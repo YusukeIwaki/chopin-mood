@@ -1,4 +1,6 @@
-# 02 — 暫定アーキテクチャ（選定前）
+# 02 — アーキテクチャ（初期概念）
+
+> 本書は初期の概念とデータ契約の草案である。現在の実行時スキーマは `.github/studio/schemas/` とソースコードが正本であり、以下の JSON 例は現在の運用 JSON ではない。現在の選定方式（Python／FFmpeg）は [アーキテクチャ判断](09_ARCHITECTURE_DECISION_AND_ACCEPTANCE.md) を参照する。生成素材プロバイダは将来の任意拡張である。
 
 ## 処理の流れ
 
@@ -26,7 +28,7 @@ flowchart TD
 4. `assets`: 静止画・レイヤー画像・動画をプロバイダー抽象化して調達。高額APIは後付け。
 5. `render`: 音源タイムラインを真として自動映像化。同期・画角・音質・シード・バージョンを記録。
 
-## 推奨するデータ契約の草案
+## データ契約の草案（概念例）
 
 内部時刻は `[start_sample, end_sample)` または同等の有理数的表現が望ましい。API境界では `start_sec` / `end_sec` の浮動小数値を使う場合も、最終レンダリングでは fps と原音声のサンプル位置から一貫して丸める。
 
@@ -89,13 +91,12 @@ flowchart TD
 
 時間関数は `t` のみに依存し、前後フレームの描画順や環境によって値が変わらないこと。長い時定数の制御用時系列は事前にプリコンピュートできる。
 
-## 技術スタック候補（未決定）
+## 技術スタック（現在と候補）
 
-- 音響: Python + librosa + NumPy/SciPy; 必要なら Essentia。初期には充分。
-- シーン提案: LLM + JSON Schemaによる構造化出力（推論モデル/プロンプト評価はこれから）。
-- 静止画/動画: 各社画像生成・動画生成APIを交換可能なadapterに。
-- 描画/編集: **Remotion（React/TS）** または Python/FFmpeg/Blender等。Remotionはフレーム駆動・音声を使った可視化の公式機能がある。ただし、最適とは決め打ちしない。
-- CLI/ジョブ制御: MVPは `analyze`, `plan`, `render`, `evaluate` などの明確なコマンドで十分。
+- 現在の選定: Python／Pillow による描画と FFmpeg による符号化／多重化（詳細は [文書09](09_ARCHITECTURE_DECISION_AND_ACCEPTANCE.md)）。音響解析は Python + librosa + NumPy/SciPy を使う。
+- シーン提案: LLM + JSON Schema による構造化出力。現在の Studio ではスキーマで制約する。
+- 静止画／動画: 将来の任意プロバイダを交換可能な adapter として接続する想定であり、現在の必須経路ではない。
+- その他の候補として Remotion や Blender が比較されたが、現在の制作経路には採用していない。
 
 ## 外部サービスの境界
 
