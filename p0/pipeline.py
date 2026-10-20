@@ -350,7 +350,8 @@ def main() -> int:
         fallback_notes.append("no accents passed the strength floor; accent layer off")
 
     params = {"seed": args.seed, "width": args.width, "height": args.height,
-              "analysis_hop": 512, "analysis_nfft": 2048,
+              "analysis_hop": int(feat["meta"]["hop"]),
+              "analysis_nfft": int(feat["meta"]["n_fft"]),
               "light_floor": planmod.LIGHT_FLOOR}
     features_uri, features_base = repo_relative(out / "features.npz")
     analysis = planmod.build_analysis_json(audio_rel, input_meas["sha256"], feat,

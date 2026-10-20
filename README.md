@@ -15,6 +15,7 @@ mainへの導入後、Actionsの「Studio auth smoke」でCodex/Muse両方の認
    確認して **Approve → Merge** すると、同一 artifact が Release に公開される。
 
 詳細・運用・制限は [docs/10_GITHUB_STUDIO_OPERATIONS.md](docs/10_GITHUB_STUDIO_OPERATIONS.md)。
+録音レート別の解析校正は [docs/11_SAMPLE_RATE_TUNING.md](docs/11_SAMPLE_RATE_TUNING.md)。
 現状は手続き描画のプロトタイプであり完成アニメではない。音声の聴取による
 音楽的検証は行われていない。手作業のタイムライン編集の受け口はない。
 
