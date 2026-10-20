@@ -1,0 +1,187 @@
+name: Studio auth smoke
+
+# Owner-only manual smoke: exact production models answer a minimal OK
+# prompt. No Issue/PR/Release mutations; only the encrypted-auth repos
+# may be updated (changed-gated, same lifecycle as production).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: studio-agent-auth
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    name: Auth smoke (Codex + Muse exact models)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+    steps:
+      - name: Require owner operator
+        env:
+          ACTOR: ${{ github.actor }}
+        run: |
+          set -euo pipefail
+          if [ "$ACTOR" != "YusukeIwaki" ]; then echo "::error::auth smoke is owner-only" >&2; exit 1; fi
+      - name: Check out trusted dispatched revision
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set runtime paths
+        run: |
+          {
+            echo "CODEX_RUNTIME_HOME=$RUNNER_TEMP/codex-home"
+            echo "CODEX_ENC_REPO_DIR=$RUNNER_TEMP/codex-enc-repository"
+            echo "CODEX_AUTH_BEFORE_HASH=$RUNNER_TEMP/codex-auth-before.sha256"
+            echo "MUSE_RUNTIME_HOME=$RUNNER_TEMP/muse-config"
+            echo "MUSE_ENC_REPO_DIR=$RUNNER_TEMP/muse-enc-repository"
+            echo "MUSE_AUTH_BEFORE_HASH=$RUNNER_TEMP/muse-auth-before.sha256"
+            echo "XDG_CONFIG_HOME=$RUNNER_TEMP/muse-config"
+          } >> "$GITHUB_ENV"
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Install Codex and Muse
+        run: |
+          set -euo pipefail
+          npm install --global "@openai/codex@0.144.6"
+          codex --version
+      - name: Create Codex read token
+        id: codex_read
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
+          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
+          owner: YusukeIwaki
+          repositories: codex.enc
+          permission-contents: read
+          skip-token-revoke: true
+      - name: Clone encrypted Codex auth
+        env:
+          GH_TOKEN: ${{ steps.codex_read.outputs.token }}
+        run: |
+          gh auth setup-git
+          git clone --branch main --single-branch https://github.com/YusukeIwaki/codex.enc.git "$CODEX_ENC_REPO_DIR"
+          test -s "$CODEX_ENC_REPO_DIR/codex.enc"
+      - name: Revoke Codex read token
+        if: always() && steps.codex_read.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ steps.codex_read.outputs.token }}
+        run: gh api --method DELETE /installation/token
+      - name: Restore Codex auth
+        id: restore_codex
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: restore-codex
+        env:
+          CODEX_ENC_PASSPHRASE: ${{ secrets.CODEX_ENC_PASSPHRASE }}
+      - name: Codex minimal prompt (exact model, xhigh)
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/smoke"
+          printf 'Reply with exactly: OK\n' > "$RUNNER_TEMP/smoke/prompt.md"
+          CODEX_HOME="$CODEX_RUNTIME_HOME" codex --ask-for-approval never exec --strict-config --ephemeral --model gpt-6.1-sol --config 'model_reasoning_effort="xhigh"' --config 'default_permissions="studio"' --output-last-message "$RUNNER_TEMP/smoke/codex.txt" - < "$RUNNER_TEMP/smoke/prompt.md"
+          test "$(cat "$RUNNER_TEMP/smoke/codex.txt")" = "OK"
+      - name: Persist refreshed Codex auth
+        id: persist_codex
+        if: always() && steps.restore_codex.outcome == 'success'
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: persist-codex
+        env:
+          CODEX_ENC_PASSPHRASE: ${{ secrets.CODEX_ENC_PASSPHRASE }}
+      - name: Create Codex write token (only when changed)
+        id: codex_write
+        if: always() && steps.persist_codex.outcome == 'success' && steps.persist_codex.outputs.changed == 'true'
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
+          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
+          owner: YusukeIwaki
+          repositories: codex.enc
+          permission-contents: write
+      - name: Push refreshed Codex auth (only when changed)
+        if: always() && steps.persist_codex.outputs.changed == 'true' && steps.codex_write.outcome == 'success'
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: push-codex
+        env:
+          GH_TOKEN: ${{ steps.codex_write.outputs.token }}
+      - name: Create Muse read token
+        id: muse_read
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
+          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
+          owner: YusukeIwaki
+          repositories: muse.enc
+          permission-contents: read
+          skip-token-revoke: true
+      - name: Clone encrypted Muse auth
+        env:
+          GH_TOKEN: ${{ steps.muse_read.outputs.token }}
+        run: |
+          gh auth setup-git
+          git clone --branch main --single-branch https://github.com/YusukeIwaki/muse.enc.git "$MUSE_ENC_REPO_DIR"
+          test -s "$MUSE_ENC_REPO_DIR/muse.enc"
+      - name: Revoke Muse read token
+        if: always() && steps.muse_read.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ steps.muse_read.outputs.token }}
+        run: gh api --method DELETE /installation/token
+      - name: Restore Muse auth
+        id: restore_muse
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: restore-muse
+        env:
+          MUSE_ENC_PASSPHRASE: ${{ secrets.MUSE_ENC_PASSPHRASE }}
+      - name: Muse minimal prompt (exact model, max)
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/smoke-muse"
+          mkdir -p "$work"
+          printf 'Reply with exactly: OK\n' > "$work/prompt.md"
+          timeout 900 bash .github/studio/scripts/muse-run.sh "$work" > "$RUNNER_TEMP/smoke/muse.json" 2> "$RUNNER_TEMP/smoke/muse.stderr"
+          python3 .github/studio/scripts/check-muse-smoke.py "$RUNNER_TEMP/smoke/muse.json"
+      - name: Persist refreshed Muse auth
+        id: persist_muse
+        if: always() && steps.restore_muse.outcome == 'success'
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: persist-muse
+        env:
+          MUSE_ENC_PASSPHRASE: ${{ secrets.MUSE_ENC_PASSPHRASE }}
+      - name: Create Muse write token (only when changed)
+        id: muse_write
+        if: always() && steps.persist_muse.outcome == 'success' && steps.persist_muse.outputs.changed == 'true'
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
+          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
+          owner: YusukeIwaki
+          repositories: muse.enc
+          permission-contents: write
+      - name: Push refreshed Muse auth (only when changed)
+        if: always() && steps.persist_muse.outputs.changed == 'true' && steps.muse_write.outcome == 'success'
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: push-muse
+        env:
+          GH_TOKEN: ${{ steps.muse_write.outputs.token }}
+      - name: Cleanup credentials
+        if: always()
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: cleanup

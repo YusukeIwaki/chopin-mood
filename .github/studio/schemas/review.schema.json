@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codex evidence review (pass requires all checks true, no blockers)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "verdict",
+    "reviewed_head_sha",
+    "checks",
+    "blockers",
+    "summary",
+    "listening_note"
+  ],
+  "properties": {
+    "verdict": {
+      "enum": [
+        "pass",
+        "fail"
+      ]
+    },
+    "reviewed_head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mechanical_qa_reviewed",
+        "brief_adherence",
+        "timing_integrity",
+        "aesthetic_approval"
+      ],
+      "properties": {
+        "mechanical_qa_reviewed": {
+          "type": "boolean"
+        },
+        "brief_adherence": {
+          "type": "boolean"
+        },
+        "timing_integrity": {
+          "type": "boolean"
+        },
+        "aesthetic_approval": {
+          "type": "boolean"
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "string",
+        "maxLength": 1000
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "listening_note": {
+      "type": "string",
+      "enum": [
+        "audio listening unavailable; not a full musical judgement"
+      ]
+    }
+  }
+}

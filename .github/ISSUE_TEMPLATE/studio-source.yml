@@ -1,0 +1,44 @@
+name: Studio source recording
+description: Piano recording for the automated 1-2 minute studio (owner only)
+title: "Studio: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This repository is public: attached recordings are publicly accessible.
+        Attach exactly ONE recording (audio or video). The studio picks a
+        60-120s excerpt automatically; no manual seconds/cuts are accepted.
+        GitHub limits (Oct 2026): .wav/.mp3 up to 25 MB; video 10 MB free /
+        100 MB paid. The controller's 512 MB cap is defence, not allowance.
+  - type: textarea
+    id: attachment
+    attributes:
+      label: Recording attachment (required)
+      description: Drag the file here so GitHub creates a user-attachment URL.
+    validations:
+      required: true
+  - type: input
+    id: piece
+    attributes:
+      label: Piece (optional, unknown by default)
+      description: Free text only; the studio never identifies the recording for you.
+    validations:
+      required: false
+  - type: dropdown
+    id: period
+    attributes:
+      label: Period direction (optional creative direction, not fact)
+      options:
+        - unknown
+        - early (aspiration for professional performance)
+        - middle (concert presence + expressiveness)
+        - late (healing)
+    validations:
+      required: false
+  - type: textarea
+    id: art_notes
+    attributes:
+      label: Art / direction notes (optional)
+    validations:
+      required: false

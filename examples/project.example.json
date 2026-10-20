@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.1",
+  "input": {
+    "audio": "assets/reference_audio.wav",
+    "video": null,
+    "track_title": null,
+    "source_rights": "owner_recorded_requires_confirmation"
+  },
+  "output": {
+    "aspect_ratio": "9:16",
+    "width": 720,
+    "height": 1280,
+    "fps": 30,
+    "duration_min_sec": 30,
+    "duration_max_sec": 45
+  },
+  "style": {
+    "mode": "original_animated_short",
+    "visual_style_id": "original-watercolor-anime",
+    "identity_consistency": true,
+    "human_timeline_edits": false
+  },
+  "generation": {
+    "allow_external_api": false,
+    "max_paid_api_budget_usd": 0,
+    "allow_automatic_publish": false,
+    "seed": 20261019
+  }
+}

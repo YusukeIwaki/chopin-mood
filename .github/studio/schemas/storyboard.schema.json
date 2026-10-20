@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Declarative creative storyboard (Muse output, data only)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "style_id",
+    "prototype_notice",
+    "scenes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "style_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "prototype_notice": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "palette",
+          "motif",
+          "camera",
+          "params"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^scene[0-9]{2}$"
+          },
+          "palette": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "sky_top",
+              "sky_bot",
+              "far",
+              "near",
+              "moon",
+              "glow"
+            ],
+            "properties": {
+              "sky_top": {
+                "$ref": "#/$defs/rgb"
+              },
+              "sky_bot": {
+                "$ref": "#/$defs/rgb"
+              },
+              "far": {
+                "$ref": "#/$defs/rgb"
+              },
+              "near": {
+                "$ref": "#/$defs/rgb"
+              },
+              "moon": {
+                "$ref": "#/$defs/rgb"
+              },
+              "glow": {
+                "$ref": "#/$defs/rgb"
+              }
+            }
+          },
+          "motif": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "camera": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "figure_scale": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 2.0
+              },
+              "particle_multiplier": {
+                "type": "number",
+                "minimum": 0.0,
+                "maximum": 2.0
+              },
+              "light_bias": {
+                "type": "number",
+                "minimum": -0.3,
+                "maximum": 0.3
+              },
+              "glow_scale": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 2.0
+              }
+            },
+            "required": [
+              "figure_scale",
+              "particle_multiplier",
+              "light_bias",
+              "glow_scale"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "rgb": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 255
+      }
+    }
+  }
+}
