@@ -169,3 +169,136 @@ def test_black_verdict_all_black_fails_intro_only_passes():
     assert Q.black_verdict(intro)["pass"] is True
     late = [{"black_start": 10.0, "black_end": 10.5, "black_duration": 0.5}]
     assert Q.black_verdict(late)["pass"] is False
+
+
+# --- Encoded-AAC format regressions through check_file() -----------------
+# Reference crops may be PCM16, PCM24 or FLOAT WAV (compressed sources
+# decode to 32-bit FLOAT). Reading a FLOAT crop as int16 casts values in
+# [-1, 1] to zero and falsely reports fail_silence_mismatch.
+
+_QA_W, _QA_H = 64, 64
+_QA_N_FRAMES = 90
+
+
+def _float_waveform(n):
+    t = np.arange(n) / SR
+    y = 0.15 * np.sin(2 * np.pi * 440 * t)
+    for a in (1.0, 2.0):
+        s = int(a * SR)
+        L = int(0.5 * SR)
+        te = np.arange(L) / SR
+        y[s:s + L] += 0.5 * np.exp(-te * 7) * np.sin(2 * np.pi * 660 * te)
+    return y
+
+
+def _small_frames(n_frames):
+    for f in range(n_frames):
+        img = np.zeros((_QA_H, _QA_W, 3), dtype=np.uint8)
+        img[..., 0] = ((np.arange(_QA_W)[None, :] + f * 4) % 256).astype(np.uint8)
+        img[..., 1] = ((np.arange(_QA_H)[:, None] + f * 2) % 256).astype(np.uint8)
+        img[..., 2] = 128
+        yield img
+
+
+def _encoded_audio_sync(workdir, subtype, y, tag, encode_y=None):
+    import hashlib
+    from pathlib import Path
+
+    workdir = Path(workdir)
+    workdir.mkdir(parents=True, exist_ok=True)
+    n = len(y)
+    asset = workdir / f"asset_{tag}.wav"
+    clip = workdir / f"clip_{tag}.wav"
+    sf.write(str(asset), y, SR, subtype=subtype)
+    sf.write(str(clip), y, SR, subtype=subtype)
+    encode_src = clip
+    if encode_y is not None:
+        encode_src = workdir / f"encode_{tag}.wav"
+        sf.write(str(encode_src), encode_y, SR, subtype="PCM_16")
+    mp4 = workdir / f"video_{tag}.mp4"
+    R.render_video(_small_frames(_QA_N_FRAMES), str(encode_src), str(mp4),
+                   _QA_W, _QA_H, FPS, 1, _QA_N_FRAMES)
+    tb = Timebase(SR, FPS, 1)
+    plan = {
+        "_asset_abspath": str(asset),
+        "clip": {"n_frames": _QA_N_FRAMES, "start_sample": 0, "end_sample": n},
+        "scenes": [{"id": "scene01", "start_frame": 0,
+                    "end_frame": _QA_N_FRAMES, "start_sample": 0,
+                    "end_sample": n}],
+        "accents": [],
+    }
+    digest = hashlib.sha256(Path(asset).read_bytes()).hexdigest()
+    res = Q.check_file(str(mp4), str(clip), plan, tb, _QA_W, _QA_H, digest,
+                       str(workdir), tag)
+    matches = [c for c in res["checks"] if c["name"] == f"{tag}:audio_sync"]
+    assert len(matches) == 1, res["checks"]
+    return matches[0]
+
+
+def test_encoded_alignment_passes_for_pcm16_pcm24_float(tmp_path):
+    y = _float_waveform(SR * 3)
+    for subtype in ("PCM_16", "PCM_24", "FLOAT"):
+        tag = subtype.lower()
+        audio = _encoded_audio_sync(tmp_path / tag, subtype, y, tag)
+        assert audio["pass"] is True, (subtype, audio)
+        assert audio["verdict"] == "measured", (subtype, audio)
+        assert audio["full"]["ref_rms"] > 1e-3, (subtype, audio)
+        assert audio["full"]["dec_rms"] > 1e-3, (subtype, audio)
+        assert abs(audio["full"]["lag_samples"]) <= FRAME, (subtype, audio)
+        assert audio["full"]["peak_corr"] >= 0.90, (subtype, audio)
+        assert abs(audio["full"]["level_diff_db"]) <= 1.0, (subtype, audio)
+
+
+def test_delayed_aac_fails_audio_sync(tmp_path):
+    y = _float_waveform(SR * 3)
+    delayed = np.concatenate([np.zeros(3 * FRAME, dtype=np.float64), y])[:len(y)]
+    audio = _encoded_audio_sync(tmp_path, "PCM_16", y, "delayed",
+                                encode_y=delayed)
+    assert audio["pass"] is False, audio
+    assert audio["verdict"] == "measured", audio
+    assert audio["full"]["lag_samples"] == 3 * FRAME, audio
+
+
+def test_true_silence_float_reference_passes_as_na(tmp_path):
+    audio = _encoded_audio_sync(tmp_path, "FLOAT", np.zeros(SR * 3), "silence")
+    assert audio["pass"] is True, audio
+    assert audio["verdict"] == "na_silent_both_match", audio
+
+
+def test_one_sided_silence_float_reference_fails(tmp_path):
+    y = _float_waveform(SR * 3)
+    audio = _encoded_audio_sync(tmp_path, "FLOAT", y, "onesided",
+                                encode_y=np.zeros(SR * 3))
+    assert audio["pass"] is False, audio
+    assert audio["verdict"] == "fail_silence_mismatch", audio
+
+
+def _direct_lag_corr(decoded, ref, max_lag):
+    a = decoded.astype(np.float64).copy()
+    b = ref.astype(np.float64).copy()
+    a -= a.mean()
+    b -= b.mean()
+    n = min(len(a), len(b))
+    a, b = a[:n], b[:n]
+    corr = np.correlate(
+        a, np.concatenate([np.zeros(max_lag), b, np.zeros(max_lag)]),
+        mode="valid")
+    lags = np.arange(-max_lag, max_lag + 1)
+    k = int(np.argmax(corr))
+    denom = float(np.sqrt((a * a).sum() * (b * b).sum())) + 1e-12
+    return int(lags[k]), float(corr[k] / denom)
+
+
+def test_audio_lag_corr_fft_matches_direct_sign_and_bounds():
+    rng = np.random.RandomState(42)
+    ref = rng.randn(SR)
+    for shift in (-2 * FRAME, -37, 0, 37, FRAME, 3 * FRAME):
+        dec = np.zeros_like(ref)
+        for i in range(len(ref)):
+            j = i - shift
+            if 0 <= j < len(ref):
+                dec[i] = ref[j]
+        got = Q.audio_lag_corr(dec, ref, 4096)
+        exp_lag, exp_peak = _direct_lag_corr(dec, ref, 4096)
+        assert got["lag_samples"] == exp_lag == shift, (shift, got, exp_lag)
+        assert abs(got["peak_corr"] - round(exp_peak, 4)) <= 1e-3, (shift, got)

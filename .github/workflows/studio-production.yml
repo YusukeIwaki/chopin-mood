@@ -95,8 +95,6 @@ jobs:
     outputs:
       matrix: ${{ steps.children.outputs.matrix }}
       fingerprint: ${{ steps.fp.outputs.fingerprint }}
-    env:
-      CODEX_VERSION: "0.144.6"
     steps:
       - name: Check out main
         uses: actions/checkout@v7
@@ -117,16 +115,15 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
-      - name: Install ffmpeg, DSP dependencies and Codex
-        env:
-          CODEX_VERSION: ${{ env.CODEX_VERSION }}
+      - name: Install ffmpeg, DSP dependencies and Codex (latest)
         run: |
           set -euo pipefail
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           ffmpeg -version | head -n 1
           pip install -r requirements-p0.txt
-          npm install --global "@openai/codex@${CODEX_VERSION}"
+          npm install --global "@openai/codex@latest"
           codex --version
+          bash .github/studio/scripts/setup-codex-sandbox.sh
       - name: Download, decode (lossless) and analyze source
         env:
           ATTACHMENT_URL: ${{ needs.preflight.outputs.attachment_url }}
@@ -211,7 +208,7 @@ jobs:
           CODEX_HOME="$CODEX_RUNTIME_HOME" codex --ask-for-approval never exec --strict-config --ephemeral --model gpt-6.1-sol --config 'model_reasoning_effort="xhigh"' --config 'default_permissions="studio"' --output-schema .github/studio/schemas/planner-output.schema.json --output-last-message output/studio/plan/selection.json - < "$RUNNER_TEMP/planner-prompt.md" > "$RUNNER_TEMP/codex.stdout" 2> "$RUNNER_TEMP/codex.stderr"
           code=$?
           set -e
-          if [ "$code" -ne 0 ]; then echo "::error::Codex planner failed with exit $code" >&2; exit "$code"; fi
+          if [ "$code" -ne 0 ]; then python3 .github/studio/scripts/report-agent-error.py "$RUNNER_TEMP/codex.stderr" || true; echo "::error::Codex planner failed with exit $code" >&2; exit "$code"; fi
           test -s output/studio/plan/selection.json
       - name: Validate planner output (IDs + candidate briefs, no timing)
         run: |
@@ -279,8 +276,6 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
-    env:
-      CODEX_VERSION: "0.144.6"
     steps:
       - name: Check out main (trusted code only; PR branch is JSON-only via API)
         uses: actions/checkout@v7
@@ -305,16 +300,15 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
-      - name: Install ffmpeg, tools (Codex pinned; Muse official launcher)
-        env:
-          CODEX_VERSION: ${{ env.CODEX_VERSION }}
+      - name: Install ffmpeg, tools (Codex latest; Muse official launcher)
         run: |
           set -euo pipefail
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           ffmpeg -version | head -n 1
           pip install -r requirements-p0.txt
-          npm install --global "@openai/codex@${CODEX_VERSION}"
+          npm install --global "@openai/codex@latest"
           codex --version
+          bash .github/studio/scripts/setup-codex-sandbox.sh
       - name: Download plan bundle
         uses: actions/download-artifact@v7
         with:
@@ -402,7 +396,7 @@ jobs:
           timeout 2400 bash .github/studio/scripts/muse-run.sh "$work" > "$RUNNER_TEMP/muse.stdout" 2> "$RUNNER_TEMP/muse.stderr"
           code=$?
           set -e
-          if [ "$code" -ne 0 ]; then echo "::error::Muse failed with exit $code" >&2; exit "$code"; fi
+          if [ "$code" -ne 0 ]; then python3 .github/studio/scripts/report-agent-error.py "$RUNNER_TEMP/muse.stderr" || true; echo "::error::Muse failed with exit $code" >&2; exit "$code"; fi
           test -s "$work/storyboard.json"
           cp "$work/storyboard.json" output/studio/work/storyboard.json
       - name: Persist refreshed Muse auth
@@ -524,7 +518,7 @@ jobs:
           CODEX_HOME="$CODEX_RUNTIME_HOME" codex --ask-for-approval never exec --strict-config --ephemeral --model gpt-6.1-sol --config 'model_reasoning_effort="xhigh"' --config 'default_permissions="studio"' --image output/studio/work/bundle/contact-sheet.jpg --output-schema .github/studio/schemas/review.schema.json --output-last-message output/studio/work/bundle/review.json - < "$RUNNER_TEMP/review-prompt.md" > "$RUNNER_TEMP/codex.stdout" 2> "$RUNNER_TEMP/codex.stderr"
           code=$?
           set -e
-          if [ "$code" -ne 0 ]; then echo "::error::Codex reviewer failed with exit $code" >&2; exit "$code"; fi
+          if [ "$code" -ne 0 ]; then python3 .github/studio/scripts/report-agent-error.py "$RUNNER_TEMP/codex.stderr" || true; echo "::error::Codex reviewer failed with exit $code" >&2; exit "$code"; fi
           test -s output/studio/work/bundle/review.json
           python3 -m studio check-review --review output/studio/work/bundle/review.json --head-sha "$HEAD_SHA" --mechanical-pass || true
           python3 - <<'PY'
