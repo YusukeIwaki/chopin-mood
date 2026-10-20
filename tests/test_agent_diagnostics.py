@@ -193,4 +193,3 @@ def test_output_is_only_fixed_lines(tmp_path):
     assert lines[0].startswith("classification: ")
     assert lines[1].startswith("label: ")
     assert lines[2].startswith("next_step: ")
-
