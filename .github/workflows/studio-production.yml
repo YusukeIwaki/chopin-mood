@@ -123,6 +123,7 @@ jobs:
           pip install -r requirements-p0.txt
           npm install --global "@openai/codex@latest"
           codex --version
+          bash .github/studio/scripts/setup-codex-sandbox.sh
       - name: Download, decode (lossless) and analyze source
         env:
           ATTACHMENT_URL: ${{ needs.preflight.outputs.attachment_url }}
@@ -307,6 +308,7 @@ jobs:
           pip install -r requirements-p0.txt
           npm install --global "@openai/codex@latest"
           codex --version
+          bash .github/studio/scripts/setup-codex-sandbox.sh
       - name: Download plan bundle
         uses: actions/download-artifact@v7
         with:

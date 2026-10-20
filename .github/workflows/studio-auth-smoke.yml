@@ -55,6 +55,7 @@ jobs:
           set -euo pipefail
           npm install --global "@openai/codex@latest"
           codex --version
+          bash .github/studio/scripts/setup-codex-sandbox.sh
       - name: Create Codex read token
         id: codex_read
         uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2

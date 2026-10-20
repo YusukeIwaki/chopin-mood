@@ -53,6 +53,9 @@ PR 本文に `Fixes #child` は書かない（release 成功前に子が閉じ�
    `npm install --global "@openai/codex@latest"` により最新 CLI を入れ、
    `codex --version` の出力を run ログに記録する（production の plan/build
    両 job と auth smoke）。バージョンはログで確認し、固定版の挙動には依存しない。
+   Ubuntuには `bubblewrap` と専用AppArmorプロファイルを公式手順で導入し、
+   認証復号前に名前空間の作成を検証する。読み取り専用・ネットワーク禁止の
+   Codex権限プロファイルは維持する。
    Muse は公式 launcher
    (`https://api.meta.ai/muse-launcher.sh`、muse.enc の Dockerfile と同方式)
    でDockerイメージ内に導入し、実バージョンをrunログに記録する。
