@@ -1,0 +1,271 @@
+{
+  "checks": [
+    {
+      "name": "studio:stream_kinds",
+      "pass": true,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "w": 540,
+      "h": 960
+    },
+    {
+      "name": "studio:frame_count",
+      "pass": true,
+      "nb_read_frames": 1932,
+      "expected": 1932
+    },
+    {
+      "name": "studio:video_stream",
+      "pass": true,
+      "start_time": 0.0,
+      "duration": 64.4,
+      "expected_duration": 64.4,
+      "start_tol_1_frame": 0.033333,
+      "dur_tol_frames": 1.5
+    },
+    {
+      "name": "studio:audio_stream",
+      "pass": true,
+      "start_time": 0.0,
+      "duration": 64.4,
+      "expected_duration": 64.4,
+      "start_tol_1_frame": 0.033333,
+      "dur_tol_frames": 1.5
+    },
+    {
+      "name": "studio:audio_sync",
+      "pass": true,
+      "verdict": "measured",
+      "lag_pass_samples": 1600,
+      "search_samples": 6400,
+      "full": {
+        "lag_samples": 0,
+        "peak_corr": 1.0,
+        "level_diff_db": -0.008,
+        "ref_rms": 0.030464,
+        "dec_rms": 0.030436
+      },
+      "segments": {
+        "head": {
+          "lag_samples": 0,
+          "peak_corr": 1.0
+        },
+        "mid": {
+          "lag_samples": 0,
+          "peak_corr": 1.0
+        },
+        "tail": {
+          "lag_samples": 0,
+          "peak_corr": 1.0
+        }
+      },
+      "segment_drift_samples": 0
+    },
+    {
+      "name": "studio:crop_pcm_exact",
+      "pass": true,
+      "mode": "float_tight",
+      "max_abs_diff": 0.0
+    },
+    {
+      "name": "studio:no_black_frames",
+      "pass": true,
+      "black_segments": [],
+      "black_sec_beyond_intro": 0
+    },
+    {
+      "name": "studio:content_changes",
+      "pass": true,
+      "probe_frames": [
+        0,
+        644,
+        1288,
+        1931
+      ],
+      "motion_diffs_blur_downscaled": [
+        11.57,
+        6.0901,
+        4.3721
+      ],
+      "motion_floor": 0.4,
+      "mean_abs_diffs_raw": [
+        13.343,
+        6.167,
+        6.772
+      ]
+    },
+    {
+      "name": "studio:scene_invariants",
+      "pass": true,
+      "n_scenes": 5,
+      "coverage_ok": true,
+      "contiguous_ok": true,
+      "min_len_ok": true
+    },
+    {
+      "name": "studio:input_hash_unchanged",
+      "pass": true,
+      "sha256": "3709d143e232d524..."
+    },
+    {
+      "name": "studio:marker_spotcheck",
+      "pass": true,
+      "markers": [
+        {
+          "frame": 0,
+          "kind": "scene_start",
+          "expect_R": 0,
+          "marker_rgb": [
+            0,
+            27,
+            0
+          ],
+          "dev_R": 0,
+          "dev_B": 0,
+          "ok": true,
+          "note": ""
+        },
+        {
+          "frame": 606,
+          "kind": "scene_start",
+          "expect_R": 67,
+          "marker_rgb": [
+            65,
+            28,
+            95
+          ],
+          "dev_R": 2,
+          "dev_B": 1,
+          "ok": true,
+          "note": "boundary_step_R 2->65"
+        },
+        {
+          "frame": 860,
+          "kind": "scene_start",
+          "expect_R": 134,
+          "marker_rgb": [
+            134,
+            28,
+            93
+          ],
+          "dev_R": 0,
+          "dev_B": 1,
+          "ok": true,
+          "note": "boundary_step_R 66->134"
+        },
+        {
+          "frame": 1227,
+          "kind": "scene_start",
+          "expect_R": 201,
+          "marker_rgb": [
+            199,
+            28,
+            203
+          ],
+          "dev_R": 2,
+          "dev_B": 0,
+          "ok": true,
+          "note": "boundary_step_R 133->199"
+        },
+        {
+          "frame": 1478,
+          "kind": "scene_start",
+          "expect_R": 12,
+          "marker_rgb": [
+            11,
+            27,
+            199
+          ],
+          "dev_R": 1,
+          "dev_B": 1,
+          "ok": true,
+          "note": "boundary_step_R 200->11"
+        },
+        {
+          "frame": 393,
+          "kind": "accent_onset",
+          "expect_accent": true,
+          "marker_rgb": [
+            2,
+            218,
+            140
+          ],
+          "dev_B": 3,
+          "ok": true,
+          "note": "onset_edge_G 26->218"
+        },
+        {
+          "frame": 457,
+          "kind": "accent_onset",
+          "expect_accent": true,
+          "marker_rgb": [
+            2,
+            219,
+            199
+          ],
+          "dev_B": 2,
+          "ok": true,
+          "note": "onset_edge_G 25->219"
+        },
+        {
+          "frame": 518,
+          "kind": "accent_onset",
+          "expect_accent": true,
+          "marker_rgb": [
+            2,
+            217,
+            10
+          ],
+          "dev_B": 4,
+          "ok": true,
+          "note": "onset_edge_G 28->217"
+        },
+        {
+          "frame": 710,
+          "kind": "accent_onset",
+          "expect_accent": true,
+          "marker_rgb": [
+            65,
+            217,
+            199
+          ],
+          "dev_B": 1,
+          "ok": true,
+          "note": "onset_edge_G 28->217"
+        },
+        {
+          "frame": 781,
+          "kind": "accent_onset",
+          "expect_accent": true,
+          "marker_rgb": [
+            65,
+            218,
+            13
+          ],
+          "dev_B": 0,
+          "ok": true,
+          "note": "onset_edge_G 28->218"
+        },
+        {
+          "frame": 852,
+          "kind": "accent_onset",
+          "expect_accent": true,
+          "marker_rgb": [
+            68,
+            218,
+            85
+          ],
+          "dev_B": 1,
+          "ok": true,
+          "note": "onset_edge_G 28->218"
+        }
+      ],
+      "quantization": {
+        "max_abs_dev": 4,
+        "n_probed": 11
+      }
+    }
+  ],
+  "pass": true,
+  "musical_naturalness": "NOT verified (no listening)"
+}

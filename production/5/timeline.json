@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "candidate_id": "cand-01",
+  "clip": {
+    "start_sample": 6816000,
+    "end_sample": 9907200,
+    "start_frame": 0,
+    "end_frame": 1932,
+    "n_frames": 1932,
+    "fps": [
+      30,
+      1
+    ],
+    "duration_sec_display": 64.4,
+    "selection_reason": "DSP candidate selected by ID; no LLM timing",
+    "edge_100ms_rms_dbfs": null,
+    "edge_energy_note": "studio render"
+  },
+  "scenes": [
+    {
+      "id": "scene01",
+      "start_sample": 6816000,
+      "end_sample": 7785600,
+      "start_frame": 0,
+      "end_frame": 606,
+      "duration_sec": 20.2,
+      "palette_id": 0,
+      "motion_preset": "slow_parallax",
+      "reactivity_profile": "restrained"
+    },
+    {
+      "id": "scene02",
+      "start_sample": 7785600,
+      "end_sample": 8192000,
+      "start_frame": 606,
+      "end_frame": 860,
+      "duration_sec": 8.4667,
+      "palette_id": 1,
+      "motion_preset": "slow_parallax",
+      "reactivity_profile": "restrained"
+    },
+    {
+      "id": "scene03",
+      "start_sample": 8192000,
+      "end_sample": 8779200,
+      "start_frame": 860,
+      "end_frame": 1227,
+      "duration_sec": 12.2333,
+      "palette_id": 2,
+      "motion_preset": "slow_parallax",
+      "reactivity_profile": "restrained"
+    },
+    {
+      "id": "scene04",
+      "start_sample": 8779200,
+      "end_sample": 9180800,
+      "start_frame": 1227,
+      "end_frame": 1478,
+      "duration_sec": 8.3667,
+      "palette_id": 0,
+      "motion_preset": "slow_parallax",
+      "reactivity_profile": "restrained"
+    },
+    {
+      "id": "scene05",
+      "start_sample": 9180800,
+      "end_sample": 9907200,
+      "start_frame": 1478,
+      "end_frame": 1932,
+      "duration_sec": 15.1333,
+      "palette_id": 1,
+      "motion_preset": "slow_parallax",
+      "reactivity_profile": "restrained"
+    }
+  ],
+  "accents": [
+    {
+      "kind": "accent",
+      "source_sample": 7445970,
+      "time_sec": 155.124375,
+      "strength": 0.8899,
+      "method": "flux_peak_v1",
+      "frame": 393
+    },
+    {
+      "kind": "accent",
+      "source_sample": 7547435,
+      "time_sec": 157.23822916666666,
+      "strength": 1.0,
+      "method": "flux_peak_v1",
+      "frame": 457
+    },
+    {
+      "kind": "accent",
+      "source_sample": 7645555,
+      "time_sec": 159.28239583333334,
+      "strength": 0.7619,
+      "method": "flux_peak_v1",
+      "frame": 518
+    },
+    {
+      "kind": "accent",
+      "source_sample": 7952180,
+      "time_sec": 165.67041666666665,
+      "strength": 1.0,
+      "method": "flux_peak_v1",
+      "frame": 710
+    },
+    {
+      "kind": "accent",
+      "source_sample": 8065910,
+      "time_sec": 168.03979166666667,
+      "strength": 1.0,
+      "method": "flux_peak_v1",
+      "frame": 781
+    },
+    {
+      "kind": "accent",
+      "source_sample": 8180755,
+      "time_sec": 170.43239583333335,
+      "strength": 1.0,
+      "method": "flux_peak_v1",
+      "frame": 852
+    },
+    {
+      "kind": "accent",
+      "source_sample": 8479575,
+      "time_sec": 176.6578125,
+      "strength": 0.6677,
+      "method": "flux_peak_v1",
+      "frame": 1039
+    },
+    {
+      "kind": "accent",
+      "source_sample": 8896585,
+      "time_sec": 185.34552083333332,
+      "strength": 1.0,
+      "method": "flux_peak_v1",
+      "frame": 1300
+    },
+    {
+      "kind": "accent",
+      "source_sample": 9035960,
+      "time_sec": 188.24916666666667,
+      "strength": 1.0,
+      "method": "flux_peak_v1",
+      "frame": 1387
+    },
+    {
+      "kind": "accent",
+      "source_sample": 9165300,
+      "time_sec": 190.94375,
+      "strength": 1.0,
+      "method": "flux_peak_v1",
+      "frame": 1468
+    }
+  ],
+  "note": "deterministic DSP timings; no manual edits"
+}
