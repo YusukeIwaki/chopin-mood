@@ -1,118 +1,104 @@
-# Piano × AI Animation — GitHub Studio（初期実装）
+# Piano × AI Animation — GitHub Studio
 
-更新日: 2026-10-20 / 言語: 日本語
+ピアノ演奏の録音を GitHub Issue に投稿すると、元の演奏音源に合わせて自動で同期した縦型 MP4 を作る仕組みです。
+目標は、音源の投入から書き出しまで、手作業でタイミングを調整しないことです。
+現在の映像は手続き描画（プログラムで図形を描く方式）のプロトタイプで、完成した AI アニメではありません。
 
-mainへの導入後、Actionsの「Studio auth smoke」でCodex/Muse両方の認証を確認してから使用する。
-この公開リポジトリに添付した録音は公開アクセス可能になる。
+## 制作の流れ
 
-## 現在の使い方（1〜2分、手作業のタイミング調整なし）
+受付はオーナー（YusukeIwaki）だけです。対象は、未クローズ（Open）の親 Issue に添付された音声／動画ファイル1件です。
+元の音源は60秒以上が必要です。このリポジトリは公開されているため、添付した録音も公開されます。
+曲名・時期・画風などの指定は任意で、未指定の場合は unknown として扱います。
+まず DSP（音声の信号処理）で録音を解析し、抜粋候補を計算します。
 
-1. GitHub Issue フォームから本人のピアノ録音を **GitHub 添付として1件**
-   アップロードする（曲名・時期・メモは任意、既定は unknown）。
-2. Codex が DSP 候補（60〜120秒、最大3件）から ID で選び、子 Issue を作り、
-   Muse が宣言的 storyboard を作り、信頼レンダラーが MP4 を書き出す。
-3. Codex の証拠レビュー通過時だけ `@YusukeIwaki please check this` が付くので、
-   確認して **Approve → Merge** すると、同一 artifact が Release に公開される。
-
-詳細・運用・制限は [docs/10_GITHUB_STUDIO_OPERATIONS.md](docs/10_GITHUB_STUDIO_OPERATIONS.md)。
-録音レート別の解析校正は [docs/11_SAMPLE_RATE_TUNING.md](docs/11_SAMPLE_RATE_TUNING.md)。
-現状は手続き描画のプロトタイプであり完成アニメではない。音声の聴取による
-音楽的検証は行われていない。手作業のタイムライン編集の受け口はない。
-
-以下は P0 までの経緯・引き継ぎ記録（保持）。
-
----
-
-# Piano × AI Animation — Codex 引き継ぎパッケージ
-
-更新日: 2026-10-19 / 言語: 日本語 / 状態: 構想・技術検証の初期段階
-
-## このプロジェクトで作りたいもの
-
-ピアニスト本人の演奏音源を投入すると、音楽の盛り上がり・フレーズ・音色の変化を解析し、短いアニメーション作品を**原音源と自動同期**して書き出すシステム。主用途は YouTube Shorts（30〜60秒程度）。単なるオーディオビジュアライザーや AI 風景 BGM の量産ではなく、ショパンの印象的なフレーズを「演奏解釈のある短編映像」にする。
-
-**最重要条件: ユーザーが毎回、カット位置・音符とのタイミング・動きの強さを手でチューニングする必要がないこと。**
-
-初期はショパン中心だが、対象は曲名非依存に設計する。曲名が不明でも音声解析は動くこと。
-
-## 最初に読む順番
-
-1. `AGENTS.md` — Codex に守ってほしい方針
-2. `prompts/CODEX_START.md` — Codex への最初の依頼文（コピペ可）
-3. `docs/01_CONTEXT_AND_GOALS.md` — 企画背景、必須条件、事実と仮説
-4. `docs/02_ARCHITECTURE.md` — 暫定アーキテクチャとデータ契約
-5. `docs/03_AUDIO_AND_SYNC.md` — 音声特徴量・同期・評価の論点
-6. `docs/04_POC_PLAN.md` — 最初の技術検証、Done 条件、テスト
-7. `docs/05_CONTENT_AND_BUSINESS.md` — ファン獲得と収益化、動画案10本
-8. `docs/06_RESEARCH_AND_RISKS.md` — 未検証事項、参考リンク、権利
-9. `docs/09_ARCHITECTURE_DECISION_AND_ACCEPTANCE.md` — 技術方式比較・次段の受け入れ条件（親作成）
-
-## 現在ある実データ
-
-- `assets/reference_audio.wav` — 添付された縦型ピアノ演奏動画から以前の会話で抽出されたモノラル音声（約167.15秒、22,050Hz）。**音響検証専用で、公開動画の最終音源には使わない**。公開時は元動画の音声トラックまたは高品質な録音マスターを使用する。外部に無断アップロードしない。
-- `assets/music_timeline.png` — 以前の解析の結果グラフ。参考指標であり、楽曲理解を実証するものではない。
-- `examples/reference_features_v0.json` — 5秒ごとの特徴量と局所ピーク。以前の解析スクリプト由来。
-- `scripts/analyze_reference.py` — 解析処理を再実行する参考スクリプト。初期の特徴量設計の一例であり製品用実装ではない。
-- `assets/reference_contact_sheet.jpg` — 入力動画の抜粋フレーム（実演映像の可能性検証に利用）。
-- **元動画 `IMG_0303.mp4` は約102MBのためZIPには含めていない**。元のチャット添付から別途作業リポジトリへ配置すること。必ずしも元動画がないと音響PoCに着手できないわけではない。
-
-**注意**: 元の演奏曲名は資料だけでは確定していない。添付素材を「スケルツォ第3番」と決め打ちしないこと。以前の会話で出てきた同曲は、企画例・レパートリーの話として区別する。
-
-## 前の会話で実測されたこと
-
-- 元動画: 約167.1667秒、512×910、30fps、映像H.264・音声AAC。
-- 音声特徴量には RMS、onset strength、spectral centroid、合成した `activity` 指標を使用した。
-- 合成 `activity` の局所ピークの上位候補: 約153.0秒、54.0秒、28.2秒、121.6秒、98.9秒。
-- **音響的活動度のピーク**であり、感情、フレーズ終止、クライマックス等を理解した証拠ではない。
-- 以前のスクリプトには `numpy` `librosa` `scipy` を使用。依存やバージョンの検証はこれから。
-
-## PoC で作りたい最初の出力
-
-約30〜45秒の音源を自動抽出 → 時系列特徴量・イベント・物語ビート・シーン計画を JSON で生成 → 静止画または暫定プレースホルダーから縦型 MP4 を自動レンダリング。**まず高価な動画生成APIなしでも音楽同期の成否がわかるもの**にする。
-
-## Codex への入口
-
-作業ディレクトリで `prompts/CODEX_START.md` の全文を Codex に貼り付ける。AGENTS.md を読む前提だけにせず、プロンプト側でも参照ファイルを指定済み。
-
-このZIPは「完成コード」ではなく、プロダクト要求・会話背景・検証資産・実装指示を揃えた引き継ぎパッケージ。
-
-## P0 の実行手順（2026-10-19 実測済み）
-
-前提: Python 3.13、FFmpeg 8.1（`ffmpeg` / `ffprobe` が PATH にあること）。
-原音源・資料を破壊しない。外部アップロード・生成API・課金APIは使わない。
-
-```bash
-uv venv --python 3.13                  # project .venv（初回のみ）
-uv pip install -r requirements-p0.txt # 固定版の依存（バージョンは同ファイル参照）
-.venv/bin/python -m p0.pipeline       # 分析→選択→plan→両MP4→QA→timeline可視化
-echo $?                               # 0 = PIPELINE PASS＋MANIFEST_VERIFY PASS
-                                      # （QA全項目＋pytest 38件＋hash再検証）
+```mermaid
+flowchart TD
+  A["オーナーが親 Issue に録音を1件添付"]
+  B["DSP が抜粋候補を計算（60〜120秒、最大3件）"]
+  C["Codex が候補を選び、制作指示書を作成"]
+  D["子 Issue を作成"]
+  E["Muse が絵コンテを作成"]
+  F["Python で描画 → FFmpeg で動画化 → 自動検証"]
+  G["PR と成果物を作成"]
+  H{"Codex レビュー"}
+  I["オーナーに担当を割り当て、確認を依頼"]
+  J["オーナーが Approve して Merge"]
+  K["承認した PR のコミットと成果物が一致することを確認"]
+  L["Release を公開"]
+  M["フィードバックと成果物を保持"]
+  N["オーナーが手動で再実行（自動修復はしません）"]
+  A --> B --> C --> D --> E --> F --> G --> H
+  H -->|合格| I --> J --> K --> L
+  H -->|不合格| M --> N
 ```
 
-主な成果物: `output/poc_structured.mp4` / `output/poc_naive.mp4`
-（540×960・30fps・自動選択 30〜45秒）、`output/analysis.json` /
-`output/plan.json` / `output/storyboard.json` / `output/qa.json` /
-`output/cost.json` / `output/timeline.png` / `output/timeline.html`
-（外部通信なし）/ `output/run_manifest.json` / `output/run.log`。
-再現用依存は `requirements-p0.txt`。設計レビューと実測値は
-`docs/07_DESIGN_REVIEW_AND_P0.md` を参照。技術方式比較・次段の
-受け入れ条件は `docs/09_ARCHITECTURE_DECISION_AND_ACCEPTANCE.md` を参照。
-手作業のタイムライン修正は受け付けない（cut 秒の入力口はない）。
+Release の公開後に対応する子 Issue を閉じます。
+すべての子 Issue が Release 済み、またはオーナーが明示的に却下した場合にだけ、親 Issue を閉じます。
 
-## ローカルプレビュー（127.0.0.1専用）
+Codex レビューで合格した場合は、オーナーに担当を割り当て、PR に `@YusukeIwaki please check this` というコメントを付けます。
 
-ブラウザで `output/` のMP4をシーク確認するためのローカル配信手順。
-標準の `python -m http.server` は Range に未対応（常に200＋全量返却）のため、
-シークが `seekable=[0,0]` で0に戻る。代わりに単一範囲対応の小スクリプトを使う。
-音声解析・plan・レンダリングには触れない。外部公開・LAN公開はしない。
+Actions が成功しても、それだけで品質が承認されたことにはなりません。
+公開するには、自動レビューの合格に加えて、現在の PR コミットに対するオーナーの承認（Approve）、オーナーによる Merge、成果物の一致確認がすべて必要です。
+
+## 用語
+
+- DSP（音声の信号処理）: 録音を解析し、抜粋候補やタイミングの基礎データを計算する処理です。
+- 制作指示書（brief）: Codex が作る、抜粋や表現方針をまとめた指示データです。
+- 絵コンテ（storyboard）: Muse が作る、場面構成を宣言的に記述したデータです。
+
+## 役割分担
+
+| 担い手 | 役割 |
+| --- | --- |
+| DSP（音声の信号処理） | サンプル／フレーム単位のタイミングを決めます |
+| Codex `gpt-6.1-sol` / `xhigh` | 候補の選択、制作指示書の作成、証拠と品質のレビュー |
+| Muse `muse-wonder-1.0-contributor` / `max` | 絵コンテの作成 |
+| レンダラー（GitHub Actions の実行環境） | Python（Pillow）が決定的にフレームを描画し、FFmpeg が動画の符号化と音声の多重化を行います |
+
+モデルには元の音声を渡しません。創作上の解釈は、音楽学的な事実ではありません。
+モデルや実行環境の詳しい設定は[運用手順](docs/10_GITHUB_STUDIO_OPERATIONS.md)をご覧ください。
+
+## 使い方
+
+1. [Issue フォーム「Studio source recording」](https://github.com/YusukeIwaki/chopin-mood/issues/new?template=studio-source.yml) から、録音を1件添付して親 Issue を作ります。通常の Issue に録音を1件添付しても受け付けます。曲名・時期・アートメモは任意です。カットする秒数を入力する欄はありません。
+2. 制作が終わるまで待ちます。秒数の指定やタイムラインの手編集は不要です。
+3. PR が作られたら、Artifacts（成果物）から `video.mp4`、`timeline.html`、`qa.json`、`review.json` を取得して確認します。成果物の保持期間は90日です。
+4. Codex レビューで合格した場合にだけ、担当の割り当てと確認依頼のコメントが付きます。オーナーが現在の PR コミットを Approve して Merge すると、承認した PR のコミットと成果物が一致することを確認したうえで、Release として公開します。
+
+作り直したい場合は、[Actions の Studio production](https://github.com/YusukeIwaki/chopin-mood/actions/workflows/studio-production.yml) を `main` から手動で実行し、`issue_number` に親 Issue の番号を指定します。
+管理者向けの初期設定（4つの Secret など）は[運用手順](docs/10_GITHUB_STUDIO_OPERATIONS.md)をご覧ください。
+
+## ローカル開発（最小）
+
+前提は Python 3.13、uv、ffmpeg／ffprobe です。リポジトリ直下で次を実行します。
 
 ```bash
-.venv/bin/python scripts/serve_preview.py --port 8765
-# ブラウザで開く: http://127.0.0.1:8765/poc_structured.mp4
+uv venv --python 3.13
+uv pip install -r requirements-p0.txt
+.venv/bin/python -m pytest tests -q
+.venv/bin/python scripts/studio_smoke.py --out output/studio-smoke
 ```
 
-仕様: `127.0.0.1` のみbind（変更口なし）、既定でrepoの `output/` を配信、
-単一byte range（`start-end` / `start-` / suffix `-N`）に206＋
-`Content-Range` / `Content-Length` / `Accept-Ranges: bytes`、HEAD・通常GET・
-範囲外416に対応、範囲外のbodyは送らない。標準ライブラリのみ依存なし。
-既存 `:8765` プロセスの切替は行わない（親が切替後にブラウザ再検証）。
+`studio_smoke.py` は合成信号だけを使うため、個人の録音や Secret は不要です。
+従来の P0（30〜45秒のオフライン比較）・プレビュー・校正の手順は[開発ガイド](scripts/README.md)をご覧ください。
+`assets/reference_audio.wav` はクローン直後には存在しないため、初期手順の前提にしていません。
+
+## 制限
+
+- DSP が出す境界候補は、検証された音楽的フレーズと等しいものではありません。
+- 音声を聴いての検証はしていません。モデルは元の音声を受け取りません。
+- 機械的な自動検証の合格は、音楽的・美的な合格とは別です。
+- 生成素材の統合は今後の課題です。現在の手続き描画は完成したアニメではありません。
+- 有料の動画生成や YouTube への投稿は、既定では行いません。
+
+## ドキュメント
+
+| 用途 | 文書 |
+| --- | --- |
+| 運用・管理 | [Studio 運用](docs/10_GITHUB_STUDIO_OPERATIONS.md) |
+| ローカル開発 | [開発ガイド](scripts/README.md) |
+| エージェント規約 | [AGENTS.md](AGENTS.md) |
+| 目的・要件 | [背景と目的](docs/01_CONTEXT_AND_GOALS.md) |
+| 同期設計 | [音響解析と同期](docs/03_AUDIO_AND_SYNC.md) |
+| 方式判断 | [アーキテクチャ判断](docs/09_ARCHITECTURE_DECISION_AND_ACCEPTANCE.md) |
+| 測定証跡 | [P0 実測](docs/07_DESIGN_REVIEW_AND_P0.md)・[独立レビュー](docs/08_INDEPENDENT_SIGNAL_REVIEW.md)・[レート校正](docs/11_SAMPLE_RATE_TUNING.md) |
