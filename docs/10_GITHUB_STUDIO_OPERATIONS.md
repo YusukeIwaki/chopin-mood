@@ -142,6 +142,12 @@ Codex planner / reviewer と Muse の失敗時は、捕捉した stderr を
   HTTP 400「model not supported」を返した。
 - 最新 CLI（取得時点 `0.163.0`）でのローカル probe は、同じ更新済み
   認証でそのエラーを通過したが、現在はアカウントの利用上限で止まる。
+- GitHub-hosted Ubuntuのbubblewrap初期化も専用AppArmorプロファイルの
+  導入で通過した。Actionsの最小試験でも停止原因が利用上限になった。
+  この実行基盤とfloat QAの修正はPR #3でmainに反映済み。
+- 2026-10-21の追加チューニング中にMuseもquotaで停止した。
+  原音源を使わない信号校正とローカルQAを続け、結果と再現手順を
+  [文書11](11_SAMPLE_RATE_TUNING.md)に記録した。
 - **本番 production の完走はまだ主張しない。** 上限解消後に auth smoke →
   production 再実行で確認する。
 - 音声 QA の float 修正: 圧縮音源は 32bit FLOAT WAV に復号されるため、

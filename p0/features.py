@@ -57,6 +57,19 @@ import numpy as np
 import librosa
 from scipy import ndimage as ndi
 
+#: Reference rate for duration-based default sizing. At this rate the
+#: defaults are exactly hop=512 / n_fft=2048 (bit-for-bit legacy behaviour).
+REFERENCE_SR = 22050
+DEFAULT_HOP_AT_REFERENCE = 512
+DEFAULT_N_FFT_AT_REFERENCE = 2048
+#: Human-readable sizing policy recorded in meta for reproducibility.
+DEFAULT_SIZING_POLICY = (
+    "duration_based_anchored_at_reference_sr: "
+    "hop=max(1,round(512*sr/22050)), "
+    "n_fft=max(2,2*round(1024*sr/22050)); "
+    "native sr, no resampling"
+)
+
 ABS_FLOOR = 1e-4  # true-amplitude silence gate (-80 dBFS)
 RANGE_FLOOR = 1e-6
 #: Below this raw time-domain RMS peak the signal counts as TRUE silence
@@ -90,15 +103,48 @@ def time_domain_rms(y: np.ndarray, n_fft: int, hop: int, n_frames: int) -> np.nd
     return np.sqrt((sq[idx + n_fft] - sq[idx]) / float(n_fft))
 
 
+def default_hop_n_fft(sr: int) -> tuple[int, int]:
+    """Duration-based default (hop, n_fft) at native ``sr``.
+
+    Anchored at REFERENCE_SR so hop/window durations (not sample counts)
+    are preserved across rates: at 22050 Hz this is exactly (512, 2048).
+    """
+    if isinstance(sr, bool) or not isinstance(sr, (int, np.integer)) or sr <= 0:
+        raise ValueError("sr must be a positive integer")
+    sr_i = int(sr)
+    hop = max(1, round(DEFAULT_HOP_AT_REFERENCE * sr_i / REFERENCE_SR))
+    n_fft = max(2, 2 * round((DEFAULT_N_FFT_AT_REFERENCE // 2) * sr_i / REFERENCE_SR))
+    return int(hop), int(n_fft)
+
+
 def compute_features(
     y: np.ndarray,
     sr: int,
-    hop: int = 512,
-    n_fft: int = 2048,
+    hop: int | None = None,
+    n_fft: int | None = None,
     slow_sec: float = 2.0,
     chroma_lag_sec: float = 2.0,
 ) -> dict:
-    """Compute continuous features. Returns arrays + centers + meta."""
+    """Compute continuous features. Returns arrays + centers + meta.
+
+    ``hop``/``n_fft`` are optional integer overrides. Without an override
+    they are resolved at the native ``sr`` by :func:`default_hop_n_fft`
+    (duration-based, anchored at 22050 Hz = 512/2048). No resampling is
+    performed; the source sample grid remains the feature grid.
+    """
+    hop_is_override = hop is not None
+    n_fft_is_override = n_fft is not None
+    default_hop, default_n_fft = default_hop_n_fft(sr)
+    if hop is None:
+        hop = default_hop
+    if n_fft is None:
+        n_fft = default_n_fft
+    if isinstance(hop, bool) or not isinstance(hop, (int, np.integer)) or hop < 1:
+        raise ValueError("hop must be a positive integer")
+    if (isinstance(n_fft, bool) or not isinstance(n_fft, (int, np.integer))
+            or n_fft < 2 or n_fft % 2):
+        raise ValueError("n_fft must be a positive even integer")
+    hop, n_fft = int(hop), int(n_fft)
     y = np.asarray(y, dtype=np.float64).ravel()
     n_src = int(y.size)
     if n_src == 0:
@@ -177,6 +223,14 @@ def compute_features(
         "n_source_samples": n_src,
         "n_fft": int(n_fft),
         "hop": int(hop),
+        "reference_sr": int(REFERENCE_SR),
+        "default_hop_at_reference": int(DEFAULT_HOP_AT_REFERENCE),
+        "default_n_fft_at_reference": int(DEFAULT_N_FFT_AT_REFERENCE),
+        "hop_duration_sec": float(hop) / float(sr),
+        "window_duration_sec": float(n_fft) / float(sr),
+        "hop_is_override": bool(hop_is_override),
+        "n_fft_is_override": bool(n_fft_is_override),
+        "default_sizing_policy": DEFAULT_SIZING_POLICY,
         "center": True,
         "padding": f"constant(zero) n_fft//2={n_fft // 2} each side",
         "padding_verified_against": "librosa 1.0.0 stft default pad_mode='constant' (NOT reflect)",

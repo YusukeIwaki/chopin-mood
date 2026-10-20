@@ -25,6 +25,24 @@ from p0 import features as featmod
 from p0 import plan as planmod
 from p0.timebase import Timebase
 
+#: Scalar feature-meta keys copied into plan-context.json (bounded, no arrays).
+_ANALYSIS_META_KEYS = (
+    "sr", "n_source_samples", "hop", "n_fft",
+    "hop_duration_sec", "window_duration_sec", "reference_sr",
+    "default_hop_at_reference", "default_n_fft_at_reference",
+    "default_sizing_policy", "hop_is_override", "n_fft_is_override",
+    "slow_sec", "chroma_lag_sec", "novelty_lag_frames",
+)
+
+
+def bounded_analysis_meta(feat: dict) -> dict:
+    """Bounded scalar analysis config from feat meta (no feature arrays)."""
+    meta = feat.get("meta", {})
+    out = {k: meta[k] for k in _ANALYSIS_META_KEYS if k in meta}
+    if "flat" in meta:
+        out["flat"] = dict(meta["flat"])
+    return out
+
 
 def main() -> int:
     ap = argparse.ArgumentParser()
@@ -61,6 +79,7 @@ def main() -> int:
     context = {
         "schema_version": "1.0", "source_sha256": digest,
         "creative": creative,
+        "analysis": bounded_analysis_meta(feat),
         "sample_rate": int(sr), "n_source_samples": int(y_mono.size),
         "duration_sec": round(y_mono.size / sr, 3),
         "candidates": ranked["candidates"],

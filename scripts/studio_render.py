@@ -74,7 +74,8 @@ def main() -> int:
         return 2
     accents = planmod.pick_accents(events, clip, int(sr))
     params = {"seed": a.seed, "width": a.width, "height": a.height,
-              "analysis_hop": 512, "analysis_nfft": 2048,
+              "analysis_hop": int(feat["meta"]["hop"]),
+              "analysis_nfft": int(feat["meta"]["n_fft"]),
               "light_floor": planmod.LIGHT_FLOOR}
     plan = planmod.build_plan_json(clip, {"scenes": det_scenes,
                                           "reason": cand.get("scene_reason", "deterministic"),
