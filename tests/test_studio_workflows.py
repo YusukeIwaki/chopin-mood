@@ -122,3 +122,40 @@ def test_fingerprint_includes_multiline_notes():
     b = fingerprint.canonical_fingerprint(source_url="u", source_sha256="a" * 64,
                                           art_notes="one")
     assert a != b
+
+
+def test_codex_cli_is_not_version_pinned_and_version_is_logged():
+    for text in (PROD, SMOKE_WF):
+        assert "CODEX_VERSION" not in text
+        assert "0.144.6" not in text
+        assert "@openai/codex@" not in text.replace("@openai/codex@latest", "")
+        assert 'npm install --global "@openai/codex@latest"' in text
+        assert "codex --version" in text
+        assert "Codex pinned" not in text
+    # Production installs latest in both the plan and build jobs.
+    assert PROD.count('npm install --global "@openai/codex@latest"') == 2
+    assert SMOKE_WF.count('npm install --global "@openai/codex@latest"') == 1
+
+
+def test_exact_models_preserved_after_unpinning():
+    assert PROD.count("--model gpt-6.1-sol") == 2
+    assert SMOKE_WF.count("--model gpt-6.1-sol") == 1
+    assert PROD.count('model_reasoning_effort="xhigh"') == 2
+    assert SMOKE_WF.count('model_reasoning_effort="xhigh"') == 1
+
+
+def test_agent_failure_diagnostics_are_guarded_and_preserve_exit():
+    script = ".github/studio/scripts/report-agent-error.py"
+    assert (ROOT / script).exists()
+    # Planner, reviewer and Muse failures in production.
+    assert PROD.count(script) >= 3
+    assert PROD.count(f'python3 {script} "$RUNNER_TEMP/codex.stderr" || true') == 2
+    assert PROD.count(f'python3 {script} "$RUNNER_TEMP/muse.stderr" || true') == 1
+    # The original nonzero agent exit is still propagated after diagnostics.
+    assert 'Codex planner failed with exit $code' in PROD
+    assert 'Codex reviewer failed with exit $code' in PROD
+    assert 'Muse failed with exit $code' in PROD
+    for label in ("Codex planner failed", "Codex reviewer failed", "Muse failed"):
+        line = next(ln for ln in PROD.splitlines() if label in ln)
+        assert "report-agent-error.py" in line and "|| true" in line
+        assert 'exit "$code"' in line

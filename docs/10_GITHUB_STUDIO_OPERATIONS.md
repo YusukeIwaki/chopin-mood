@@ -49,9 +49,14 @@ PR 本文に `Fixes #child` は書かない（release 成功前に子が閉じ�
    （公開リポジトリの既定は read + `can_approve_pull_request_reviews=false`）。
    本スタジオは COMMENT レビューしか出さないが、PR 作成に必要。
 3. Default branchは`main`。productionはmainのイベントSHAを固定してcheckoutし、手動実行もmain限定。releaseは信頼するmainをcheckoutする。いずれも`persist-credentials: false`。
-4. Codex は `0.144.6` 固定 + Node 24。Muse は公式 launcher
+4. Codex のバージョン固定はしない。Node 24 で
+   `npm install --global "@openai/codex@latest"` により最新 CLI を入れ、
+   `codex --version` の出力を run ログに記録する（production の plan/build
+   両 job と auth smoke）。バージョンはログで確認し、固定版の挙動には依存しない。
+   Muse は公式 launcher
    (`https://api.meta.ai/muse-launcher.sh`、muse.enc の Dockerfile と同方式)
    でDockerイメージ内に導入し、実バージョンをrunログに記録する。
+   モデル指定は不変: Codex `gpt-6.1-sol` / `xhigh`、Muse は従来どおり。
 5. Actions → Studio auth smokeを手動実行し、両モデルの実認証を確認してから録音Issueを作る。`invalid_refresh_token`ならCodexを再ログインしてcodex.encを更新する。Muse認証の更新先はmuse.encで、Linuxでは`$XDG_CONFIG_HOME/muse/auth.json`へ復号する。
 
 ### 認証ライフサイクル
@@ -106,6 +111,44 @@ PR 本文に `Fixes #child` は書かない（release 成功前に子が閉じ�
 `studio-ci.yml` は secret・モデル・個人音源なしで同じ tests と
 60秒以上の合成レンダリング smoke を実行する。
 
+
+## エージェント失敗時の診断（安全な分類のみ）
+
+Codex planner / reviewer と Muse の失敗時は、捕捉した stderr を
+`.github/studio/scripts/report-agent-error.py`（標準ライブラリのみ）に渡し、
+固定の許可リスト分類と次の一手だけを Actions ログに出す。生の provider
+出力・認証情報・プロンプト・入力行・パスは決して出力しない。診断は
+`|| true` でガードし、元のエージェントの非ゼロ終了コードを保持する。
+
+| 分類 | 意味 | 次の一手 |
+|---|---|---|
+| `expired_authentication` | `invalid_refresh_token` / `token_revoked` 等の認証失効 | 再ログインし暗号化認証を更新して auth smoke |
+| `unsupported_model` | モデル未対応（HTTP 400 等） | ログの CLI バージョンとモデルの利用可否を確認して auth smoke |
+| `usage_limit` | 利用上限 / quota | 上限のリセット・引き上げを待って auth smoke |
+| `sandbox_setup_failure` | sandbox セットアップ失敗 | runner の sandbox 設定・権限を確認して auth smoke |
+| `generic` | 上記に当てはまらない不明な失敗 | auth smoke で切り分け（生出力は共有しない） |
+
+この区別により、モデル未対応と利用上限は別原因として Actions 上で
+判別できる。実測でも両者は別物だった（下記）。
+
+## 現在の検証状況（実測・簡潔）
+
+- 初期 CI: 109 tests と合成 60 秒 QA は pass。
+- Issue 1: owner の受付・ダウンロード・解析は成功。
+- 初期 production は Codex planner で停止した。当時の固定版 `0.144.6` は
+  HTTP 400「model not supported」を返した。
+- 最新 CLI（取得時点 `0.163.0`）でのローカル probe は、同じ更新済み
+  認証でそのエラーを通過したが、現在はアカウントの利用上限で止まる。
+- **本番 production の完走はまだ主張しない。** 上限解消後に auth smoke →
+  production 再実行で確認する。
+- 音声 QA の float 修正: 圧縮音源は 32bit FLOAT WAV に復号されるため、
+  `check_file()` は MP4 を float PCM に復号し、復号音声と参照 crop の
+  両方を float64 の正規化振幅で読む（mono 化は従来どおり）。整数 PCM と
+  FLOAT/DOUBLE のどちらの WAV でも振幅がゼロ化しない。元音源/crop の
+  書き換えはせず、`check_crop_exact()` の整数完全一致パスは不変。
+  実音源での独立測定では元 crop と MP4 が lag=0 samples @48kHz、
+  peakcorr=0.99999006157、leveldiff=-0.008436dB で一致した。これは
+  ファイルレベルの同期検証であり、音楽的・美的品質の検証ではない。
 
 ## 証跡バインディング（receipt）と再試行の正確さ
 

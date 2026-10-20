@@ -50,10 +50,10 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
-      - name: Install Codex and Muse
+      - name: Install Codex (latest) and Muse
         run: |
           set -euo pipefail
-          npm install --global "@openai/codex@0.144.6"
+          npm install --global "@openai/codex@latest"
           codex --version
       - name: Create Codex read token
         id: codex_read

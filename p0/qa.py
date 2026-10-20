@@ -73,7 +73,7 @@ def ffprobe(path: str) -> dict:
 
 def decode_audio_wav(mp4: str, out_wav: str, sr: int) -> None:
     cmd = ["ffmpeg", "-y", "-v", "error", "-i", mp4, "-map", "0:a",
-           "-ac", "1", "-ar", str(sr), "-c:a", "pcm_s16le", out_wav]
+           "-ac", "1", "-ar", str(sr), "-c:a", "pcm_f32le", out_wav]
     subprocess.run(cmd, check=True)
 
 
@@ -86,13 +86,17 @@ def decode_frame_rgb(mp4: str, frame_idx: int, w: int, h: int) -> np.ndarray:
 
 
 def audio_lag_corr(decoded: np.ndarray, ref: np.ndarray, max_lag: int) -> dict:
+    from scipy import signal as _sig
+
     a = decoded.astype(np.float64)
     b = ref.astype(np.float64)
     a -= a.mean()
     b -= b.mean()
     n = min(len(a), len(b))
     a, b = a[:n], b[:n]
-    corr = np.correlate(a, np.concatenate([np.zeros(max_lag), b, np.zeros(max_lag)]), mode="valid")
+    corr = _sig.correlate(
+        a, np.concatenate([np.zeros(max_lag), b, np.zeros(max_lag)]),
+        mode="valid", method="fft")
     lags = np.arange(-max_lag, max_lag + 1)
     k = int(np.argmax(corr))
     denom = float(np.sqrt((a * a).sum() * (b * b).sum())) + 1e-12
@@ -329,8 +333,8 @@ def check_file(mp4: str, clip_wav: str, plan: dict, tb, w: int, h: int,
     try:
         dec_wav = f"{workdir}/qa_dec_{tag}.wav"
         decode_audio_wav(mp4, dec_wav, tb.sr)
-        dec, _ = sf.read(dec_wav, dtype="int16", always_2d=True)
-        ref, _ = sf.read(clip_wav, dtype="int16", always_2d=True)
+        dec, _ = sf.read(dec_wav, dtype="float64", always_2d=True)
+        ref, _ = sf.read(clip_wav, dtype="float64", always_2d=True)
         m = min(len(dec), len(ref))
         verdict = qa_audio_verdict(dec[:m], ref[:m], tb, "audio_sync")
         rec("audio_sync", verdict["pass"], **{k: v for k, v in verdict.items()
