@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Production brief persisted under production/<child-id>/",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "parent_issue",
+    "child_issue",
+    "candidate_id",
+    "fingerprint",
+    "candidate",
+    "piece",
+    "period",
+    "period_direction",
+    "art_notes",
+    "creative_brief",
+    "source_hashes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "parent_issue": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "child_issue": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "candidate_id": {
+      "type": "string",
+      "pattern": "^cand-[0-9]{2}$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "candidate": {
+      "type": "object"
+    },
+    "piece": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "period": {
+      "enum": [
+        "early",
+        "middle",
+        "late",
+        null
+      ]
+    },
+    "period_direction": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "art_notes": {
+      "type": "string",
+      "maxLength": 20000
+    },
+    "creative_brief": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "source_hashes": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  }
+}

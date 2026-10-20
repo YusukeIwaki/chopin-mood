@@ -1,0 +1,53 @@
+name: Studio release
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Merged studio PR number to (re)try releasing"
+        required: true
+        type: number
+
+permissions: {}
+
+concurrency:
+  group: studio-agent-auth
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release exact approved head
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: read
+      issues: write
+      actions: read
+    steps:
+      # Trusted main only: never check out or execute PR-branch code.
+      - name: Check out main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Release (gate, draft-first publish, close child/parent)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER_EVENT: ${{ github.event.pull_request.number }}
+          PR_NUMBER_INPUT: ${{ inputs.pr_number }}
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_ACTOR: ${{ github.actor }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then num="$PR_NUMBER_INPUT"; else num="$PR_NUMBER_EVENT"; fi
+          python3 scripts/studio_release.py --pr "$num"
+          echo "Release controller finished for PR $num (see JSON above; skipped non-studio PRs are a no-op)." >> "$GITHUB_STEP_SUMMARY"

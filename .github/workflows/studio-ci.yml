@@ -1,0 +1,38 @@
+name: Studio CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Offline tests and synthetic render smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # No ref: check out the event revision (PR head / pushed commit),
+      # never the old default branch. CI uses no secrets.
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Install dependencies (no secrets, no model APIs)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -r requirements-p0.txt
+      - name: Run offline tests
+        run: python3 -m pytest tests -q
+      - name: Synthetic 60s+ render smoke (no personal source)
+        run: python3 scripts/studio_smoke.py --out output/studio-smoke
+      - name: Upload synthetic smoke artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: studio-smoke-synthetic
+          path: output/studio-smoke/
+          retention-days: 14

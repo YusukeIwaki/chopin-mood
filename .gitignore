@@ -1,0 +1,21 @@
+# Personal audio/video and rendered outputs should not be pushed to public repos.
+assets/reference_audio.wav
+assets/reference_contact_sheet.jpg
+output/
+cache/
+.env
+.envrc
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+# Scratch auth / secrets (never commit credential state)
+auth.json
+*.dec
+codex.enc.tmp
+muse.enc.tmp
+*-auth-before.sha256
+*.mp4
+*.wav
+*.mov
+*.m4a
