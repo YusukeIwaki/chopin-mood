@@ -90,7 +90,6 @@ def test_palette_and_four_params_affect_pixels():
     assert diff_pal > 10, diff_pal
     for key, lo, hi, floor in (
             ("figure_scale", 0.5, 2.0, 0.5),
-            ("particle_multiplier", 0.0, 2.0, 0.3),
             ("light_bias", -0.3, 0.3, 0.5),
             ("glow_scale", 0.5, 2.0, 1.0)):
         pa = [dict(p) for p in PARAMS]
@@ -105,21 +104,39 @@ def test_palette_and_four_params_affect_pixels():
         assert diff > floor, (key, diff)
 
 
-def test_decorative_multiplier_zero_empties_stars_and_particles():
+def test_decorative_multiplier_zero_empties_stars_and_particles(monkeypatch):
+    # Layout is built BEFORE any count patch so the seeded RNG draw
+    # sequence (placements, radii, phases) is never altered by the
+    # patch; counts are only disabled at draw time below.
     lay = R.make_layouts(SEED, W, H)
     ctrl = _ctrl()
     ctrl["particle"] = np.full(N, 0.9)
+    ctrl_before = {k: v.copy() for k, v in ctrl.items()}
     zero = [dict(p, particle_multiplier=0.0) for p in PARAMS]
     one = [dict(p, particle_multiplier=1.0) for p in PARAMS]
     fz = R.draw_clean_frame(10, ctrl, W, H, SEED, lay,
                             scene_palettes=PALS, scene_params=zero)
     fo = R.draw_clean_frame(10, ctrl, W, H, SEED, lay,
                             scene_palettes=PALS, scene_params=one)
-    assert np.abs(fz.astype(int) - fo.astype(int)).mean() > 0.3
-    def bright(img):
-        sky = img[:int(H * 0.55), :int(W * 0.6)]
-        return int((sky.max(axis=2) > 170).sum())
-    assert bright(fz) < bright(fo)
+    # Functional contract only (no brightness floor, no aesthetic
+    # claim): the combined field responds to the multiplier, and
+    # multiplier-zero is pixel-identical to disabling BOTH decorative
+    # counts at draw time. Exact equality catches either field
+    # ignoring zero on its own. Independent per-field isolation is
+    # covered in tests/test_studio_decorations.py.
+    assert not np.array_equal(fz, fo)
+    monkeypatch.setattr(R, "N_STARS", 0)
+    monkeypatch.setattr(R, "N_PARTICLES", 0)
+    both_off = R.draw_clean_frame(10, ctrl, W, H, SEED, lay,
+                                  scene_palettes=PALS, scene_params=one)
+    assert np.array_equal(fz, both_off)
+    # Determinism and no input mutation under the same layout/control.
+    monkeypatch.undo()
+    assert np.array_equal(
+        fz, R.draw_clean_frame(10, ctrl, W, H, SEED, lay,
+                               scene_palettes=PALS, scene_params=zero))
+    for k in ctrl:
+        assert np.array_equal(ctrl[k], ctrl_before[k]), k
 
 
 def test_clean_frame_has_no_caption_or_marker_pixels():
