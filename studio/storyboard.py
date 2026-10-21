@@ -6,12 +6,24 @@ and out-of-range values are rejected.
 """
 from __future__ import annotations
 
+import math
+
 PALETTE_KEYS = ("sky_top", "sky_bot", "far", "near", "moon", "glow")
 PARAM_RANGES = {
     "figure_scale": (0.5, 2.0),
     "particle_multiplier": (0.0, 2.0),
     "light_bias": (-0.3, 0.3),
     "glow_scale": (0.5, 2.0),
+    # Optional executable camera (defaults: zoom 1.0, pan 0.0). The
+    # camera transforms the whole frame by a deterministic crop/resample
+    # eased with smoothstep over the scene's inclusive frame range; pan
+    # is a fraction of the available crop margin (no-op at zoom 1.0).
+    "camera_zoom_start": (1.0, 1.18),
+    "camera_zoom_end": (1.0, 1.18),
+    "camera_pan_x_start": (-1.0, 1.0),
+    "camera_pan_x_end": (-1.0, 1.0),
+    "camera_pan_y_start": (-1.0, 1.0),
+    "camera_pan_y_end": (-1.0, 1.0),
 }
 _FORBIDDEN_KEYS = {"path", "file", "filepath", "command", "cmd", "script",
                    "code", "exec", "url", "href", "src"}
@@ -64,6 +76,8 @@ def validate_storyboard(sb: dict, deterministic_scenes: list[dict]) -> dict:
                     failures.append(f"{sid}: unknown param {k}")
                 elif not isinstance(v, (int, float)) or isinstance(v, bool):
                     failures.append(f"{sid}: param {k} must be a number")
+                elif not math.isfinite(float(v)):
+                    failures.append(f"{sid}: param {k} must be finite")
                 else:
                     lo, hi = PARAM_RANGES[k]
                     if not (lo <= float(v) <= hi):
@@ -97,7 +111,10 @@ def default_storyboard(deterministic_scenes: list[dict],
             "motif": "procedural prototype motif (no finished anime claimed)",
             "camera": "slow parallax drift",
             "params": {"figure_scale": 1.0, "particle_multiplier": 1.0,
-                       "light_bias": 0.0, "glow_scale": 1.0},
+                       "light_bias": 0.0, "glow_scale": 1.0,
+                       "camera_zoom_start": 1.0, "camera_zoom_end": 1.0,
+                       "camera_pan_x_start": 0.0, "camera_pan_x_end": 0.0,
+                       "camera_pan_y_start": 0.0, "camera_pan_y_end": 0.0},
         })
     return {"schema_version": "1.0", "style_id": "studio-procedural-v1",
             "prototype_notice": "procedural prototype, not finished anime",

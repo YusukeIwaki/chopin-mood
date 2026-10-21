@@ -10,7 +10,8 @@ Output ONLY `storyboard.json` matching `storyboard.schema.json` in
 this workspace: one entry per provided scene ID, in order, each with a
 bounded RGB palette, short motif/camera descriptions reflecting the
 brief's direction/composition/palette intent for that scene, and
-bounded render params (all four keys).
+bounded render params (the four original keys are required; the six
+camera keys below are optional and default to zoom 1.0 / pan 0.0).
 
 Rules:
 - Use the provided scene IDs and timings exactly; never invent timing.
@@ -24,7 +25,8 @@ Rules:
 - Period (if any) is creative direction only, not historical fact.
   Never identify the recording as a particular piece.
 - Stay within param ranges; the trusted renderer consumes palette,
-  figure_scale, particle_multiplier, light_bias and glow_scale.
+  figure_scale, particle_multiplier, light_bias, glow_scale and the
+  optional camera params below.
 
 ## What actually changes the picture
 
@@ -33,11 +35,30 @@ Only these executed controls change rendered pixels, per scene:
 - the six palette colours (`sky_top`, `sky_bot`, `far`, `near`, `moon`,
   `glow`); and
 - `figure_scale` (0.5-2.0), `particle_multiplier` (0.0-2.0),
-  `light_bias` (-0.3-0.3) and `glow_scale` (0.5-2.0).
+  `light_bias` (-0.3-0.3) and `glow_scale` (0.5-2.0); and
+- the OPTIONAL executable camera: `camera_zoom_start` /
+  `camera_zoom_end` (1.0-1.18, default 1.0) and `camera_pan_x_start` /
+  `camera_pan_x_end` / `camera_pan_y_start` / `camera_pan_y_end`
+  (-1.0-1.0, default 0.0). The camera crops/resamples the ENTIRE
+  frame (landscape, moon and figure together -- it is not a figure
+  resize). Zoom/pan are interpolated with smoothstep easing over the
+  scene's inclusive frame range [start_frame, end_frame-1]. Pan is a
+  fraction of the available crop margin: at zoom 1.0 pan does
+  nothing, and zoom >= 1.0 always crops inside the frame, so no
+  black edges can appear. Omitting all six keys is exactly zoom 1.0 /
+  pan 0.0 (legacy behaviour).
 
-`motif` and `camera` are descriptive metadata only: they are not
-executed. Rewriting motif/camera prose alone produces no visual
+`motif` and `camera` strings are descriptive metadata only: they are
+not executed. Rewriting motif/camera prose alone produces no visual
 change, so never present a prose-only edit as a visual repair.
+Instead, TRANSLATE the brief's camera direction into the numeric
+camera params: for example a gentle inward move is zoom_start 1.0
+rising to a modest zoom_end (about 1.06-1.14) with pan held near 0; a
+wider returning move is zoom falling back toward 1.0; a settling move
+is a small zoom/pan change that comes to rest at its end values. Keep
+moves restrained, hold the traveler's approximate screen position
+with small pan fractions when zooming, and do not use figure_scale
+as a substitute for camera framing.
 
 ## Repair attempts (when critique data is present)
 

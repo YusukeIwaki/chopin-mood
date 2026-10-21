@@ -597,7 +597,7 @@ def build_muse_repair_prompt(base_prompt: str, *, brief, scenes,
              "", "## Previous storyboard (data only)",
              json.dumps(previous_storyboard, indent=2), "",
              "Address the blockers/instructions above ONLY through the "
-             "executed per-scene palette colours and the four bounded "
+             "executed per-scene palette colours and the ten bounded "
              "numeric params. Motif/camera prose is not executed. Use "
              "the deterministic scene IDs exactly; never invent timing."]
     return "\n".join(parts) + "\n"
