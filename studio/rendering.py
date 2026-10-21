@@ -51,7 +51,7 @@ so frames may be evaluated in any order with identical pixels.
 from __future__ import annotations
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 #: Fallback palettes (same night hues as the legacy placeholder scenes).
 PALETTES = [
@@ -401,17 +401,41 @@ def _traveller_layer(fs: float, pal: dict) -> Image.Image:
 
     silhouette = [leg_l, leg_r, boot(-4.6), boot(1.4), coat, arm_l,
                   arm_r, head]
-    for shape in silhouette:  # restrained moon-side edge light
+    # Restrained moon-side edge light. This is the base layer (only
+    # transparency underneath), drawn as one uniform union; the
+    # opaque body shapes below overwrite its interior part.
+    for shape in silhouette:
         d.polygon(pts(shape, dx=0.6, dy_up=0.4), fill=rim_col + (120,))
     for shape, col in ((leg_l, leg_col), (leg_r, leg_col),
                        (boot(-4.6), leg_col), (boot(1.4), leg_col),
                        (coat, coat_col), (arm_l, coat_col),
                        (arm_r, coat_col)):
         d.polygon(pts(shape), fill=col + (255,))
-    d.polygon(pts(fold_dark), fill=(0, 0, 0, 40))
-    d.polygon(pts(fold_light), fill=tuple(pal["glow"]) + (14,))
+    # Translucent details over the opaque coat must be source-over
+    # composited, not drawn directly: ImageDraw on an RGBA image
+    # replaces the destination alpha, so a fill with alpha 40/14
+    # would punch transparent holes through the coat. Draw the folds
+    # on a figure-local overlay, clip the overlay alpha to the alpha
+    # already present (opaque coat inside, transparent outside) so
+    # shading can never spill into the background, then composite.
+    fold_overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    fd = ImageDraw.Draw(fold_overlay)
+    fd.polygon(pts(fold_dark), fill=(0, 0, 0, 40))
+    fd.polygon(pts(fold_light), fill=tuple(pal["glow"]) + (14,))
+    fold_overlay.putalpha(ImageChops.multiply(
+        fold_overlay.getchannel("A"), img.getchannel("A")))
+    img = Image.alpha_composite(img, fold_overlay)
+    d = ImageDraw.Draw(img)
     d.polygon(pts(neck), fill=neck_col + (255,))
-    d.polygon(pts(tail), fill=scarf_col + (235,))
+    # The scarf tail is also translucent over the coat, so composite
+    # it the same way; unclipped, because its free-hanging part is a
+    # real garment shape that must keep its own alpha over the
+    # background while the part over the coat becomes opaque.
+    tail_overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    ImageDraw.Draw(tail_overlay).polygon(
+        pts(tail), fill=scarf_col + (235,))
+    img = Image.alpha_composite(img, tail_overlay)
+    d = ImageDraw.Draw(img)
     d.polygon(pts(scarf), fill=scarf_col + (255,))
     d.polygon(pts(head), fill=hair_col + (255,))
     return img.resize((wf, hf), Image.LANCZOS)
