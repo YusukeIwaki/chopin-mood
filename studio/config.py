@@ -5,13 +5,18 @@ OWNER = "YusukeIwaki"
 DEFAULT_BRANCH = "main"
 BOT_LOGINS = {"github-actions[bot]"}
 
-CODEX_VERSION = "0.144.6"
+CODEX_VERSION = "latest"
 CODEX_MODEL = "gpt-6.1-sol"
 CODEX_EFFORT = "xhigh"
 NODE_VERSION = "24"
 MUSE_MODEL = "muse-wonder-1.0-contributor"
 MUSE_EFFORT = "max"
 MUSE_MAX_STEPS = 80
+
+# Bounded aesthetic repair loop (initial attempt + at most 2 repairs).
+MAX_REPAIRS = 2
+REPAIR_MAX_ATTEMPTS = MAX_REPAIRS + 1
+REPAIR_AGENT_TIMEOUT_SEC = 900
 
 CANDIDATE_MIN_SEC = 60.0
 CANDIDATE_MAX_SEC = 120.0

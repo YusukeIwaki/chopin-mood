@@ -56,6 +56,17 @@ MARKER_R_TOL = 60
 MARKER_B_TOL = 12
 ACCENT_G_HIGH = 120
 ACCENT_G_LOW = 90
+#: Rendered-reference spotcheck (clean Studio path, replaces the marker
+#: check only when a reference callback is supplied). A frame passes
+#: when BOTH its whole-frame mean-abs error and its worst patch error
+#: stay within these bounds. Patch errors keep small localised faults
+#: (a missing accent bloom, a one-frame-late palette change) from being
+#: diluted by the whole-frame average. Values are calibrated against
+#: real CRF-18 encodes of the clean renderer (see
+#: tests/test_studio_clean_render.py); do not widen them to pass.
+RENDERED_GLOBAL_MAE_MAX = 8.0
+RENDERED_PATCH_MAE_MAX = 16.0
+RENDERED_PATCH_GRID = (8, 12)  # (columns, rows) over the full frame
 
 
 def lag_pass_samples(tb) -> int:
@@ -267,6 +278,101 @@ def check_markers(mp4: str, plan: dict, tb, w: int, h: int, n_frames: int) -> di
                              "n_probed": len(marks)}}
 
 
+def _frame_error_metrics(decoded: np.ndarray, expected: np.ndarray) -> dict:
+    """Whole-frame + patch mean-abs errors (0-255 scale) for one frame."""
+    diff = np.abs(decoded.astype(np.float64) - expected.astype(np.float64))
+    global_mae = float(diff.mean())
+    cols, rows = RENDERED_PATCH_GRID
+    h, w = diff.shape[:2]
+    bh, bw = h // rows, w // cols
+    if bh == 0 or bw == 0:
+        patch_max = global_mae
+        patch_mean = global_mae
+    else:
+        trimmed = diff[:bh * rows, :bw * cols]
+        patches = trimmed.reshape(rows, bh, cols, bw, 3).mean(axis=(1, 3, 4))
+        patch_max = float(patches.max())
+        patch_mean = float(patches.mean())
+    return {"global_mae": round(global_mae, 3),
+            "patch_mae_max": round(patch_max, 3),
+            "patch_mae_mean": round(patch_mean, 3)}
+
+
+def rendered_probe_frames(plan: dict, n_frames: int) -> dict:
+    """Frames probed by the rendered spotcheck, mapped to their roles.
+
+    Covers frame 0 / the last frame, every scene start with its
+    f-1/f+1 neighbours, every accent with its f-1/f+1 neighbours, and
+    sparse interior frames, so a one-frame timing slip at any planned
+    boundary lands on at least one probed frame.
+    """
+    probes: dict[int, list[str]] = {}
+
+    def add(f: int, kind: str) -> None:
+        if 0 <= int(f) < n_frames:
+            probes.setdefault(int(f), [])
+            if kind not in probes[int(f)]:
+                probes[int(f)].append(kind)
+
+    add(0, "first_frame")
+    add(n_frames - 1, "last_frame")
+    for sc in plan.get("scenes", []):
+        f = int(sc["start_frame"])
+        add(f, "scene_start")
+        add(f - 1, "scene_start_pre")
+        add(f + 1, "scene_start_post")
+    for ac in plan.get("accents", []):
+        if "frame" not in ac:
+            continue
+        f = int(ac["frame"])
+        add(f, "accent")
+        add(f - 1, "accent_pre")
+        add(f + 1, "accent_post")
+    for frac in (0.08, 0.2, 0.35, 0.5, 0.65, 0.8, 0.92):
+        add(int(frac * (n_frames - 1)), "interior")
+    return probes
+
+
+def check_rendered_frames(mp4: str, plan: dict, tb, w: int, h: int,
+                          n_frames: int, reference_frame_fn) -> dict:
+    """Verify DECODED frames against deterministic reference frames.
+
+    Clean Studio video carries no diagnostic marker, so this is the
+    marker check's replacement for that path only: each probed decoded
+    frame is compared with the frame the clean renderer deterministi-
+    cally produces for the same index, using compression-tolerant
+    whole-frame and patch mean-abs errors. Any probed frame outside
+    tolerance fails the check (no averaging away of a bad frame).
+    """
+    probe_map = rendered_probe_frames(plan, n_frames)
+    results = []
+    for f in sorted(probe_map):
+        decoded = decode_frame_rgb(mp4, f, w, h)
+        expected = np.asarray(reference_frame_fn(f))
+        if expected.shape != decoded.shape:
+            results.append({"frame": f, "kinds": probe_map[f], "ok": False,
+                            "error": f"reference shape {expected.shape} "
+                                     f"!= decoded {decoded.shape}"})
+            continue
+        m = _frame_error_metrics(decoded, expected)
+        ok = (m["global_mae"] <= RENDERED_GLOBAL_MAE_MAX
+              and m["patch_mae_max"] <= RENDERED_PATCH_MAE_MAX)
+        results.append({"frame": f, "kinds": probe_map[f], "ok": bool(ok),
+                        **m})
+    return {
+        "pass": bool(results) and all(r["ok"] for r in results),
+        "method": ("decoded MP4 frames vs deterministic clean-renderer "
+                   "reference frames; per-frame whole-frame MAE and "
+                   f"{RENDERED_PATCH_GRID[0]}x{RENDERED_PATCH_GRID[1]} "
+                   "patch MAE (0-255), both must pass"),
+        "thresholds": {"global_mae_max": RENDERED_GLOBAL_MAE_MAX,
+                       "patch_mae_max": RENDERED_PATCH_MAE_MAX,
+                       "patch_grid": list(RENDERED_PATCH_GRID)},
+        "probed_frames": sorted(probe_map),
+        "frames": results,
+    }
+
+
 def check_crop_exact(asset_path: str, clip_wav: str, s0: int, s1: int) -> dict:
     """The output crop must equal the source interval (no downmix leakage)."""
     import soundfile as sf
@@ -292,8 +398,17 @@ def check_crop_exact(asset_path: str, clip_wav: str, s0: int, s1: int) -> dict:
 
 
 def check_file(mp4: str, clip_wav: str, plan: dict, tb, w: int, h: int,
-               input_hash: str, workdir: str, tag: str) -> dict:
-    """Run all checks for one MP4. Returns check dicts (no exceptions)."""
+               input_hash: str, workdir: str, tag: str,
+               reference_frame_fn=None) -> dict:
+    """Run all checks for one MP4. Returns check dicts (no exceptions).
+
+    ``reference_frame_fn`` (optional, default ``None``) is a callable
+    ``fn(frame_index) -> RGB ndarray`` returning the deterministic
+    clean-renderer frame for that index. When supplied, the marker
+    spotcheck is replaced by :func:`check_rendered_frames` recorded as
+    ``rendered_frame_spotcheck``; every other check is unchanged. When
+    omitted, all legacy callers keep the marker path exactly as before.
+    """
     import soundfile as sf
 
     checks: list[dict] = []
@@ -390,13 +505,25 @@ def check_file(mp4: str, clip_wav: str, plan: dict, tb, w: int, h: int,
     except Exception as e:  # noqa: BLE001
         rec("input_hash_unchanged", False, error=str(e)[:300])
 
-    try:
-        mk = check_markers(mp4, plan, tb, w, h, n_frames)
-        rec("marker_spotcheck", mk["pass"],
-            **{k: v for k, v in mk.items() if k != "pass"})
-    except Exception as e:  # noqa: BLE001
-        import traceback
+    if reference_frame_fn is not None:
+        try:
+            rf = check_rendered_frames(mp4, plan, tb, w, h, n_frames,
+                                       reference_frame_fn)
+            rec("rendered_frame_spotcheck", rf["pass"],
+                **{k: v for k, v in rf.items() if k != "pass"})
+        except Exception as e:  # noqa: BLE001
+            import traceback
 
-        rec("marker_spotcheck", False, error=(str(e) + " | " + traceback.format_exc())[-600:])
+            rec("rendered_frame_spotcheck", False,
+                error=(str(e) + " | " + traceback.format_exc())[-600:])
+    else:
+        try:
+            mk = check_markers(mp4, plan, tb, w, h, n_frames)
+            rec("marker_spotcheck", mk["pass"],
+                **{k: v for k, v in mk.items() if k != "pass"})
+        except Exception as e:  # noqa: BLE001
+            import traceback
+
+            rec("marker_spotcheck", False, error=(str(e) + " | " + traceback.format_exc())[-600:])
 
     return {"checks": checks, "pass": all(c["pass"] for c in checks)}

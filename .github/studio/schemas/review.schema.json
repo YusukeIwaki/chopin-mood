@@ -9,7 +9,8 @@
     "checks",
     "blockers",
     "summary",
-    "listening_note"
+    "listening_note",
+    "repair"
   ],
   "properties": {
     "verdict": {
@@ -64,6 +65,33 @@
       "enum": [
         "audio listening unavailable; not a full musical judgement"
       ]
+    },
+    "repair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "route",
+        "instructions"
+      ],
+      "properties": {
+        "route": {
+          "type": "string",
+          "enum": [
+            "none",
+            "storyboard",
+            "engine"
+          ]
+        },
+        "instructions": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        }
+      }
     }
   }
 }

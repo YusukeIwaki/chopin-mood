@@ -3,10 +3,11 @@
   "owner": "YusukeIwaki",
   "default_branch": "main",
   "codex": {"version": "latest", "model": "gpt-6.1-sol", "effort": "xhigh", "node": "24", "timeout_minutes": 15},
-  "muse": {"model": "muse-wonder-1.0-contributor", "effort": "max", "max_steps": 80, "timeout_minutes_per_candidate": 45},
+  "muse": {"model": "muse-wonder-1.0-contributor", "effort": "max", "max_steps": 80, "timeout_minutes_per_candidate": 15},
   "excerpt": {"min_sec": 60, "max_sec": 120, "max_candidates": 3, "min_scene_sec": 6, "fps": [30, 1]},
   "source": {"max_bytes": 536870912, "max_duration_sec": 900, "max_sample_rate": 96000, "max_channels": 2, "download_timeout_sec": 120},
   "artifact": {"retention_days": 90},
+  "repair": {"max_repairs": 2, "max_attempts": 3, "agent_timeout_sec": 900},
   "secrets": ["CODEX_ENC_APP_ID", "CODEX_ENC_APP_PRIVATE_KEY", "CODEX_ENC_PASSPHRASE", "MUSE_ENC_PASSPHRASE"],
   "period_directions": {"early": "aspiration for professional performance", "middle": "concert presence and expressiveness", "late": "healing"},
   "github_attachment_doc_limits_mb": {"wav_mp3": 25, "video_free": 10, "video_paid": 100}

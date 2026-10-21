@@ -28,7 +28,7 @@
 
 - read token で `.enc` リポジトリを clone し、**エージェント実行前に read token を失効**させる。
 - 復号時に内容を表示せずに検証する。Codex は `auth_mode == "chatgpt"` かつ `tokens.refresh_token` があること、Muse は keychain ではない schema-v1 の実トークン JSON であることを確認する。
-- エージェント後に hash が変わった場合のみ AES-256-CBC／PBKDF2／base64 で再暗号化し、write token を新規に作って **force なし**で push する。clone 時点から remote が動いていたら credentials の rebase はせず失敗させる。
+- エージェント後に hash が変わった場合のみ AES-256-CBC／PBKDF2／base64 で再暗号化し、write token を新規に作って **force なし**で push する。clone 時点から remote が動いていたら credentials の rebase はせず失敗させる。Muse の認証保存ブロックは修復ステップの後（最終モデル呼び出しの後、cleanup の前）にあり、修復時の認証変化も成功・失敗を問わず保存する。
 - codex.enc／muse.enc への同時書き込みは別リポジトリのワークフローとも競合しうる。失敗安全側に倒れる（上書きしない）ため、その場合はワークフローを再実行する。
 
 ## 受付とオーナーガード
@@ -46,6 +46,9 @@
 - commit 後に作る artifact 専用 `receipt.json` が、PR／child／parent／head SHA／run ID／run attempt／engine SHA／原音源ハッシュ（添付そのもの＋復号 WAV）／企画 fingerprint／全 commit ファイルの sha256 を結び付ける。自己完結の `timeline.html` も artifact と Release に含める。
 - commit する `provenance.json` には MP4・確認画像・`timeline.html` そのものの SHA256 も記録する。同じ設計 JSON から作られた別の動画へ差し替え、artifact のハッシュ表だけを更新しても公開できない。
 - Codex レビューは `reviewed_head_sha` を返し、ゲートは期待 head と完全一致、かつ4チェック（機械 QA・brief 準拠・タイミング完全性・美的承認）が全て true、blocker なしを要求する。
+- 初回レビュー後に `scripts/studio_repair.py` が有界修復を行う。最終成果物名と publish-review の PR／head は初回 commit ではなく最後の `repair` ステップ出力を使う。初回 receipt／レビューの入力は初回 commit を指したままにする。publish-review には `output/studio/work/repair-result.json` を渡す。
+- レビュー済みの各試行は `output/studio/work/review-attempts/attempt-*`（最大3件、各12ファイルの許可リスト）に保存し、アップロード前に `studio.repair.validate_attempt_history` で連番・許可リスト・ハッシュ／receipt／メディア provenance を厳格に検証する（ルート直下の余分なファイルや symlink は拒否する）。履歴成果物名は `studio-review-attempts-child-<child>-run-<run>-a<attempt>` で、Release 対象の成果物名パターンには一致しない。保持期間は90日。未検証の途中 staging はアップロードしない。
+- 最終ステップ概要には品質 status、試行回数、次の一手を示す。美的失敗でもワークフロー実行自体は完了しうるが、オーナー確認可能（owner-ready）とは扱わない。
 - 通知（receipt コメント、exact-head の COMMENT ping、担当者割当て）はそれぞれ独立に冪等化し、通知直前に head／open を再取得する。ユーザーが書いた marker 文字列は bot 証跡として数えない。
 - exact-head の本人 Approve が必要である。COMMENT は承認を消さず、CHANGES_REQUESTED・DISMISSED は承認として扱わない。制作 PR をエージェントが自動で Approve／Merge しない。
 - Release の前提は次のすべてである: PR がオーナー本人により Merge 済みであること、最新の実質的なオーナーレビューが現在の head に対する APPROVED であること（COMMENT は承認を取り消さない）、`main` 上で信頼できる studio-production run が実際に成功し、成果物が一致すること。
@@ -61,22 +64,38 @@
 
 ## 再実行・手動操作
 
-- 失敗した制作の再試行: Actions → Studio production → Run workflow に source Issue 番号を入れる（実行者もオーナーのみ、`main` から実行）。保存済みの企画と候補を再利用し、終了済みの子 Issue／PR は制作対象から除外する。
-- 創作的に却下された場合: 初版には**自動修復ループはない**。PR／Issue のフィードバックを確認し、production ワークフローを手動で再実行する。前回の bot レビューは Muse への再試行入力に含める。秒指定・タイミング修正は不要である。
+- 失敗した制作の再試行: Actions → Studio production → Run workflow に source Issue 番号を入れる（実行者もオーナーのみ、`main` から実行）。保存済みの企画と候補を再利用し、終了済みの子 Issue／PR は制作対象から除外する。手動再実行はコード修正後や利用上限（quota）の解消後に使うもので、通常の絵コンテ反復に手動再実行は不要である（絵コンテ反復はワークフロー内の自動修復が担う）。
+- 創作的に却下された場合: 経路が `storyboard` なら、ブロッカーと修復指示の全文と前回の絵コンテを保持したまま Muse が最大2回まで自動修復し、各回で再描画・機械 QA・Codex 再レビューを行う。元のタイミング（抜粋区間・場面境界・アクセント）は変更しない。秒指定・タイミング修正は不要である。
 - Release の再試行: Actions → Studio release → Run workflow に PR 番号を入れる。既存 Release の資産が食い違う場合は黙って上書きせず失敗する。
 - ソースや brief を変えたい場合: 既存の承認済み作業は上書きしない。**新しい source Issue を開く**こと（初版の制約）。
+
+## 修復 status とエンジニアリング引き継ぎ
+
+最終 bundle と同じ head に結び付いた `repair-result.json` の `status` が品質状態である。ワークフローの成否とは別に読む。
+
+| status | 意味 | 次の一手 |
+| --- | --- | --- |
+| `passed` | 最終レビュー合格（機械 QA・4チェック・blocker なし） | exact-head のオーナー Approve と Merge を待つ |
+| `needs_engine` | レビューが engine 経路（不足した描画・構成・検証能力など） | エンジニアリング Issue からコード変更する |
+| `attempts_exhausted` | 絵コンテ修復を上限2回まで使っても不合格 | エンジニアリング Issue からコード変更する |
+| `no_change` | 修復後の絵コンテが前回と同一で進展なし | エンジニアリング Issue からコード変更する |
+| `no_visual_change` | 絵コンテは変わったが清浄なメディアが同一で進展なし | エンジニアリング Issue からコード変更する |
+
+- インフラ障害（malformed／stale／closed／source drift／機械 QA 失敗、モデルや commit の失敗）は上記 status とは別で、`studio_repair.py` は非ゼロで fail-closed に終了し、公開しない。
+- `needs_engine`／`attempts_exhausted`／`no_change`／`no_visual_change` では publish-review が子ごとに1件だけ bot のエンジニアリング Issue を保証する。**エンジンのコードを自動で書くジョブはまだない**。実際のコードエージェントはその Issue から作業し、別のエンジニアリング PR を作る。その PR のレビューと Merge が終わってから、オーナーが元の音源 Issue で制作を手動 dispatch する。対応していない機能が自動で直るわけではない。
+- 非オーナーや bot が作ったエンジニアリング Issue は引き継ぎ対象として扱わない（受付はオーナーのみ、という原則は変わらない）。
 
 ## 制限と注意
 
 - このリポジトリは公開されているため、Issue 添付の録音も公開アクセス可能になる。GitHub 側の添付上限は変更されうるため、数値は Issue フォームと GitHub の現行ドキュメントで確認する。コントローラの 512MB 上限は防御であり、GitHub の許可量ではない。
 - **音楽の聴取は未検証**である。候補選択は DSP の音響ランキングであり、音楽的良否の証明ではない。端点の根拠と懸念は JSON に保存される。
-- 描画は手続きプロトタイプであり、完成したアニメ作品ではない。生成素材のプロバイダは将来の差し替え対象であり、時刻決定権は渡さない。
+- 描画は手続きプロトタイプであり、完成したアニメ作品ではない。Studio のフレームは QA 文字・マーカー・ロゴのないクリーンな描画で、プロトタイプ表記は provenance／storyboard のメタデータにのみ置く。実行できるのは場面ごとのパレット6色と4つの数値パラメータ（`figure_scale`、`particle_multiplier`、`light_bias`、`glow_scale`）だけで、`motif`／`camera` の説明文はプログラムとして実行しない。新しいデコード済み参照フレーム QA は符号化動画と決定的描画の機械的対応を確認するもので、美的・音楽的な真実の判定ではない。生成素材のプロバイダは将来の差し替え対象であり、時刻決定権は渡さない。
 - 時期の解釈（early＝プロ演奏への憧れ、middle＝コンサートの存在感と表現、late＝癒し）は**創作上の方向付けであり歴史的・音楽学的事実ではない**。曲名・時期は任意で既定は unknown である。添付録音を特定の曲と同定しない。
 - 60秒未満の音源は actionable なエラーで止まる（隠れた padding／stretch はしない）。
 - 秒単位のイベントはネイティブサンプル／30fps フレームで検証する。固定 BPM グリッドは使わない。
 - artifact は90日保持する。原録音の全体は Issue 添付と一時ワークスペースのみに存在し、git・plan artifact・Release には入れない。
 - 自動マージ、bot の APPROVE、YouTube API、音声のモデル API 送信は行わない。モデルが見るのは有界な DSP JSON と画像証拠のみである。
-- 復号はビット深度を保持する。WAV はネイティブ subtype／チャンネルを維持し、圧縮音源は32bit float WAV に復号する（無条件に pcm16 化しない）。Muse（`--yolo`）実行中はワークスペースに原音源全体を置かず、音源のダウンロード／復号は Muse の後に行う。
+- 復号はビット深度を保持する。WAV はネイティブ subtype／チャンネルを維持し、圧縮音源は32bit float WAV に復号する（無条件に pcm16 化しない）。初回 Muse はホストに音源をダウンロードする前に実行する。修復時の Muse は、ホスト上に音源 WAV が存在する間も、入力だけをマウントした隔離ワーカー（`muse-run.sh`）の中で実行し、原音源・信頼済みチェックアウト・GitHub トークンはワーカーへ渡さない。
 - 今後は宣言的 storyboard に素材プロバイダを追加する。生成画像・短い生成動画は素材として受け取り、尺・カット・アクセントは既存のサンプル／フレーム基準で決める。現在の風景・人物シルエット・パレット制御で表現できない演技や物語は次段階の課題であり、音声の直接聴取や楽譜／MIDI 併用による候補選択の改善も別実験とする。生成 API の課金は承認前に行わない。
 
 ## ローカル検証（オフライン）
@@ -89,6 +108,9 @@
 `studio-ci.yml` は Secret・モデル・個人音源なしで同じ tests と60秒以上の合成レンダリング smoke を実行する。
 
 ## エージェント失敗時の診断（安全な分類のみ）
+
+Muse のコンテナ停止を確認できない場合は、認証の再暗号化・保存も停止します。実行中の処理と認証保存が競合するのを防ぐためです。Actions のエラーを解消し、必要なら再ログインして auth smoke を実行してから再試行します。
+
 
 Codex planner／reviewer と Muse の失敗時は、捕捉した stderr を `.github/studio/scripts/report-agent-error.py`（標準ライブラリのみ）に渡し、固定の許可リスト分類と次の一手だけを Actions ログに出す。生の provider 出力・認証情報・プロンプト・入力行・パスは決して出力しない。診断は `|| true` でガードし、元のエージェントの非ゼロ終了コードを保持する。
 

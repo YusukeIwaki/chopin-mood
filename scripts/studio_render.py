@@ -2,9 +2,13 @@
 """Trusted renderer: brief + declarative storyboard -> MP4 + QA bundle.
 
 Only this controller code renders. Muse contributes validated JSON;
-palettes/params from the storyboard measurably steer the procedural
-render (sky/moon/hill colours, figure scale, particles, light, glow).
-Output is marked a procedural prototype, not finished anime.
+palettes/params from the storyboard measurably steer the clean
+procedural render in ``studio.rendering`` (sky/moon/hill colours,
+figure scale, particles, light, glow). Descriptive motif/camera text
+is metadata only and does not affect pixels. The creative video
+carries no captions, QA markers or logos; the procedural-prototype
+disclaimer stays in provenance/storyboard metadata. Output is a
+procedural prototype, not finished anime.
 """
 from __future__ import annotations
 import sys
@@ -31,6 +35,7 @@ from p0.pipeline import write_crop_lossless
 from p0.timebase import Timebase
 from studio import storyboard as sbmod
 from studio import artifacts as artmod
+from studio import rendering as cleanmod
 
 
 def sha256_file(p: Path) -> str:
@@ -91,12 +96,14 @@ def main() -> int:
     clip_wav = out / "clip_audio.wav"
     write_crop_lossless(Path(a.wav), clip_wav, clip["start_sample"],
                         clip["end_sample"], int(sr))
-    lay = rendermod._layouts(a.seed, a.width, a.height)
+    lay = cleanmod.make_layouts(a.seed, a.width, a.height)
     mp4 = out / "video.mp4"
+    # Clean creative renderer (no captions/markers); p0.render is only
+    # reused for its ffmpeg encode/mux helper, never for Studio pixels.
     rendermod.render_video(
-        (rendermod.draw_frame(f, ctrl, "structured", a.width, a.height,
-                              a.seed, lay, scene_palettes=palettes,
-                              scene_params=sparams)
+        (cleanmod.draw_clean_frame(f, ctrl, a.width, a.height,
+                                   a.seed, lay, scene_palettes=palettes,
+                                   scene_params=sparams)
          for f in range(clip["n_frames"])),
         str(clip_wav), str(mp4), a.width, a.height, 30, 1, clip["n_frames"])
     # Show every scene to the visual reviewer, including endpoints.
@@ -122,10 +129,16 @@ def main() -> int:
     sheet.save(out / "contact-sheet.jpg", quality=88)
     for p in frames:
         p.unlink()
-    # Encoded-media QA on the real file.
+    # Encoded-media QA on the real file. Clean video has no marker, so
+    # the marker spotcheck is replaced by decoded-frame correspondence
+    # against the deterministic clean renderer (computed on demand,
+    # cached per frame); all other file-level checks run unchanged.
+    reference_fn = cleanmod.make_reference_frame_fn(
+        ctrl, a.width, a.height, a.seed, scene_palettes=palettes,
+        scene_params=sparams, layouts=lay)
     qa = qamod.check_file(str(mp4), str(clip_wav), plan, tb, a.width,
                           a.height, sha256_file(Path(a.wav)), str(out),
-                          "studio")
+                          "studio", reference_frame_fn=reference_fn)
     timeline = {"schema_version": "1.0", "candidate_id": cand["id"],
                 "clip": plan["clip"], "scenes": plan["scenes"],
                 "accents": plan["accents"],

@@ -221,6 +221,10 @@ class GitHubClient:
             payload["commit_id"] = commit_id
         return self.request("POST", f"/pulls/{pr}/reviews", payload)
 
+    def update_review(self, pr: int, review_id: int, body: str):
+        return self.request("PUT", f"/pulls/{pr}/reviews/{review_id}",
+                            {"body": body})
+
     def assign(self, issue: int, login: str):
         return self.request("POST", f"/issues/{issue}/assignees",
                             {"assignees": [login]})
@@ -372,12 +376,16 @@ class FakeTransport:
             if len(seg) == 2 and method == "GET":
                 return iss
             if len(seg) == 2 and method == "PATCH":
+                # Standard issue update: state and/or title/body.
                 if "state" in body:
                     iss["state"] = body["state"]
                     iss["state_reason"] = body.get("state_reason")
                     if body["state"] == "closed":
                         # GitHub records the authenticated closer.
                         iss["closed_by"] = {"login": body.get("_closed_by", "github-actions[bot]")}
+                for _k in ("title", "body"):
+                    if _k in body:
+                        iss[_k] = body[_k]
                 return iss
             if seg[2:] == ["sub_issues"] and method == "GET":
                 return [self.issues[x] for x in iss["sub_issues"]]
@@ -453,6 +461,15 @@ class FakeTransport:
                      "body": body.get("body", "")}
                 self.reviews.setdefault(n, []).append(r)
                 return r
+            if len(seg) == 4 and seg[2] == "reviews" and method == "PUT":
+                # PUT /pulls/{n}/reviews/{id}: update own review body only.
+                rid = int(seg[3])
+                for r in self.reviews.get(n, []):
+                    if r.get("id") == rid:
+                        if "body" in body:
+                            r["body"] = body["body"]
+                        return r
+                raise GitHubError(404, "review not found")
             if seg[2:] == ["files"] and method == "GET":
                 # GitHub lists only files CHANGED vs the base branch.
                 commit = self.commits.get(self.branches.get(pr["head"]["ref"], ""), {})
@@ -675,6 +692,10 @@ class FakeTransport:
         if commit_id:
             payload["commit_id"] = commit_id
         return self.request("POST", f"/pulls/{pr}/reviews", payload)
+
+    def update_review(self, pr: int, review_id: int, body: str):
+        return self.request("PUT", f"/pulls/{pr}/reviews/{review_id}",
+                            {"body": body})
 
     def assign(self, issue: int, login: str):
         return self.request("POST", f"/issues/{issue}/assignees",
