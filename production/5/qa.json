@@ -83,15 +83,15 @@
         1931
       ],
       "motion_diffs_blur_downscaled": [
-        8.6757,
-        8.6097,
-        5.0688
+        7.197,
+        6.3554,
+        5.3716
       ],
       "motion_floor": 0.4,
       "mean_abs_diffs_raw": [
-        13.1,
-        8.597,
-        7.413
+        12.243,
+        6.209,
+        7.511
       ]
     },
     {
@@ -181,9 +181,9 @@
             "scene_start"
           ],
           "ok": true,
-          "global_mae": 1.593,
-          "patch_mae_max": 1.808,
-          "patch_mae_mean": 1.593
+          "global_mae": 1.599,
+          "patch_mae_max": 1.777,
+          "patch_mae_mean": 1.599
         },
         {
           "frame": 1,
@@ -191,9 +191,9 @@
             "scene_start_post"
           ],
           "ok": true,
-          "global_mae": 1.614,
-          "patch_mae_max": 1.911,
-          "patch_mae_mean": 1.615
+          "global_mae": 1.617,
+          "patch_mae_max": 1.913,
+          "patch_mae_mean": 1.616
         },
         {
           "frame": 154,
@@ -201,9 +201,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.649,
-          "patch_mae_max": 1.938,
-          "patch_mae_mean": 1.649
+          "global_mae": 1.651,
+          "patch_mae_max": 1.912,
+          "patch_mae_mean": 1.652
         },
         {
           "frame": 386,
@@ -211,9 +211,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.683,
-          "patch_mae_max": 1.984,
-          "patch_mae_mean": 1.684
+          "global_mae": 1.656,
+          "patch_mae_max": 2.044,
+          "patch_mae_mean": 1.657
         },
         {
           "frame": 392,
@@ -221,9 +221,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.675,
-          "patch_mae_max": 1.977,
-          "patch_mae_mean": 1.676
+          "global_mae": 1.653,
+          "patch_mae_max": 2.051,
+          "patch_mae_mean": 1.654
         },
         {
           "frame": 393,
@@ -231,9 +231,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.716,
-          "patch_mae_max": 2.704,
-          "patch_mae_mean": 1.717
+          "global_mae": 1.664,
+          "patch_mae_max": 2.279,
+          "patch_mae_mean": 1.664
         },
         {
           "frame": 394,
@@ -241,9 +241,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.699,
-          "patch_mae_max": 2.392,
-          "patch_mae_mean": 1.7
+          "global_mae": 1.656,
+          "patch_mae_max": 2.266,
+          "patch_mae_mean": 1.656
         },
         {
           "frame": 456,
@@ -251,9 +251,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.657,
-          "patch_mae_max": 1.937,
-          "patch_mae_mean": 1.657
+          "global_mae": 1.644,
+          "patch_mae_max": 2.111,
+          "patch_mae_mean": 1.644
         },
         {
           "frame": 457,
@@ -261,9 +261,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.711,
-          "patch_mae_max": 2.483,
-          "patch_mae_mean": 1.712
+          "global_mae": 1.655,
+          "patch_mae_max": 2.265,
+          "patch_mae_mean": 1.655
         },
         {
           "frame": 458,
@@ -271,9 +271,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.685,
-          "patch_mae_max": 2.404,
-          "patch_mae_mean": 1.686
+          "global_mae": 1.656,
+          "patch_mae_max": 2.217,
+          "patch_mae_mean": 1.656
         },
         {
           "frame": 517,
@@ -281,9 +281,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.655,
-          "patch_mae_max": 2.016,
-          "patch_mae_mean": 1.655
+          "global_mae": 1.681,
+          "patch_mae_max": 2.074,
+          "patch_mae_mean": 1.681
         },
         {
           "frame": 518,
@@ -291,9 +291,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.474,
-          "patch_mae_max": 2.053,
-          "patch_mae_mean": 1.475
+          "global_mae": 1.683,
+          "patch_mae_max": 2.118,
+          "patch_mae_mean": 1.684
         },
         {
           "frame": 519,
@@ -301,9 +301,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.686,
-          "patch_mae_max": 2.072,
-          "patch_mae_mean": 1.686
+          "global_mae": 1.676,
+          "patch_mae_max": 2.096,
+          "patch_mae_mean": 1.676
         },
         {
           "frame": 605,
@@ -311,9 +311,9 @@
             "scene_start_pre"
           ],
           "ok": true,
-          "global_mae": 1.666,
-          "patch_mae_max": 1.916,
-          "patch_mae_mean": 1.667
+          "global_mae": 1.683,
+          "patch_mae_max": 1.892,
+          "patch_mae_mean": 1.683
         },
         {
           "frame": 606,
@@ -321,9 +321,9 @@
             "scene_start"
           ],
           "ok": true,
-          "global_mae": 1.496,
-          "patch_mae_max": 1.989,
-          "patch_mae_mean": 1.496
+          "global_mae": 1.686,
+          "patch_mae_max": 2.253,
+          "patch_mae_mean": 1.686
         },
         {
           "frame": 607,
@@ -331,9 +331,9 @@
             "scene_start_post"
           ],
           "ok": true,
-          "global_mae": 1.709,
-          "patch_mae_max": 2.26,
-          "patch_mae_mean": 1.709
+          "global_mae": 1.672,
+          "patch_mae_max": 2.223,
+          "patch_mae_mean": 1.672
         },
         {
           "frame": 675,
@@ -341,9 +341,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.693,
-          "patch_mae_max": 2.204,
-          "patch_mae_mean": 1.693
+          "global_mae": 1.658,
+          "patch_mae_max": 2.116,
+          "patch_mae_mean": 1.658
         },
         {
           "frame": 709,
@@ -351,9 +351,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.714,
-          "patch_mae_max": 2.466,
-          "patch_mae_mean": 1.715
+          "global_mae": 1.678,
+          "patch_mae_max": 2.292,
+          "patch_mae_mean": 1.678
         },
         {
           "frame": 710,
@@ -361,9 +361,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.816,
-          "patch_mae_max": 3.335,
-          "patch_mae_mean": 1.816
+          "global_mae": 1.71,
+          "patch_mae_max": 2.566,
+          "patch_mae_mean": 1.711
         },
         {
           "frame": 711,
@@ -371,9 +371,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.786,
-          "patch_mae_max": 3.093,
-          "patch_mae_mean": 1.787
+          "global_mae": 1.7,
+          "patch_mae_max": 2.479,
+          "patch_mae_mean": 1.7
         },
         {
           "frame": 780,
@@ -381,9 +381,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.687,
-          "patch_mae_max": 2.351,
-          "patch_mae_mean": 1.688
+          "global_mae": 1.673,
+          "patch_mae_max": 2.211,
+          "patch_mae_mean": 1.673
         },
         {
           "frame": 781,
@@ -391,9 +391,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.59,
-          "patch_mae_max": 2.333,
-          "patch_mae_mean": 1.591
+          "global_mae": 1.725,
+          "patch_mae_max": 2.614,
+          "patch_mae_mean": 1.726
         },
         {
           "frame": 782,
@@ -401,9 +401,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.758,
-          "patch_mae_max": 2.4,
-          "patch_mae_mean": 1.759
+          "global_mae": 1.711,
+          "patch_mae_max": 2.508,
+          "patch_mae_mean": 1.712
         },
         {
           "frame": 851,
@@ -411,9 +411,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.699,
-          "patch_mae_max": 2.319,
-          "patch_mae_mean": 1.699
+          "global_mae": 1.702,
+          "patch_mae_max": 2.129,
+          "patch_mae_mean": 1.702
         },
         {
           "frame": 852,
@@ -421,9 +421,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.813,
-          "patch_mae_max": 2.639,
-          "patch_mae_mean": 1.813
+          "global_mae": 1.756,
+          "patch_mae_max": 2.822,
+          "patch_mae_mean": 1.756
         },
         {
           "frame": 853,
@@ -431,9 +431,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.753,
-          "patch_mae_max": 2.366,
-          "patch_mae_mean": 1.753
+          "global_mae": 1.725,
+          "patch_mae_max": 2.554,
+          "patch_mae_mean": 1.725
         },
         {
           "frame": 859,
@@ -441,9 +441,9 @@
             "scene_start_pre"
           ],
           "ok": true,
-          "global_mae": 1.722,
-          "patch_mae_max": 2.401,
-          "patch_mae_mean": 1.723
+          "global_mae": 1.713,
+          "patch_mae_max": 2.186,
+          "patch_mae_mean": 1.713
         },
         {
           "frame": 860,
@@ -451,9 +451,9 @@
             "scene_start"
           ],
           "ok": true,
-          "global_mae": 1.463,
-          "patch_mae_max": 1.795,
-          "patch_mae_mean": 1.463
+          "global_mae": 1.436,
+          "patch_mae_max": 1.679,
+          "patch_mae_mean": 1.436
         },
         {
           "frame": 861,
@@ -461,9 +461,9 @@
             "scene_start_post"
           ],
           "ok": true,
-          "global_mae": 1.662,
-          "patch_mae_max": 2.01,
-          "patch_mae_mean": 1.663
+          "global_mae": 1.652,
+          "patch_mae_max": 1.945,
+          "patch_mae_mean": 1.653
         },
         {
           "frame": 965,
@@ -471,9 +471,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.613,
-          "patch_mae_max": 2.01,
-          "patch_mae_mean": 1.613
+          "global_mae": 1.566,
+          "patch_mae_max": 2.054,
+          "patch_mae_mean": 1.566
         },
         {
           "frame": 1038,
@@ -481,9 +481,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.623,
-          "patch_mae_max": 2.088,
-          "patch_mae_mean": 1.623
+          "global_mae": 1.576,
+          "patch_mae_max": 2.086,
+          "patch_mae_mean": 1.576
         },
         {
           "frame": 1039,
@@ -491,9 +491,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.616,
-          "patch_mae_max": 2.032,
-          "patch_mae_mean": 1.616
+          "global_mae": 1.576,
+          "patch_mae_max": 2.078,
+          "patch_mae_mean": 1.577
         },
         {
           "frame": 1040,
@@ -501,9 +501,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.617,
-          "patch_mae_max": 2.088,
-          "patch_mae_mean": 1.617
+          "global_mae": 1.573,
+          "patch_mae_max": 2.073,
+          "patch_mae_mean": 1.573
         },
         {
           "frame": 1226,
@@ -511,9 +511,9 @@
             "scene_start_pre"
           ],
           "ok": true,
-          "global_mae": 1.609,
-          "patch_mae_max": 1.87,
-          "patch_mae_mean": 1.609
+          "global_mae": 1.577,
+          "patch_mae_max": 1.853,
+          "patch_mae_mean": 1.578
         },
         {
           "frame": 1227,
@@ -521,9 +521,9 @@
             "scene_start"
           ],
           "ok": true,
-          "global_mae": 1.495,
-          "patch_mae_max": 1.725,
-          "patch_mae_mean": 1.495
+          "global_mae": 1.573,
+          "patch_mae_max": 1.967,
+          "patch_mae_mean": 1.574
         },
         {
           "frame": 1228,
@@ -531,9 +531,9 @@
             "scene_start_post"
           ],
           "ok": true,
-          "global_mae": 1.704,
-          "patch_mae_max": 2.0,
-          "patch_mae_mean": 1.705
+          "global_mae": 1.581,
+          "patch_mae_max": 2.013,
+          "patch_mae_mean": 1.582
         },
         {
           "frame": 1255,
@@ -541,9 +541,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.679,
+          "global_mae": 1.595,
           "patch_mae_max": 1.951,
-          "patch_mae_mean": 1.679
+          "patch_mae_mean": 1.596
         },
         {
           "frame": 1299,
@@ -551,9 +551,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.682,
-          "patch_mae_max": 2.163,
-          "patch_mae_mean": 1.683
+          "global_mae": 1.63,
+          "patch_mae_max": 2.032,
+          "patch_mae_mean": 1.63
         },
         {
           "frame": 1300,
@@ -561,9 +561,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.725,
-          "patch_mae_max": 2.756,
-          "patch_mae_mean": 1.725
+          "global_mae": 1.655,
+          "patch_mae_max": 2.387,
+          "patch_mae_mean": 1.656
         },
         {
           "frame": 1301,
@@ -571,9 +571,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.707,
-          "patch_mae_max": 2.487,
-          "patch_mae_mean": 1.707
+          "global_mae": 1.651,
+          "patch_mae_max": 2.42,
+          "patch_mae_mean": 1.652
         },
         {
           "frame": 1386,
@@ -581,9 +581,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.703,
-          "patch_mae_max": 2.204,
-          "patch_mae_mean": 1.703
+          "global_mae": 1.623,
+          "patch_mae_max": 1.93,
+          "patch_mae_mean": 1.623
         },
         {
           "frame": 1387,
@@ -591,9 +591,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.51,
-          "patch_mae_max": 2.343,
-          "patch_mae_mean": 1.509
+          "global_mae": 1.458,
+          "patch_mae_max": 2.14,
+          "patch_mae_mean": 1.458
         },
         {
           "frame": 1388,
@@ -601,9 +601,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.7,
-          "patch_mae_max": 2.309,
-          "patch_mae_mean": 1.701
+          "global_mae": 1.667,
+          "patch_mae_max": 2.12,
+          "patch_mae_mean": 1.667
         },
         {
           "frame": 1467,
@@ -611,9 +611,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.693,
-          "patch_mae_max": 2.146,
-          "patch_mae_mean": 1.694
+          "global_mae": 1.622,
+          "patch_mae_max": 2.001,
+          "patch_mae_mean": 1.622
         },
         {
           "frame": 1468,
@@ -621,9 +621,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.742,
-          "patch_mae_max": 2.962,
-          "patch_mae_mean": 1.743
+          "global_mae": 1.638,
+          "patch_mae_max": 2.306,
+          "patch_mae_mean": 1.639
         },
         {
           "frame": 1469,
@@ -631,9 +631,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.727,
-          "patch_mae_max": 2.642,
-          "patch_mae_mean": 1.728
+          "global_mae": 1.64,
+          "patch_mae_max": 2.329,
+          "patch_mae_mean": 1.64
         },
         {
           "frame": 1477,
@@ -641,9 +641,9 @@
             "scene_start_pre"
           ],
           "ok": true,
-          "global_mae": 1.691,
-          "patch_mae_max": 2.036,
-          "patch_mae_mean": 1.692
+          "global_mae": 1.625,
+          "patch_mae_max": 2.047,
+          "patch_mae_mean": 1.626
         },
         {
           "frame": 1478,
@@ -651,9 +651,9 @@
             "scene_start"
           ],
           "ok": true,
-          "global_mae": 1.481,
-          "patch_mae_max": 1.722,
-          "patch_mae_mean": 1.481
+          "global_mae": 1.659,
+          "patch_mae_max": 2.03,
+          "patch_mae_mean": 1.66
         },
         {
           "frame": 1479,
@@ -661,9 +661,9 @@
             "scene_start_post"
           ],
           "ok": true,
-          "global_mae": 1.702,
-          "patch_mae_max": 1.881,
-          "patch_mae_mean": 1.703
+          "global_mae": 1.656,
+          "patch_mae_max": 2.039,
+          "patch_mae_mean": 1.657
         },
         {
           "frame": 1544,
@@ -671,9 +671,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.646,
-          "patch_mae_max": 2.045,
-          "patch_mae_mean": 1.647
+          "global_mae": 1.664,
+          "patch_mae_max": 1.987,
+          "patch_mae_mean": 1.664
         },
         {
           "frame": 1776,
@@ -681,9 +681,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.641,
-          "patch_mae_max": 2.034,
-          "patch_mae_mean": 1.642
+          "global_mae": 1.666,
+          "patch_mae_max": 2.008,
+          "patch_mae_mean": 1.667
         },
         {
           "frame": 1931,
@@ -691,9 +691,9 @@
             "last_frame"
           ],
           "ok": true,
-          "global_mae": 1.621,
-          "patch_mae_max": 2.022,
-          "patch_mae_mean": 1.621
+          "global_mae": 1.669,
+          "patch_mae_max": 1.891,
+          "patch_mae_mean": 1.67
         }
       ]
     }
