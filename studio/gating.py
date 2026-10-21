@@ -42,19 +42,102 @@ def evaluate_approval(reviews: list[dict], *, head_sha: str,
 
 REVIEW_KEYS = {"verdict", "reviewed_head_sha", "checks", "blockers",
                "summary", "listening_note"}
+REVIEW_KEYS_WITH_REPAIR = REVIEW_KEYS | {"repair"}
+REPAIR_ROUTES = ("none", "storyboard", "engine")
 
 
-def evaluate_review_gate(review: dict | None, *, mechanical_pass: bool,
-                         expected_head_sha: str | None = None) -> dict:
-    """Codex review, strict keys/types: exactly the schema keys, ALL
-    four checks boolean true (including aesthetic_approval), no
-    blockers, exact listening_note, non-empty summary, a 40-hex
-    reviewed_head_sha binding the exact head when expected is given,
-    and mechanical_pass exactly True."""
+def review_route(review) -> str | None:
+    """Repair route from a review dict, or None when absent/malformed."""
+    if not isinstance(review, dict):
+        return None
+    repair = review.get("repair")
+    if not isinstance(repair, dict):
+        return None
+    route = repair.get("route")
+    return route if route in REPAIR_ROUTES else None
+
+
+def review_instructions(review) -> list:
+    if not isinstance(review, dict):
+        return []
+    repair = review.get("repair")
+    if not isinstance(repair, dict):
+        return []
+    instr = repair.get("instructions")
+    return list(instr) if isinstance(instr, list) else []
+
+
+def validate_repair_metadata(review, *, require: bool = False) -> list[str]:
+    """Strict validation of the optional ``repair`` object.
+
+    Legacy reviews without ``repair`` are accepted (past immutable
+    artifacts remain readable). When ``repair`` is present it must be
+    exactly ``{route, instructions}`` with strict types and verdict
+    consistency: pass -> route ``none`` and no instructions; fail ->
+    route ``storyboard``/``engine`` with non-empty actionable
+    instructions (max 20, each 1..1000 chars). When ``require`` is true
+    (new production reviews) a missing ``repair`` is a failure.
+    """
+    failures: list[str] = []
+    if not isinstance(review, dict):
+        return ["missing review result"]
+    if "repair" not in review:
+        if require:
+            failures.append(
+                "review missing repair metadata (required for new reviews)")
+        return failures
+    repair = review.get("repair")
+    if not isinstance(repair, dict):
+        return failures + ["review repair must be an object"]
+    if set(repair) != {"route", "instructions"}:
+        failures.append(
+            "review repair must have exactly route and instructions")
+    route = repair.get("route")
+    if route not in REPAIR_ROUTES:
+        failures.append("review repair.route must be none/storyboard/engine")
+    instr = repair.get("instructions")
+    if not isinstance(instr, list):
+        failures.append("review repair.instructions must be a list")
+    else:
+        if len(instr) > 20:
+            failures.append("review repair.instructions exceeds 20 items")
+        for i, item in enumerate(instr):
+            if not isinstance(item, str) or not item.strip() \
+                    or len(item) > 1000:
+                failures.append(
+                    f"review repair.instructions[{i}] must be "
+                    "non-empty text <= 1000 chars")
+    verdict = review.get("verdict")
+    if route in REPAIR_ROUTES and isinstance(instr, list):
+        if verdict == "pass":
+            if route != "none":
+                failures.append("passing review repair.route must be none")
+            if instr:
+                failures.append(
+                    "passing review repair.instructions must be empty")
+        elif verdict == "fail":
+            if route == "none":
+                failures.append(
+                    "failing review repair.route must be storyboard or engine")
+            if route in ("storyboard", "engine") and not instr:
+                failures.append(
+                    "failing review repair.instructions must be non-empty")
+    return failures
+
+
+def validate_review_structure(review, *, expected_head_sha: str | None = None,
+                              require_repair: bool = False) -> dict:
+    """Structural review validation (no pass/fail gate decision).
+
+    Accepts legacy reviews without ``repair`` and new reviews with a
+    strictly validated ``repair`` object. Does NOT require a pass
+    verdict, true checks or empty blockers: a structurally valid fail
+    is a legitimate review outcome for the repair loop to route on.
+    """
     failures: list[str] = []
     if not isinstance(review, dict):
         return {"ok": False, "failures": ["missing review result"]}
-    extra = set(review) - REVIEW_KEYS
+    extra = set(review) - REVIEW_KEYS_WITH_REPAIR
     if extra:
         failures.append(f"review has unexpected keys: {sorted(extra)}")
     missing = REVIEW_KEYS - set(review)
@@ -62,8 +145,6 @@ def evaluate_review_gate(review: dict | None, *, mechanical_pass: bool,
         failures.append(f"review missing keys: {sorted(missing)}")
     if review.get("verdict") not in ("pass", "fail"):
         failures.append("review verdict must be pass/fail")
-    elif review.get("verdict") != "pass":
-        failures.append("AI review verdict is not pass")
     checks = review.get("checks")
     if not isinstance(checks, dict):
         failures.append("review checks must be an object")
@@ -72,13 +153,16 @@ def evaluate_review_gate(review: dict | None, *, mechanical_pass: bool,
             failures.append(
                 f"review checks keys {sorted(checks)} != {sorted(REVIEW_CHECKS)}")
         for key in REVIEW_CHECKS:
-            if checks.get(key) is not True:
-                failures.append(f"review check not true: {key}")
+            if key in checks and not isinstance(checks.get(key), bool):
+                failures.append(f"review check must be a boolean: {key}")
     blockers = review.get("blockers")
-    if not isinstance(blockers, list) or any(not isinstance(b, str) for b in blockers or []):
+    if not isinstance(blockers, list) \
+            or any(not isinstance(b, str) for b in blockers or []):
         failures.append("review blockers must be a list of strings")
-    elif blockers:
-        failures.append("review has blockers")
+    elif len(blockers) > 20:
+        failures.append("review blockers exceeds 20 items")
+    elif any(len(b) > 1000 for b in blockers):
+        failures.append("review blockers items must be <= 1000 chars")
     summary = review.get("summary")
     if not isinstance(summary, str) or not summary.strip() or len(summary) > 4000:
         failures.append("review summary must be non-empty text")
@@ -90,9 +174,46 @@ def evaluate_review_gate(review: dict | None, *, mechanical_pass: bool,
         failures.append("review reviewed_head_sha must be a 40-hex sha")
     elif expected_head_sha is not None and rhs != expected_head_sha:
         failures.append("reviewed_head_sha does not match expected head SHA")
+    failures.extend(validate_repair_metadata(review, require=require_repair))
+    return {"ok": not failures, "failures": failures}
+
+
+def evaluate_review_gate(review: dict | None, *, mechanical_pass: bool,
+                         expected_head_sha: str | None = None,
+                         require_repair: bool = False) -> dict:
+    """Codex review gate: strict structure (legacy reviews without
+    ``repair`` remain readable; a present ``repair`` is strictly
+    validated), ALL four checks boolean true (including
+    aesthetic_approval), no blockers, exact listening_note, non-empty
+    summary, a 40-hex reviewed_head_sha binding the exact head when
+    expected is given, and mechanical_pass exactly True. With
+    ``require_repair`` a missing ``repair`` object also fails."""
+    if not isinstance(review, dict):
+        return {"ok": False, "failures": ["missing review result"]}
+    failures: list[str] = list(validate_review_structure(
+        review, expected_head_sha=expected_head_sha,
+        require_repair=require_repair)["failures"])
+    if review.get("verdict") in ("pass", "fail") \
+            and review.get("verdict") != "pass":
+        failures.append("AI review verdict is not pass")
+    checks = review.get("checks")
+    if isinstance(checks, dict):
+        for key in REVIEW_CHECKS:
+            if checks.get(key) is not True:
+                failures.append(f"review check not true: {key}")
+    blockers = review.get("blockers")
+    if isinstance(blockers, list) and blockers:
+        failures.append("review has blockers")
     if mechanical_pass is not True:
         failures.append("mechanical QA did not pass")
-    return {"ok": not failures, "failures": failures}
+    # De-duplicate preserving order (structural + gate overlap).
+    seen: set[str] = set()
+    unique: list[str] = []
+    for f in failures:
+        if f not in seen:
+            seen.add(f)
+            unique.append(f)
+    return {"ok": not unique, "failures": unique}
 
 
 def _full_name(v) -> str | None:

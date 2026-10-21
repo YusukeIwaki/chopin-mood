@@ -92,7 +92,9 @@ def test_actual_muse_wrapper_mounts_only_work_and_provider_auth(tmp_path):
     subprocess.run(["bash", str(ROOT / ".github/studio/scripts/muse-run.sh"), str(work)],
                    cwd=ROOT, env=env, check=True, capture_output=True)
     invocations = [json.loads(line) for line in calls.read_text().splitlines()]
-    args = invocations[-1]
+    run_invocations = [a for a in invocations if "--mount" in a]
+    assert run_invocations, invocations
+    args = run_invocations[-1]
     mounts = [args[i + 1] for i, arg in enumerate(args) if arg == "--mount"]
     assert mounts == [f"type=bind,source={work},target=/workspace",
                       f"type=bind,source={auth},target=/agent-config"]
@@ -142,6 +144,125 @@ def test_exact_models_preserved_after_unpinning():
     assert SMOKE_WF.count("--model gpt-6.1-sol") == 1
     assert PROD.count('model_reasoning_effort="xhigh"') == 2
     assert SMOKE_WF.count('model_reasoning_effort="xhigh"') == 1
+
+
+def _step_block(name_fragment):
+    start = PROD.index(name_fragment)
+    nxt = PROD.find("\n      - name:", start + 1)
+    return PROD[start:] if nxt == -1 else PROD[start:nxt]
+
+
+def test_repair_wiring_order_args_and_final_refs():
+    # Sequence preserved: initial Muse -> download -> render -> commit
+    # -> receipt -> initial Codex review -> repair -> final upload/publish.
+    order = [
+        "Run Muse in isolated container",
+        "Download source AFTER Muse",
+        "Validate storyboard and render",
+        "Commit production bundle and create or reuse PR",
+        "Generate artifact receipt and hash manifest",
+        "Run Codex evidence review",
+        "Bounded aesthetic repair",
+        "Validate bundle allowlist before upload",
+        "Upload production artifact",
+        "Publish review (ping only on pass",
+    ]
+    idx = [PROD.index(s) for s in order]
+    assert idx == sorted(idx), list(zip(order, idx))
+    # Repair CLI: actual entrypoint + inputs from the task contract.
+    repair_block = _step_block("Bounded aesthetic repair")
+    assert "id: repair" in repair_block
+    assert "timeout-minutes: 75" in repair_block
+    assert "GH_TOKEN: ${{ github.token }}" in repair_block
+    assert "GITHUB_REPOSITORY: ${{ github.repository }}" in repair_block
+    for arg in (
+        "python3 scripts/studio_repair.py",
+        "--work output/studio/work",
+        '--muse-work "$RUNNER_TEMP/muse-work"',
+        "--wav output/studio/source/source.wav",
+        "--parent ${{ needs.preflight.outputs.issue_number }}",
+        "--child ${{ matrix.child_issue }}",
+        "--engine-sha ${{ github.sha }}",
+        "--run-id ${{ github.run_id }}",
+        "--run-attempt ${{ github.run_attempt }}",
+    ):
+        assert arg in repair_block, arg
+    # Repair agents are inside the Python module, not new shell Codex calls.
+    assert PROD.count("--model gpt-6.1-sol") == 2
+    # Final artifact + publish use the LAST repair outputs, never initial.
+    upload_block = _step_block("Upload production artifact")
+    assert "steps.repair.outputs.pr_number" in upload_block
+    assert "steps.repair.outputs.head_sha" in upload_block
+    assert "steps.commit.outputs" not in upload_block
+    publish_block = _step_block("Publish review (ping only on pass")
+    assert "steps.repair.outputs.pr_number" in publish_block
+    assert "steps.repair.outputs.head_sha" in publish_block
+    assert "steps.commit.outputs" not in publish_block
+    assert "--repair-result output/studio/work/repair-result.json" in publish_block
+    # Initial receipt/review keep the initial-commit binding.
+    receipt_block = _step_block("Generate artifact receipt and hash manifest")
+    assert "steps.commit.outputs.head_sha" in receipt_block
+    review_block = _step_block("Run Codex evidence review")
+    assert "steps.commit.outputs.head_sha" in review_block
+    # Fail-closed allowlist still guards the final (12-file) bundle.
+    assert "python3 -m studio check-bundle --dir output/studio/work/bundle" in PROD
+    # No recursive dispatch / second concurrency group / new permissions.
+    assert PROD.count("concurrency:") == 1
+    assert PROD.count("group: studio-agent-auth") == 1
+    assert "gh workflow run" not in PROD and "workflow_dispatch" in PROD
+
+
+def test_repair_history_artifact_is_validated_and_not_release_eligible():
+    validate_block = _step_block("Validate review-attempt history bundles")
+    assert "id: validate_history" in validate_block
+    assert "validate_attempt_history" in validate_block
+    assert "review-attempts" in validate_block
+    history_block = _step_block("Upload review-attempt history")
+    assert ("name: studio-review-attempts-child-${{ matrix.child_issue }}"
+            "-run-${{ github.run_id }}-a${{ github.run_attempt }}") in history_block
+    assert "path: output/studio/work/review-attempts/" in history_block
+    assert "retention-days: 90" in history_block
+    assert "steps.validate_history.outcome == 'success'" in history_block
+    # History name must not match the release-eligible production pattern.
+    assert not history_block.split("name: ", 1)[1].splitlines()[0].strip().startswith(
+        "studio-child-")
+    # Validation happens before the history upload.
+    assert PROD.index("Validate review-attempt history bundles") < PROD.index(
+        "Upload review-attempt history")
+    # Final summary distinguishes quality status from workflow completion.
+    summary_block = _step_block("Summarize final quality status")
+    assert "Studio final quality status" in summary_block
+    assert "owner-ready: NO" in summary_block
+    assert "attempt_count" in summary_block
+
+
+def test_muse_auth_persist_moved_after_repair_and_timeouts_bounded():
+    # Build + initial-Muse timeouts bound the total; repair step covers
+    # max 2 repairs x (Muse 900s + Codex 900s).
+    import yaml
+    wf = yaml.safe_load(PROD)
+    assert wf["jobs"]["build"]["timeout-minutes"] == 120
+    muse_block = _step_block("Run Muse in isolated container")
+    assert "timeout-minutes: 15" in muse_block
+    assert "timeout --kill-after=10s 900 bash .github/studio/scripts/muse-run.sh" in muse_block
+    repair_block = _step_block("Bounded aesthetic repair")
+    assert int(repair_block.split("timeout-minutes:")[1].split()[0]) >= 60
+    # The whole Muse persist block moved AFTER the last model call
+    # (the repair step) and before cleanup; exactly one copy exists.
+    assert PROD.count("id: persist_muse") == 1
+    assert PROD.count("id: muse_write") == 1
+    repair_at = PROD.index("Bounded aesthetic repair")
+    persist_at = PROD.index("Persist refreshed Muse auth")
+    codex_review_at = PROD.index("Run Codex evidence review")
+    assert persist_at > repair_at > codex_review_at
+    assert persist_at > PROD.index("Download source AFTER Muse")
+    assert persist_at < PROD.rindex("Cleanup credentials")
+    persist_block = _step_block("Persist refreshed Muse auth")
+    assert "always() && steps.restore_muse.outcome == 'success'" in persist_block
+    write_block = _step_block("Create Muse write token")
+    assert "steps.persist_muse.outputs.changed == 'true'" in write_block
+    # Codex persist/cleanup stay always-gated after repair as well.
+    assert PROD.rindex("Persist refreshed Codex auth") > repair_at
 
 
 def test_agent_failure_diagnostics_are_guarded_and_preserve_exit():

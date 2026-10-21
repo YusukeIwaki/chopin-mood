@@ -266,7 +266,7 @@ jobs:
     needs: [preflight, plan]
     if: needs.plan.outputs.matrix != '' && needs.plan.outputs.matrix != '{"include":[]}'
     runs-on: ubuntu-latest
-    timeout-minutes: 70
+    timeout-minutes: 120
     permissions:
       contents: write
       pull-requests: write
@@ -388,42 +388,17 @@ jobs:
         env:
           MUSE_ENC_PASSPHRASE: ${{ secrets.MUSE_ENC_PASSPHRASE }}
       - name: Run Muse in isolated container (no source or trusted checkout mounted)
-        timeout-minutes: 40
+        timeout-minutes: 15
         run: |
           set +e
           work="$RUNNER_TEMP/muse-work"
           test ! -e output/studio/source/source.wav
-          timeout 2400 bash .github/studio/scripts/muse-run.sh "$work" > "$RUNNER_TEMP/muse.stdout" 2> "$RUNNER_TEMP/muse.stderr"
+          timeout --kill-after=10s 900 bash .github/studio/scripts/muse-run.sh "$work" > "$RUNNER_TEMP/muse.stdout" 2> "$RUNNER_TEMP/muse.stderr"
           code=$?
           set -e
           if [ "$code" -ne 0 ]; then python3 .github/studio/scripts/report-agent-error.py "$RUNNER_TEMP/muse.stderr" || true; echo "::error::Muse failed with exit $code" >&2; exit "$code"; fi
           test -s "$work/storyboard.json"
           cp "$work/storyboard.json" output/studio/work/storyboard.json
-      - name: Persist refreshed Muse auth
-        id: persist_muse
-        if: always() && steps.restore_muse.outcome == 'success'
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: persist-muse
-        env:
-          MUSE_ENC_PASSPHRASE: ${{ secrets.MUSE_ENC_PASSPHRASE }}
-      - name: Create Muse write token (only when auth changed)
-        id: muse_write
-        if: always() && steps.persist_muse.outcome == 'success' && steps.persist_muse.outputs.changed == 'true'
-        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
-        with:
-          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
-          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
-          owner: YusukeIwaki
-          repositories: muse.enc
-          permission-contents: write
-      - name: Push refreshed Muse auth (only when changed)
-        if: always() && steps.persist_muse.outputs.changed == 'true' && steps.muse_write.outcome == 'success'
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: push-muse
-        env:
-          GH_TOKEN: ${{ steps.muse_write.outputs.token }}
       - name: Download source AFTER Muse and verify both hashes
         env:
           ATTACHMENT_URL: ${{ needs.preflight.outputs.attachment_url }}
@@ -529,6 +504,40 @@ jobs:
           files = {p.name: p.read_bytes() for p in d.iterdir() if p.is_file() and p.name != "hashes.json"}
           (d / "hashes.json").write_text(json.dumps(artifacts.build_hash_manifest(files), indent=2))
           PY
+      - name: Bounded aesthetic repair (max 2 Muse + render + Codex re-review)
+        id: repair
+        timeout-minutes: 75
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python3 scripts/studio_repair.py --work output/studio/work --muse-work "$RUNNER_TEMP/muse-work" --wav output/studio/source/source.wav --parent ${{ needs.preflight.outputs.issue_number }} --child ${{ matrix.child_issue }} --engine-sha ${{ github.sha }} --run-id ${{ github.run_id }} --run-attempt ${{ github.run_attempt }}
+      - name: Persist refreshed Muse auth
+        id: persist_muse
+        if: always() && steps.restore_muse.outcome == 'success' && env.STUDIO_MUSE_CLEANUP_SAFE != 'false'
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: persist-muse
+        env:
+          MUSE_ENC_PASSPHRASE: ${{ secrets.MUSE_ENC_PASSPHRASE }}
+      - name: Create Muse write token (only when auth changed)
+        id: muse_write
+        if: always() && steps.persist_muse.outcome == 'success' && steps.persist_muse.outputs.changed == 'true'
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
+          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
+          owner: YusukeIwaki
+          repositories: muse.enc
+          permission-contents: write
+      - name: Push refreshed Muse auth (only when changed)
+        if: always() && steps.persist_muse.outputs.changed == 'true' && steps.muse_write.outcome == 'success'
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: push-muse
+        env:
+          GH_TOKEN: ${{ steps.muse_write.outputs.token }}
       - name: Validate bundle allowlist before upload
         run: |
           python3 -m studio check-bundle --dir output/studio/work/bundle
@@ -536,16 +545,54 @@ jobs:
         id: upload
         uses: actions/upload-artifact@v7
         with:
-          name: studio-child-${{ matrix.child_issue }}-pr-${{ steps.commit.outputs.pr_number }}-${{ steps.commit.outputs.head_sha }}-run-${{ github.run_id }}-a${{ github.run_attempt }}
+          name: studio-child-${{ matrix.child_issue }}-pr-${{ steps.repair.outputs.pr_number }}-${{ steps.repair.outputs.head_sha }}-run-${{ github.run_id }}-a${{ github.run_attempt }}
           path: output/studio/work/bundle/
+          retention-days: 90
+      - name: Validate review-attempt history bundles (fully reviewed only)
+        id: validate_history
+        if: always() && steps.repair.outcome != 'cancelled'
+        env:
+          HISTORY_PARENT: ${{ needs.preflight.outputs.issue_number }}
+          HISTORY_CHILD: ${{ matrix.child_issue }}
+          HISTORY_RUN_ID: ${{ github.run_id }}
+          HISTORY_RUN_ATTEMPT: ${{ github.run_attempt }}
+          HISTORY_ENGINE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, sys
+          from pathlib import Path
+          from studio import repair
+          r = repair.validate_attempt_history(
+              Path("output/studio/work/review-attempts"),
+              parent=int(os.environ["HISTORY_PARENT"]),
+              child=int(os.environ["HISTORY_CHILD"]),
+              run_id=int(os.environ["HISTORY_RUN_ID"]),
+              run_attempt=int(os.environ["HISTORY_RUN_ATTEMPT"]),
+              engine_sha=os.environ["HISTORY_ENGINE_SHA"])
+          if not r["ok"]:
+              print("history validation failed: " + "; ".join(r["failures"]))
+              sys.exit(2)
+          summary = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary:
+              with open(summary, "a", encoding="utf-8") as fh:
+                  fh.write(f"validated {r['count']} review-attempt bundle(s)\n")
+          print(f"validated {r['count']} review-attempt bundle(s)")
+          PY
+      - name: Upload review-attempt history (not release-eligible)
+        if: always() && steps.validate_history.outcome == 'success'
+        uses: actions/upload-artifact@v7
+        with:
+          name: studio-review-attempts-child-${{ matrix.child_issue }}-run-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: output/studio/work/review-attempts/
           retention-days: 90
       - name: Publish review (ping only on pass + mechanical pass; retry-safe)
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          PR_NUMBER: ${{ steps.commit.outputs.pr_number }}
+          PR_NUMBER: ${{ steps.repair.outputs.pr_number }}
           CHILD_ISSUE: ${{ matrix.child_issue }}
-          HEAD_SHA: ${{ steps.commit.outputs.head_sha }}
+          HEAD_SHA: ${{ steps.repair.outputs.head_sha }}
           ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
           ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
           RUN_ID: ${{ github.run_id }}
@@ -554,7 +601,24 @@ jobs:
           set -euo pipefail
           mech=""
           python3 -c 'import json,sys; sys.exit(0 if json.load(open("output/studio/work/bundle/qa.json"))["pass"] else 1)' && mech="--mechanical-pass" || true
-          python3 scripts/studio_publish_review.py --review output/studio/work/bundle/review.json --pr "$PR_NUMBER" --child "$CHILD_ISSUE" --head-sha "$HEAD_SHA" --run-id "$RUN_ID" --run-attempt "$RUN_ATTEMPT" --artifact-id "$ARTIFACT_ID" --artifact-url "$ARTIFACT_URL" $mech
+          python3 scripts/studio_publish_review.py --review output/studio/work/bundle/review.json --pr "$PR_NUMBER" --child "$CHILD_ISSUE" --head-sha "$HEAD_SHA" --run-id "$RUN_ID" --run-attempt "$RUN_ATTEMPT" --artifact-id "$ARTIFACT_ID" --artifact-url "$ARTIFACT_URL" --repair-result output/studio/work/repair-result.json $mech
+      - name: Summarize final quality status
+        if: steps.repair.outcome == 'success'
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          r = json.load(open("output/studio/work/repair-result.json"))
+          status = r.get("status")
+          print(f"## Studio final quality status: {status}")
+          print(f"- attempts: {r.get('attempt_count')}/{int(r.get('max_repairs', 0)) + 1} (repairs used: {r.get('repairs_used')})")
+          print(f"- final PR: #{r.get('pr_number')} head: {r.get('final_head_sha')}")
+          print(f"- next action: {r.get('next_action')}")
+          if status == "passed":
+              print("- owner-ready: pending exact-head owner Approve + Merge (workflow success alone is not approval)")
+          else:
+              print("- owner-ready: NO - aesthetic/engineering handoff required; this workflow completing is not a quality pass")
+              print("- engineering handoff: see the bot engineering Issue from publish-review (when applicable) and the review-attempts history artifact; no automated engine-coding job exists yet")
+          PY
       - name: Persist refreshed Codex auth
         id: persist_codex
         if: always() && steps.restore_codex.outcome == 'success'

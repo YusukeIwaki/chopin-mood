@@ -154,11 +154,11 @@ jobs:
           work="$RUNNER_TEMP/smoke-muse"
           mkdir -p "$work"
           printf 'Reply with exactly: OK\n' > "$work/prompt.md"
-          timeout 900 bash .github/studio/scripts/muse-run.sh "$work" > "$RUNNER_TEMP/smoke/muse.json" 2> "$RUNNER_TEMP/smoke/muse.stderr"
+          timeout --kill-after=10s 900 bash .github/studio/scripts/muse-run.sh "$work" > "$RUNNER_TEMP/smoke/muse.json" 2> "$RUNNER_TEMP/smoke/muse.stderr"
           python3 .github/studio/scripts/check-muse-smoke.py "$RUNNER_TEMP/smoke/muse.json"
       - name: Persist refreshed Muse auth
         id: persist_muse
-        if: always() && steps.restore_muse.outcome == 'success'
+        if: always() && steps.restore_muse.outcome == 'success' && env.STUDIO_MUSE_CLEANUP_SAFE != 'false'
         uses: ./.github/actions/studio-auth
         with:
           mode: persist-muse

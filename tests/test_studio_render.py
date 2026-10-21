@@ -36,6 +36,12 @@ def test_synthetic_60s_render_and_qa(smoke):
     tl = json.loads((bundle / "timeline.json").read_text())
     assert tl["scenes"][0]["start_frame"] == 0
     assert tl["scenes"][-1]["end_frame"] == plan["clip"]["n_frames"]
+    # Clean Studio QA: decoded-reference spotcheck replaces the legacy
+    # P0 marker check; the other 10 file-level checks are retained.
+    names = [c["name"] for c in qa["checks"]]
+    assert any(n.endswith(":rendered_frame_spotcheck") for n in names), names
+    assert not any(n.endswith(":marker_spotcheck") for n in names), names
+    assert len(names) == 11, names
 
 
 def test_storyboard_palette_reaches_decoded_frames(smoke):
