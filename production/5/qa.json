@@ -83,15 +83,15 @@
         1931
       ],
       "motion_diffs_blur_downscaled": [
-        11.57,
-        6.0901,
-        4.3721
+        9.3154,
+        9.0454,
+        5.1125
       ],
       "motion_floor": 0.4,
       "mean_abs_diffs_raw": [
-        13.343,
-        6.167,
-        6.772
+        13.305,
+        9.293,
+        7.321
       ]
     },
     {
@@ -108,162 +108,594 @@
       "sha256": "3709d143e232d524..."
     },
     {
-      "name": "studio:marker_spotcheck",
+      "name": "studio:rendered_frame_spotcheck",
       "pass": true,
-      "markers": [
+      "method": "decoded MP4 frames vs deterministic clean-renderer reference frames; per-frame whole-frame MAE and 8x12 patch MAE (0-255), both must pass",
+      "thresholds": {
+        "global_mae_max": 8.0,
+        "patch_mae_max": 16.0,
+        "patch_grid": [
+          8,
+          12
+        ]
+      },
+      "probed_frames": [
+        0,
+        1,
+        154,
+        386,
+        392,
+        393,
+        394,
+        456,
+        457,
+        458,
+        517,
+        518,
+        519,
+        605,
+        606,
+        607,
+        675,
+        709,
+        710,
+        711,
+        780,
+        781,
+        782,
+        851,
+        852,
+        853,
+        859,
+        860,
+        861,
+        965,
+        1038,
+        1039,
+        1040,
+        1226,
+        1227,
+        1228,
+        1255,
+        1299,
+        1300,
+        1301,
+        1386,
+        1387,
+        1388,
+        1467,
+        1468,
+        1469,
+        1477,
+        1478,
+        1479,
+        1544,
+        1776,
+        1931
+      ],
+      "frames": [
         {
           "frame": 0,
-          "kind": "scene_start",
-          "expect_R": 0,
-          "marker_rgb": [
-            0,
-            27,
-            0
+          "kinds": [
+            "first_frame",
+            "scene_start"
           ],
-          "dev_R": 0,
-          "dev_B": 0,
           "ok": true,
-          "note": ""
+          "global_mae": 1.61,
+          "patch_mae_max": 1.808,
+          "patch_mae_mean": 1.61
         },
         {
-          "frame": 606,
-          "kind": "scene_start",
-          "expect_R": 67,
-          "marker_rgb": [
-            65,
-            28,
-            95
+          "frame": 1,
+          "kinds": [
+            "scene_start_post"
           ],
-          "dev_R": 2,
-          "dev_B": 1,
           "ok": true,
-          "note": "boundary_step_R 2->65"
+          "global_mae": 1.635,
+          "patch_mae_max": 1.925,
+          "patch_mae_mean": 1.635
         },
         {
-          "frame": 860,
-          "kind": "scene_start",
-          "expect_R": 134,
-          "marker_rgb": [
-            134,
-            28,
-            93
+          "frame": 154,
+          "kinds": [
+            "interior"
           ],
-          "dev_R": 0,
-          "dev_B": 1,
           "ok": true,
-          "note": "boundary_step_R 66->134"
+          "global_mae": 1.672,
+          "patch_mae_max": 1.916,
+          "patch_mae_mean": 1.672
         },
         {
-          "frame": 1227,
-          "kind": "scene_start",
-          "expect_R": 201,
-          "marker_rgb": [
-            199,
-            28,
-            203
+          "frame": 386,
+          "kinds": [
+            "interior"
           ],
-          "dev_R": 2,
-          "dev_B": 0,
           "ok": true,
-          "note": "boundary_step_R 133->199"
+          "global_mae": 1.667,
+          "patch_mae_max": 1.866,
+          "patch_mae_mean": 1.667
         },
         {
-          "frame": 1478,
-          "kind": "scene_start",
-          "expect_R": 12,
-          "marker_rgb": [
-            11,
-            27,
-            199
+          "frame": 392,
+          "kinds": [
+            "accent_pre"
           ],
-          "dev_R": 1,
-          "dev_B": 1,
           "ok": true,
-          "note": "boundary_step_R 200->11"
+          "global_mae": 1.681,
+          "patch_mae_max": 1.937,
+          "patch_mae_mean": 1.681
         },
         {
           "frame": 393,
-          "kind": "accent_onset",
-          "expect_accent": true,
-          "marker_rgb": [
-            2,
-            218,
-            140
+          "kinds": [
+            "accent"
           ],
-          "dev_B": 3,
           "ok": true,
-          "note": "onset_edge_G 26->218"
+          "global_mae": 1.724,
+          "patch_mae_max": 2.342,
+          "patch_mae_mean": 1.725
+        },
+        {
+          "frame": 394,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.677,
+          "patch_mae_max": 2.109,
+          "patch_mae_mean": 1.677
+        },
+        {
+          "frame": 456,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.676,
+          "patch_mae_max": 1.969,
+          "patch_mae_mean": 1.676
         },
         {
           "frame": 457,
-          "kind": "accent_onset",
-          "expect_accent": true,
-          "marker_rgb": [
-            2,
-            219,
-            199
+          "kinds": [
+            "accent"
           ],
-          "dev_B": 2,
           "ok": true,
-          "note": "onset_edge_G 25->219"
+          "global_mae": 1.483,
+          "patch_mae_max": 1.977,
+          "patch_mae_mean": 1.483
+        },
+        {
+          "frame": 458,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.712,
+          "patch_mae_max": 2.124,
+          "patch_mae_mean": 1.712
+        },
+        {
+          "frame": 517,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.679,
+          "patch_mae_max": 1.924,
+          "patch_mae_mean": 1.679
         },
         {
           "frame": 518,
-          "kind": "accent_onset",
-          "expect_accent": true,
-          "marker_rgb": [
-            2,
-            217,
-            10
+          "kinds": [
+            "accent"
           ],
-          "dev_B": 4,
           "ok": true,
-          "note": "onset_edge_G 28->217"
+          "global_mae": 1.729,
+          "patch_mae_max": 2.466,
+          "patch_mae_mean": 1.73
+        },
+        {
+          "frame": 519,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.709,
+          "patch_mae_max": 2.163,
+          "patch_mae_mean": 1.71
+        },
+        {
+          "frame": 605,
+          "kinds": [
+            "scene_start_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.684,
+          "patch_mae_max": 1.939,
+          "patch_mae_mean": 1.684
+        },
+        {
+          "frame": 606,
+          "kinds": [
+            "scene_start"
+          ],
+          "ok": true,
+          "global_mae": 1.487,
+          "patch_mae_max": 1.971,
+          "patch_mae_mean": 1.487
+        },
+        {
+          "frame": 607,
+          "kinds": [
+            "scene_start_post"
+          ],
+          "ok": true,
+          "global_mae": 1.698,
+          "patch_mae_max": 2.191,
+          "patch_mae_mean": 1.699
+        },
+        {
+          "frame": 675,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.683,
+          "patch_mae_max": 2.3,
+          "patch_mae_mean": 1.683
+        },
+        {
+          "frame": 709,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.736,
+          "patch_mae_max": 2.372,
+          "patch_mae_mean": 1.736
         },
         {
           "frame": 710,
-          "kind": "accent_onset",
-          "expect_accent": true,
-          "marker_rgb": [
-            65,
-            217,
-            199
+          "kinds": [
+            "accent"
           ],
-          "dev_B": 1,
           "ok": true,
-          "note": "onset_edge_G 28->217"
+          "global_mae": 1.762,
+          "patch_mae_max": 2.565,
+          "patch_mae_mean": 1.762
+        },
+        {
+          "frame": 711,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.744,
+          "patch_mae_max": 2.554,
+          "patch_mae_mean": 1.744
+        },
+        {
+          "frame": 780,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.707,
+          "patch_mae_max": 2.305,
+          "patch_mae_mean": 1.707
         },
         {
           "frame": 781,
-          "kind": "accent_onset",
-          "expect_accent": true,
-          "marker_rgb": [
-            65,
-            218,
-            13
+          "kinds": [
+            "accent"
           ],
-          "dev_B": 0,
           "ok": true,
-          "note": "onset_edge_G 28->218"
+          "global_mae": 1.829,
+          "patch_mae_max": 2.598,
+          "patch_mae_mean": 1.83
+        },
+        {
+          "frame": 782,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.75,
+          "patch_mae_max": 2.342,
+          "patch_mae_mean": 1.751
+        },
+        {
+          "frame": 851,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.71,
+          "patch_mae_max": 2.381,
+          "patch_mae_mean": 1.711
         },
         {
           "frame": 852,
-          "kind": "accent_onset",
-          "expect_accent": true,
-          "marker_rgb": [
-            68,
-            218,
-            85
+          "kinds": [
+            "accent"
           ],
-          "dev_B": 1,
           "ok": true,
-          "note": "onset_edge_G 28->218"
+          "global_mae": 1.598,
+          "patch_mae_max": 2.298,
+          "patch_mae_mean": 1.598
+        },
+        {
+          "frame": 853,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.77,
+          "patch_mae_max": 2.317,
+          "patch_mae_mean": 1.771
+        },
+        {
+          "frame": 859,
+          "kinds": [
+            "scene_start_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.77,
+          "patch_mae_max": 2.541,
+          "patch_mae_mean": 1.771
+        },
+        {
+          "frame": 860,
+          "kinds": [
+            "scene_start"
+          ],
+          "ok": true,
+          "global_mae": 1.642,
+          "patch_mae_max": 1.916,
+          "patch_mae_mean": 1.643
+        },
+        {
+          "frame": 861,
+          "kinds": [
+            "scene_start_post"
+          ],
+          "ok": true,
+          "global_mae": 1.666,
+          "patch_mae_max": 2.019,
+          "patch_mae_mean": 1.667
+        },
+        {
+          "frame": 965,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.619,
+          "patch_mae_max": 1.893,
+          "patch_mae_mean": 1.619
+        },
+        {
+          "frame": 1038,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.628,
+          "patch_mae_max": 1.953,
+          "patch_mae_mean": 1.629
+        },
+        {
+          "frame": 1039,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.441,
+          "patch_mae_max": 1.776,
+          "patch_mae_mean": 1.441
+        },
+        {
+          "frame": 1040,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.646,
+          "patch_mae_max": 1.968,
+          "patch_mae_mean": 1.647
+        },
+        {
+          "frame": 1226,
+          "kinds": [
+            "scene_start_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.626,
+          "patch_mae_max": 1.906,
+          "patch_mae_mean": 1.626
+        },
+        {
+          "frame": 1227,
+          "kinds": [
+            "scene_start"
+          ],
+          "ok": true,
+          "global_mae": 1.474,
+          "patch_mae_max": 1.759,
+          "patch_mae_mean": 1.474
+        },
+        {
+          "frame": 1228,
+          "kinds": [
+            "scene_start_post"
+          ],
+          "ok": true,
+          "global_mae": 1.7,
+          "patch_mae_max": 1.994,
+          "patch_mae_mean": 1.701
+        },
+        {
+          "frame": 1255,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.676,
+          "patch_mae_max": 1.937,
+          "patch_mae_mean": 1.676
+        },
+        {
+          "frame": 1299,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.684,
+          "patch_mae_max": 2.211,
+          "patch_mae_mean": 1.685
+        },
+        {
+          "frame": 1300,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.747,
+          "patch_mae_max": 2.776,
+          "patch_mae_mean": 1.748
+        },
+        {
+          "frame": 1301,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.716,
+          "patch_mae_max": 2.568,
+          "patch_mae_mean": 1.716
+        },
+        {
+          "frame": 1386,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.699,
+          "patch_mae_max": 2.304,
+          "patch_mae_mean": 1.699
+        },
+        {
+          "frame": 1387,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.694,
+          "patch_mae_max": 2.507,
+          "patch_mae_mean": 1.694
+        },
+        {
+          "frame": 1388,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.703,
+          "patch_mae_max": 2.559,
+          "patch_mae_mean": 1.704
+        },
+        {
+          "frame": 1467,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.69,
+          "patch_mae_max": 2.22,
+          "patch_mae_mean": 1.69
+        },
+        {
+          "frame": 1468,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.509,
+          "patch_mae_max": 2.265,
+          "patch_mae_mean": 1.509
+        },
+        {
+          "frame": 1469,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.71,
+          "patch_mae_max": 2.375,
+          "patch_mae_mean": 1.71
+        },
+        {
+          "frame": 1477,
+          "kinds": [
+            "scene_start_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.731,
+          "patch_mae_max": 2.285,
+          "patch_mae_mean": 1.732
+        },
+        {
+          "frame": 1478,
+          "kinds": [
+            "scene_start"
+          ],
+          "ok": true,
+          "global_mae": 1.728,
+          "patch_mae_max": 2.159,
+          "patch_mae_mean": 1.729
+        },
+        {
+          "frame": 1479,
+          "kinds": [
+            "scene_start_post"
+          ],
+          "ok": true,
+          "global_mae": 1.709,
+          "patch_mae_max": 2.11,
+          "patch_mae_mean": 1.709
+        },
+        {
+          "frame": 1544,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.662,
+          "patch_mae_max": 2.025,
+          "patch_mae_mean": 1.662
+        },
+        {
+          "frame": 1776,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.659,
+          "patch_mae_max": 2.028,
+          "patch_mae_mean": 1.659
+        },
+        {
+          "frame": 1931,
+          "kinds": [
+            "last_frame"
+          ],
+          "ok": true,
+          "global_mae": 1.661,
+          "patch_mae_max": 2.13,
+          "patch_mae_mean": 1.661
         }
-      ],
-      "quantization": {
-        "max_abs_dev": 4,
-        "n_probed": 11
-      }
+      ]
     }
   ],
   "pass": true,

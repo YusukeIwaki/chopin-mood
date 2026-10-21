@@ -6,96 +6,96 @@
     {
       "id": "scene01",
       "palette": {
-        "sky_top": [18, 24, 38],
-        "sky_bot": [42, 52, 66],
-        "far": [58, 66, 80],
-        "near": [26, 29, 34],
-        "moon": [216, 218, 206],
-        "glow": [140, 150, 165]
+        "sky_top": [16, 26, 44],
+        "sky_bot": [74, 90, 110],
+        "far": [52, 64, 82],
+        "near": [20, 24, 32],
+        "moon": [232, 234, 222],
+        "glow": [168, 180, 196]
       },
-      "motif": "Abstract moonlit ridges under open darkness; one small stationary silhouetted traveler below center with sparse drifting particles as faint traces; desaturated blue-gray and charcoal with dim pearl moon, conveying tired stillness and isolation.",
-      "camera": "Wide landscape with broad negative space above the traveler and moon offset from the figure; restrained slow lateral drift, traveler remains stationary and small.",
+      "motif": "Abstract moonlit ridges in layered blue-gray; one small stationary silhouetted traveler below center, sparse particles as faint traces. Desaturated charcoal and steel tones with a dim pearl moon convey tired stillness and isolation.",
+      "camera": "Wide landscape with broad negative space above the small traveler and the moon offset from the figure; restrained slow lateral drift, traveler stationary.",
       "params": {
-        "figure_scale": 0.75,
-        "particle_multiplier": 0.6,
-        "light_bias": -0.08,
-        "glow_scale": 0.8
-      }
-    },
-    {
-      "id": "scene02",
-      "palette": {
-        "sky_top": [28, 30, 44],
-        "sky_bot": [70, 62, 58],
-        "far": [78, 70, 62],
-        "near": [34, 32, 30],
-        "moon": [228, 214, 182],
-        "glow": [180, 145, 105]
-      },
-      "motif": "Same abstract ridges and stationary traveler, now suffused with faint faded amber suggesting an indistinct recollection; no literal memory imagery, dim warmth held within the blue-gray landscape.",
-      "camera": "Slightly closer framing with gentle inward move; traveler stays small and grounded, moon held as stable anchor.",
-      "params": {
-        "figure_scale": 0.9,
-        "particle_multiplier": 0.85,
-        "light_bias": 0.06,
-        "glow_scale": 1.1
-      }
-    },
-    {
-      "id": "scene03",
-      "palette": {
-        "sky_top": [16, 20, 36],
-        "sky_bot": [38, 42, 60],
-        "far": [52, 56, 76],
-        "near": [24, 26, 32],
-        "moon": [200, 202, 198],
-        "glow": [130, 128, 125]
-      },
-      "motif": "Recollection withdraws into slate and muted indigo ridges; only a faint trace of amber remains among cooler tones, particles thinned, traveler held in spacious quiet as weariness returns.",
-      "camera": "Return toward the opening spacious wide framing at the same traveler position; camera settles with minimal movement.",
-      "params": {
-        "figure_scale": 0.78,
-        "particle_multiplier": 0.45,
-        "light_bias": -0.1,
-        "glow_scale": 0.7
-      }
-    },
-    {
-      "id": "scene04",
-      "palette": {
-        "sky_top": [22, 26, 40],
-        "sky_bot": [50, 50, 56],
-        "far": [66, 62, 58],
-        "near": [28, 29, 32],
-        "moon": [218, 200, 172],
-        "glow": [158, 130, 96]
-      },
-      "motif": "Weaker echo of recollection: faint dusty amber returns within charcoal and blue ridges, abstract particles only, no dramatic reveal; traveler remains isolated and stationary in generous darkness.",
-      "camera": "Wide landscape preserving generous negative space around the isolated traveler; restrained slow drift, no abrupt change.",
-      "params": {
-        "figure_scale": 0.76,
-        "particle_multiplier": 0.65,
+        "figure_scale": 1.0,
+        "particle_multiplier": 0.55,
         "light_bias": 0.02,
         "glow_scale": 0.95
       }
     },
     {
-      "id": "scene05",
+      "id": "scene02",
       "palette": {
-        "sky_top": [20, 26, 40],
-        "sky_bot": [46, 54, 66],
-        "far": [58, 64, 74],
-        "near": [27, 30, 35],
-        "moon": [212, 206, 192],
-        "glow": [138, 134, 122]
+        "sky_top": [26, 32, 52],
+        "sky_bot": [104, 90, 76],
+        "far": [68, 62, 54],
+        "near": [28, 26, 24],
+        "moon": [238, 222, 188],
+        "glow": [204, 168, 120]
       },
-      "motif": "Warmth recedes into muted blue-gray with a residual warm tint; abstract ridges and small traveler persist quietly beneath the moon, particles visually quieter, ending in subdued visibility without resolution.",
-      "camera": "Balanced wide view with small traveler beneath the moon and readable ridge contours; movement settles to near stillness.",
+      "motif": "Same abstract ridges and stationary traveler suffused with dim faded amber, suggesting an indistinct recollection held within the blue-gray landscape; abstract particles only, no literal memory imagery.",
+      "camera": "Slightly closer framing with a gentle inward move; traveler remains small and grounded, moon held as a stable anchor.",
       "params": {
-        "figure_scale": 0.8,
-        "particle_multiplier": 0.35,
+        "figure_scale": 1.15,
+        "particle_multiplier": 0.9,
+        "light_bias": 0.14,
+        "glow_scale": 1.35
+      }
+    },
+    {
+      "id": "scene03",
+      "palette": {
+        "sky_top": [14, 22, 42],
+        "sky_bot": [62, 74, 98],
+        "far": [44, 54, 76],
+        "near": [18, 22, 30],
+        "moon": [214, 220, 214],
+        "glow": [148, 152, 148]
+      },
+      "motif": "Recollection withdraws into slate and muted indigo ridges with only a faint trace of amber in the glow; particles thinned, traveler held in spacious quiet as weariness returns.",
+      "camera": "Return toward the opening spacious wide framing at the same traveler position; camera settles with minimal movement.",
+      "params": {
+        "figure_scale": 1.0,
+        "particle_multiplier": 0.4,
         "light_bias": -0.04,
         "glow_scale": 0.75
+      }
+    },
+    {
+      "id": "scene04",
+      "palette": {
+        "sky_top": [20, 28, 48],
+        "sky_bot": [84, 80, 76],
+        "far": [56, 56, 52],
+        "near": [22, 24, 28],
+        "moon": [230, 216, 190],
+        "glow": [176, 150, 116]
+      },
+      "motif": "Weaker echo of recollection: faint dusty amber returns within charcoal and blue ridges, abstract particles only, no dramatic reveal; traveler remains isolated and stationary in generous darkness.",
+      "camera": "Wide landscape preserving generous negative space around the isolated traveler; restrained slow drift, no abrupt change.",
+      "params": {
+        "figure_scale": 0.98,
+        "particle_multiplier": 0.6,
+        "light_bias": 0.06,
+        "glow_scale": 1.05
+      }
+    },
+    {
+      "id": "scene05",
+      "palette": {
+        "sky_top": [18, 28, 46],
+        "sky_bot": [72, 86, 102],
+        "far": [50, 62, 78],
+        "near": [20, 25, 32],
+        "moon": [226, 224, 210],
+        "glow": [158, 162, 156]
+      },
+      "motif": "Warmth recedes into muted blue-gray with a residual warm tint in moon and glow; abstract ridges and small traveler persist quietly beneath the moon, particles visually quieter, ending in subdued visibility without resolution.",
+      "camera": "Balanced wide view with the small traveler beneath the moon and readable ridge contours; movement settles to near stillness.",
+      "params": {
+        "figure_scale": 1.02,
+        "particle_multiplier": 0.3,
+        "light_bias": 0.0,
+        "glow_scale": 0.85
       }
     }
   ]
