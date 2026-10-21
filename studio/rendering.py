@@ -12,13 +12,28 @@ What the storyboard can actually steer (honest capability list):
   applied only at the deterministic DSP scene ids;
 * ``figure_scale``, ``particle_multiplier``, ``light_bias`` and
   ``glow_scale`` per scene;
+* the optional executable camera per scene: ``camera_zoom_start/end``
+  (1.0-1.18, default 1.0) and ``camera_pan_x_start/end`` /
+  ``camera_pan_y_start/end`` (-1.0-1.0, default 0.0). The camera
+  transforms the ENTIRE rendered world (sky, moon, terrain, figure) by
+  a deterministic subpixel crop/resample. Zoom/pan are interpolated
+  with smoothstep easing over the current scene's inclusive frame
+  range ``[start_frame, end_frame-1]``, derived from
+  ``ctrl['scene_id']`` without moving any event or boundary. Pan is a
+  fraction of the available crop margin, so pan has no effect at zoom
+  1.0, and zoom >= 1.0 guarantees the crop stays inside the frame (no
+  black/edge fill at any bound);
 * the per-frame control arrays built by DSP (``light``, ``zoom``,
-  ``camx``/``camy``, ``particle``, ``accent_pulse``, ``scene_id``).
+  ``camx``/``camy``, ``particle``, ``accent_pulse``, ``scene_id``),
+  which continue to drive accents/light/parallax and are never
+  rewritten by the storyboard camera.
 
 Descriptive storyboard fields such as ``motif`` and ``camera`` are text
 metadata: they are *not* executable instructions and have no effect on
-the pixels. Timings, scene boundaries and accents are deterministic
-inputs; this module never moves them, adds cuts, or imposes a BPM grid.
+the pixels. Camera *prose* alone changes nothing; only the numeric
+camera params above move the framing. Timings, scene boundaries and
+accents are deterministic inputs; this module never moves them, adds
+cuts, or imposes a BPM grid.
 
 Imagery is original and procedural (Pillow/NumPy only): a soft night
 sky with diffuse moonlight, irregular layered terrain with a winding
@@ -98,6 +113,12 @@ def make_layouts(seed: int, w: int, h: int) -> dict:
         np.clip((tex_small - tex_small.min())
                 / (tex_small.max() - tex_small.min() + 1e-9) * 255,
                 0, 255).astype(np.uint8)).resize((w, h), Image.BICUBIC)
+    # Down/up resample: broad tonal variation only, never the tall
+    # thin block streaks a direct 36x64 -> frame upscale would leave.
+    tex_img = tex_img.resize((max(8, w // 6), max(8, h // 6)),
+                             Image.BICUBIC).resize((w, h), Image.BICUBIC)
+    tex_img = tex_img.filter(
+        ImageFilter.GaussianBlur(radius=max(2.0, min(w, h) * 0.006)))
     lay["_texture"] = (np.asarray(tex_img, dtype=np.float32) / 255.0 - 0.5)
     lay["_w"], lay["_h"] = int(w), int(h)
     return lay
@@ -118,6 +139,282 @@ def _ridge_y(x_norm: np.ndarray, ctrl_pts: np.ndarray, base: float,
 
 def _mix(a, b, t: float) -> tuple:
     return tuple(int(round(a[i] * (1 - t) + b[i] * t)) for i in range(3))
+
+
+# --- executable storyboard camera (pure helpers) --------------------------
+#
+# The camera is a bounded crop/resample of the whole rendered world.
+# Zoom is >= 1.0, so the crop window always lies inside the source
+# frame: there is never any black or edge-replicated fill, even at the
+# pan extrema. Pan is expressed as a fraction of the available crop
+# margin ((frame - crop) / 2 on each axis), so pan at zoom 1.0 is an
+# exact no-op. Trajectories are eased with smoothstep over the current
+# scene's inclusive frame range [start_frame, end_frame-1]; scene
+# bounds are derived from ctrl['scene_id'] runs only, so no event,
+# plan or boundary is ever moved and no structure is mutated.
+
+CAMERA_ZOOM_RANGE = (1.0, 1.18)
+CAMERA_PAN_RANGE = (-1.0, 1.0)
+_CAMERA_KEYS = ("camera_zoom_start", "camera_zoom_end",
+                "camera_pan_x_start", "camera_pan_x_end",
+                "camera_pan_y_start", "camera_pan_y_end")
+
+
+def smoothstep01(t: float) -> float:
+    """Clamped smoothstep easing on [0, 1]."""
+    x = float(min(1.0, max(0.0, float(t))))
+    return x * x * (3.0 - 2.0 * x)
+
+
+def scene_frame_progress(frame: int, scene_ids) -> float:
+    """Progress of ``frame`` through its scene's inclusive range.
+
+    The current scene is the maximal run of equal ``scene_ids`` values
+    containing ``frame``; progress is ``(f - start) / (end-1 - start)``
+    over the inclusive range [start, end-1]. A one-frame scene has
+    progress 0.0. Pure: inputs are never mutated and the result does
+    not depend on evaluation order.
+    """
+    ids = np.asarray(scene_ids)
+    f = int(frame)
+    cur = int(ids[f])
+    start = f
+    while start > 0 and int(ids[start - 1]) == cur:
+        start -= 1
+    end = f + 1
+    while end < len(ids) and int(ids[end]) == cur:
+        end += 1
+    last = end - 1
+    if last <= start:
+        return 0.0
+    return float(min(1.0, max(0.0, (f - start) / (last - start))))
+
+
+def camera_trajectory(params: dict | None, progress: float):
+    """(zoom, pan_x, pan_y) at ``progress``, smoothstep-eased.
+
+    Missing keys default to zoom 1.0 / pan 0.0 (legacy storyboards).
+    Values are defensively clamped to the validated ranges. The input
+    dict is only read, never mutated.
+    """
+    p = params or {}
+    e = smoothstep01(progress)
+
+    def _lerp(start_key, end_key, lo, hi, default):
+        a = float(p.get(start_key, default))
+        b = float(p.get(end_key, default))
+        return float(min(hi, max(lo, a + (b - a) * e)))
+
+    zoom = _lerp("camera_zoom_start", "camera_zoom_end",
+                 CAMERA_ZOOM_RANGE[0], CAMERA_ZOOM_RANGE[1], 1.0)
+    pan_x = _lerp("camera_pan_x_start", "camera_pan_x_end",
+                  CAMERA_PAN_RANGE[0], CAMERA_PAN_RANGE[1], 0.0)
+    pan_y = _lerp("camera_pan_y_start", "camera_pan_y_end",
+                  CAMERA_PAN_RANGE[0], CAMERA_PAN_RANGE[1], 0.0)
+    return zoom, pan_x, pan_y
+
+
+def camera_crop_box(w: int, h: int, zoom: float, pan_x: float,
+                    pan_y: float):
+    """Float crop box (left, top, crop_w, crop_h) inside the frame.
+
+    ``crop_w = w / zoom``; the centre is offset by ``pan * margin``
+    where ``margin = (w - crop_w) / 2`` (likewise vertically), and the
+    box is clamped inside [0, w-crop_w] x [0, h-crop_h]. At zoom 1.0
+    the box is exactly the full frame for any pan.
+    """
+    z = float(min(CAMERA_ZOOM_RANGE[1],
+                  max(CAMERA_ZOOM_RANGE[0], float(zoom))))
+    cw = float(w) / z
+    ch = float(h) / z
+    px = float(min(1.0, max(-1.0, float(pan_x))))
+    py = float(min(1.0, max(-1.0, float(pan_y))))
+    left = (float(w) - cw) / 2.0 + px * (float(w) - cw) / 2.0
+    top = (float(h) - ch) / 2.0 + py * (float(h) - ch) / 2.0
+    left = float(min(max(left, 0.0), max(0.0, float(w) - cw)))
+    top = float(min(max(top, 0.0), max(0.0, float(h) - ch)))
+    return left, top, cw, ch
+
+
+def camera_for_frame(f: int, ctrl: dict, scene_params=None):
+    """(zoom, pan_x, pan_y) for frame ``f`` from its scene's params.
+
+    Uses the same per-scene params (indexed by ``ctrl['scene_id']``)
+    as the rest of the renderer, so the creative render and the QA
+    reference callback always agree. Pure and order-independent.
+    """
+    scene_id = int(ctrl["scene_id"][f])
+    spar: dict = {}
+    if scene_params:
+        spar = scene_params[scene_id % len(scene_params)] or {}
+    progress = scene_frame_progress(f, ctrl["scene_id"])
+    return camera_trajectory(spar, progress)
+
+
+def apply_camera(frame: np.ndarray, zoom: float, pan_x: float,
+                 pan_y: float) -> np.ndarray:
+    """Deterministic subpixel crop+resample of the whole frame.
+
+    Returns the input unchanged (full-frame box, e.g. zoom 1.0 with
+    any pan) so default storyboards keep their exact pixels and cost.
+    Otherwise resamples the float crop box back to (w, h) with
+    bicubic interpolation; the box never leaves the source frame, so
+    no black/edge fill can appear.
+    """
+    h, w = int(frame.shape[0]), int(frame.shape[1])
+    left, top, cw, ch = camera_crop_box(w, h, zoom, pan_x, pan_y)
+    if cw >= w - 1e-9 and ch >= h - 1e-9:
+        return frame
+    img = Image.fromarray(np.ascontiguousarray(frame, dtype=np.uint8),
+                          "RGB")
+    out = img.resize((w, h), Image.BICUBIC,
+                     box=(left, top, left + cw, top + ch))
+    return np.asarray(out, dtype=np.uint8)
+
+
+# --- smooth curve helpers (figure silhouette / path) ----------------------
+
+def _cubic(p0, p1, p2, p3, t: float):
+    mt = 1.0 - t
+    a, b, c, d = mt ** 3, 3 * mt * mt * t, 3 * mt * t * t, t ** 3
+    return (a * p0[0] + b * p1[0] + c * p2[0] + d * p3[0],
+            a * p0[1] + b * p1[1] + c * p2[1] + d * p3[1])
+
+
+def _bezier_chain(start, segments, steps: int = 14):
+    """Sample a chain of cubic Bezier segments into a point list."""
+    pts = [(float(start[0]), float(start[1]))]
+    cur = (float(start[0]), float(start[1]))
+    for c1, c2, end in segments:
+        for i in range(1, steps + 1):
+            pts.append(_cubic(cur, c1, c2, end, i / steps))
+        cur = (float(end[0]), float(end[1]))
+    return pts
+
+
+def _tapered_stroke(start, segments, w_start: float, w_end: float,
+                    steps: int = 14):
+    """Closed polygon around a Bezier centreline with tapered width."""
+    centre = _bezier_chain(start, segments, steps=steps)
+    left, right = [], []
+    n = len(centre)
+    for i, (x, y) in enumerate(centre):
+        j0, j1 = max(0, i - 1), min(n - 1, i + 1)
+        dx, dy = centre[j1][0] - centre[j0][0], centre[j1][1] - centre[j0][1]
+        norm = max(1e-9, float(np.hypot(dx, dy)))
+        nx, ny = -dy / norm, dx / norm
+        half = 0.5 * (w_start + (w_end - w_start) * (i / max(1, n - 1)))
+        left.append((x + nx * half, y + ny * half))
+        right.append((x - nx * half, y - ny * half))
+    return left + right[::-1]
+
+
+def _traveller_layer(fs: float, pal: dict) -> Image.Image:
+    """Refined static traveller silhouette as a small RGBA layer.
+
+    Drawn on a locally supersampled mask (4x, figure-sized only, so
+    there is no full-frame supersampling cost) from sampled cubic
+    Bezier outlines, then downscaled: edges are smooth and considered,
+    not circle/polygon tokens. The pose is still and asymmetrical:
+    bowed head/neck with a hair profile (no face, no expression),
+    uneven coat shoulders and hem, one arm hanging, one raised to the
+    lantern, tapered trousers and grounded boots (feet planted; the
+    contact shadow is drawn by the caller). A restrained rim offset
+    toward the moon gives subtle edge lighting. Local coordinates are
+    in ``fs`` units: x in [-17, 17], y in [-3, 57] upward from feet.
+    """
+    ss = 4
+    wf = max(2, int(np.ceil(34 * fs)))
+    hf = max(2, int(np.ceil(60 * fs)))
+    img = Image.new("RGBA", (wf * ss, hf * ss), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+
+    def pts(shape, dx=0.0, dy_up=0.0):
+        return [((x + 17.0 + dx) * fs * ss, (57.0 - (y + dy_up)) * fs * ss)
+                for x, y in shape]
+
+    body = (10, 10, 17)
+    coat_col, leg_col = (13, 13, 21), (9, 9, 15)
+    hair_col, neck_col = (6, 6, 11), (12, 10, 14)
+    scarf_col = _mix(pal["glow"], pal["near"], 0.85)
+    rim_col = _mix(pal["glow"], body, 0.50)
+
+    # Hunched, asymmetrical coat: higher back (left) shoulder, lower
+    # front shoulder, straighter sides, longer back hem than front.
+    coat = _bezier_chain((-7.6, 13.6), [
+        ((-8.6, 21.0), (-7.8, 30.0), (-5.2, 39.2)),
+        ((-4.6, 41.2), (-3.2, 42.2), (-1.8, 42.5)),
+        ((-0.2, 43.0), (1.0, 42.7), (2.4, 42.0)),
+        ((3.9, 41.2), (4.8, 39.6), (5.0, 37.6)),
+        ((6.2, 30.0), (6.3, 22.0), (5.7, 15.4)),
+        ((4.0, 14.0), (1.4, 16.8), (-1.6, 14.2)),
+        ((-4.0, 12.4), (-6.2, 15.4), (-7.6, 13.6))])
+    # Bowed head and hair as one mass: crown thrown back, forehead
+    # sloping steeply to a tucked chin at the front, hair falling at
+    # the back over the neck almost to the shoulder. The outline is
+    # long and leaning, never a plain circle; no face is drawn.
+    head = _bezier_chain((2.8, 42.4), [
+        ((5.8, 44.6), (6.2, 47.6), (4.8, 50.4)),
+        ((3.2, 51.4), (0.4, 52.2), (-2.4, 51.4)),
+        ((-5.0, 50.4), (-6.1, 47.6), (-5.8, 44.6)),
+        ((-5.4, 42.6), (-4.6, 40.2), (-3.2, 39.2)),
+        ((-1.6, 40.6), (0.2, 41.2), (1.4, 41.0)),
+        ((2.2, 41.4), (2.6, 41.8), (2.8, 42.4))])
+    leg_l = _bezier_chain((-5.0, 15.8), [
+        ((-5.3, 10.0), (-5.0, 5.0), (-4.7, 2.4)),
+        ((-3.9, 2.0), (-3.0, 2.0), (-2.5, 2.4)),
+        ((-2.0, 6.0), (-1.8, 11.0), (-1.7, 15.4)),
+        ((-3.2, 16.2), (-4.2, 16.1), (-5.0, 15.8))])
+    leg_r = _bezier_chain((0.9, 15.4), [
+        ((0.7, 10.0), (0.9, 5.0), (1.1, 2.4)),
+        ((1.9, 2.0), (2.8, 2.0), (3.3, 2.4)),
+        ((3.9, 6.0), (4.1, 11.0), (4.0, 15.0)),
+        ((2.6, 15.8), (1.6, 15.7), (0.9, 15.4))])
+
+    def boot(x0):
+        return _bezier_chain((x0, 0.2), [
+            ((x0 - 0.1, 1.6), (x0 + 0.4, 2.6), (x0 + 1.8, 2.8)),
+            ((x0 + 3.2, 2.6), (x0 + 3.8, 1.4), (x0 + 4.1, 0.5)),
+            ((x0 + 4.0, 0.1), (x0 + 2.1, 0.0), (x0, 0.2))])
+
+    arm_l = _tapered_stroke((-5.2, 36.6),
+                            [((-8.8, 30.5), (-10.0, 24.5), (-9.2, 19.6))],
+                            3.3, 2.2)
+    arm_r = _tapered_stroke((4.7, 37.0),
+                            [((7.3, 33.2), (9.5, 29.8), (10.7, 27.4))],
+                            3.3, 2.3)
+    neck = [(-2.1, 42.7), (2.3, 42.5), (1.9, 39.7), (-1.7, 39.9)]
+    scarf = _bezier_chain((-3.8, 42.9), [
+        ((-2.0, 43.6), (1.0, 43.4), (3.6, 42.4)),
+        ((3.2, 41.2), (2.6, 40.6), (1.8, 40.3)),
+        ((-0.5, 39.9), (-2.6, 40.4), (-3.9, 41.2)),
+        ((-4.1, 41.9), (-4.0, 42.4), (-3.8, 42.9))])
+    tail = _tapered_stroke((-3.4, 41.3),
+                           [((-5.6, 39.8), (-6.8, 37.8), (-6.2, 35.6))],
+                           1.7, 0.9)
+    fold_dark = _tapered_stroke((-2.2, 36.0),
+                                [((-2.8, 29.0), (-2.4, 21.0), (-3.0, 15.5))],
+                                0.55, 0.4)
+    fold_light = _tapered_stroke((3.4, 35.0),
+                                 [((3.0, 28.0), (3.6, 20.0), (3.0, 15.0))],
+                                 0.45, 0.3)
+
+    silhouette = [leg_l, leg_r, boot(-4.6), boot(1.4), coat, arm_l,
+                  arm_r, head]
+    for shape in silhouette:  # restrained moon-side edge light
+        d.polygon(pts(shape, dx=0.6, dy_up=0.4), fill=rim_col + (120,))
+    for shape, col in ((leg_l, leg_col), (leg_r, leg_col),
+                       (boot(-4.6), leg_col), (boot(1.4), leg_col),
+                       (coat, coat_col), (arm_l, coat_col),
+                       (arm_r, coat_col)):
+        d.polygon(pts(shape), fill=col + (255,))
+    d.polygon(pts(fold_dark), fill=(0, 0, 0, 40))
+    d.polygon(pts(fold_light), fill=tuple(pal["glow"]) + (14,))
+    d.polygon(pts(neck), fill=neck_col + (255,))
+    d.polygon(pts(tail), fill=scarf_col + (235,))
+    d.polygon(pts(scarf), fill=scarf_col + (255,))
+    d.polygon(pts(head), fill=hair_col + (255,))
+    return img.resize((wf, hf), Image.LANCZOS)
 
 
 def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
@@ -179,26 +476,41 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
     if tex is None or tex.shape != (h, w):
         tex = np.zeros((h, w), dtype=np.float32)
 
-    # layered terrain: irregular ridges with slow parallax drift
+    # layered terrain: irregular ridges with slow parallax drift.
+    # Distant layers dissolve into the haze (soft feathered edges,
+    # reduced contrast); nearer layers keep firmer but still
+    # antialiased edges. Slope and texture shading keep the slopes
+    # from reading as flat colour bands.
     drift = f * 0.0016  # slow environment motion even if camx is still
+    ypix = yy[:, None] * h
+    haze_arr = np.array(_mix(pal["sky_bot"], pal["far"], 0.45), float)
     layers = []
-    for pts, base_f, amp_f, col, shift_k in (
+    for li, (pts, base_f, amp_f, col, shift_k) in enumerate((
         (lay["ridge_far"], 0.60, 0.055, pal["far"], 1.0),
         (lay["ridge_mid"], 0.70, 0.065, _mix(pal["far"], pal["near"], 0.45), 1.8),
         (lay["ridge_near"], 0.80, 0.055, pal["near"], 2.8),
-    ):
+    )):
         ridge = _ridge_y(x_norm, pts, base_f * h + (camy - 0.5) * 0.03 * h,
                          amp_f * h * zoom, camx * shift_k + drift * shift_k)
         layers.append((ridge, np.array(col, float)))
-        below = (yy[:, None] * h) >= ridge[None, :]
-        depth = np.clip(((yy[:, None] * h) - ridge[None, :])
+        depth = np.clip((ypix - ridge[None, :])
                         / np.maximum(1.0, h - ridge[None, :]), 0, 1)
-        col_arr = np.array(col, float)
+        atmo = (0.42, 0.22, 0.06)[li]  # far layers sit deeper in haze
+        col_arr = np.array(col, float) * (1.0 - atmo) + haze_arr * atmo
+        slope = np.gradient(ridge)
+        k = np.ones(17) / 17.0  # smooth so shading cannot stripe
+        slope = np.convolve(np.pad(slope, 8, mode="edge"), k,
+                            mode="valid")[:len(slope)]
+        shade = np.clip(1.0 - slope * 0.16, 0.96, 1.04)[None, :, None]
         layer_col = (col_arr[None, None, :] * (1 - 0.25 * depth[:, :, None])
                      + np.array((4, 5, 10), float)[None, None, :]
                      * (0.25 * depth[:, :, None]))
-        layer_col = layer_col + tex[:, :, None] * 9.0
-        img = np.where(below[:, :, None], layer_col, img)
+        layer_col = layer_col * shade + tex[:, :, None] * 7.0
+        feather = (0.016, 0.010, 0.005)[li] * h
+        alpha = np.clip((ypix - ridge[None, :] + feather * 0.5)
+                        / max(1.0, feather), 0.0, 1.0)
+        alpha = alpha * alpha * (3.0 - 2.0 * alpha)
+        img = layer_col * alpha[:, :, None] + img * (1 - alpha[:, :, None])
 
     # water sheen in the lowest foreground: blend toward the sky colour
     water = np.clip((yy - 0.93) / 0.07, 0, 1)[:, None, None]
@@ -211,11 +523,48 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
     tx_c = float(np.clip(tx, 0, w - 1))
     feet_y = float(np.interp(tx_c, xs, near_ridge)) + 3 * u
     fs = figure_scale * u
+    # The figure is static (no bob, no walking loop): feet stay planted
+    # at feet_y. The lantern hangs from the raised hand; this ONE
+    # position drives both the accent bloom below and the lantern dot
+    # drawn with the figure, so they can never drift apart.
+    fy = feet_y
+    lx, ly = tx_c + 11 * fs, fy - 27 * fs
+
+    # terrain-following path: a naturally curving worn track from the
+    # traveller's feet down the foreground slope. Drawn as a feathered,
+    # texture-broken mask (soft integrated edges, shading that fades
+    # with distance) -- never a hard translucent wedge/spotlight.
+    if h - feet_y > 4:
+        span = h - feet_y
+        p0 = (tx_c, feet_y - 1 * u)
+        p1 = (tx_c + 15 * u, feet_y + 0.30 * span)
+        p2 = (tx_c - 20 * u, feet_y + 0.66 * span)
+        p3 = (tx_c + 11 * u, h + 4 * u)
+        centre = [_cubic(p0, p1, p2, p3, t / 28.0) for t in range(29)]
+        left, right = [], []
+        for i, (cxp, cyp) in enumerate(centre):
+            t = i / 28.0
+            half = (2.4 + 13.0 * t ** 1.3) * u \
+                * (1.0 + 0.16 * np.sin(t * 9.0 + scene_id * 1.3))
+            left.append((cxp - half, cyp))
+            right.append((cxp + half, cyp))
+        mask = Image.new("L", (w, h), 0)
+        ImageDraw.Draw(mask).polygon(left + right[::-1], fill=255)
+        mask = mask.filter(
+            ImageFilter.GaussianBlur(radius=max(1.0, 1.7 * u)))
+        pa = np.asarray(mask, dtype=np.float64) / 255.0
+        fade = 1.0 - 0.45 * np.clip((ypix - feet_y)
+                                    / max(1.0, span), 0, 1)
+        pa = pa * fade * (0.70 + 0.60 * (tex.astype(np.float64) + 0.5))
+        pa = np.clip(pa, 0.0, 1.0) * 0.38
+        path_col = np.array(_mix(_mix(pal["near"], pal["glow"], 0.18),
+                                 pal["moon"], 0.10), float)
+        img = img * (1 - pa[:, :, None]) + path_col[None, None, :] \
+            * pa[:, :, None]
 
     # soft accent bloom at the lantern (diffuse, localised; not a ring,
-    # not a whole-frame flash)
+    # not a whole-frame flash). Shares (lx, ly) with the lantern dot.
     if acc > 0.01:
-        lx, ly = tx_c + 11 * fs, feet_y - 27 * fs
         d2 = (xs[None, :] - lx) ** 2 + ((yy[:, None] * h) - ly) ** 2
         img += np.array(pal["glow"], float)[None, None, :] * (
             np.exp(-d2 / (2 * (0.10 * min(w, h)) ** 2))
@@ -253,36 +602,22 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
                                lay["star_phase"][:n_star]):
             tw = 0.4 + 0.6 * abs(np.sin(0.03 * f + ph))
             a = int(46 + 66 * tw)
-            rr = r * u
+            rr = r * u * 0.55
             d.ellipse([x - rr, y - rr, x + rr, y + rr],
                       fill=(228, 233, 250, a))
 
     # terrain speckles (texture on the slopes, parallax-shifted)
     sp = lay["speckles"]
     spx = (sp[:, 0] * w + camx * 14 * u) % w
-    for x, yn in zip(spx[::3], sp[::3, 1]):
+    for x, yn in zip(spx[::4], sp[::4, 1]):
         ridge_here = float(np.interp(x, xs, layers[1][0]))
         y = ridge_here + yn * (h - ridge_here) * 0.85
         if y < h - 2:
             d.ellipse([x - u, y - u * 0.6, x + u, y + u * 0.6],
                       fill=(210, 215, 235, 14))
 
-    # winding path from the traveller's feet to the bottom edge
-    path_col = _mix(pal["near"], pal["glow"], 0.30)
-    steps = 9
-    left, right = [], []
-    for i in range(steps + 1):
-        t = i / steps
-        y = feet_y + t * (h - feet_y)
-        cxp = tx_c + np.sin(t * 2.4 + scene_id) * 9 * u * t + t * t * 14 * u
-        half = (3.5 + 24 * t) * u
-        left.append((cxp - half, y))
-        right.append((cxp + half, y))
-    d.polygon(left + right[::-1], fill=path_col + (64,))
-    inner_l = [(x + (tx_c - x) * 0.45, y) for x, y in left]
-    inner_r = [(x + (tx_c - x) * 0.45, y) for x, y in right]
-    d.polygon(inner_l + inner_r[::-1],
-              fill=_mix(path_col, pal["moon"], 0.2) + (36,))
+    # (The worn path was integrated into the terrain above as a
+    # feathered, texture-broken mask; no wedge is drawn here.)
 
     # water shimmer streaks in the foreground
     for i, (sx0, sy0) in enumerate(lay["streaks"]):
@@ -292,50 +627,39 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
         d.line([x, y, x + ln, y], fill=pal["glow"] + (int(13 + 10 * light),),
                width=max(1, int(u)))
 
-    # traveller: head, coat, arms, legs, grounded on the near ridge
-    body = (10, 10, 17)
-    bob = 0.7 * u * np.sin(2 * np.pi * f / 110.0)
-    fy = feet_y + bob
-    for side in (-1, 1):  # legs + boots
-        hip_x = tx_c + side * 3.2 * fs
-        foot_x = tx_c + side * 5.0 * fs
-        d.polygon([(hip_x - 1.7 * fs, fy - 17 * fs),
-                   (hip_x + 1.7 * fs, fy - 17 * fs),
-                   (foot_x + 1.6 * fs, fy - 1.5 * fs),
-                   (foot_x - 1.6 * fs, fy - 1.5 * fs)], fill=body + (255,))
-        d.rectangle([foot_x - 2.4 * fs, fy - 1.8 * fs,
-                     foot_x + 2.8 * fs, fy], fill=body + (255,))
-    # coat: rim light offset toward the moon, then the coat itself
-    coat = [(tx_c - 6.5 * fs, fy - 39 * fs), (tx_c + 6.5 * fs, fy - 39 * fs),
-            (tx_c + 10.5 * fs, fy - 15 * fs), (tx_c + 4.0 * fs, fy - 14 * fs),
-            (tx_c, fy - 18 * fs), (tx_c - 4.0 * fs, fy - 14 * fs),
-            (tx_c - 10.5 * fs, fy - 15 * fs)]
-    rim = [(x + 1.1 * fs, y) for x, y in coat]
-    d.polygon(rim, fill=_mix(pal["glow"], body, 0.45) + (255,))
-    d.polygon(coat, fill=body + (255,))
-    # arms (one hangs, one carries the lantern)
-    d.polygon([(tx_c - 6.2 * fs, fy - 37 * fs), (tx_c - 3.8 * fs, fy - 37 * fs),
-               (tx_c - 6.8 * fs, fy - 20 * fs), (tx_c - 9.0 * fs, fy - 20 * fs)],
-              fill=body + (255,))
-    d.polygon([(tx_c + 3.8 * fs, fy - 37 * fs), (tx_c + 6.2 * fs, fy - 37 * fs),
-               (tx_c + 11.5 * fs, fy - 27 * fs),
-               (tx_c + 9.6 * fs, fy - 24.5 * fs)], fill=body + (255,))
-    # scarf + head + hair cap
-    scarf = _mix(pal["glow"], pal["near"], 0.35)
-    d.polygon([(tx_c - 4.6 * fs, fy - 40.5 * fs),
-               (tx_c + 4.6 * fs, fy - 40.5 * fs),
-               (tx_c + 2.5 * fs, fy - 36.5 * fs),
-               (tx_c - 2.5 * fs, fy - 36.5 * fs)], fill=scarf + (255,))
-    d.ellipse([tx_c - 6.0 * fs, fy - 52 * fs, tx_c + 6.0 * fs, fy - 40 * fs],
-              fill=(16, 14, 20, 255))
-    d.pieslice([tx_c - 6.2 * fs, fy - 53.5 * fs, tx_c + 6.2 * fs, fy - 41 * fs],
-               start=180, end=360, fill=(7, 7, 12, 255))
-    # lantern dot (brightens with the accent pulse; its diffuse bloom
-    # was added above, so this stays a point, never a ring/flash)
-    lx, ly = tx_c + 11 * fs, fy - 27 * fs
-    lr = (1.8 + 1.6 * acc) * fs
+    # traveller: refined static silhouette (see _traveller_layer),
+    # grounded by a soft contact shadow. No bob, no walking loop.
+    shadow = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    ImageDraw.Draw(shadow).ellipse(
+        [tx_c - 9.5 * fs, fy - 0.8 * fs, tx_c + 10.5 * fs, fy + 2.8 * fs],
+        fill=(0, 0, 0, 95))
+    canvas = Image.alpha_composite(
+        canvas.convert("RGBA"),
+        shadow.filter(ImageFilter.GaussianBlur(
+            radius=max(1.0, 1.1 * u)))).convert("RGB")
+    fig_key = (float(fs), pal["glow"], pal["near"])
+    fig_cache = lay.setdefault("_fig_cache", {})
+    if fig_cache.get("key") != fig_key:
+        fig_cache.clear()
+        fig_cache["key"] = fig_key
+        fig_cache["layer"] = _traveller_layer(fs, pal)
+    canvas_rgba = canvas.convert("RGBA")
+    canvas_rgba.alpha_composite(
+        fig_cache["layer"],
+        dest=(int(round(tx_c - 17 * fs)), int(round(fy - 57 * fs))))
+    canvas = canvas_rgba.convert("RGB")
+    d = ImageDraw.Draw(canvas, "RGBA")
+    # lantern dot at the SAME (lx, ly) as the accent bloom above
+    # (brightens with the accent pulse; stays a subdued point, never
+    # a ring/flash). A hairline links it to the raised hand.
+    d.line([tx_c + 10.7 * fs, fy - 27.4 * fs, lx, ly - 1.2 * fs],
+           fill=(10, 10, 17, 200), width=max(1, int(0.35 * fs)))
+    lr = (1.7 + 1.5 * acc) * fs
     d.ellipse([lx - lr, ly - lr, lx + lr, ly + lr],
-              fill=pal["glow"] + (int(150 + 100 * acc),))
+              fill=pal["glow"] + (int(145 + 95 * acc),))
+    cr = 0.6 * fs
+    d.ellipse([lx - cr, ly - cr, lx + cr, ly + cr],
+              fill=_mix(pal["glow"], pal["moon"], 0.4) + (190,))
 
     # sparse drifting particles (count follows audio-linked density)
     n_part = int(round(dens * N_PARTICLES))
@@ -348,11 +672,21 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
             d.ellipse([x - rr, y - rr, x + rr, y + rr],
                       fill=(255, 240, 210, 62))
 
+    # executable storyboard camera: transform the ENTIRE rendered
+    # world (sky/moon/terrain/path/figure) by the bounded subpixel
+    # crop/resample for this frame's scene. Identity (exact pixels,
+    # no cost) for legacy/default params. Grain is added afterwards
+    # so it stays frame grain, not stretched world texture.
+    base = np.asarray(canvas, dtype=np.uint8)
+    cam_zoom, cam_pan_x, cam_pan_y = camera_for_frame(
+        f, ctrl, scene_params)
+    base = apply_camera(base, cam_zoom, cam_pan_x, cam_pan_y)
+
     # deterministic per-frame grain (order-independent, as in P0)
     grng = np.random.RandomState(
         (seed ^ (0x9E3779B9 + f * 0x85EBCA6B)) & 0xFFFFFFFF)
     grain = grng.randint(-2, 3, size=(h, w, 1)).astype(np.int16)
-    arr = np.clip(np.asarray(canvas).astype(np.int16) + grain, 0, 255)
+    arr = np.clip(base.astype(np.int16) + grain, 0, 255)
     return arr.astype(np.uint8)
 
 

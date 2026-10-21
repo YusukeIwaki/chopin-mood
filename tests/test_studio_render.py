@@ -58,3 +58,11 @@ def test_storyboard_palette_reaches_decoded_frames(smoke):
     # Moon glow + warm wash legitimately lift the sky; bound stays well
     # below the distance to a wrong (red) palette.
     assert dist_story < 60, (top_mean, sky)
+
+
+def test_contact_sheet_has_start_mid_end_row_per_scene(smoke):
+    from PIL import Image
+    bundle = smoke / "bundle"
+    plan = json.loads((bundle / "plan.json").read_text())
+    with Image.open(bundle / "contact-sheet.jpg") as sheet:
+        assert sheet.size == (270 * 3, 480 * len(plan["scenes"])), sheet.size

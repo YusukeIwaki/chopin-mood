@@ -11,7 +11,8 @@ You receive labelled sections, in order:
 plus the contact-sheet image(s) via --image.
 
 Judge the ACTUAL final MP4 evidence (contact sheet sampled from the
-encoded video), not the storyboard prose. Judge separately:
+encoded video: START/MIDDLE/END of every deterministic scene, one row
+per scene), not the storyboard prose. Judge separately:
 (1) mechanical QA reviewed, (2) brief adherence (does the storyboard
 implement the labelled brief, scene by scene, within what the renderer
 can actually execute?), (3) timing integrity (deterministic scene IDs,
@@ -36,9 +37,19 @@ The trusted renderer consumes ONLY, per deterministic scene:
 
 - the six palette colours: `sky_top`, `sky_bot`, `far`, `near`, `moon`,
   `glow` (RGB triples); and
-- four bounded numeric params: `figure_scale` (0.5-2.0),
-  `particle_multiplier` (0.0-2.0), `light_bias` (-0.3-0.3) and
-  `glow_scale` (0.5-2.0).
+- ten bounded numeric params: `figure_scale` (0.5-2.0),
+  `particle_multiplier` (0.0-2.0), `light_bias` (-0.3-0.3),
+  `glow_scale` (0.5-2.0), and the optional executable camera
+  `camera_zoom_start`/`camera_zoom_end` (1.0-1.18, default 1.0) and
+  `camera_pan_x_start`/`camera_pan_x_end`/`camera_pan_y_start`/
+  `camera_pan_y_end` (-1.0-1.0, default 0.0). The camera
+  crops/resamples the ENTIRE frame (landscape, moon and figure
+  together), eased with smoothstep over the scene's inclusive frame
+  range [start_frame, end_frame-1]; pan is a fraction of the
+  available crop margin (no-op at zoom 1.0) and the crop never leaves
+  the frame, so no black edges can appear. Omitting the camera keys
+  means zoom 1.0 / pan 0.0. Judge framing from the contact sheet's
+  start/middle/end row for each scene against these numeric values.
 
 `motif` and `camera` storyboard fields are descriptive prose only:
 they are NOT executed and changing them alone changes no pixels. Scene
@@ -56,12 +67,14 @@ Always return `repair` with exactly `route` and `instructions`:
   to verify it in the re-rendered evidence (contact sheet / QA).
 
 Choose `storyboard` ONLY if EVERY blocker can be resolved using the
-executed controls above: per-scene palette colours and/or the four
-bounded numeric params, within their existing ranges, at the existing
-deterministic scene IDs. Write instructions in those terms (scene ID,
-palette key or param, direction of change, verification), never as
-requests for new timing, new scenes or prose-only edits presented as
-visual fixes.
+executed controls above: per-scene palette colours and/or the ten
+bounded numeric params (including numeric camera zoom/pan fixes --
+an inward, wider or settling framing that the numeric camera can
+express is a storyboard fix), within their existing ranges, at the
+existing deterministic scene IDs. Write instructions in those terms
+(scene ID, palette key or param, direction of change, verification),
+never as requests for new timing, new scenes or prose-only edits
+presented as visual fixes.
 
 Choose `engine` if ANY blocker needs a missing composition, asset or
 rendering capability (new imagery, figures, animation, composition or

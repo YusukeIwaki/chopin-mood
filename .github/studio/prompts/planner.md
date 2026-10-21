@@ -23,13 +23,24 @@ The current renderer produces clean frames with no QA text, captions
 or diagnostic markers; the procedural-prototype notice is metadata
 only. It supports a landscape, one silhouetted traveler, moon,
 particles and palette changes. The ONLY executable per-scene controls
-are the six palette colours plus four bounded numeric params
-(figure_scale, particle_multiplier, light_bias, glow_scale); motif and
-camera descriptions in briefs/storyboards are guidance prose, not
-programs, and camera motion comes from deterministic DSP controls.
-Design within those capabilities and identify the result as a
-procedural study. Do not promise facial acting, literal objects or
-animation this renderer cannot produce; those require a future asset
+are the six palette colours plus ten bounded numeric params:
+figure_scale (0.5-2.0), particle_multiplier (0.0-2.0), light_bias
+(-0.3-0.3), glow_scale (0.5-2.0), and the optional camera params
+camera_zoom_start/camera_zoom_end (1.0-1.18, default 1.0) and
+camera_pan_x_start/camera_pan_x_end/camera_pan_y_start/
+camera_pan_y_end (-1.0-1.0, default 0.0). The camera params transform
+the ENTIRE frame by a deterministic crop/resample, eased with
+smoothstep over each scene's inclusive frame range; pan is a
+fraction of the available crop margin and does nothing at zoom 1.0.
+Motif and camera descriptions in briefs/storyboards remain guidance
+prose, not programs: camera prose alone moves no pixels, so express
+framing intent (inward move, wider return, settling) in scene
+guidance clearly enough for the storyboard step to translate it into
+the numeric camera params. Per-frame DSP controls still drive
+accents/light/parallax and are not replaced by this camera. Design
+within those capabilities and identify the result as a procedural
+study. Do not promise facial acting, literal objects or animation
+this renderer cannot produce; those require a future asset
 provider. Decoded reference-frame QA checks mechanical correspondence
 with the deterministic render, not aesthetic or musical truth.
 

@@ -4,11 +4,14 @@
 Only this controller code renders. Muse contributes validated JSON;
 palettes/params from the storyboard measurably steer the clean
 procedural render in ``studio.rendering`` (sky/moon/hill colours,
-figure scale, particles, light, glow). Descriptive motif/camera text
-is metadata only and does not affect pixels. The creative video
-carries no captions, QA markers or logos; the procedural-prototype
-disclaimer stays in provenance/storyboard metadata. Output is a
-procedural prototype, not finished anime.
+figure scale, particles, light, glow, plus the optional executable
+camera zoom/pan params, which crop/resample the whole frame with
+smoothstep easing over each scene's inclusive frame range).
+Descriptive motif/camera text is metadata only and does not affect
+pixels; camera prose alone never moves the framing. The creative
+video carries no captions, QA markers or logos; the
+procedural-prototype disclaimer stays in provenance/storyboard
+metadata. Output is a procedural prototype, not finished anime.
 """
 from __future__ import annotations
 import sys
@@ -106,26 +109,33 @@ def main() -> int:
                                    scene_params=sparams)
          for f in range(clip["n_frames"])),
         str(clip_wav), str(mp4), a.width, a.height, 30, 1, clip["n_frames"])
-    # Show every scene to the visual reviewer, including endpoints.
+    # Contact sheet for the visual reviewer: START / MIDDLE / END of
+    # EVERY deterministic scene, sampled from the ENCODED MP4, in
+    # chronological scene row groups (one row per scene, 3 columns).
+    # END is end_frame-1 (end_frame is exclusive and belongs to the
+    # next scene); MIDDLE is the middle of the inclusive range. No
+    # captions are drawn into the sheet's thumbnails.
+    last_frame = int(clip["n_frames"]) - 1
+    scene_triples = []
+    for s in det_scenes:
+        s0 = max(0, min(last_frame, int(s["start_frame"])))
+        e1 = max(s0, min(last_frame, int(s["end_frame"]) - 1))
+        scene_triples.append((s0, (s0 + e1) // 2, e1))
     frames = []
-    sample_frames = {
-        min(clip["n_frames"] - 1, int(clip["n_frames"] * frac))
-        for frac in (0.05, 0.5, 0.95)
-    }
-    sample_frames.update((int(s["start_frame"]) + int(s["end_frame"]) - 1) // 2
-                         for s in det_scenes)
-    for fidx in sorted(sample_frames):
+    frame_pngs: dict[int, Path] = {}
+    for fidx in sorted({f for triple in scene_triples for f in triple}):
         png = out / f"cs_{fidx}.png"
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(mp4),
                         "-vf", f"select=eq(n\\,{fidx})", "-frames:v", "1",
                         str(png)], check=True)
+        frame_pngs[fidx] = png
         frames.append(png)
     from PIL import Image
-    imgs = [Image.open(p).resize((270, 480)) for p in frames]
-    columns = min(3, len(imgs))
-    sheet = Image.new("RGB", (270 * columns, 480 * ((len(imgs) + columns - 1) // columns)))
-    for index, im in enumerate(imgs):
-        sheet.paste(im, ((index % columns) * 270, (index // columns) * 480))
+    sheet = Image.new("RGB", (270 * 3, 480 * len(scene_triples)))
+    for row, triple in enumerate(scene_triples):
+        for col, fidx in enumerate(triple):
+            with Image.open(frame_pngs[fidx]) as im:
+                sheet.paste(im.resize((270, 480)), (col * 270, row * 480))
     sheet.save(out / "contact-sheet.jpg", quality=88)
     for p in frames:
         p.unlink()
