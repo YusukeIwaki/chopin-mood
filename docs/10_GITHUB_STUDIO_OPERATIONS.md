@@ -83,7 +83,7 @@
 
 - インフラ障害（malformed／stale／closed／source drift／機械 QA 失敗、モデルや commit の失敗）は上記 status とは別で、`studio_repair.py` は非ゼロで fail-closed に終了し、公開しない。
 - `needs_engine`／`attempts_exhausted`／`no_change`／`no_visual_change` では publish-review が子ごとに1件だけ bot のエンジニアリング Issue を保証する。**エンジンのコードを自動で書くジョブはまだない**。実際のコードエージェントはその Issue から作業し、別のエンジニアリング PR を作る。その PR のレビューと Merge が終わってから、オーナーが元の音源 Issue で制作を手動 dispatch する。対応していない機能が自動で直るわけではない。
-- 非オーナーや bot が作ったエンジニアリング Issue は引き継ぎ対象として扱わない（受付はオーナーのみ、という原則は変わらない）。
+- bot が作ったエンジニアリング Issue はコード修正の引き継ぎに使い、新しい録音の制作受付としては扱わない。録音の受付はオーナーが作った親 Issue に限る。
 
 ## 制限と注意
 
