@@ -13,13 +13,19 @@
         "moon": [232, 234, 222],
         "glow": [168, 180, 196]
       },
-      "motif": "Abstract moonlit ridges in layered blue-gray; one small stationary silhouetted traveler below center, sparse particles as faint traces. Desaturated charcoal and steel tones with a dim pearl moon convey tired stillness and isolation.",
-      "camera": "Wide landscape with broad negative space above the small traveler and the moon offset from the figure; restrained slow lateral drift, traveler stationary.",
+      "motif": "Abstract moonlit ridges in layered blue-gray; one small stationary silhouetted traveler below center, sparse particles as faint traces of the past. Desaturated charcoal and steel tones with a dim pearl moon convey tired stillness and isolation. Procedural prototype silhouette and ridge bands; refined figure contour and terrain detail await renderer.",
+      "camera": "Wide landscape with broad negative space above the small traveler and moon offset from the figure; restrained lateral drift implemented as a slight whole-frame crop with slow horizontal pan, traveler stationary.",
       "params": {
-        "figure_scale": 1.0,
+        "figure_scale": 0.95,
         "particle_multiplier": 0.55,
         "light_bias": 0.02,
-        "glow_scale": 0.95
+        "glow_scale": 0.95,
+        "camera_zoom_start": 1.03,
+        "camera_zoom_end": 1.04,
+        "camera_pan_x_start": -0.15,
+        "camera_pan_x_end": 0.15,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.0
       }
     },
     {
@@ -32,13 +38,19 @@
         "moon": [238, 222, 188],
         "glow": [204, 168, 120]
       },
-      "motif": "Same abstract ridges and stationary traveler suffused with dim faded amber, suggesting an indistinct recollection held within the blue-gray landscape; abstract particles only, no literal memory imagery.",
-      "camera": "Slightly closer framing with a gentle inward move; traveler remains small and grounded, moon held as a stable anchor.",
+      "motif": "Same abstract ridges and stationary traveler suffused with dim faded amber, suggesting an indistinct recollection held within the blue-gray landscape; sparse abstract particles only, no literal memory imagery. Procedural prototype forms retained.",
+      "camera": "Slightly closer whole-frame framing with a gentle inward move; traveler remains small and grounded at unchanged figure scale, moon held as a stable anchor.",
       "params": {
-        "figure_scale": 1.15,
+        "figure_scale": 1.0,
         "particle_multiplier": 0.9,
         "light_bias": 0.14,
-        "glow_scale": 1.35
+        "glow_scale": 1.35,
+        "camera_zoom_start": 1.02,
+        "camera_zoom_end": 1.12,
+        "camera_pan_x_start": 0.0,
+        "camera_pan_x_end": 0.0,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.05
       }
     },
     {
@@ -49,15 +61,21 @@
         "far": [44, 54, 76],
         "near": [18, 22, 30],
         "moon": [214, 220, 214],
-        "glow": [148, 152, 148]
+        "glow": [150, 148, 138]
       },
-      "motif": "Recollection withdraws into slate and muted indigo ridges with only a faint trace of amber in the glow; particles thinned, traveler held in spacious quiet as weariness returns.",
-      "camera": "Return toward the opening spacious wide framing at the same traveler position; camera settles with minimal movement.",
+      "motif": "Recollection withdraws into slate and muted indigo ridges with only a faint trace of amber in the glow; particles thinned, traveler held small in spacious quiet as weariness returns. Procedural prototype silhouette and ridges; atmospheric refinement awaits renderer.",
+      "camera": "Return toward the opening spacious wide framing at the same traveler position; whole-frame zoom eases outward and settles to rest.",
       "params": {
-        "figure_scale": 1.0,
+        "figure_scale": 0.98,
         "particle_multiplier": 0.4,
         "light_bias": -0.04,
-        "glow_scale": 0.75
+        "glow_scale": 0.75,
+        "camera_zoom_start": 1.1,
+        "camera_zoom_end": 1.02,
+        "camera_pan_x_start": 0.08,
+        "camera_pan_x_end": 0.0,
+        "camera_pan_y_start": 0.05,
+        "camera_pan_y_end": 0.0
       }
     },
     {
@@ -70,13 +88,19 @@
         "moon": [230, 216, 190],
         "glow": [176, 150, 116]
       },
-      "motif": "Weaker echo of recollection: faint dusty amber returns within charcoal and blue ridges, abstract particles only, no dramatic reveal; traveler remains isolated and stationary in generous darkness.",
-      "camera": "Wide landscape preserving generous negative space around the isolated traveler; restrained slow drift, no abrupt change.",
+      "motif": "Weaker echo of recollection: faint dusty amber returns within charcoal and blue ridges, abstract particles only, no dramatic reveal or literal memory imagery; traveler remains small, isolated and stationary in generous darkness. Procedural prototype forms retained.",
+      "camera": "Wide landscape preserving generous negative space around the isolated traveler; restrained slow whole-frame drift with no abrupt change.",
       "params": {
-        "figure_scale": 0.98,
+        "figure_scale": 0.97,
         "particle_multiplier": 0.6,
         "light_bias": 0.06,
-        "glow_scale": 1.05
+        "glow_scale": 1.05,
+        "camera_zoom_start": 1.03,
+        "camera_zoom_end": 1.05,
+        "camera_pan_x_start": 0.12,
+        "camera_pan_x_end": -0.08,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.0
       }
     },
     {
@@ -89,13 +113,19 @@
         "moon": [226, 224, 210],
         "glow": [158, 162, 156]
       },
-      "motif": "Warmth recedes into muted blue-gray with a residual warm tint in moon and glow; abstract ridges and small traveler persist quietly beneath the moon, particles visually quieter, ending in subdued visibility without resolution.",
-      "camera": "Balanced wide view with the small traveler beneath the moon and readable ridge contours; movement settles to near stillness.",
+      "motif": "Warmth recedes into muted blue-gray with a residual warm tint in moon and glow; abstract ridges and small stationary traveler persist quietly beneath the moon, particles visually quieter, ending in subdued visibility without triumphant resolution. Procedural prototype silhouette and ridges; finished contour awaits renderer.",
+      "camera": "Balanced wide view with the small traveler beneath the moon and readable ridge contours; whole-frame movement eases and settles to near stillness.",
       "params": {
-        "figure_scale": 1.02,
+        "figure_scale": 0.98,
         "particle_multiplier": 0.3,
         "light_bias": 0.0,
-        "glow_scale": 0.85
+        "glow_scale": 0.85,
+        "camera_zoom_start": 1.06,
+        "camera_zoom_end": 1.02,
+        "camera_pan_x_start": 0.05,
+        "camera_pan_x_end": 0.0,
+        "camera_pan_y_start": 0.03,
+        "camera_pan_y_end": 0.0
       }
     }
   ]
