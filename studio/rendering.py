@@ -36,12 +36,13 @@ accents are deterministic inputs; this module never moves them, adds
 cuts, or imposes a BPM grid.
 
 Imagery is original and procedural (Pillow/NumPy only): a soft night
-sky with diffuse moonlight, irregular layered terrain with a winding
-path and water shimmer, a grounded traveller figure (head, coat, arms,
-legs), and a very sparse drifting particle/star field. There are no
-captions, logos, QA markers, expanding rings or concentric halos in
-any frame. The "procedural prototype, not finished anime" disclaimer
-lives in provenance/storyboard metadata, never in the raster.
+sky with diffuse moonlight, deliberately shaped layered landforms
+with a narrow worn earth path, a grounded traveller figure (head,
+coat, arms, legs), and a very sparse drifting particle/star field.
+There are no captions, logos, QA markers, expanding rings or
+concentric halos in any frame. The "procedural prototype, not
+finished anime" disclaimer lives in provenance/storyboard metadata,
+never in the raster.
 
 Determinism: ``draw_clean_frame(f, ...)`` is a pure function of
 ``(f, ctrl, seed, palettes, params)``. All layouts come from
@@ -120,7 +121,20 @@ def make_layouts(seed: int, w: int, h: int) -> dict:
     tex_img = tex_img.filter(
         ImageFilter.GaussianBlur(radius=max(2.0, min(w, h) * 0.006)))
     lay["_texture"] = (np.asarray(tex_img, dtype=np.float32) / 255.0 - 0.5)
+    # Fine dry-ground mottling (cached, seed/resolution only): small
+    # soft features, applied to the foreground slope so the ground
+    # has low-contrast texture following the land, not flat fill.
+    gtex_small = rng.randn(max(4, h // 4), max(4, w // 4)).astype(np.float32)
+    gtex_img = Image.fromarray(
+        np.clip((gtex_small - gtex_small.min())
+                / (gtex_small.max() - gtex_small.min() + 1e-9) * 255,
+                0, 255).astype(np.uint8)).resize((w, h), Image.BICUBIC)
+    gtex_img = gtex_img.filter(
+        ImageFilter.GaussianBlur(radius=max(0.8, min(w, h) * 0.003)))
+    lay["_ground_texture"] = (
+        np.asarray(gtex_img, dtype=np.float32) / 255.0 - 0.5)
     lay["_w"], lay["_h"] = int(w), int(h)
+    lay["terrain"] = _terrain_seed_params(int(seed))
     return lay
 
 
@@ -139,6 +153,221 @@ def _ridge_y(x_norm: np.ndarray, ctrl_pts: np.ndarray, base: float,
 
 def _mix(a, b, t: float) -> tuple:
     return tuple(int(round(a[i] * (1 - t) + b[i] * t)) for i in range(3))
+
+
+# --- shaped depth profiles (terrain composition) ---------------------------
+#
+# The three landforms are independent analytic silhouettes with
+# distinctly different large-scale directions, in disjoint bounded
+# height ranges so occlusion (far above middle above foreground at
+# every x) holds by construction without copying one layer's shape
+# into the next and without any clipping:
+#
+# * far: a high left shoulder (x ~0.12, y ~0.44) descending to a
+#   valley (x ~0.55), plus a lower right distant shoulder;
+# * middle: a stronger mass on the right (x ~0.78) falling toward
+#   the left/centre (x ~0.20) -- its high point deliberately does
+#   not line up with the far high point;
+# * foreground: a ledge entering from the left (x 0, y ~0.75),
+#   supporting the figure near the world anchor (x ~0.38, y ~0.82),
+#   then sloping down to the right (y ~0.89-0.92), never echoing a
+#   third full-width valley.
+#
+# Each curve is a smooth (C1) analytic form -- Gaussians and
+# smoothstep ramps on the real line, not wrapped periodic bumps --
+# with only small seed-only variation, so there is no wrap seam to
+# hide. Parallax is a smooth bounded shift (see _parallax_shift),
+# the same seeded world serves every scene, and parameters come
+# only from the seed, cached in the layout by make_layouts.
+
+def _gauss(t: np.ndarray, center: float, sigma: float) -> np.ndarray:
+    """Gaussian bump on the real line (C1, no wrap seam)."""
+    d = (np.asarray(t, dtype=np.float64) - float(center)) / float(sigma)
+    return np.exp(-0.5 * d * d)
+
+
+def _sramp(t: np.ndarray, a: float, b: float) -> np.ndarray:
+    """Clamped smoothstep ramp, 0 below ``a`` and 1 above ``b`` (C1)."""
+    r = np.clip((np.asarray(t, dtype=np.float64) - float(a))
+                / max(1e-9, float(b) - float(a)), 0.0, 1.0)
+    return r * r * (3.0 - 2.0 * r)
+
+
+#: Fixed foreground world anchor (normalised x) carrying the figure.
+FIGURE_WORLD_X = 0.38
+_LAYER_PARALLAX = (0.45, 0.75, 1.0)
+
+
+def _parallax_shift(camx: float, drift: float, layer: int) -> float:
+    """Smooth bounded parallax shift (normalised x) for one layer.
+
+    A tanh-bounded function of the audio-linked camx and the slow
+    drift, scaled per depth (far moves least). Bounded for any
+    drift, so the non-periodic world never slides off the frame,
+    and C1-smooth so no frame-to-frame step can appear.
+    """
+    raw = (float(camx) - 0.5) * 0.04 + float(drift) * 0.05
+    bounded = 0.06 * float(np.tanh(raw / 0.06))
+    return bounded * _LAYER_PARALLAX[int(layer)]
+
+
+def foreground_screen_x(w: int, camx: float = 0.5,
+                        drift: float = 0.0) -> float:
+    """Screen x (pixels) of the fixed foreground world anchor.
+
+    The anchor ``FIGURE_WORLD_X`` is a world coordinate: the
+    foreground profile is evaluated at ``t = x_norm - shift``, so
+    the screen column projecting that world point is
+    ``(FIGURE_WORLD_X + shift) * (w - 1)`` with the same foreground
+    parallax shift. Feet placed here stay on the same world feature
+    however the camera/drift moves.
+    """
+    return (FIGURE_WORLD_X + _parallax_shift(camx, drift, 2)) \
+        * float(max(0, int(w) - 1))
+
+
+def _terrain_seed_params(seed: int) -> dict:
+    """Seed-only shape parameters for the independent profiles."""
+    rng = np.random.RandomState((int(seed) ^ 0x5EEDCAFE) & 0xFFFFFFFF)
+
+    def u(lo, hi):
+        return float(rng.uniform(lo, hi))
+
+    return {
+        "far": {"base": u(0.564, 0.572), "hl": u(0.128, 0.140),
+                "cl": u(0.105, 0.135), "sl": u(0.145, 0.175),
+                "hr": u(0.062, 0.074), "cr": u(0.795, 0.845),
+                "sr": u(0.130, 0.160), "a1": u(0.003, 0.006),
+                "p1": u(0.0, 1.0), "a2": u(0.0015, 0.003),
+                "p2": u(0.0, 1.0)},
+        "mid": {"low": u(0.706, 0.714), "drop": u(0.090, 0.098),
+                "pk": u(0.009, 0.013), "cr": u(0.755, 0.805),
+                "sr": u(0.155, 0.185), "a1": u(0.0025, 0.005),
+                "p1": u(0.0, 1.0), "a2": u(0.001, 0.0025),
+                "p2": u(0.0, 1.0)},
+        "near": {"base": u(0.757, 0.763), "d1": u(0.057, 0.063),
+                 "d2": u(0.083, 0.090), "a1": u(0.002, 0.004),
+                 "p1": u(0.0, 1.0), "a2": u(0.001, 0.002),
+                 "p2": u(0.0, 1.0)},
+        "centers": (0.505, 0.655, 0.830),
+    }
+
+
+def _far_frac(t: np.ndarray, p: dict) -> np.ndarray:
+    """Far silhouette: high left shoulder, valley, lower right shoulder."""
+    y = np.full_like(np.asarray(t, dtype=np.float64), p["base"])
+    y = y - p["hl"] * _gauss(t, p["cl"], p["sl"])
+    y = y - p["hr"] * _gauss(t, p["cr"], p["sr"])
+    y = y + p["a1"] * np.cos(2.0 * np.pi * (t - p["p1"]))
+    y = y + p["a2"] * np.cos(4.0 * np.pi * (t - p["p2"]))
+    return y
+
+
+def _mid_frac(t: np.ndarray, p: dict) -> np.ndarray:
+    """Middle silhouette: right mass falling toward the left/centre."""
+    y = np.full_like(np.asarray(t, dtype=np.float64), p["low"])
+    y = y - p["drop"] * _sramp(t, 0.18, 0.82)
+    y = y - p["pk"] * _gauss(t, p["cr"], p["sr"])
+    y = y + p["a1"] * np.cos(2.0 * np.pi * (t - p["p1"]))
+    y = y + p["a2"] * np.cos(4.0 * np.pi * (t - p["p2"]))
+    return y
+
+
+def _near_frac(t: np.ndarray, p: dict) -> np.ndarray:
+    """Foreground ledge: left entry, figure shelf, descent to the right."""
+    y = np.full_like(np.asarray(t, dtype=np.float64), p["base"])
+    y = y + p["d1"] * _sramp(t, 0.02, 0.38)
+    y = y + p["d2"] * _sramp(t, 0.40, 0.95)
+    y = y + p["a1"] * np.cos(2.0 * np.pi * (t - p["p1"]))
+    y = y + p["a2"] * np.cos(4.0 * np.pi * (t - p["p2"]))
+    return y
+
+
+def terrain_profiles(lay: dict, w: int, h: int, camx: float = 0.5,
+                     camy: float = 0.5, zoom: float = 1.0,
+                     drift: float = 0.0):
+    """(far, mid, near) ridge heights in pixels for this frame.
+
+    Pure function of (lay, w, h, camx, camy, zoom, drift): the seeded
+    layout is only read, and identical inputs give identical arrays
+    in any evaluation order. The three silhouettes are independent
+    analytic curves in disjoint bounded ranges, so far lies strictly
+    above mid strictly above near at every column with no clipping,
+    and the foreground passes through the figure shelf near the
+    world anchor. Parallax shifts each depth by a smooth bounded
+    offset (no wrap seam), so ordering and continuity survive
+    x/time/camera motion at any drift.
+    """
+    params = lay.get("terrain") or _terrain_seed_params(lay.get("seed", 0))
+    x_norm = np.arange(int(w), dtype=np.float64) / max(1, int(w) - 1)
+    fracs = []
+    for li, fn in enumerate((_far_frac, _mid_frac, _near_frac)):
+        t = x_norm - _parallax_shift(camx, drift, li)
+        fracs.append(fn(t, params[("far", "mid", "near")[li]]))
+    amp = float(min(1.15, max(0.85, float(zoom))))
+    off = (float(camy) - 0.5) * 0.03
+    out = []
+    for frac, center in zip(fracs, params["centers"]):
+        y = (center + (frac - center) * amp + off) * float(h)
+        out.append(np.asarray(y, dtype=np.float64))
+    return out[0], out[1], out[2]
+
+
+def figure_support(lay: dict, w: int, h: int, f: int, camx: float = 0.5,
+                   camy: float = 0.5, zoom: float = 1.0,
+                   drift: float | None = None, near=None):
+    """(tx, feet_y, ground_y): figure anchor on the foreground.
+
+    ``ground_y`` is the rendered near profile interpolated at the
+    figure column and ``feet_y`` is exactly ``ground_y + 3u``; the
+    contact shadow and boots use the same ``feet_y``, so the figure
+    can never float above or sink into its ledge. The figure has no
+    autonomous motion: its column is the fixed world anchor
+    ``FIGURE_WORLD_X`` projected by the same foreground parallax
+    mapping that evaluates its support (see foreground_screen_x),
+    so the feet stay on the same world feature and never slide
+    relative to the ground. The frame index only supplies the
+    default drift; it never translates the figure by itself. The
+    position does not depend on the scene id: one world, one
+    stance, all scenes.
+    """
+    if drift is None:
+        drift = float(f) * 0.0016
+    u = min(int(w), int(h)) / 180.0
+    if near is None:
+        _, _, near = terrain_profiles(lay, w, h, camx=camx, camy=camy,
+                                      zoom=zoom, drift=drift)
+    tx_c = float(min(max(foreground_screen_x(w, camx=camx, drift=drift),
+                         0.0), float(w) - 1.0))
+    ground = float(np.interp(tx_c, np.arange(int(w), dtype=np.float64),
+                             near))
+    return tx_c, ground + 3.0 * u, ground
+
+
+# (lit centre, lit width, lit amp, shadow centre, shadow width, shadow amp)
+_FACETS = ((0.64, 0.30, 0.045, 0.30, 0.24, -0.035),
+           (0.70, 0.28, 0.065, 0.26, 0.22, -0.050),
+           (0.66, 0.26, 0.090, 0.24, 0.22, -0.070))
+
+
+def _slope_facet_factor(layer_index: int, x_norm, depth) -> np.ndarray:
+    """Broad tonal facet factor (1.0 = neutral) for one landform.
+
+    Two large softly bounded internal facets per layer -- a moonlit
+    plane toward the moon side and a shadow plane away from it --
+    whose vertical envelope is a smooth function of depth below the
+    ridge, so the facets follow the slope instead of running as a
+    column gradient. The far layer is softer/lower contrast and the
+    foreground firmer, with no hard outline anywhere (Gaussian in
+    x, smoothstep in depth). Pure and deterministic.
+    """
+    lc, lw, la, sc, sw, sa = _FACETS[int(layer_index)]
+    xn, dep = np.broadcast_arrays(
+        np.asarray(x_norm, dtype=np.float64),
+        np.asarray(depth, dtype=np.float64))
+    env = _sramp(dep, 0.06, 0.30) * (1.0 - _sramp(dep, 0.62, 0.95))
+    spatial = la * _gauss(xn, lc, lw) + sa * _gauss(xn, sc, sw)
+    return 1.0 + env * spatial
 
 
 # --- executable storyboard camera (pure helpers) --------------------------
@@ -310,17 +539,20 @@ def _tapered_stroke(start, segments, w_start: float, w_end: float,
 
 
 def _traveller_layer(fs: float, pal: dict) -> Image.Image:
-    """Refined static traveller silhouette as a small RGBA layer.
+    """Static weary traveller silhouette as a small RGBA layer.
 
     Drawn on a locally supersampled mask (4x, figure-sized only, so
     there is no full-frame supersampling cost) from sampled cubic
-    Bezier outlines, then downscaled: edges are smooth and considered,
-    not circle/polygon tokens. The pose is still and asymmetrical:
-    bowed head/neck with a hair profile (no face, no expression),
-    uneven coat shoulders and hem, one arm hanging, one raised to the
-    lantern, tapered trousers and grounded boots (feet planted; the
-    contact shadow is drawn by the caller). A restrained rim offset
-    toward the moon gives subtle edge lighting. Local coordinates are
+    Bezier outlines, then downscaled. The pose is still: a small
+    head (about 6-7 units wide, 8 tall) tilted forward and down with
+    a subtle rear hair contour, sloped asymmetric shoulders on an
+    A-line coat with an uneven hem near y=14, a rear arm held close
+    to the body, the near arm bent to the lantern hand anchor, and a
+    contrapposto stance (weight on one planted boot, the other leg
+    narrower, receding, at a different angle). No face, no walking
+    or bobbing. Coat shading is 2-3 opaque tonal planes plus a
+    restrained moon-side rim; translucent accents are source-over
+    composited so they can never punch holes. Local coordinates are
     in ``fs`` units: x in [-17, 17], y in [-3, 57] upward from feet.
     """
     ss = 4
@@ -339,37 +571,40 @@ def _traveller_layer(fs: float, pal: dict) -> Image.Image:
     scarf_col = _mix(pal["glow"], pal["near"], 0.85)
     rim_col = _mix(pal["glow"], body, 0.50)
 
-    # Hunched, asymmetrical coat: higher back (left) shoulder, lower
-    # front shoulder, straighter sides, longer back hem than front.
-    coat = _bezier_chain((-7.6, 13.6), [
-        ((-8.6, 21.0), (-7.8, 30.0), (-5.2, 39.2)),
-        ((-4.6, 41.2), (-3.2, 42.2), (-1.8, 42.5)),
-        ((-0.2, 43.0), (1.0, 42.7), (2.4, 42.0)),
-        ((3.9, 41.2), (4.8, 39.6), (5.0, 37.6)),
-        ((6.2, 30.0), (6.3, 22.0), (5.7, 15.4)),
-        ((4.0, 14.0), (1.4, 16.8), (-1.6, 14.2)),
-        ((-4.0, 12.4), (-6.2, 15.4), (-7.6, 13.6))])
-    # Bowed head and hair as one mass: crown thrown back, forehead
-    # sloping steeply to a tucked chin at the front, hair falling at
-    # the back over the neck almost to the shoulder. The outline is
-    # long and leaning, never a plain circle; no face is drawn.
-    head = _bezier_chain((2.8, 42.4), [
-        ((5.8, 44.6), (6.2, 47.6), (4.8, 50.4)),
-        ((3.2, 51.4), (0.4, 52.2), (-2.4, 51.4)),
-        ((-5.0, 50.4), (-6.1, 47.6), (-5.8, 44.6)),
-        ((-5.4, 42.6), (-4.6, 40.2), (-3.2, 39.2)),
-        ((-1.6, 40.6), (0.2, 41.2), (1.4, 41.0)),
-        ((2.2, 41.4), (2.6, 41.8), (2.8, 42.4))])
-    leg_l = _bezier_chain((-5.0, 15.8), [
-        ((-5.3, 10.0), (-5.0, 5.0), (-4.7, 2.4)),
-        ((-3.9, 2.0), (-3.0, 2.0), (-2.5, 2.4)),
-        ((-2.0, 6.0), (-1.8, 11.0), (-1.7, 15.4)),
-        ((-3.2, 16.2), (-4.2, 16.1), (-5.0, 15.8))])
-    leg_r = _bezier_chain((0.9, 15.4), [
-        ((0.7, 10.0), (0.9, 5.0), (1.1, 2.4)),
-        ((1.9, 2.0), (2.8, 2.0), (3.3, 2.4)),
-        ((3.9, 6.0), (4.1, 11.0), (4.0, 15.0)),
-        ((2.6, 15.8), (1.6, 15.7), (0.9, 15.4))])
+    # A-line coat: rounded higher back shoulder, front shoulder
+    # sloping lower, sides flaring gently to an uneven hem near
+    # y=14 (front corner higher than the back). About 15 units wide.
+    coat = _bezier_chain((-7.8, 13.8), [
+        ((-8.4, 20.0), (-8.0, 28.0), (-6.8, 36.0)),
+        ((-6.2, 39.5), (-4.8, 41.2), (-2.6, 42.0)),
+        ((-1.2, 42.6), (0.6, 42.3), (2.2, 41.6)),
+        ((3.4, 40.8), (4.4, 39.0), (5.2, 36.5)),
+        ((6.4, 28.0), (7.0, 20.0), (6.6, 14.6)),
+        ((4.2, 13.2), (0.5, 15.0), (-2.0, 13.5)),
+        ((-4.5, 12.6), (-6.4, 14.8), (-7.8, 13.8))])
+    # Small bowed head, about 6-7 wide and 8 tall: crown tipped
+    # forward/down toward the lantern side, chin tucked, and hair
+    # falling in one subtle contour down the back to the neck. One
+    # leaning mass, never a round ball; no face is drawn.
+    head = _bezier_chain((1.4, 42.9), [
+        ((3.0, 43.8), (3.4, 45.4), (3.1, 47.6)),
+        ((2.9, 49.3), (1.9, 50.6), (0.4, 51.1)),
+        ((-1.2, 51.0), (-2.3, 50.2), (-2.7, 48.6)),
+        ((-3.0, 46.8), (-2.9, 45.0), (-2.5, 43.6)),
+        ((-1.8, 42.8), (-0.4, 42.7), (1.4, 42.9))])
+    # Contrapposto legs: the back leg bears the weight, near
+    # vertical and planted flat; the front leg is narrower, angled
+    # away and receding, its trouser ending at a different height.
+    leg_planted = _bezier_chain((-5.0, 15.6), [
+        ((-5.2, 10.0), (-4.9, 5.0), (-4.3, 2.6)),
+        ((-3.6, 2.1), (-2.7, 2.1), (-2.2, 2.5)),
+        ((-1.7, 6.0), (-1.5, 11.0), (-1.4, 15.2)),
+        ((-3.0, 16.0), (-4.1, 15.9), (-5.0, 15.6))])
+    leg_receding = _bezier_chain((0.6, 15.2), [
+        ((1.4, 10.0), (2.8, 5.5), (3.8, 3.0)),
+        ((4.4, 2.6), (5.0, 2.6), (5.3, 3.0)),
+        ((4.9, 7.0), (4.0, 11.0), (3.4, 14.8)),
+        ((2.2, 15.5), (1.3, 15.4), (0.6, 15.2))])
 
     def boot(x0):
         return _bezier_chain((x0, 0.2), [
@@ -377,55 +612,62 @@ def _traveller_layer(fs: float, pal: dict) -> Image.Image:
             ((x0 + 3.2, 2.6), (x0 + 3.8, 1.4), (x0 + 4.1, 0.5)),
             ((x0 + 4.0, 0.1), (x0 + 2.1, 0.0), (x0, 0.2))])
 
-    arm_l = _tapered_stroke((-5.2, 36.6),
-                            [((-8.8, 30.5), (-10.0, 24.5), (-9.2, 19.6))],
-                            3.3, 2.2)
-    arm_r = _tapered_stroke((4.7, 37.0),
-                            [((7.3, 33.2), (9.5, 29.8), (10.7, 27.4))],
-                            3.3, 2.3)
-    neck = [(-2.1, 42.7), (2.3, 42.5), (1.9, 39.7), (-1.7, 39.9)]
-    scarf = _bezier_chain((-3.8, 42.9), [
-        ((-2.0, 43.6), (1.0, 43.4), (3.6, 42.4)),
-        ((3.2, 41.2), (2.6, 40.6), (1.8, 40.3)),
-        ((-0.5, 39.9), (-2.6, 40.4), (-3.9, 41.2)),
-        ((-4.1, 41.9), (-4.0, 42.4), (-3.8, 42.9))])
-    tail = _tapered_stroke((-3.4, 41.3),
-                           [((-5.6, 39.8), (-6.8, 37.8), (-6.2, 35.6))],
-                           1.7, 0.9)
-    fold_dark = _tapered_stroke((-2.2, 36.0),
-                                [((-2.8, 29.0), (-2.4, 21.0), (-3.0, 15.5))],
-                                0.55, 0.4)
-    fold_light = _tapered_stroke((3.4, 35.0),
-                                 [((3.0, 28.0), (3.6, 20.0), (3.0, 15.0))],
-                                 0.45, 0.3)
+    boot_planted = boot(-5.0)
+    boot_receding = _bezier_chain((3.3, 0.2), [
+        ((3.2, 1.4), (3.6, 2.3), (4.6, 2.5)),
+        ((5.6, 2.3), (6.1, 1.3), (6.3, 0.5)),
+        ((6.2, 0.1), (4.8, 0.0), (3.3, 0.2))])
+    # Rear arm held close against the coat edge (drawn behind the
+    # coat, so only its outer sliver reads); near arm bent at the
+    # elbow toward the lantern hand anchor (10.7, 27.4).
+    arm_rear = _tapered_stroke((-5.9, 37.4),
+                               [((-7.0, 31.0), (-6.7, 25.0),
+                                 (-5.4, 20.6))],
+                               2.7, 1.9)
+    arm_front = _tapered_stroke((4.9, 36.8), [
+        ((6.2, 34.0), (7.6, 32.0), (8.0, 30.2)),
+        ((9.2, 29.0), (10.0, 28.0), (10.7, 27.4))],
+        3.1, 2.1)
+    neck = [(-1.2, 43.2), (1.5, 43.0), (1.2, 40.4), (-0.9, 40.5)]
+    scarf = _bezier_chain((-2.9, 42.5), [
+        ((-1.4, 43.1), (0.9, 42.9), (2.7, 42.0)),
+        ((2.4, 41.0), (1.9, 40.5), (1.2, 40.2)),
+        ((-0.4, 39.9), (-2.0, 40.3), (-2.9, 41.1)),
+        ((-3.1, 41.7), (-3.0, 42.1), (-2.9, 42.5))])
+    tail = _tapered_stroke((-2.3, 41.0),
+                           [((-3.9, 39.6), (-4.7, 37.6), (-4.1, 35.3))],
+                           1.5, 0.8)
+    # Opaque coat tonal planes (back shadow / moonlit front), with
+    # irregular diagonal boundaries: shading follows the coat form
+    # instead of running as long parallel torso seams.
+    plane_shadow = [(-7.2, 14.2), (-6.6, 30.0), (-5.2, 38.5),
+                    (-2.4, 41.6), (0.2, 41.0), (-0.8, 30.0),
+                    (-2.4, 14.8)]
+    plane_light = [(1.6, 38.0), (4.9, 36.2), (6.3, 20.0),
+                   (6.2, 15.0), (3.2, 13.9), (2.6, 26.0),
+                   (1.9, 34.0)]
 
-    silhouette = [leg_l, leg_r, boot(-4.6), boot(1.4), coat, arm_l,
-                  arm_r, head]
+    silhouette = [leg_planted, leg_receding, boot_planted,
+                  boot_receding, coat, arm_rear, arm_front, head]
     # Restrained moon-side edge light. This is the base layer (only
-    # transparency underneath), drawn as one uniform union; the
-    # opaque body shapes below overwrite its interior part.
+    # transparency underneath), drawn as one uniform union offset
+    # toward the moon; the opaque body shapes below overwrite its
+    # interior part, leaving a thin rim following the contours.
     for shape in silhouette:
-        d.polygon(pts(shape, dx=0.6, dy_up=0.4), fill=rim_col + (120,))
-    for shape, col in ((leg_l, leg_col), (leg_r, leg_col),
-                       (boot(-4.6), leg_col), (boot(1.4), leg_col),
-                       (coat, coat_col), (arm_l, coat_col),
-                       (arm_r, coat_col)):
+        d.polygon(pts(shape, dx=0.55, dy_up=0.35), fill=rim_col + (115,))
+    # Rear arm first, so the coat overlaps its inner edge and it
+    # reads as held close to the body, not a separated tube.
+    for shape, col in ((leg_planted, leg_col), (leg_receding, leg_col),
+                       (boot_planted, leg_col), (boot_receding, leg_col),
+                       (arm_rear, coat_col), (coat, coat_col)):
         d.polygon(pts(shape), fill=col + (255,))
-    # Translucent details over the opaque coat must be source-over
-    # composited, not drawn directly: ImageDraw on an RGBA image
-    # replaces the destination alpha, so a fill with alpha 40/14
-    # would punch transparent holes through the coat. Draw the folds
-    # on a figure-local overlay, clip the overlay alpha to the alpha
-    # already present (opaque coat inside, transparent outside) so
-    # shading can never spill into the background, then composite.
-    fold_overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    fd = ImageDraw.Draw(fold_overlay)
-    fd.polygon(pts(fold_dark), fill=(0, 0, 0, 40))
-    fd.polygon(pts(fold_light), fill=tuple(pal["glow"]) + (14,))
-    fold_overlay.putalpha(ImageChops.multiply(
-        fold_overlay.getchannel("A"), img.getchannel("A")))
-    img = Image.alpha_composite(img, fold_overlay)
-    d = ImageDraw.Draw(img)
+    # Opaque tonal planes over the coat base: a darker back plane
+    # and a moonlit front plane. Both are fully opaque, so the torso
+    # interior stays solid at every scale (no new transparent holes).
+    d.polygon(pts(plane_shadow), fill=(11, 11, 18, 255))
+    d.polygon(pts(plane_light),
+              fill=_mix(coat_col, pal["glow"], 0.12) + (255,))
+    d.polygon(pts(arm_front), fill=coat_col + (255,))
     d.polygon(pts(neck), fill=neck_col + (255,))
     # The scarf tail is also translucent over the coat, so composite
     # it the same way; unclipped, because its free-hanging part is a
@@ -499,23 +741,27 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
     tex = lay.get("_texture")
     if tex is None or tex.shape != (h, w):
         tex = np.zeros((h, w), dtype=np.float32)
+    gtex = lay.get("_ground_texture")
+    if gtex is None or gtex.shape != (h, w):
+        gtex = np.zeros((h, w), dtype=np.float32)
 
-    # layered terrain: irregular ridges with slow parallax drift.
-    # Distant layers dissolve into the haze (soft feathered edges,
-    # reduced contrast); nearer layers keep firmer but still
-    # antialiased edges. Slope and texture shading keep the slopes
-    # from reading as flat colour bands.
+    # Layered terrain: deliberately shaped landforms (see
+    # terrain_profiles) with slow parallax drift. Distant layers
+    # dissolve into the haze with soft feathered edges; nearer layers
+    # keep firmer edges. Directional tonal planes (slope facing the
+    # moon plus a broad brightening toward the moon side) keep the
+    # slopes from reading as flat parallel colour bands.
     drift = f * 0.0016  # slow environment motion even if camx is still
     ypix = yy[:, None] * h
     haze_arr = np.array(_mix(pal["sky_bot"], pal["far"], 0.45), float)
+    far_r, mid_r, near_r = terrain_profiles(
+        lay, w, h, camx=camx, camy=camy, zoom=zoom, drift=drift)
     layers = []
-    for li, (pts, base_f, amp_f, col, shift_k) in enumerate((
-        (lay["ridge_far"], 0.60, 0.055, pal["far"], 1.0),
-        (lay["ridge_mid"], 0.70, 0.065, _mix(pal["far"], pal["near"], 0.45), 1.8),
-        (lay["ridge_near"], 0.80, 0.055, pal["near"], 2.8),
+    for li, (ridge, col) in enumerate((
+        (far_r, pal["far"]),
+        (mid_r, _mix(pal["far"], pal["near"], 0.45)),
+        (near_r, pal["near"]),
     )):
-        ridge = _ridge_y(x_norm, pts, base_f * h + (camy - 0.5) * 0.03 * h,
-                         amp_f * h * zoom, camx * shift_k + drift * shift_k)
         layers.append((ridge, np.array(col, float)))
         depth = np.clip((ypix - ridge[None, :])
                         / np.maximum(1.0, h - ridge[None, :]), 0, 1)
@@ -525,27 +771,33 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
         k = np.ones(17) / 17.0  # smooth so shading cannot stripe
         slope = np.convolve(np.pad(slope, 8, mode="edge"), k,
                             mode="valid")[:len(slope)]
-        shade = np.clip(1.0 - slope * 0.16, 0.96, 1.04)[None, :, None]
-        layer_col = (col_arr[None, None, :] * (1 - 0.25 * depth[:, :, None])
-                     + np.array((4, 5, 10), float)[None, None, :]
-                     * (0.25 * depth[:, :, None]))
-        layer_col = layer_col * shade + tex[:, :, None] * 7.0
-        feather = (0.016, 0.010, 0.005)[li] * h
+        shade = np.clip(1.0 - slope * 0.24, 0.93, 1.07)[None, :, None]
+        moon_grad = (0.95 + 0.08 * x_norm)[None, :, None]
+        # Foreground ground deepens more strongly (dry slope falling
+        # into shadow toward the bottom); upper depths stay gentle.
+        if li < 2:
+            dshade = 0.25 * depth[:, :, None]
+        else:
+            dshade = 0.55 * (depth[:, :, None] ** 1.5)
+        layer_col = (col_arr[None, None, :] * (1 - dshade)
+                     + np.array((4, 5, 10), float)[None, None, :] * dshade)
+        facet = _slope_facet_factor(li, x_norm, depth)
+        layer_col = layer_col * shade * moon_grad * facet[:, :, None] \
+            + tex[:, :, None] * 6.0
+        if li == 2:
+            layer_col = layer_col + gtex[:, :, None] \
+                * (5.0 + 10.0 * depth[:, :, None])
+        feather = (0.020, 0.011, 0.005)[li] * h
         alpha = np.clip((ypix - ridge[None, :] + feather * 0.5)
                         / max(1.0, feather), 0.0, 1.0)
         alpha = alpha * alpha * (3.0 - 2.0 * alpha)
         img = layer_col * alpha[:, :, None] + img * (1 - alpha[:, :, None])
 
-    # water sheen in the lowest foreground: blend toward the sky colour
-    water = np.clip((yy - 0.93) / 0.07, 0, 1)[:, None, None]
-    img = img * (1 - 0.22 * water) + bot[None, None, :] * (0.22 * water)
-
-    # traveller ground position on the near ridge
-    tx = w * (0.38 + 0.03 * np.sin(0.0011 * f + scene_id * 1.7)) \
-        + (camx - 0.5) * 6 * u
-    near_ridge = layers[-1][0]
-    tx_c = float(np.clip(tx, 0, w - 1))
-    feet_y = float(np.interp(tx_c, xs, near_ridge)) + 3 * u
+    # Traveller ground position: feet and contact shadow sit on the
+    # exact rendered foreground surface (see figure_support).
+    tx_c, feet_y, _ground_y = figure_support(
+        lay, w, h, f, camx=camx, camy=camy, zoom=zoom, drift=drift,
+        near=near_r)
     fs = figure_scale * u
     # The figure is static (no bob, no walking loop): feet stay planted
     # at feet_y. The lantern hangs from the raised hand; this ONE
@@ -554,36 +806,47 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
     fy = feet_y
     lx, ly = tx_c + 11 * fs, fy - 27 * fs
 
-    # terrain-following path: a naturally curving worn track from the
-    # traveller's feet down the foreground slope. Drawn as a feathered,
-    # texture-broken mask (soft integrated edges, shading that fades
-    # with distance) -- never a hard translucent wedge/spotlight.
+    # Worn earth path: a narrow track grounded exactly at the
+    # traveller's feet, widening gradually in perspective down the
+    # foreground slope. Its colour is the surrounding ground made
+    # slightly darker and desaturated (never a pale luminous ribbon
+    # or spotlight), with low-contrast texture following the land.
     if h - feet_y > 4:
         span = h - feet_y
         p0 = (tx_c, feet_y - 1 * u)
-        p1 = (tx_c + 15 * u, feet_y + 0.30 * span)
-        p2 = (tx_c - 20 * u, feet_y + 0.66 * span)
-        p3 = (tx_c + 11 * u, h + 4 * u)
+        p1 = (tx_c + 10 * u, feet_y + 0.30 * span)
+        p2 = (tx_c - 12 * u, feet_y + 0.66 * span)
+        p3 = (tx_c + 6 * u, h + 4 * u)
         centre = [_cubic(p0, p1, p2, p3, t / 28.0) for t in range(29)]
         left, right = [], []
         for i, (cxp, cyp) in enumerate(centre):
             t = i / 28.0
-            half = (2.4 + 13.0 * t ** 1.3) * u \
-                * (1.0 + 0.16 * np.sin(t * 9.0 + scene_id * 1.3))
+            half = (1.6 + 8.5 * t ** 1.35) * u \
+                * (1.0 + 0.07 * np.sin(t * 7.0))
             left.append((cxp - half, cyp))
             right.append((cxp + half, cyp))
         mask = Image.new("L", (w, h), 0)
         ImageDraw.Draw(mask).polygon(left + right[::-1], fill=255)
         mask = mask.filter(
-            ImageFilter.GaussianBlur(radius=max(1.0, 1.7 * u)))
+            ImageFilter.GaussianBlur(radius=max(1.0, 1.4 * u)))
         pa = np.asarray(mask, dtype=np.float64) / 255.0
-        fade = 1.0 - 0.45 * np.clip((ypix - feet_y)
+        fade = 1.0 - 0.25 * np.clip((ypix - feet_y)
                                     / max(1.0, span), 0, 1)
-        pa = pa * fade * (0.70 + 0.60 * (tex.astype(np.float64) + 0.5))
-        pa = np.clip(pa, 0.0, 1.0) * 0.38
-        path_col = np.array(_mix(_mix(pal["near"], pal["glow"], 0.18),
-                                 pal["moon"], 0.10), float)
-        img = img * (1 - pa[:, :, None]) + path_col[None, None, :] \
+        pa = pa * fade * (0.85 + 0.30 * (tex.astype(np.float64) + 0.5))
+        pa = np.clip(pa, 0.0, 1.0) * 0.62
+        _pn = _mix(pal["near"], pal["far"], 0.18)
+        _lum = int(round(0.299 * _pn[0] + 0.587 * _pn[1]
+                         + 0.114 * _pn[2]))
+        _desat = _mix(_pn, (_lum, _lum, _lum), 0.40)
+        path_col = np.array(tuple(int(round(c * 0.62)) for c in _desat),
+                            float)
+        # The worn surface follows the ground's own deepening shade
+        # downslope, so it stays darker than its surroundings at
+        # every depth instead of flattening into a ribbon.
+        row_shade = 1.0 - 0.30 * np.clip((ypix - feet_y)
+                                         / max(1.0, span), 0, 1)
+        img = img * (1 - pa[:, :, None]) \
+            + (path_col[None, None, :] * row_shade[:, :, None]) \
             * pa[:, :, None]
 
     # soft accent bloom at the lantern (diffuse, localised; not a ring,
@@ -596,6 +859,10 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
 
     canvas = Image.fromarray(np.clip(img, 0, 255).astype(np.uint8), "RGB")
     d = ImageDraw.Draw(canvas, "RGBA")
+
+    # No moonlit edge line on the path: regularly spaced bright
+    # dashes read as stitching/road markings. The worn path stays
+    # grounded by its dark, low-contrast surface alone.
 
     # soft drifting clouds (blurred blobs -> atmospheric depth)
     overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
@@ -625,33 +892,26 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
         for x, y, r, ph in zip(sx, sy, lay["star_r"][:n_star],
                                lay["star_phase"][:n_star]):
             tw = 0.4 + 0.6 * abs(np.sin(0.03 * f + ph))
-            a = int(46 + 66 * tw)
-            rr = r * u * 0.55
+            a = int(24 + 40 * tw)
+            rr = r * u * 0.24
             d.ellipse([x - rr, y - rr, x + rr, y + rr],
                       fill=(228, 233, 250, a))
 
     # terrain speckles (texture on the slopes, parallax-shifted)
     sp = lay["speckles"]
     spx = (sp[:, 0] * w + camx * 14 * u) % w
-    for x, yn in zip(spx[::4], sp[::4, 1]):
+    for x, yn in zip(spx[::6], sp[::6, 1]):
         ridge_here = float(np.interp(x, xs, layers[1][0]))
         y = ridge_here + yn * (h - ridge_here) * 0.85
         if y < h - 2:
             d.ellipse([x - u, y - u * 0.6, x + u, y + u * 0.6],
-                      fill=(210, 215, 235, 14))
+                      fill=(210, 215, 235, 11))
 
-    # (The worn path was integrated into the terrain above as a
-    # feathered, texture-broken mask; no wedge is drawn here.)
+    # (The worn earth path was integrated into the terrain above as
+    # a feathered, texture-modulated mask; no wedge, bright ribbon
+    # or floating water shimmer is drawn in the dry foreground.)
 
-    # water shimmer streaks in the foreground
-    for i, (sx0, sy0) in enumerate(lay["streaks"]):
-        y = h * (0.94 + 0.055 * sy0)
-        x = ((sx0 + 0.0006 * f * (0.5 + sy0)) % 1.0) * w
-        ln = (6 + 14 * sx0) * u
-        d.line([x, y, x + ln, y], fill=pal["glow"] + (int(13 + 10 * light),),
-               width=max(1, int(u)))
-
-    # traveller: refined static silhouette (see _traveller_layer),
+    # traveller: static silhouette (see _traveller_layer),
     # grounded by a soft contact shadow. No bob, no walking loop.
     shadow = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     ImageDraw.Draw(shadow).ellipse(
@@ -692,9 +952,9 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
               + 0.10 * f * lay["part_speed"][:n_part] * u) % w
         py = (lay["parts"][:n_part, 1] * h - 0.22 * f * u) % h
         for x, y, r in zip(px, py, lay["part_r"][:n_part]):
-            rr = r * u
+            rr = r * u * 0.35
             d.ellipse([x - rr, y - rr, x + rr, y + rr],
-                      fill=(255, 240, 210, 62))
+                      fill=(255, 240, 210, 32))
 
     # executable storyboard camera: transform the ENTIRE rendered
     # world (sky/moon/terrain/path/figure) by the bounded subpixel
