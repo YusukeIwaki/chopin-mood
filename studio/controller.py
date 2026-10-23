@@ -19,7 +19,140 @@ _FAILURE_MARKER_RE = re.compile(
 _ENGINEERING_MARKER_RE = re.compile(
     r"<!-- studio:engineering child=(\d+) -->")
 ESCALATION_STATUSES = ("needs_engine", "attempts_exhausted",
-                       "no_change", "no_visual_change")
+                       "no_change", "no_visual_change", "visual_blocked")
+
+_VISUAL_MARKER_RE = re.compile(
+    r"<!-- studio:visual child=(\d+) run=(\d+) attempt=(\d+) "
+    r"version=(\d+) stage=(still|motion) phase=(pending|result) -->")
+
+
+def sanitize_comment_text(value) -> str:
+    """Render model-derived text as comment DATA, never as markup.
+
+    Neutralises unintended @mentions (zero-width break after ``@``)
+    and HTML-comment marker injection (``<!-- ... -->``), so model
+    text can neither ping a user nor forge a bot idempotency marker.
+    """
+    text = str(value or "")
+    text = text.replace("<!--", "&lt;!--").replace("-->", "--&gt;")
+    return re.sub(r"@(?=[A-Za-z0-9])", "@\u200b", text)
+
+
+def visual_comment_marker(*, child: int, run_id: int, run_attempt: int,
+                          version: int, stage: str, phase: str) -> str:
+    return (f"<!-- studio:visual child={int(child)} run={int(run_id)} "
+            f"attempt={int(run_attempt)} version={int(version)} "
+            f"stage={stage} phase={phase} -->")
+
+
+def parse_visual_markers(body) -> list[dict]:
+    out = []
+    for m in _VISUAL_MARKER_RE.finditer(body or ""):
+        out.append({"child": int(m.group(1)), "run_id": int(m.group(2)),
+                    "run_attempt": int(m.group(3)),
+                    "version": int(m.group(4)), "stage": m.group(5),
+                    "phase": m.group(6)})
+    return out
+
+
+def build_visual_pending_body(*, child: int, run_id: int, run_attempt: int,
+                              version: int, stage: str,
+                              evidence_sha256: str, artifact_name: str = "",
+                              artifact_url: str = "", repo: str = "") -> str:
+    marker = visual_comment_marker(
+        child=child, run_id=run_id, run_attempt=run_attempt,
+        version=version, stage=stage, phase="pending")
+    lines = [
+        f"Studio visual preflight: {stage} review pending "
+        f"(storyboard version {version}).",
+        "",
+        f"- Stage: {stage}",
+        f"- Evidence SHA-256: `{evidence_sha256}`",
+        f"- Artifact: {artifact_url or artifact_name or '(see workflow run)'}",
+        f"- Run: {run_url_for(repo or None, run_id)} (attempt {run_attempt})",
+        "",
+        "Next action: automated visual review of the uploaded evidence; "
+        "this pending note is not a final approval.",
+        marker,
+    ]
+    return "\n".join(lines)
+
+
+def build_visual_result_body(*, child: int, run_id: int, run_attempt: int,
+                             version: int, stage: str, review,
+                             evidence_sha256: str, artifact_url: str = "",
+                             artifact_id=None, repo: str = "",
+                             next_action: str = "") -> str:
+    """Per-stage result comment: full blockers/instructions as data."""
+    review = review if isinstance(review, dict) else {}
+    blockers = review.get("blockers") if isinstance(
+        review.get("blockers"), list) else []
+    instructions = gating.review_instructions(review)
+    verdict = review.get("verdict") or "unknown"
+    if not next_action:
+        if verdict == "pass":
+            next_action = (
+                "Proceed to the next visual stage; this intermediate "
+                "pass is not a final approval." if stage == "still" else
+                "Proceed to the full render and existing final review; "
+                "this preflight pass is not a final approval.")
+        else:
+            next_action = ("Address the blockers/instructions above; "
+                           "no full render follows a failed preflight.")
+    marker = visual_comment_marker(
+        child=child, run_id=run_id, run_attempt=run_attempt,
+        version=version, stage=stage, phase="result")
+    lines = [
+        f"Studio visual preflight result: stage={stage} "
+        f"decision={verdict} (storyboard version {version}).",
+        "",
+        f"- Stage: {stage}",
+        f"- Evidence SHA-256: `{evidence_sha256}`",
+        f"- Decision: {verdict}",
+        f"- Artifact: {artifact_url or artifact_id or '(see workflow run)'}",
+        f"- Run: {run_url_for(repo or None, run_id)} (attempt {run_attempt})",
+        "",
+        "Blockers:",
+        *([f"- {sanitize_comment_text(b)}" for b in blockers]
+          or ["- (none recorded)"]),
+        "",
+        "Repair instructions:",
+        *([f"- {sanitize_comment_text(i)}" for i in instructions]
+          or ["- (none recorded in this review)"]),
+        "",
+        f"Summary: {sanitize_comment_text(review.get('summary', ''))}",
+        "",
+        ("Intermediate pass: this is not a final approval."
+         if verdict == "pass" else
+         "No full render or final approval follows this result."),
+        f"Next action: {sanitize_comment_text(next_action)}",
+        marker,
+    ]
+    return "\n".join(lines)
+
+
+def ensure_visual_comment(gh, *, child: int, run_id: int, run_attempt: int,
+                          version: int, stage: str, phase: str,
+                          body: str) -> dict:
+    """Idempotent per-stage comment on the child issue.
+
+    Deduped by the exact (child, run, attempt, version, stage, phase)
+    marker; only bot-authored comments count, so a forged marker in a
+    user comment never suppresses the real bot comment. Comments are
+    reporting only: they never control pipeline flow.
+    """
+    marker = visual_comment_marker(
+        child=child, run_id=run_id, run_attempt=run_attempt,
+        version=version, stage=stage, phase=phase)
+    for c in _bot_comments(gh, int(child)):
+        if marker in (c.get("body") or ""):
+            return {"ok": True, "action": "reused", "comment_id": c.get("id"),
+                    "created": False}
+    created = gh.request("POST", f"/issues/{int(child)}/comments",
+                         {"body": body})
+    return {"ok": True, "action": "created",
+            "comment_id": created.get("id") if isinstance(created, dict) else None,
+            "created": True}
 
 
 def _is_bot_login(login) -> bool:
@@ -72,13 +205,22 @@ def build_failure_feedback_body(review, gate_failures, *, head_sha: str,
     old feedback reader still finds it. Never pings or assigns owner.
     """
     review = review if isinstance(review, dict) else {}
-    blockers = review.get("blockers") if isinstance(
-        review.get("blockers"), list) else []
-    instructions = gating.review_instructions(review)
-    route = gating.review_route(review) or "legacy (no repair metadata)"
+    # A visual_blocked stop keeps the LAST fully reviewed final bundle
+    # above, but the feedback blockers/instructions/summary must be the
+    # NEWEST visual preflight review, never the old final review.
+    vrev = (repair_result or {}).get("visual_review") if isinstance(
+        repair_result, dict) else None
+    feedback_src = vrev if isinstance(vrev, dict) else review
+    blockers = feedback_src.get("blockers") if isinstance(
+        feedback_src.get("blockers"), list) else []
+    instructions = gating.review_instructions(feedback_src)
+    route = gating.review_route(feedback_src) \
+        or gating.review_route(review) or "legacy (no repair metadata)"
     failed = _failed_checks(review)
     status = (repair_result or {}).get("status") if isinstance(
         repair_result, dict) else None
+    visual_stage = (repair_result or {}).get("visual_stage") \
+        if isinstance(repair_result, dict) else None
     if status in ESCALATION_STATUSES or route == "engine":
         next_action = ("Engineering implementation and review before "
                        "rerunning the source workflow.")
@@ -133,13 +275,18 @@ def build_failure_feedback_body(review, gate_failures, *, head_sha: str,
         *([f"- {f}" for f in (gate_failures or [])] or ["- (none recorded)"]),
         "",
         "Blockers:",
-        *([f"- {b}" for b in blockers] or ["- (none recorded)"]),
+        *([f"- {sanitize_comment_text(b)}" for b in blockers]
+          or ["- (none recorded)"]),
         "",
         "Repair instructions:",
-        *([f"- {i}" for i in instructions]
+        *([f"- {sanitize_comment_text(i)}" for i in instructions]
           or ["- (none recorded in this review)"]),
         "",
-        f"Summary: {review.get('summary', '')}",
+        f"Summary: {sanitize_comment_text(feedback_src.get('summary', ''))}",
+        *([f"Visual preflight stage: {sanitize_comment_text(visual_stage)} "
+           "(newest block; the final bundle above is the last fully "
+           "reviewed bundle and was not replaced)"]
+          if visual_stage else []),
         "",
         *eng_lines,
         *([""] if eng_lines else []),
@@ -150,19 +297,47 @@ def build_failure_feedback_body(review, gate_failures, *, head_sha: str,
     return "\n".join(lines)
 
 
-def build_engineering_issue_body(*, parent: int, child: int, pr_number: int,
-                                 head_sha: str, run_id: int,
-                                 run_attempt: int, artifact_id=None,
+def build_engineering_issue_body(*, parent: int, child: int, pr_number=None,
+                                 head_sha: str = "", run_id: int = 0,
+                                 run_attempt: int = 1, artifact_id=None,
                                  artifact_url: str = "", review=None,
                                  repair_result=None,
-                                 gate_failures=None, repo: str = "") -> str:
+                                 gate_failures=None, repo: str = "",
+                                 stage: str | None = None,
+                                 evidence_sha256: str = "",
+                                 visual_artifact_url: str = "",
+                                 visual_artifact_name: str = "",
+                                 visual_review=None,
+                                 has_production_head: bool = True) -> str:
     review = review if isinstance(review, dict) else {}
-    blockers = review.get("blockers") if isinstance(
-        review.get("blockers"), list) else []
-    instructions = gating.review_instructions(review)
-    route = gating.review_route(review) or "legacy (no repair metadata)"
+    vrev = visual_review if isinstance(visual_review, dict) else None
+    src = vrev if vrev is not None else review
+    blockers = src.get("blockers") if isinstance(
+        src.get("blockers"), list) else []
+    instructions = gating.review_instructions(src)
+    route = gating.review_route(src) or "legacy (no repair metadata)"
     status = (repair_result or {}).get("status") if isinstance(
         repair_result, dict) else None
+    if has_production_head:
+        pr_lines = [
+            f"- Production PR: #{pr_number}",
+            f"- Latest head: `{head_sha}`",
+        ]
+    else:
+        pr_lines = [
+            "- Production PR: none (no new full-video production "
+            "head exists for this outcome)",
+            "- Latest head: none (no new full-video production "
+            "head exists; no PR/head is claimed)",
+        ]
+    visual_lines: list[str] = []
+    if stage is not None:
+        visual_lines = [
+            f"- Visual stage: {sanitize_comment_text(stage)}",
+            f"- Visual evidence SHA-256: `{evidence_sha256 or '(none)'}`",
+            f"- Visual artifact: "
+            f"{visual_artifact_url or visual_artifact_name or '(see workflow run)'}",
+        ]
     lines = [
         engineering_marker(child),
         "",
@@ -170,18 +345,19 @@ def build_engineering_issue_body(*, parent: int, child: int, pr_number: int,
         "",
         f"- Parent issue: #{parent}",
         f"- Child issue: #{child}",
-        f"- Production PR: #{pr_number}",
-        f"- Latest head: `{head_sha}`",
+        *pr_lines,
+        *visual_lines,
         f"- Run: {run_url_for(repo or None, run_id)} (attempt {run_attempt})",
         f"- Artifact: {artifact_url or artifact_id or '(see workflow run)'}",
         f"- Repair route: {route}",
         f"- Repair status: {status or 'needs_engine'}",
         "",
         "## Blockers",
-        *([f"- {b}" for b in blockers] or ["- (none recorded)"]),
+        *([f"- {sanitize_comment_text(b)}" for b in blockers]
+          or ["- (none recorded)"]),
         "",
         "## Repair instructions",
-        *([f"- {i}" for i in instructions]
+        *([f"- {sanitize_comment_text(i)}" for i in instructions]
           or ["- (none recorded in this review)"]),
         "",
         "## Why automatic repair stopped",
@@ -223,24 +399,41 @@ def find_engineering_issues(gh, *, child: int) -> list:
     return sorted(out, key=lambda i: int(i.get("number", 0)))
 
 
-def ensure_engineering_issue(gh, *, parent: int, child: int, pr_number: int,
-                             head_sha: str, run_id: int, run_attempt: int,
+def ensure_engineering_issue(gh, *, parent: int, child: int, pr_number=None,
+                             head_sha: str = "", run_id: int = 0,
+                             run_attempt: int = 1,
                              artifact_id=None, artifact_url: str = "",
                              review=None, repair_result=None,
-                             gate_failures=None) -> dict:
+                             gate_failures=None, stage=None,
+                             evidence_sha256: str = "",
+                             visual_artifact_url: str = "",
+                             visual_artifact_name: str = "",
+                             visual_review=None,
+                             has_production_head: bool = True) -> dict:
     """Create or update ONE open bot engineering issue per child.
 
     Idempotent: an existing open bot issue is updated in place; an
     owner/bot-closed bot issue is never reopened and blocks creating a
     duplicate. User-forged markers never count. Never links the issue
     as a source-production sub-issue and never closes source/PR.
+
+    Optional visual-preflight fields (``stage``, ``evidence_sha256``,
+    ``visual_artifact_*``, ``visual_review``) describe an early visual
+    outcome; with ``has_production_head=False`` the body honestly
+    states that no new full-video production head exists instead of
+    inventing a PR/head. The SAME child marker/dedupe logic is used.
     """
     body = build_engineering_issue_body(
         parent=parent, child=child, pr_number=pr_number, head_sha=head_sha,
         run_id=run_id, run_attempt=run_attempt, artifact_id=artifact_id,
         artifact_url=artifact_url, review=review,
         repair_result=repair_result, gate_failures=gate_failures,
-        repo=getattr(gh, "repo", "") or "")
+        repo=getattr(gh, "repo", "") or "", stage=stage,
+        evidence_sha256=evidence_sha256,
+        visual_artifact_url=visual_artifact_url,
+        visual_artifact_name=visual_artifact_name,
+        visual_review=visual_review,
+        has_production_head=has_production_head)
     title = f"Studio engineering repair needed for child #{child}"
     existing = find_engineering_issues(gh, child=child)
     open_existing = [i for i in existing if i.get("state") == "open"]
@@ -269,6 +462,30 @@ def ensure_engineering_issue(gh, *, parent: int, child: int, pr_number: int,
             "issue_number": num1,
             "created": True, "updated": False, "state": "open",
             "html_url": issue_url_for(getattr(gh, "repo", None), num1)}
+
+
+def ensure_visual_engineering_issue(gh, *, parent: int, child: int,
+                                    run_id: int, run_attempt: int,
+                                    stage: str, evidence_sha256: str = "",
+                                    artifact_url: str = "",
+                                    artifact_name: str = "",
+                                    review=None, status: str = "needs_engine",
+                                    gate_failures=None) -> dict:
+    """Early visual-failure handoff on the SAME bot engineering issue.
+
+    Shares the child marker/dedupe of :func:`ensure_engineering_issue`
+    (never a new source sub-issue), states honestly that no new
+    full-video production head exists, and never pings/assigns the
+    owner. An existing production PR is left untouched.
+    """
+    return ensure_engineering_issue(
+        gh, parent=parent, child=child, run_id=run_id,
+        run_attempt=run_attempt, review=review,
+        repair_result={"status": status}, gate_failures=gate_failures or [],
+        stage=stage, evidence_sha256=evidence_sha256,
+        visual_artifact_url=artifact_url, visual_artifact_name=artifact_name,
+        visual_review=review if isinstance(review, dict) else None,
+        has_production_head=False)
 
 
 def build_retry_feedback(gh, *, child: int) -> str:
@@ -594,13 +811,32 @@ def publish_review_controller(gh, *, pr_number: int, child: int,
                 parent_number = repair_result.get(
                     "parent_issue", repair_result.get("parent"))
             if parent_number is not None:
+                _vrev = repair_result.get("visual_review") \
+                    if isinstance(repair_result, dict) else None
+                _visual = repair_result.get("visual") \
+                    if isinstance(repair_result, dict) else None
+                _vart = _visual.get("artifact") \
+                    if isinstance(_visual, dict) else None
+                if not isinstance(_vart, dict):
+                    _vart = repair_result.get("visual_artifact") \
+                        if isinstance(repair_result, dict) else None
                 engineering = ensure_engineering_issue(
                     gh, parent=int(parent_number), child=child,
                     pr_number=pr_number, head_sha=head_sha, run_id=run_id,
                     run_attempt=run_attempt, artifact_id=artifact_id,
                     artifact_url=artifact_url, review=review,
                     repair_result=repair_result,
-                    gate_failures=gate["failures"])
+                    gate_failures=gate["failures"],
+                    stage=repair_result.get("visual_stage")
+                    if isinstance(repair_result, dict) else None,
+                    evidence_sha256=str(
+                        repair_result.get("visual_evidence_sha256") or "")
+                    if isinstance(repair_result, dict) else "",
+                    visual_artifact_url=str(_vart.get("url") or "")
+                    if isinstance(_vart, dict) else "",
+                    visual_artifact_name=str(_vart.get("name") or "")
+                    if isinstance(_vart, dict) else "",
+                    visual_review=_vrev if isinstance(_vrev, dict) else None)
         repo_name = getattr(gh, "repo", "") or ""
         body = build_failure_feedback_body(
             review, gate["failures"], head_sha=head_sha,

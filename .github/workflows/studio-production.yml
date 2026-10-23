@@ -266,7 +266,8 @@ jobs:
     needs: [preflight, plan]
     if: needs.plan.outputs.matrix != '' && needs.plan.outputs.matrix != '{"include":[]}'
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    # Covers all calls under the shared two-repair budget plus cleanup.
+    timeout-minutes: 300
     permissions:
       contents: write
       pull-requests: write
@@ -309,6 +310,8 @@ jobs:
           npm install --global "@openai/codex@latest"
           codex --version
           bash .github/studio/scripts/setup-codex-sandbox.sh
+          npm install --prefix "$RUNNER_TEMP/studio-artifact-tools" --ignore-scripts --no-audit --no-fund @actions/artifact@2.3.2
+          echo "STUDIO_ARTIFACT_TOOLS=$RUNNER_TEMP/studio-artifact-tools" >> "$GITHUB_ENV"
       - name: Download plan bundle
         uses: actions/download-artifact@v7
         with:
@@ -415,45 +418,6 @@ jobs:
           assert work_meta["decoded_wav_sha256"] == plan_meta["decoded_wav_sha256"] == ctx["source_sha256"], "decoded WAV hash does not match plan context"
           print("source hashes verified (attachment + decoded)")
           PY
-      - name: Validate storyboard and render (trusted renderer + encoded QA)
-        run: |
-          set -euo pipefail
-          python3 -m studio validate-storyboard --storyboard output/studio/work/storyboard.json --scenes output/studio/work/scenes.json
-          python3 scripts/studio_render.py --wav output/studio/source/source.wav --candidate output/studio/work/candidate.json --storyboard output/studio/work/storyboard.json --brief output/studio/work/brief.json --out output/studio/work/bundle
-      - name: Commit production bundle and create or reuse PR
-        id: commit
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          CHILD_ISSUE: ${{ matrix.child_issue }}
-        run: |
-          set -euo pipefail
-          mkdir -p output/studio/work/production-bundle
-          cp output/studio/work/brief.json output/studio/work/storyboard.json output/studio/work/bundle/plan.json output/studio/work/bundle/qa.json output/studio/work/bundle/provenance.json output/studio/work/bundle/timeline.json output/studio/work/production-bundle/
-          python3 scripts/studio_commit_bundle.py --child "$CHILD_ISSUE" --bundle-dir output/studio/work/production-bundle --out output/studio/work/pr.json
-          echo "pr_number=$(python3 -c 'import json;print(json.load(open("output/studio/work/pr.json"))["pr_number"])')" >> "$GITHUB_OUTPUT"
-          echo "head_sha=$(python3 -c 'import json;print(json.load(open("output/studio/work/pr.json"))["head_sha"])')" >> "$GITHUB_OUTPUT"
-      - name: Generate artifact receipt and hash manifest (receipt not committed)
-        env:
-          HEAD_SHA: ${{ steps.commit.outputs.head_sha }}
-          PR_NUMBER: ${{ steps.commit.outputs.pr_number }}
-          CHILD_ISSUE: ${{ matrix.child_issue }}
-          PARENT_ISSUE: ${{ needs.preflight.outputs.issue_number }}
-          FINGERPRINT: ${{ needs.plan.outputs.fingerprint }}
-        run: |
-          set -euo pipefail
-          python3 -c 'import json; json.dump(json.load(open("output/studio/work/pr.json"))["blob_sha256"], open("output/studio/work/production-map.json","w"), indent=2)'
-          python3 -m studio make-receipt --pr "$PR_NUMBER" --child "$CHILD_ISSUE" --parent "$PARENT_ISSUE" --head-sha "$HEAD_SHA" --run-id "${{ github.run_id }}" --run-attempt "${{ github.run_attempt }}" --engine-sha "${{ github.sha }}" --attachment-sha256 "$(python3 -c 'import json;print(json.load(open("output/studio/work/source-meta.json"))["attachment_sha256"])')" --decoded-sha256 "$(python3 -c 'import json;print(json.load(open("output/studio/work/source-meta.json"))["decoded_wav_sha256"])')" --fingerprint "$FINGERPRINT" --production-map output/studio/work/production-map.json --out output/studio/work/bundle/receipt.json
-          cp output/studio/work/storyboard.json output/studio/work/brief.json output/studio/work/bundle/
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          from studio import artifacts
-          d = Path("output/studio/work/bundle")
-          files = {p.name: p.read_bytes() for p in d.iterdir() if p.is_file() and p.name != "hashes.json"}
-          (d / "hashes.json").write_text(json.dumps(artifacts.build_hash_manifest(files), indent=2))
-          PY
       - name: Create Codex read token (review)
         id: codex_read
         uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
@@ -483,7 +447,69 @@ jobs:
           mode: restore-codex
         env:
           CODEX_ENC_PASSPHRASE: ${{ secrets.CODEX_ENC_PASSPHRASE }}
+      - name: Staged visual preflight (still to motion)
+        id: visual
+        # Worst case: 6 reviews + 2 repairs, each bounded to 15 min.
+        timeout-minutes: 150
+        uses: actions/github-script@v8
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PARENT_ISSUE: ${{ needs.preflight.outputs.issue_number }}
+          CHILD_ISSUE: ${{ matrix.child_issue }}
+          ENGINE_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          VISUAL_WORK: output/studio/work
+          VISUAL_MUSE_WORK: ${{ runner.temp }}/muse-work
+          VISUAL_WAV: output/studio/source/source.wav
+        with:
+          script: |
+            await exec.exec('python3', ['scripts/studio_visual_preflight.py', '--work', process.env.VISUAL_WORK, '--muse-work', process.env.VISUAL_MUSE_WORK, '--wav', process.env.VISUAL_WAV, '--parent', process.env.PARENT_ISSUE, '--child', process.env.CHILD_ISSUE, '--engine-sha', process.env.ENGINE_SHA, '--run-id', process.env.RUN_ID, '--run-attempt', process.env.RUN_ATTEMPT]);
+      - name: Validate storyboard and render (trusted renderer + encoded QA)
+        if: steps.visual.outputs.proceed == 'true'
+        run: |
+          set -euo pipefail
+          python3 -m studio validate-storyboard --storyboard output/studio/work/storyboard.json --scenes output/studio/work/scenes.json
+          python3 scripts/studio_render.py --wav output/studio/source/source.wav --candidate output/studio/work/candidate.json --storyboard output/studio/work/storyboard.json --brief output/studio/work/brief.json --out output/studio/work/bundle --visual-approval output/studio/work/visual-approval.json --engine-sha ${{ github.sha }}
+      - name: Commit production bundle and create or reuse PR
+        if: steps.visual.outputs.proceed == 'true'
+        id: commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          CHILD_ISSUE: ${{ matrix.child_issue }}
+        run: |
+          set -euo pipefail
+          mkdir -p output/studio/work/production-bundle
+          cp output/studio/work/brief.json output/studio/work/storyboard.json output/studio/work/bundle/plan.json output/studio/work/bundle/qa.json output/studio/work/bundle/provenance.json output/studio/work/bundle/timeline.json output/studio/work/production-bundle/
+          python3 scripts/studio_commit_bundle.py --child "$CHILD_ISSUE" --bundle-dir output/studio/work/production-bundle --out output/studio/work/pr.json
+          echo "pr_number=$(python3 -c 'import json;print(json.load(open("output/studio/work/pr.json"))["pr_number"])')" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$(python3 -c 'import json;print(json.load(open("output/studio/work/pr.json"))["head_sha"])')" >> "$GITHUB_OUTPUT"
+      - name: Generate artifact receipt and hash manifest (receipt not committed)
+        if: steps.visual.outputs.proceed == 'true'
+        env:
+          HEAD_SHA: ${{ steps.commit.outputs.head_sha }}
+          PR_NUMBER: ${{ steps.commit.outputs.pr_number }}
+          CHILD_ISSUE: ${{ matrix.child_issue }}
+          PARENT_ISSUE: ${{ needs.preflight.outputs.issue_number }}
+          FINGERPRINT: ${{ needs.plan.outputs.fingerprint }}
+        run: |
+          set -euo pipefail
+          python3 -c 'import json; json.dump(json.load(open("output/studio/work/pr.json"))["blob_sha256"], open("output/studio/work/production-map.json","w"), indent=2)'
+          python3 -m studio make-receipt --pr "$PR_NUMBER" --child "$CHILD_ISSUE" --parent "$PARENT_ISSUE" --head-sha "$HEAD_SHA" --run-id "${{ github.run_id }}" --run-attempt "${{ github.run_attempt }}" --engine-sha "${{ github.sha }}" --attachment-sha256 "$(python3 -c 'import json;print(json.load(open("output/studio/work/source-meta.json"))["attachment_sha256"])')" --decoded-sha256 "$(python3 -c 'import json;print(json.load(open("output/studio/work/source-meta.json"))["decoded_wav_sha256"])')" --fingerprint "$FINGERPRINT" --production-map output/studio/work/production-map.json --out output/studio/work/bundle/receipt.json
+          cp output/studio/work/storyboard.json output/studio/work/brief.json output/studio/work/bundle/
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from studio import artifacts
+          d = Path("output/studio/work/bundle")
+          files = {p.name: p.read_bytes() for p in d.iterdir() if p.is_file() and p.name != "hashes.json"}
+          (d / "hashes.json").write_text(json.dumps(artifacts.build_hash_manifest(files), indent=2))
+          PY
       - name: Run Codex evidence review (labelled brief/storyboard/files/images/QA)
+        if: steps.visual.outputs.proceed == 'true'
         timeout-minutes: 15
         env:
           HEAD_SHA: ${{ steps.commit.outputs.head_sha }}
@@ -506,13 +532,24 @@ jobs:
           PY
       - name: Bounded aesthetic repair (max 2 Muse + render + Codex re-review)
         id: repair
-        timeout-minutes: 75
+        if: steps.visual.outputs.proceed == 'true'
+        # At most 2 * (Muse + still + motion + render + final review).
+        timeout-minutes: 180
+        uses: actions/github-script@v8
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          python3 scripts/studio_repair.py --work output/studio/work --muse-work "$RUNNER_TEMP/muse-work" --wav output/studio/source/source.wav --parent ${{ needs.preflight.outputs.issue_number }} --child ${{ matrix.child_issue }} --engine-sha ${{ github.sha }} --run-id ${{ github.run_id }} --run-attempt ${{ github.run_attempt }}
+          PARENT_ISSUE: ${{ needs.preflight.outputs.issue_number }}
+          CHILD_ISSUE: ${{ matrix.child_issue }}
+          ENGINE_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          REPAIR_WORK: output/studio/work
+          REPAIR_MUSE_WORK: ${{ runner.temp }}/muse-work
+          REPAIR_WAV: output/studio/source/source.wav
+        with:
+          script: |
+            await exec.exec('python3', ['scripts/studio_repair.py', '--work', process.env.REPAIR_WORK, '--muse-work', process.env.REPAIR_MUSE_WORK, '--wav', process.env.REPAIR_WAV, '--parent', process.env.PARENT_ISSUE, '--child', process.env.CHILD_ISSUE, '--engine-sha', process.env.ENGINE_SHA, '--run-id', process.env.RUN_ID, '--run-attempt', process.env.RUN_ATTEMPT, '--require-visual-preflight']);
       - name: Persist refreshed Muse auth
         id: persist_muse
         if: always() && steps.restore_muse.outcome == 'success' && env.STUDIO_MUSE_CLEANUP_SAFE != 'false'
@@ -539,9 +576,11 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.muse_write.outputs.token }}
       - name: Validate bundle allowlist before upload
+        if: steps.visual.outputs.proceed == 'true'
         run: |
           python3 -m studio check-bundle --dir output/studio/work/bundle
       - name: Upload production artifact (child/head/run/attempt in name)
+        if: steps.visual.outputs.proceed == 'true'
         id: upload
         uses: actions/upload-artifact@v7
         with:
@@ -550,7 +589,7 @@ jobs:
           retention-days: 90
       - name: Validate review-attempt history bundles (fully reviewed only)
         id: validate_history
-        if: always() && steps.repair.outcome != 'cancelled'
+        if: always() && steps.repair.outcome != 'cancelled' && hashFiles('output/studio/work/review-attempts/**') != ''
         env:
           HISTORY_PARENT: ${{ needs.preflight.outputs.issue_number }}
           HISTORY_CHILD: ${{ matrix.child_issue }}
@@ -586,7 +625,21 @@ jobs:
           name: studio-review-attempts-child-${{ matrix.child_issue }}-run-${{ github.run_id }}-a${{ github.run_attempt }}
           path: output/studio/work/review-attempts/
           retention-days: 90
+      - name: Build aggregate visual history
+        id: validate_visual_history
+        if: always() && hashFiles('output/studio/work/visual-state.json') != ''
+        run: |
+          set -euo pipefail
+          python3 scripts/studio_visual_preflight.py --work output/studio/work --validate-history
+      - name: Upload aggregate visual history (not release-eligible)
+        if: always() && steps.validate_visual_history.outcome == 'success'
+        uses: actions/upload-artifact@v7
+        with:
+          name: studio-visual-reviews-child-${{ matrix.child_issue }}-run-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: output/studio/work/visual-history/
+          retention-days: 90
       - name: Publish review (ping only on pass + mechanical pass; retry-safe)
+        if: steps.visual.outputs.proceed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -619,6 +672,17 @@ jobs:
               print("- owner-ready: NO - aesthetic/engineering handoff required; this workflow completing is not a quality pass")
               print("- engineering handoff: see the bot engineering Issue from publish-review (when applicable) and the review-attempts history artifact; no automated engine-coding job exists yet")
           PY
+      - name: Summarize early visual block
+        if: always() && steps.visual.outputs.proceed == 'false'
+        env:
+          VISUAL_STATUS: ${{ steps.visual.outputs.status }}
+        run: |
+          {
+            echo "## Studio final quality status: visual preflight blocked (${VISUAL_STATUS})"
+            echo "- owner-ready: NO"
+            echo "- new production head: none (no new production head was created and no full render ran)"
+            echo "- next action: address the visual preflight outcome above; do not treat this workflow as a quality pass"
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Persist refreshed Codex auth
         id: persist_codex
         if: always() && steps.restore_codex.outcome == 'success'

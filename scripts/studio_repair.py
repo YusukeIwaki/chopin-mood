@@ -36,7 +36,9 @@ import shutil
 from pathlib import Path
 
 from studio import artifacts, config, controller, gating, repair
+from studio import visual_pipeline as vpipe
 from studio.github_client import GitHubClient
+from studio.render_context import prepare_context
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -99,6 +101,12 @@ def main() -> int:
     ap.add_argument("--engine-sha", required=True)
     ap.add_argument("--run-id", required=True, type=int)
     ap.add_argument("--run-attempt", required=True, type=int)
+    ap.add_argument("--require-visual-preflight", action="store_true",
+                    help="require an approved visual-state for the initial "
+                         "storyboard and a fresh still+motion pass for "
+                         "every repaired storyboard (production sets this)")
+    ap.add_argument("--visual-state", default="",
+                    help="visual-state.json path (default: <work>/visual-state.json)")
     a = ap.parse_args()
     try:
         return _run(a)
@@ -177,6 +185,43 @@ def _run(a) -> int:
             "work storyboard does not match reviewed bundle storyboard")
     initial_plan = _read_json_bytes(files["plan.json"], "plan.json")
     initial_media = repair.media_sha_map(files)
+    # Shared visual budget: load/validate prior visual state BEFORE any
+    # Muse call. Production (--require-visual-preflight) fails closed
+    # when it is missing or does not approve the initial storyboard.
+    visual_state = None
+    prior_visual_repairs = 0
+    require_visual_preflight = bool(
+        getattr(a, "require_visual_preflight", False))
+    _visual_state_arg = getattr(a, "visual_state", "") or ""
+    visual_state_path = Path(_visual_state_arg) if _visual_state_arg else work / vpipe.STATE_FILENAME
+    if visual_state_path.is_file():
+        try:
+            visual_state = vpipe.load_visual_state(visual_state_path.parent)
+        except vpipe.VisualInfrastructureError as e:
+            raise repair.RepairInfrastructureError(str(e)) from e
+        if visual_state.get("parent_issue") != a.parent \
+                or visual_state.get("child_issue") != a.child \
+                or visual_state.get("engine_sha") != a.engine_sha \
+                or visual_state.get("run_id") != a.run_id \
+                or visual_state.get("run_attempt") != a.run_attempt:
+            raise repair.RepairInfrastructureError(
+                "visual state identity does not match this run")
+        if vpipe.canonical_hash(brief) != visual_state.get("brief_sha256") \
+                or vpipe.canonical_hash(candidate) != visual_state.get("candidate_sha256"):
+            raise repair.RepairInfrastructureError(
+                "visual state brief/candidate does not match work inputs")
+        prior_visual_repairs = int(visual_state.get("repairs_used", 0))
+    elif require_visual_preflight:
+        raise repair.RepairInfrastructureError(
+            "visual preflight required but visual state missing")
+    if require_visual_preflight:
+        sb_hash = vpipe.canonical_hash(initial_storyboard)
+        if not any(v.get("storyboard_sha256") == sb_hash
+                   and v.get("outcome") == "passed"
+                   for v in (visual_state or {}).get("versions", [])):
+            raise repair.RepairInfrastructureError(
+                "initial storyboard has no approved visual preflight")
+    remaining_visual_repairs = max(0, repair.MAX_REPAIRS - prior_visual_repairs)
     # 2. Source/candidate drift BEFORE any snapshot or model call.
     _check_source_and_candidate(wav_path=a.wav, brief=brief, candidate=candidate)
     # 3. Fresh owner/open source+child and current PR/head guard BEFORE
@@ -203,6 +248,13 @@ def _run(a) -> int:
     def _finish(loop_result) -> int:
         result = repair.build_repair_result(
             loop_result, parent=a.parent, child=a.child)
+        # Shared global budget: total = early visual repairs + this loop.
+        _total = prior_visual_repairs + int(result.get("repairs_attempted") or 0)
+        for _k in ("repairs_attempted", "repair_count",
+                   "muse_repair_calls", "repairs_used"):
+            result[_k] = _total
+        result["visual_repairs_before_final"] = prior_visual_repairs
+        result["max_repairs"] = repair.MAX_REPAIRS
         final_attempt = int(loop_result["attempt_count"])
         final_head = loop_result.get("final_head_sha") or loop_result.get("head_sha")
         final_pr = int(loop_result.get("final_pr_number")
@@ -275,6 +327,76 @@ def _run(a) -> int:
         repair.snapshot_bundle(outcome["bundle_dir"], attempts_dir,
                                attempt_number)
 
+    # --- final-repair visual recheck helpers (shared budget, no nesting) ---
+    def _visual_context(sb):
+        digest = vpipe.canonical_hash(sb)[:16]
+        sb_path = runner_temp / f"visual-final-storyboard-{digest}.json"
+        sb_path.write_text(json.dumps(sb, indent=2), encoding="utf-8")
+        ctx = prepare_context(a.wav, work / "candidate.json", sb_path,
+                                work / "brief.json")
+        return ctx
+
+    def _consume_visual_budget() -> None:
+        if visual_state is None:
+            return
+        used = int(visual_state.get("repairs_used", 0))
+        if used >= int(repair.MAX_REPAIRS):
+            raise repair.RepairInfrastructureError(
+                "shared visual repair budget exhausted")
+        visual_state["repairs_used"] = used + 1
+        # Persist BEFORE the Muse call so a crash cannot reuse it.
+        vpipe.save_visual_state(visual_state_path.parent, visual_state)
+
+    def _run_visual_recheck(new_sb):
+        reviewer = vpipe.make_codex_visual_reviewer(
+            base_prompt=(ROOT / ".github/studio/prompts/codex-visual-review.md").read_text(),
+            schema_path=ROOT / ".github/studio/schemas/visual-review.schema.json",
+            runner_temp=runner_temp / "visual-review-final",
+            report_script=report_script)
+        uploader = vpipe.make_node_uploader(
+            node_script=ROOT / ".github/studio/scripts/upload-visual-artifact.cjs",
+            result_dir=runner_temp / "visual-uploads-final")
+        try:
+            return vpipe.run_visual_pipeline(
+                work_dir=work, context_provider=_visual_context,
+                storyboard=new_sb, brief=brief, candidate=candidate,
+                scenes=deterministic_scenes, parent=a.parent,
+                child=a.child, engine_sha=a.engine_sha, run_id=a.run_id,
+                run_attempt=a.run_attempt, gh=gh, reviewer=reviewer,
+                uploader=uploader, muse_repair=None, allow_repair=False,
+                state=visual_state)
+        except vpipe.VisualInfrastructureError as e:
+            raise repair.RepairInfrastructureError(str(e)) from e
+
+    def _visual_blocked_outcome(visual_result, new_sb):
+        if not isinstance(visual_result, dict):
+            raise repair.RepairInfrastructureError(
+                "visual pipeline returned no result")
+        review = visual_result.get("visual_review") \
+            or visual_result.get("review")
+        stage = visual_result.get("visual_stage") \
+            or visual_result.get("stage")
+        ev_sha = visual_result.get("visual_evidence_sha256") \
+            or visual_result.get("evidence_sha256") or ""
+        state_after = visual_result.get("state") \
+            if isinstance(visual_result.get("state"), dict) else visual_state
+        artifacts_list = state_after.get("artifacts") \
+            if isinstance(state_after, dict) else []
+        artifact = artifacts_list[-1] if artifacts_list else None
+        visual_info = {
+            "status": visual_result.get("status"), "stage": stage,
+            "visual_stage": stage, "evidence_sha256": ev_sha,
+            "visual_evidence_sha256": ev_sha,
+            "version": visual_result.get("version"),
+            "approval_path": visual_result.get("approval_path"),
+            "artifact": artifact, "artifacts": artifacts_list,
+            "review": review}
+        return {"kind": "visual_blocked", "visual_review": review,
+                "review": review, "visual_stage": stage, "stage": stage,
+                "visual_evidence_sha256": ev_sha,
+                "evidence_sha256": ev_sha, "visual": visual_info,
+                "visual_artifact": artifact, "storyboard": new_sb}
+
     def _attempt_runner(repair_index, context):
         prior_review = context["previous_review"]
         prior_head = context["previous_head_sha"]
@@ -284,6 +406,9 @@ def _run(a) -> int:
         # Source/candidate drift is rechecked BEFORE the Muse call.
         _check_source_and_candidate(
             wav_path=a.wav, brief=brief, candidate=candidate)
+        # Shared budget: consume+persist BEFORE this Muse repair call.
+        if require_visual_preflight:
+            _consume_visual_budget()
         # 5. Fresh isolated Muse workspace (allowlisted data only).
         workspace = _fresh_dir(
             runner_temp / f"muse-repair-{a.run_attempt}-{repair_index}")
@@ -313,13 +438,40 @@ def _run(a) -> int:
         if not valid["ok"]:
             raise repair.RepairInfrastructureError(
                 "repaired storyboard invalid: " + "; ".join(valid["failures"]))
+        # Visual recheck of the NEW storyboard in the SAME work dir /
+        # visual-state, exactly once, with no nested repair loop. Any
+        # non-pass stops as visual_blocked before any full render, so
+        # the last fully reviewed bundle/head is preserved by the loop.
+        render_extra: list = []
+        if require_visual_preflight:
+            visual_result = _run_visual_recheck(new_storyboard)
+            if not isinstance(visual_result, dict):
+                raise repair.RepairInfrastructureError(
+                    "visual pipeline returned no result")
+            if not visual_result.get("proceed"):
+                return _visual_blocked_outcome(
+                    visual_result, new_storyboard)
+            approval_path = Path(
+                visual_result.get("approval_path")
+                or work / vpipe.APPROVAL_FILENAME)
+            if not approval_path.is_file() \
+                    and not isinstance(visual_result.get("approval"), dict):
+                raise repair.RepairInfrastructureError(
+                    "visual approval missing after visual pass")
+            if not approval_path.is_file():
+                raise repair.RepairInfrastructureError(
+                    "visual approval file missing after visual pass")
+            # The renderer re-validates this attestation against the
+            # live context before encoding (studio_render.py).
+            render_extra = ["--visual-approval", str(approval_path),
+                            "--engine-sha", a.engine_sha]
         staging = _fresh_dir(
             runner_temp / f"repair-bundle-{a.run_attempt}-{repair_index}")
         repair.run_agent_command(
             [sys.executable, str(ROOT / "scripts/studio_render.py"),
              "--wav", str(a.wav), "--candidate", str(work / "candidate.json"),
              "--storyboard", str(sb_path), "--brief", str(work / "brief.json"),
-             "--out", str(staging)],
+             "--out", str(staging)] + render_extra,
             stdout_path=runner_temp / f"render-{repair_index}.stdout",
             stderr_path=runner_temp / f"render-{repair_index}.stderr",
             timeout=repair.AGENT_TIMEOUT_SEC, label="renderer")
@@ -430,7 +582,8 @@ def _run(a) -> int:
         initial_head_sha=initial_head, initial_pr_number=pr_number,
         attempt_runner=_attempt_runner, snapshot_attempt=_snapshot_cb,
         initial_storyboard=initial_storyboard,
-        initial_media_sha256=initial_media)
+        initial_media_sha256=initial_media,
+        max_repairs=remaining_visual_repairs)
     return _finish(loop_result)
 
 
