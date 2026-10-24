@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "style_id": "moonlit-recollection-codex-v1",
+  "style_id": "moonlit-recollection-codex-v2",
   "prototype_notice": "Original procedural illustration; no generated or replacement performance audio. Musical listening evaluation pending.",
   "scenes": [
     {
@@ -71,9 +71,9 @@
           56
         ],
         "near": [
-          26,
-          22,
-          20
+          20,
+          25,
+          35
         ],
         "moon": [
           238,

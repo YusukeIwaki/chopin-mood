@@ -39,6 +39,9 @@ PALETTES = [
 
 N_STARS = 140
 N_PARTICLES = 120
+# Shared by production and transition-QA reference encodes.
+VIDEO_ENCODE_ARGS = ("-c:v", "libx264", "-preset", "medium", "-crf", "18",
+                     "-pix_fmt", "yuv420p")
 
 
 def _layouts(seed: int, w: int, h: int) -> dict:
@@ -195,8 +198,7 @@ def render_video(frames_iter, audio_wav: str, out_mp4: str, w: int, h: int,
         "ffmpeg", "-y", "-v", "error",
         "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{w}x{h}",
         "-framerate", fps_str, "-i", "-",
-        "-c:v", "libx264", "-preset", "medium", "-crf", "18",
-        "-pix_fmt", "yuv420p",
+        *VIDEO_ENCODE_ARGS,
         "-frames:v", str(n_frames), video_only,
     ]
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE,

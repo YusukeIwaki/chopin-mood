@@ -9,7 +9,7 @@ creative Studio video, so Studio frames are drawn here instead. The P0
 What the storyboard can actually steer (honest capability list):
 
 * the six RGB palette colours per scene (sky/moon/hill/glow colours),
-  applied only at the deterministic DSP scene ids;
+  with automatic smooth transitions at the deterministic DSP boundaries;
 * ``figure_scale``, ``particle_multiplier``, ``light_bias`` and
   ``glow_scale`` per scene;
 * the optional executable camera per scene: ``camera_zoom_start/end``
@@ -109,13 +109,16 @@ def make_layouts(seed: int, w: int, h: int) -> dict:
         "streaks": rng.rand(36, 2),
         "seed": int(seed),
     }
-    tex_small = rng.randn(36, 64).astype(np.float32)
+    # Roughly square world-space cells. A fixed 36x64 lattice stretched
+    # into a portrait frame creates tall narrow streaks in every hill.
+    cell = max(4.0, min(w, h) / 22.0)
+    tex_small = rng.randn(max(4, int(np.ceil(h / cell))),
+                          max(4, int(np.ceil(w / cell)))).astype(np.float32)
     tex_img = Image.fromarray(
         np.clip((tex_small - tex_small.min())
                 / (tex_small.max() - tex_small.min() + 1e-9) * 255,
                 0, 255).astype(np.uint8)).resize((w, h), Image.BICUBIC)
-    # Down/up resample: broad tonal variation only, never the tall
-    # thin block streaks a direct 36x64 -> frame upscale would leave.
+    # Soft isotropic mottling rather than elongated column texture.
     tex_img = tex_img.resize((max(8, w // 6), max(8, h // 6)),
                              Image.BICUBIC).resize((w, h), Image.BICUBIC)
     tex_img = tex_img.filter(
@@ -264,8 +267,11 @@ def _far_frac(t: np.ndarray, p: dict) -> np.ndarray:
 
 
 def _mid_frac(t: np.ndarray, p: dict) -> np.ndarray:
-    """Middle silhouette: right mass falling toward the left/centre."""
+    """Right mass and an off-screen left shoulder enclosing a shallow valley."""
     y = np.full_like(np.asarray(t, dtype=np.float64), p["low"])
+    # The clamped ramp alone has a flat left tail. This broad shoulder
+    # continues beyond the image edge without introducing a wrap seam.
+    y = y - (0.030 + p["a1"]) * _gauss(t, -0.04, 0.19)
     y = y - p["drop"] * _sramp(t, 0.18, 0.82)
     y = y - p["pk"] * _gauss(t, p["cr"], p["sr"])
     y = y + p["a1"] * np.cos(2.0 * np.pi * (t - p["p1"]))
@@ -353,21 +359,21 @@ _FACETS = ((0.64, 0.30, 0.045, 0.30, 0.24, -0.035),
 def _slope_facet_factor(layer_index: int, x_norm, depth) -> np.ndarray:
     """Broad tonal facet factor (1.0 = neutral) for one landform.
 
-    Two large softly bounded internal facets per layer -- a moonlit
-    plane toward the moon side and a shadow plane away from it --
-    whose vertical envelope is a smooth function of depth below the
-    ridge, so the facets follow the slope instead of running as a
-    column gradient. The far layer is softer/lower contrast and the
-    foreground firmer, with no hard outline anywhere (Gaussian in
-    x, smoothstep in depth). Pure and deterministic.
+    Two oblique, elliptical tonal planes follow depth below the ridge.
+    Their centres and strength vary with depth, so light is never a
+    one-dimensional ridge derivative extruded down a screen column.
+    The far layer is softer/lower contrast than the foreground.
     """
     lc, lw, la, sc, sw, sa = _FACETS[int(layer_index)]
     xn, dep = np.broadcast_arrays(
         np.asarray(x_norm, dtype=np.float64),
         np.asarray(depth, dtype=np.float64))
-    env = _sramp(dep, 0.06, 0.30) * (1.0 - _sramp(dep, 0.62, 0.95))
-    spatial = la * _gauss(xn, lc, lw) + sa * _gauss(xn, sc, sw)
-    return 1.0 + env * spatial
+    env = _sramp(dep, 0.02, 0.18) * (1.0 - _sramp(dep, 0.70, 1.0))
+    lit = _gauss(xn - 0.30 * (dep - 0.25), lc, lw) \
+        * _gauss(dep, 0.32, 0.23)
+    shadow = _gauss(xn + 0.22 * (dep - 0.25), sc, sw) \
+        * _gauss(dep, 0.43, 0.28)
+    return 1.0 + env * (la * lit + sa * shadow)
 
 
 # --- executable storyboard camera (pure helpers) --------------------------
@@ -381,9 +387,12 @@ def _slope_facet_factor(layer_index: int, x_norm, depth) -> np.ndarray:
 # scene's inclusive frame range [start_frame, end_frame-1]; scene
 # bounds are derived from ctrl['scene_id'] runs only, so no event,
 # plan or boundary is ever moved and no structure is mutated.
+# At adjacent scene boundaries, the renderer joins the two trajectories
+# over the same automatically bounded window used for palette and light.
 
 CAMERA_ZOOM_RANGE = (1.0, 1.18)
 CAMERA_PAN_RANGE = (-1.0, 1.0)
+SCENE_TRANSITION_HALF_FRAMES = 24  # 0.8s each side at Studio's fixed 30fps
 _CAMERA_KEYS = ("camera_zoom_start", "camera_zoom_end",
                 "camera_pan_x_start", "camera_pan_x_end",
                 "camera_pan_y_start", "camera_pan_y_end")
@@ -393,6 +402,63 @@ def smoothstep01(t: float) -> float:
     """Clamped smoothstep easing on [0, 1]."""
     x = float(min(1.0, max(0.0, float(t))))
     return x * x * (3.0 - 2.0 * x)
+
+
+def _scene_span(frame: int, scene_ids) -> tuple[int, int]:
+    f = int(frame)
+    start, end = f, f + 1
+    while start > 0 and scene_ids[start - 1] == scene_ids[f]:
+        start -= 1
+    while end < len(scene_ids) and scene_ids[end] == scene_ids[f]:
+        end += 1
+    return start, end
+
+
+def scene_transition(frame: int, scene_ids):
+    """Optional (left frame, right frame, blend) around a fixed boundary.
+
+    The existing boundary is the 50% point, not a new cut time. Each
+    half-window is at most 24 frames and at most a quarter of either
+    adjacent scene, so transitions never overlap or erase a short scene.
+    No input is modified. One-frame scenes retain their explicit style.
+    """
+    f = int(frame)
+    start, end = _scene_span(f, scene_ids)
+    for boundary in (start, end):
+        if boundary == 0 or boundary == len(scene_ids):
+            continue
+        left_start, _ = _scene_span(boundary - 1, scene_ids)
+        _, right_end = _scene_span(boundary, scene_ids)
+        radius = min(SCENE_TRANSITION_HALF_FRAMES,
+                     (boundary - left_start) // 4,
+                     (right_end - boundary) // 4)
+        if radius and boundary - radius <= f <= boundary + radius:
+            left, right = boundary - radius, boundary + radius
+            return left, right, smoothstep01((f - left) / (right - left))
+    return None
+
+
+def visual_style_for_frame(f, ctrl, scene_palettes=None, scene_params=None):
+    """Palette and four visual controls, smoothly joined without moving time."""
+    defaults = {"figure_scale": 1.0, "particle_multiplier": 1.0,
+                "light_bias": 0.0, "glow_scale": 1.0}
+    pals = scene_palettes or PALETTES
+
+    def at(frame):
+        sid = int(ctrl["scene_id"][frame])
+        pal = _coerce_palette(pals[sid % len(pals)])
+        p = (scene_params[sid % len(scene_params)] or {}) if scene_params else {}
+        return pal, {key: float(p.get(key, value))
+                     for key, value in defaults.items()}
+
+    trans = scene_transition(f, ctrl["scene_id"])
+    if trans is None:
+        return at(f)
+    left, right, blend = trans
+    pa, a = at(left)
+    pb, b = at(right)
+    return ({key: _mix(pa[key], pb[key], blend) for key in _PALETTE_KEYS},
+            {key: a[key] + (b[key] - a[key]) * blend for key in defaults})
 
 
 def scene_frame_progress(frame: int, scene_ids) -> float:
@@ -472,12 +538,17 @@ def camera_for_frame(f: int, ctrl: dict, scene_params=None):
     as the rest of the renderer, so the creative render and the QA
     reference callback always agree. Pure and order-independent.
     """
-    scene_id = int(ctrl["scene_id"][f])
-    spar: dict = {}
-    if scene_params:
-        spar = scene_params[scene_id % len(scene_params)] or {}
-    progress = scene_frame_progress(f, ctrl["scene_id"])
-    return camera_trajectory(spar, progress)
+    def at(frame):
+        scene_id = int(ctrl["scene_id"][frame])
+        spar = (scene_params[scene_id % len(scene_params)] or {}) \
+            if scene_params else {}
+        return camera_trajectory(spar, scene_frame_progress(frame, ctrl["scene_id"]))
+
+    trans = scene_transition(f, ctrl["scene_id"])
+    if trans is None:
+        return at(f)
+    left, right, blend = trans
+    return tuple(a + (b - a) * blend for a, b in zip(at(left), at(right)))
 
 
 def apply_camera(frame: np.ndarray, zoom: float, pan_x: float,
@@ -653,14 +724,7 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
                      lay: dict, scene_palettes=None,
                      scene_params=None) -> np.ndarray:
     """Render one clean RGB frame. Pure function of (f, ctrl, seed)."""
-    scene_id = int(ctrl["scene_id"][f])
-    if scene_palettes:
-        pal = _coerce_palette(scene_palettes[scene_id % len(scene_palettes)])
-    else:
-        pal = PALETTES[scene_id % len(PALETTES)]
-    spar = {}
-    if scene_params:
-        spar = scene_params[scene_id % len(scene_params)] or {}
+    pal, spar = visual_style_for_frame(f, ctrl, scene_palettes, scene_params)
     particle_mult = float(spar.get("particle_multiplier", 1.0))
     light = float(np.clip(float(ctrl["light"][f])
                           + float(spar.get("light_bias", 0.0)), 0.0, 1.0))
@@ -714,9 +778,8 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
     # Layered terrain: deliberately shaped landforms (see
     # terrain_profiles) with slow parallax drift. Distant layers
     # dissolve into the haze with soft feathered edges; nearer layers
-    # keep firmer edges. Directional tonal planes (slope facing the
-    # moon plus a broad brightening toward the moon side) keep the
-    # slopes from reading as flat parallel colour bands.
+    # keep firmer edges. Two-dimensional oblique tonal planes and
+    # isotropic surface texture avoid vertical curtain-like stripes.
     drift = f * 0.0016  # slow environment motion even if camx is still
     ypix = yy[:, None] * h
     haze_arr = np.array(_mix(pal["sky_bot"], pal["far"], 0.45), float)
@@ -733,12 +796,6 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
                         / np.maximum(1.0, h - ridge[None, :]), 0, 1)
         atmo = (0.42, 0.22, 0.06)[li]  # far layers sit deeper in haze
         col_arr = np.array(col, float) * (1.0 - atmo) + haze_arr * atmo
-        slope = np.gradient(ridge)
-        k = np.ones(17) / 17.0  # smooth so shading cannot stripe
-        slope = np.convolve(np.pad(slope, 8, mode="edge"), k,
-                            mode="valid")[:len(slope)]
-        shade = np.clip(1.0 - slope * 0.24, 0.93, 1.07)[None, :, None]
-        moon_grad = (0.95 + 0.08 * x_norm)[None, :, None]
         # Foreground ground deepens more strongly (dry slope falling
         # into shadow toward the bottom); upper depths stay gentle.
         if li < 2:
@@ -747,8 +804,9 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
             dshade = 0.55 * (depth[:, :, None] ** 1.5)
         layer_col = (col_arr[None, None, :] * (1 - dshade)
                      + np.array((4, 5, 10), float)[None, None, :] * dshade)
-        facet = _slope_facet_factor(li, x_norm, depth)
-        layer_col = layer_col * shade * moon_grad * facet[:, :, None] \
+        world_x = x_norm - _parallax_shift(camx, drift, li)
+        facet = _slope_facet_factor(li, world_x, depth)
+        layer_col = layer_col * facet[:, :, None] \
             + tex[:, :, None] * 6.0
         if li == 2:
             layer_col = layer_col + gtex[:, :, None] \
@@ -945,5 +1003,28 @@ def make_reference_frame_fn(ctrl: dict, w: int, h: int, seed: int,
                                          scene_params=scene_params)
         return cache[f]
 
+    def shifted_boundary_frame(boundary: int, shift: int, frame: int):
+        # Counterfactual for encoded timing QA: move only this scene
+        # boundary. Audio-linked controls and the evaluated frame stay
+        # fixed, so an accent near a transition cannot mask its lag.
+        ids = np.asarray(ctrl["scene_id"]).copy()
+        b, delta = int(boundary), int(shift)
+        if not 0 < b < len(ids) or ids[b - 1] == ids[b]:
+            raise ValueError("not a scene boundary")
+        if delta > 0:
+            if b + delta >= len(ids) or np.any(ids[b:b + delta] != ids[b]):
+                raise ValueError("shift crosses another scene")
+            ids[b:b + delta] = ids[b - 1]
+        elif delta < 0:
+            if b + delta < 0 or np.any(ids[b + delta:b] != ids[b - 1]):
+                raise ValueError("shift crosses another scene")
+            ids[b + delta:b] = ids[b]
+        shifted = dict(ctrl, scene_id=ids)
+        return draw_clean_frame(int(frame), shifted, w, h, seed, lay,
+                                scene_palettes=scene_palettes,
+                                scene_params=scene_params)
+
     fn.cache = cache  # type: ignore[attr-defined]
+    fn.transition_window = lambda b: scene_transition(b, ctrl["scene_id"])
+    fn.shifted_boundary_frame = shifted_boundary_frame
     return fn

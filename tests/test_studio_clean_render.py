@@ -227,4 +227,78 @@ def test_encoded_fault_injection_fails_decoded_qa(encoded, key, bad_frame):
     assert not res["pass"], (key, res["frames"])
     failing = {f["frame"]: f for f in res["frames"] if not f["ok"]}
     assert bad_frame in failing, (key, failing)
-    assert failing[bad_frame]["patch_mae_max"] > Q.RENDERED_PATCH_MAE_MAX
+    if key == "scene_late":
+        # Smooth joins need temporal evidence as well as spatial MAE.
+        # The injected one-frame delay must still be detected, not exempted.
+        timing = failing[bad_frame]["transition_timing"]
+        assert not timing["ok"] and timing["best_offset_frames"] == 1
+    else:
+        assert failing[bad_frame]["patch_mae_max"] > Q.RENDERED_PATCH_MAE_MAX
+
+
+@pytest.mark.parametrize("w,h", [(180, 320), (288, 512)])
+def test_full_width_transition_timing_with_nearby_accent(tmp_path, w, h):
+    # Calibrate the real maximum-width fade, not only the short fixture's
+    # reduced window. The nearby accent stays fixed while the boundary moves.
+    n, boundary = 240, 120
+    ctrl = _ctrl(scene_at=boundary, accent_at=boundary + 4, n=n)
+    before = {key: value.copy() for key, value in ctrl.items()}
+    ref = R.make_reference_frame_fn(ctrl, w, h, SEED,
+                                    scene_palettes=PALS, scene_params=PARAMS)
+    window = ref.transition_window(boundary)
+    assert window == (boundary - 24, boundary + 24, .5)
+    for shift in (-1, 0, 1):
+        path = _encode(tmp_path, f"phase-{shift}.mp4",
+                       _ctrl(scene_at=boundary + shift,
+                             accent_at=boundary + 4, n=n), w=w, h=h, n=n)
+        result = Q.check_transition_timing(path, boundary, window, w, h, n, ref)
+        assert result["best_offset_frames"] == shift, result
+        assert result["ok"] == (shift == 0), result
+    for key in ctrl:
+        assert np.array_equal(ctrl[key], before[key]), key
+
+
+def test_transition_timing_abstains_if_offsets_are_indistinguishable(encoded, monkeypatch):
+    paths, ref = encoded
+    monkeypatch.setattr(ref, "shifted_boundary_frame",
+                        lambda boundary, shift, frame: ref(frame))
+    result = Q.check_transition_timing(paths["good"], SCENE_AT,
+                                      ref.transition_window(SCENE_AT),
+                                      W, H, N, ref)
+    assert not result["ok"] and result["relative_margin"] == 0.0
+
+
+def test_production_timing_check_cannot_silently_skip_missing_reference_capability(encoded):
+    paths, ref = encoded
+    result = Q.check_rendered_frames(paths["good"], PLAN, Timebase(SR, 30, 1),
+                                     W, H, N, lambda frame: ref(frame),
+                                     require_transition_timing=True)
+    assert not result["pass"] and not result["transition_timing_supported"]
+    assert all(frame["ok"] for frame in result["frames"])
+
+
+@pytest.mark.parametrize("shift", [-1, 0, 1])
+def test_low_contrast_quantized_fade_does_not_hide_one_frame_error(tmp_path, shift):
+    # Independent-review counterexample: raw RGB models ranked the late
+    # CRF18/yuv420p encode as aligned with a 14% margin. Quantized plateaus
+    # must be compared in the codec domain, at every frame, not subsampled.
+    w, h, n, boundary = 288, 512, 240, 120
+    first, last = np.array([29, 102, 128]), np.array([29, 110, 140])
+
+    def frame_at(offset, frame):
+        blend = R.smoothstep01((frame - (boundary + offset - 24)) / 48)
+        color = np.rint(first + (last - first) * blend).astype(np.uint8)
+        return np.broadcast_to(color, (h, w, 3))
+
+    def reference(frame):
+        return frame_at(0, frame)
+
+    reference.shifted_boundary_frame = lambda b, offset, f: frame_at(offset, f)
+    wav, mp4 = tmp_path / "tone.wav", tmp_path / "quantized.mp4"
+    sf.write(wav, np.zeros(SR * 8, dtype=np.int16), SR, subtype="PCM_16")
+    PR.render_video((frame_at(shift, f) for f in range(n)), str(wav), str(mp4),
+                    w, h, 30, 1, n)
+    result = Q.check_transition_timing(str(mp4), boundary, (96, 144, .5),
+                                      w, h, n, reference)
+    assert result["best_offset_frames"] == shift, result
+    assert result["ok"] == (shift == 0), result
