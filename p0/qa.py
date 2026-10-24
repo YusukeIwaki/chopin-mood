@@ -39,10 +39,13 @@ from __future__ import annotations
 
 import json
 import subprocess
+import tempfile
+from pathlib import Path
 
 import numpy as np
 
 from .features import SILENCE_RMS
+from .render import VIDEO_ENCODE_ARGS
 
 CORR_MIN = 0.90
 LEVEL_MAX_DB = 1.0
@@ -69,6 +72,7 @@ RENDERED_PATCH_MAE_MAX = 16.0
 RENDERED_PATCH_GRID = (8, 12)  # (columns, rows) over the full frame
 TRANSITION_MIN_MARGIN = 0.10
 TRANSITION_FEATURE_STD_MIN = 0.25
+TRANSITION_SEPARATION_RATIO_MIN = 2.0
 
 
 def lag_pass_samples(tb) -> int:
@@ -343,20 +347,56 @@ def _transition_features(frame: np.ndarray) -> np.ndarray:
         4, bh, 4, bw, 3).mean(axis=(1, 3)).reshape(-1)
 
 
+def _encoded_transition_reference(fn, boundary, shift, frames, w, h, fps):
+    """Compare in the codec's domain, including chroma quantization steps.
+
+    Short references use the production H.264 settings. Keeping every frame
+    avoids temporal aliasing of low-contrast, quantized colour changes.
+    The original MP4 and all render inputs remain read-only.
+    """
+    with tempfile.TemporaryDirectory(prefix="studio-timing-") as tmp:
+        path = Path(tmp) / "reference.mp4"
+        with tempfile.TemporaryFile() as errors:
+            proc = subprocess.Popen(
+                ["ffmpeg", "-y", "-v", "error", "-f", "rawvideo",
+                 "-pix_fmt", "rgb24", "-s", f"{w}x{h}", "-framerate", fps,
+                 "-i", "-", *VIDEO_ENCODE_ARGS, "-frames:v", str(len(frames)), str(path)],
+                stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=errors)
+            try:
+                for f in frames:
+                    frame = fn.shifted_boundary_frame(boundary, shift, f)
+                    proc.stdin.write(np.ascontiguousarray(frame, dtype=np.uint8).tobytes())
+                proc.stdin.close()
+                if proc.wait(timeout=120) != 0:
+                    errors.seek(0)
+                    raise RuntimeError(errors.read().decode(errors="replace")[-1000:])
+            finally:
+                if proc.poll() is None:
+                    proc.kill()
+                    proc.wait()
+        raw = subprocess.run(
+            ["ffmpeg", "-v", "error", "-i", str(path), "-pix_fmt", "rgb24",
+             "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
+        decoded = np.frombuffer(raw, np.uint8).reshape(len(frames), h, w, 3)
+        return np.stack([_transition_features(frame) for frame in decoded])
+
+
 def check_transition_timing(mp4, boundary, window, w, h, n_frames,
-                            reference_frame_fn):
+                            reference_frame_fn, *, fps="30"):
     """Compare actual encoded progression with -2..+2-frame boundary models.
 
     A smooth fade can hide a one-frame error inside a spatial MAE tolerance.
     These counterfactuals move only the scene boundary; audio controls and
     frame-dependent motion remain at their actual time. Region-wise constant
-    colour offsets and <=10% gain compensate codec conversion, then the
-    nonlinear progression over the complete join determines its phase.
+    colour offsets and <=10% gain compensate local GOP differences. The
+    references undergo the same codec conversion as the observed MP4;
+    raw RGB references can falsely pass a late, low-contrast quantized fade.
+    Hypotheses must also separate by more than twice the observed fit RMS.
     Ambiguous or unobservable timing fails instead of claiming precision.
     """
     left, right, _ = window
     start, end = max(0, left - 6), min(n_frames - 1, right + 6)
-    frames = sorted(set(range(start, end + 1, 3)) | {boundary, start, end})
+    frames = list(range(start, end + 1))
     expr = "select=" + "+".join(f"eq(n\\,{f})" for f in frames)
     raw = subprocess.run(
         ["ffmpeg", "-v", "error", "-i", mp4, "-vf", expr,
@@ -366,27 +406,37 @@ def check_transition_timing(mp4, boundary, window, w, h, n_frames,
     observed = np.stack([_transition_features(frame) for frame in decoded])
     observed -= observed.mean(axis=0)
     del decoded, raw
-    reference = np.stack([_transition_features(reference_frame_fn(f)) for f in frames])
+    reference = _encoded_transition_reference(
+        reference_frame_fn, boundary, 0, frames, w, h, fps)
     active = reference.std(axis=0) > TRANSITION_FEATURE_STD_MIN
     if np.count_nonzero(active) < 3:
         return {"ok": False, "reason": "transition timing is not observable",
                 "boundary": boundary, "probe_frames": frames}
     scores = {}
+    predictions = {}
     for shift in (-2, -1, 0, 1, 2):
-        ref = reference if shift == 0 else np.stack([
-            _transition_features(reference_frame_fn.shifted_boundary_frame(
-                boundary, shift, f)) for f in frames])
+        ref = reference if shift == 0 else _encoded_transition_reference(
+            reference_frame_fn, boundary, shift, frames, w, h, fps)
         x = ref - ref.mean(axis=0)
         gain = np.clip(np.sum(x * observed, axis=0)
                        / np.maximum(np.sum(x * x, axis=0), 1e-8), .9, 1.1)
-        scores[shift] = float(np.mean(
-            (observed[:, active] - x[:, active] * gain[active]) ** 2))
+        predictions[shift] = x[:, active] * gain[active]
+        scores[shift] = float(np.mean((observed[:, active] - predictions[shift]) ** 2))
     ranked = sorted(scores, key=scores.get)
     best, second = ranked[:2]
     margin = (scores[second] - scores[best]) / max(scores[best], .001)
-    ok = best == 0 and margin >= TRANSITION_MIN_MARGIN
+    separation = min(float(np.sqrt(np.mean(
+        (predictions[best] - value) ** 2)))
+        for shift, value in predictions.items() if shift != best)
+    uncertainty = max(float(np.sqrt(scores[best])), .001)
+    separation_ratio = separation / uncertainty
+    ok = (best == 0 and margin >= TRANSITION_MIN_MARGIN
+          and separation_ratio >= TRANSITION_SEPARATION_RATIO_MIN)
     return {"ok": bool(ok), "boundary": boundary, "probe_frames": frames,
             "best_offset_frames": best, "relative_margin": round(margin, 5),
+            "hypothesis_separation_rms": round(separation, 6),
+            "fit_rms": round(uncertainty, 6),
+            "separation_ratio": round(separation_ratio, 5),
             "scores": {str(k): round(v, 6) for k, v in scores.items()},
             "reason": "aligned" if ok else "shifted or ambiguous transition"}
 
@@ -434,7 +484,7 @@ def check_rendered_frames(mp4: str, plan: dict, tb, w: int, h: int,
             if window is None:
                 continue
             timing = check_transition_timing(mp4, boundary, window, w, h,
-                                             n_frames, reference_frame_fn)
+                                             n_frames, reference_frame_fn, fps=str(tb.fps))
             transitions.append(timing)
             by_frame[boundary]["transition_timing"] = timing
             by_frame[boundary]["ok"] &= timing["ok"]
@@ -450,6 +500,7 @@ def check_rendered_frames(mp4: str, plan: dict, tb, w: int, h: int,
                        "patch_grid": list(RENDERED_PATCH_GRID),
                        "transition_min_relative_margin": TRANSITION_MIN_MARGIN,
                        "transition_feature_std_min": TRANSITION_FEATURE_STD_MIN,
+                       "transition_separation_ratio_min": TRANSITION_SEPARATION_RATIO_MIN,
                        "transition_gain_range": [.9, 1.1]},
         "probed_frames": sorted(probe_map),
         "frames": results,

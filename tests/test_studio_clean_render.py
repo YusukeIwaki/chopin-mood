@@ -275,3 +275,30 @@ def test_production_timing_check_cannot_silently_skip_missing_reference_capabili
                                      require_transition_timing=True)
     assert not result["pass"] and not result["transition_timing_supported"]
     assert all(frame["ok"] for frame in result["frames"])
+
+
+@pytest.mark.parametrize("shift", [-1, 0, 1])
+def test_low_contrast_quantized_fade_does_not_hide_one_frame_error(tmp_path, shift):
+    # Independent-review counterexample: raw RGB models ranked the late
+    # CRF18/yuv420p encode as aligned with a 14% margin. Quantized plateaus
+    # must be compared in the codec domain, at every frame, not subsampled.
+    w, h, n, boundary = 288, 512, 240, 120
+    first, last = np.array([29, 102, 128]), np.array([29, 110, 140])
+
+    def frame_at(offset, frame):
+        blend = R.smoothstep01((frame - (boundary + offset - 24)) / 48)
+        color = np.rint(first + (last - first) * blend).astype(np.uint8)
+        return np.broadcast_to(color, (h, w, 3))
+
+    def reference(frame):
+        return frame_at(0, frame)
+
+    reference.shifted_boundary_frame = lambda b, offset, f: frame_at(offset, f)
+    wav, mp4 = tmp_path / "tone.wav", tmp_path / "quantized.mp4"
+    sf.write(wav, np.zeros(SR * 8, dtype=np.int16), SR, subtype="PCM_16")
+    PR.render_video((frame_at(shift, f) for f in range(n)), str(wav), str(mp4),
+                    w, h, 30, 1, n)
+    result = Q.check_transition_timing(str(mp4), boundary, (96, 144, .5),
+                                      w, h, n, reference)
+    assert result["best_offset_frames"] == shift, result
+    assert result["ok"] == (shift == 0), result
