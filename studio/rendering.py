@@ -9,7 +9,7 @@ creative Studio video, so Studio frames are drawn here instead. The P0
 What the storyboard can actually steer (honest capability list):
 
 * the six RGB palette colours per scene (sky/moon/hill/glow colours),
-  applied only at the deterministic DSP scene ids;
+  with automatic smooth transitions at the deterministic DSP boundaries;
 * ``figure_scale``, ``particle_multiplier``, ``light_bias`` and
   ``glow_scale`` per scene;
 * the optional executable camera per scene: ``camera_zoom_start/end``
@@ -360,7 +360,7 @@ def _slope_facet_factor(layer_index: int, x_norm, depth) -> np.ndarray:
     """Broad tonal facet factor (1.0 = neutral) for one landform.
 
     Two oblique, elliptical tonal planes follow depth below the ridge.
-    Their centres and widths vary with depth, so light is never a
+    Their centres and strength vary with depth, so light is never a
     one-dimensional ridge derivative extruded down a screen column.
     The far layer is softer/lower contrast than the foreground.
     """
@@ -387,9 +387,12 @@ def _slope_facet_factor(layer_index: int, x_norm, depth) -> np.ndarray:
 # scene's inclusive frame range [start_frame, end_frame-1]; scene
 # bounds are derived from ctrl['scene_id'] runs only, so no event,
 # plan or boundary is ever moved and no structure is mutated.
+# At adjacent scene boundaries, the renderer joins the two trajectories
+# over the same automatically bounded window used for palette and light.
 
 CAMERA_ZOOM_RANGE = (1.0, 1.18)
 CAMERA_PAN_RANGE = (-1.0, 1.0)
+SCENE_TRANSITION_HALF_FRAMES = 24  # 0.8s each side at Studio's fixed 30fps
 _CAMERA_KEYS = ("camera_zoom_start", "camera_zoom_end",
                 "camera_pan_x_start", "camera_pan_x_end",
                 "camera_pan_y_start", "camera_pan_y_end")
@@ -399,6 +402,63 @@ def smoothstep01(t: float) -> float:
     """Clamped smoothstep easing on [0, 1]."""
     x = float(min(1.0, max(0.0, float(t))))
     return x * x * (3.0 - 2.0 * x)
+
+
+def _scene_span(frame: int, scene_ids) -> tuple[int, int]:
+    f = int(frame)
+    start, end = f, f + 1
+    while start > 0 and scene_ids[start - 1] == scene_ids[f]:
+        start -= 1
+    while end < len(scene_ids) and scene_ids[end] == scene_ids[f]:
+        end += 1
+    return start, end
+
+
+def scene_transition(frame: int, scene_ids):
+    """Optional (left frame, right frame, blend) around a fixed boundary.
+
+    The existing boundary is the 50% point, not a new cut time. Each
+    half-window is at most 24 frames and at most a quarter of either
+    adjacent scene, so transitions never overlap or erase a short scene.
+    No input is modified. One-frame scenes retain their explicit style.
+    """
+    f = int(frame)
+    start, end = _scene_span(f, scene_ids)
+    for boundary in (start, end):
+        if boundary == 0 or boundary == len(scene_ids):
+            continue
+        left_start, _ = _scene_span(boundary - 1, scene_ids)
+        _, right_end = _scene_span(boundary, scene_ids)
+        radius = min(SCENE_TRANSITION_HALF_FRAMES,
+                     (boundary - left_start) // 4,
+                     (right_end - boundary) // 4)
+        if radius and boundary - radius <= f <= boundary + radius:
+            left, right = boundary - radius, boundary + radius
+            return left, right, smoothstep01((f - left) / (right - left))
+    return None
+
+
+def visual_style_for_frame(f, ctrl, scene_palettes=None, scene_params=None):
+    """Palette and four visual controls, smoothly joined without moving time."""
+    defaults = {"figure_scale": 1.0, "particle_multiplier": 1.0,
+                "light_bias": 0.0, "glow_scale": 1.0}
+    pals = scene_palettes or PALETTES
+
+    def at(frame):
+        sid = int(ctrl["scene_id"][frame])
+        pal = _coerce_palette(pals[sid % len(pals)])
+        p = (scene_params[sid % len(scene_params)] or {}) if scene_params else {}
+        return pal, {key: float(p.get(key, value))
+                     for key, value in defaults.items()}
+
+    trans = scene_transition(f, ctrl["scene_id"])
+    if trans is None:
+        return at(f)
+    left, right, blend = trans
+    pa, a = at(left)
+    pb, b = at(right)
+    return ({key: _mix(pa[key], pb[key], blend) for key in _PALETTE_KEYS},
+            {key: a[key] + (b[key] - a[key]) * blend for key in defaults})
 
 
 def scene_frame_progress(frame: int, scene_ids) -> float:
@@ -478,12 +538,17 @@ def camera_for_frame(f: int, ctrl: dict, scene_params=None):
     as the rest of the renderer, so the creative render and the QA
     reference callback always agree. Pure and order-independent.
     """
-    scene_id = int(ctrl["scene_id"][f])
-    spar: dict = {}
-    if scene_params:
-        spar = scene_params[scene_id % len(scene_params)] or {}
-    progress = scene_frame_progress(f, ctrl["scene_id"])
-    return camera_trajectory(spar, progress)
+    def at(frame):
+        scene_id = int(ctrl["scene_id"][frame])
+        spar = (scene_params[scene_id % len(scene_params)] or {}) \
+            if scene_params else {}
+        return camera_trajectory(spar, scene_frame_progress(frame, ctrl["scene_id"]))
+
+    trans = scene_transition(f, ctrl["scene_id"])
+    if trans is None:
+        return at(f)
+    left, right, blend = trans
+    return tuple(a + (b - a) * blend for a, b in zip(at(left), at(right)))
 
 
 def apply_camera(frame: np.ndarray, zoom: float, pan_x: float,
@@ -659,14 +724,7 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
                      lay: dict, scene_palettes=None,
                      scene_params=None) -> np.ndarray:
     """Render one clean RGB frame. Pure function of (f, ctrl, seed)."""
-    scene_id = int(ctrl["scene_id"][f])
-    if scene_palettes:
-        pal = _coerce_palette(scene_palettes[scene_id % len(scene_palettes)])
-    else:
-        pal = PALETTES[scene_id % len(PALETTES)]
-    spar = {}
-    if scene_params:
-        spar = scene_params[scene_id % len(scene_params)] or {}
+    pal, spar = visual_style_for_frame(f, ctrl, scene_palettes, scene_params)
     particle_mult = float(spar.get("particle_multiplier", 1.0))
     light = float(np.clip(float(ctrl["light"][f])
                           + float(spar.get("light_bias", 0.0)), 0.0, 1.0))

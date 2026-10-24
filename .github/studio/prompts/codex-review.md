@@ -51,6 +51,16 @@ The trusted renderer consumes ONLY, per deterministic scene:
   means zoom 1.0 / pan 0.0. Judge framing from the contact sheet's
   start/middle/end row for each scene against these numeric values.
 
+The renderer automatically joins palettes, the four non-camera numeric
+controls, and the camera trajectories around each unchanged DSP scene
+boundary. The join uses smoothstep over at most 24 frames on each side
+(0.8 seconds per side at 30fps), capped to a quarter of each adjacent
+scene. The boundary is the 50% blend point. Start/end samples beside a
+boundary therefore contain a blend; scene interiors show the intended
+palette. These are renderer-derived transitions, not new LLM timings.
+Judge their actual continuity and brief adherence without lowering the
+aesthetic standard.
+
 `motif` and `camera` storyboard fields are descriptive prose only:
 they are NOT executed and changing them alone changes no pixels. Scene
 boundaries, clip window and accents are deterministic DSP timings and

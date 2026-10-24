@@ -60,6 +60,13 @@ controls are, per deterministic scene:
   `camera_pan_x_start`/`camera_pan_x_end`,
   `camera_pan_y_start`/`camera_pan_y_end`.
 
+The renderer joins palettes, the four non-camera controls and camera
+trajectories with smoothstep around existing DSP boundaries: at most
+24 frames (0.8s) per side, capped to a quarter of each adjacent scene.
+Each unchanged boundary is the 50% blend point. Adjacent scene end/start
+samples therefore contain a blend; the interiors show the scene palette.
+Judge the actual result with the same aesthetic standard.
+
 `motif` and `camera` prose fields are metadata only: they are not
 executed, and changing prose alone changes no pixels. Scene
 boundaries, clip window and accents are deterministic timings and
