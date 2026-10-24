@@ -456,12 +456,21 @@ def make_codex_visual_reviewer(*, base_prompt: str, schema_path,
         runtime_home = model_env.get("CODEX_RUNTIME_HOME")
         if runtime_home:
             model_env["CODEX_HOME"] = runtime_home
-        repairmod.run_agent_command(
-            cmd, stdout_path=rt / f"codex-visual-{stage}.stdout",
-            stderr_path=rt / f"codex-visual-{stage}.stderr",
-            stdin_path=prompt_path, timeout=timeout,
-            env=model_env, report_script=report_script,
-            label="Codex visual review")
+        stderr_path = rt / f"codex-visual-{stage}.stderr"
+        try:
+            repairmod.run_agent_command(
+                cmd, stdout_path=rt / f"codex-visual-{stage}.stdout",
+                stderr_path=stderr_path,
+                stdin_path=prompt_path, timeout=timeout,
+                env=model_env, report_script=report_script,
+                label="Codex visual review")
+        except repairmod.RepairInfrastructureError:
+            # Preserve only the fixed diagnostic, never the exception or
+            # provider output. The outer pipeline preserves this error type.
+            detail = (repairmod.classify_agent_error(stderr_path, report_script)
+                      if report_script else "classification: generic")
+            raise VisualInfrastructureError(
+                f"Codex visual review failed ({detail})") from None
         if not out_path.is_file() or out_path.stat().st_size == 0:
             raise VisualInfrastructureError(
                 "Codex visual review produced no review (classification: generic)")

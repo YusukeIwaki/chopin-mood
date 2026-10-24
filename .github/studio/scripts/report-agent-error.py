@@ -33,6 +33,21 @@ _SANDBOX = (
     "sandbox setup failure",
     "Check the runner sandbox setup and permissions, then run Studio auth smoke.",
 )
+_INPUT = (
+    "input_limit",
+    "request or image input size limit",
+    "Check image count and encoded payload size; preserve native evidence and review bindings.",
+)
+_REQUEST = (
+    "invalid_model_request",
+    "invalid model request or output schema",
+    "Validate the CLI flags and structured-output schema with the logged CLI version.",
+)
+_CONNECTION = (
+    "provider_connection",
+    "provider connection or upstream service failure",
+    "Check provider availability; retry only a bounded number of times without bypassing review.",
+)
 _GENERIC = (
     "generic",
     "generic",
@@ -62,6 +77,21 @@ _PATTERNS = (
         r"too many requests",
         r"limit (reached|exceeded)",
         r"\b429\b",
+    )),
+    (_INPUT, (
+        r"\b413\b", r"payload too large", r"request entity too large",
+        r"request body.{0,60}(too large|exceed)",
+        r"too many images", r"image.{0,60}(size limit|too large)",
+        r"context_length_exceeded", r"maximum context length",
+    )),
+    (_REQUEST, (
+        r"invalid_json_schema", r"invalid schema for response",
+        r"unrecognized arguments?", r"unexpected argument",
+    )),
+    (_CONNECTION, (
+        r"\b(502|503|504)\b", r"stream disconnected",
+        r"connection (reset|refused|timed out)",
+        r"error sending request", r"websocket.{0,60}(failed|error)",
     )),
     (_SANDBOX, (
         r"sandbox[ _-]?setup",
