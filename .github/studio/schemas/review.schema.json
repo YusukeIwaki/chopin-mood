@@ -14,6 +14,7 @@
   ],
   "properties": {
     "verdict": {
+      "type": "string",
       "enum": [
         "pass",
         "fail"

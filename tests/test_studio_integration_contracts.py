@@ -70,6 +70,23 @@ def test_planning_record_round_trip_with_code_fence_in_direction():
     assert fingerprint.parse_planning_comment(fingerprint.build_planning_comment(record)) == record
 
 
+def test_model_output_choice_schemas_declare_types():
+    # Current Codex structured output rejects an enum/const-only property
+    # even though it is valid general JSON Schema. Saved input schemas are
+    # separate; this checks every actual/legacy model-output schema.
+    def check(node):
+        if isinstance(node, dict):
+            if 'const' in node or 'enum' in node:
+                assert 'type' in node, node
+            for value in node.values():
+                check(value)
+        elif isinstance(node, list):
+            for value in node:
+                check(value)
+    for name in ('planner-output', 'review', 'visual-review'):
+        check(json.loads((ROOT/f'.github/studio/schemas/{name}.schema.json').read_text()))
+
+
 def test_auth_restore_and_unchanged_persist_execute_real_scripts(tmp_path):
     for binary in ("openssl", "jq", "git", "sha256sum"):
         if not shutil.which(binary):
