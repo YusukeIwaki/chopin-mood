@@ -175,10 +175,10 @@
   "art_notes": "Expresses \"Tired... tired...\" with abstract image, with dimly reminiscing past.",
   "creative_brief": {
     "character": "One stationary silhouetted traveler, small against the landscape. Convey weariness through isolation, scale, and framing, without relying on facial expression or character animation.",
-    "creative_interpretation": "Honor the owner's note: Expresses \"Tired... tired...\" with abstract image, with dimly reminiscing past. Repeated cool compositions evoke fatigue; faint warm palette returns suggest recollection. This is an owner-directed procedural study, not a claim about the recording's meaning.",
+    "creative_interpretation": "Honor the owner's note: Expresses \"Tired... tired...\" with abstract image, with dimly reminiscing past. Repeated cool compositions evoke fatigue; faint warm palette returns suggest recollection. This is an owner-directed visual interpretation, not a claim about the recording's meaning.",
     "evidence_notes": "The ending is marked music-endpoint and closely matches a detected dip with very low RMS. The opening is grid-derived and less closely supported by dip and structural evidence. The empty endpoint_basis leaves the boundary rationale incomplete. Supplied structural and accent detections guide rendering, not emotional interpretation.",
     "narrative_arc": "Stillness establishes exhaustion. Dim warmth introduces an uncertain recollection, withdraws, and returns as a weaker echo. The landscape settles into quiet persistence without a triumphant resolution.",
-    "renderer_constraints": "Use the existing landscape, one silhouetted traveler, moon, particles, palette changes, and restrained camera movement. Preserve supplied deterministic scenes and original performance audio. Keep accent responses subtle, without extra cuts or flashes. Facial acting, literal memory objects, and new character animation require a future asset provider.",
+    "renderer_constraints": "Use the versioned moonlit landscape and separate stationary traveler assets, with restrained particles, colour grading, moonlight and camera movement. Preserve supplied deterministic scenes and original performance audio. Keep accent responses subtle, without extra cuts or flashes. No facial acting, literal memory objects or character walking.",
     "scene_guidance": [
       {
         "composition": "Wide landscape; small traveler below center, broad negative space above, moon offset from the figure.",

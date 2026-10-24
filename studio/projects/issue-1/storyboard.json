@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "style_id": "moonlit-recollection-codex-v2",
-  "prototype_notice": "Original procedural illustration; no generated or replacement performance audio. Musical listening evaluation pending.",
+  "style_id": "moonlit-recollection-painted-v1",
+  "prototype_notice": "AI-painted background and traveler; deterministic camera, colour, light and particles. Original performance audio retained; musical listening pending.",
   "scenes": [
     {
       "id": "scene01",
@@ -248,5 +248,6 @@
         "camera_pan_y_end": 0.0
       }
     }
-  ]
+  ],
+  "asset_bundle": "moonlit-recollection-v1"
 }

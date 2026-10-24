@@ -156,6 +156,12 @@
           }
         }
       }
+    },
+    "asset_bundle": {
+      "enum": [
+        "moonlit-recollection-v1"
+      ],
+      "description": "Optional trusted, versioned in-repository asset bundle; never a path or URL."
     }
   },
   "$defs": {

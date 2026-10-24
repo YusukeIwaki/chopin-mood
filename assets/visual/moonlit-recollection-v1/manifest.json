@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "bundle_id": "moonlit-recollection-v1",
+  "provider": "Codex built-in image_gen",
+  "model": "not exposed by built-in tool",
+  "created_on": "2026-10-25",
+  "prompts": "assets/visual/moonlit-recollection-v1/PROMPTS.md",
+  "files": {
+    "background.png": "ad853e14d50c49f22b229029f9c6dfcc8c3d11540094440f91bc589245d4b79b",
+    "traveler.png": "e6f2cb29ce32e4797d352c0a8aba30c5e31d5540bc5f240f669842717249b64a"
+  }
+}

@@ -724,6 +724,9 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
                      lay: dict, scene_palettes=None,
                      scene_params=None) -> np.ndarray:
     """Render one clean RGB frame. Pure function of (f, ctrl, seed)."""
+    if "painted_assets" in lay:
+        from .painted import draw_frame
+        return draw_frame(f, ctrl, w, h, seed, lay, scene_palettes, scene_params)
     pal, spar = visual_style_for_frame(f, ctrl, scene_palettes, scene_params)
     particle_mult = float(spar.get("particle_multiplier", 1.0))
     light = float(np.clip(float(ctrl["light"][f])
@@ -1027,4 +1030,8 @@ def make_reference_frame_fn(ctrl: dict, w: int, h: int, seed: int,
     fn.cache = cache  # type: ignore[attr-defined]
     fn.transition_window = lambda b: scene_transition(b, ctrl["scene_id"])
     fn.shifted_boundary_frame = shifted_boundary_frame
+    if "painted_assets" in lay:
+        # Calibrated with real CRF18 encoded positives and missing/late
+        # accents: this provider has subtle light, so use a stricter bound.
+        fn.patch_mae_max = 8.0
     return fn
