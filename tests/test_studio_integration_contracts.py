@@ -47,19 +47,22 @@ def test_m4a_decode_when_libsndfile_cannot_open(tmp_path):
     assert sf.info(tmp_path / "decoded.wav").duration >= 1.0
 
 
-def test_nested_model_schemas_have_closed_objects():
-    def check(node):
+def test_nested_schemas_are_closed_with_explicit_saved_data_options():
+    def check(node, optional=frozenset()):
         if isinstance(node, dict):
             if node.get("type") == "object":
                 assert node.get("additionalProperties") is False
-                assert set(node.get("properties", {})) == set(node.get("required", []))
+                assert set(node.get("properties", {})) == set(node.get("required", [])) | optional
             for value in node.values():
                 check(value)
         elif isinstance(node, list):
             for value in node:
                 check(value)
-    for name in ("planner-output", "review", "storyboard"):
-        check(json.loads((ROOT / f".github/studio/schemas/{name}.schema.json").read_text()))
+    for name in ("planner-output", "review", "visual-review", "storyboard"):
+        # Storyboards are saved production inputs, not model output. Only
+        # their root asset selector is optional; nested contracts stay closed.
+        optional = {"asset_bundle"} if name == "storyboard" else frozenset()
+        check(json.loads((ROOT / f".github/studio/schemas/{name}.schema.json").read_text()), optional)
 
 
 def test_planning_record_round_trip_with_code_fence_in_direction():

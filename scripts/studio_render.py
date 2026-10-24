@@ -169,6 +169,9 @@ def main() -> int:
             "prototype": "procedural prototype, not finished anime"}
     if visual_approval is not None:
         prov["visual_approval"] = visual_approval
+    if "painted_assets" in ctx.layouts:
+        prov["prototype"] = "AI-painted assets with deterministic animation; no generated audio"
+        prov["visual_assets"] = ctx.layouts["painted_assets"]["provenance"]
     # Approving a commit must approve these exact media bytes, even if a
     # later rerender uses identical plans but a different encoder version.
     prov["media_sha256"] = {

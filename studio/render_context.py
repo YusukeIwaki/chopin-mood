@@ -153,6 +153,12 @@ def prepare_context(wav, candidate_path, storyboard_path, brief_path, *,
     controls = planmod.build_controls("structured", clip["n_frames"], tb, clip,
                                       det_scenes, accents, feat, seed)
     layouts = cleanmod.make_layouts(seed, width, height)
+    if storyboard.get("asset_bundle") is not None:
+        from .painted import load_bundle
+        layouts["painted_assets"] = load_bundle(storyboard["asset_bundle"], width, height)
+        # Included in public_plan_sha256, so preflight approval also binds
+        # the exact asset files and manifest, even in local working trees.
+        plan["visual_assets"] = layouts["painted_assets"]["provenance"]
     return RenderContext(
         candidate=cand, brief=brief, storyboard=storyboard,
         sample_rate=sample_rate, tb=tb, clip=clip, det_scenes=det_scenes,

@@ -456,6 +456,9 @@ def check_rendered_frames(mp4: str, plan: dict, tb, w: int, h: int,
     match against deliberately early/late boundary hypotheses.
     """
     probe_map = rendered_probe_frames(plan, n_frames)
+    patch_limit = float(getattr(reference_frame_fn, "patch_mae_max", RENDERED_PATCH_MAE_MAX))
+    if not np.isfinite(patch_limit) or not 0 < patch_limit <= RENDERED_PATCH_MAE_MAX:
+        raise ValueError("renderer patch threshold may only tighten the baseline")
     results = []
     for f in sorted(probe_map):
         decoded = decode_frame_rgb(mp4, f, w, h)
@@ -467,7 +470,7 @@ def check_rendered_frames(mp4: str, plan: dict, tb, w: int, h: int,
             continue
         m = _frame_error_metrics(decoded, expected)
         ok = (m["global_mae"] <= RENDERED_GLOBAL_MAE_MAX
-              and m["patch_mae_max"] <= RENDERED_PATCH_MAE_MAX)
+              and m["patch_mae_max"] <= patch_limit)
         results.append({"frame": f, "kinds": probe_map[f], "ok": bool(ok),
                         **m})
     # Studio callbacks expose boundary-specific counterfactuals. Legacy P0
@@ -496,7 +499,8 @@ def check_rendered_frames(mp4: str, plan: dict, tb, w: int, h: int,
                    f"{RENDERED_PATCH_GRID[0]}x{RENDERED_PATCH_GRID[1]} "
                    "patch MAE (0-255), plus encoded transition phase; all must pass"),
         "thresholds": {"global_mae_max": RENDERED_GLOBAL_MAE_MAX,
-                       "patch_mae_max": RENDERED_PATCH_MAE_MAX,
+                       "patch_mae_max": patch_limit,
+                       "baseline_patch_mae_max": RENDERED_PATCH_MAE_MAX,
                        "patch_grid": list(RENDERED_PATCH_GRID),
                        "transition_min_relative_margin": TRANSITION_MIN_MARGIN,
                        "transition_feature_std_min": TRANSITION_FEATURE_STD_MIN,

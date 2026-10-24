@@ -33,6 +33,16 @@ a review because a text disclaimer is or is not drawn into the frames.
 
 ## What the renderer can actually execute (capability truth)
 
+The optional top-level `asset_bundle` selects a registered, hash-checked
+background painting and transparent traveler stored in the repository.
+It does not generate images during rendering. The same artwork persists
+across scenes; palette values drive spatial colour grading and light,
+preserving painted detail rather than replacing regions with flat RGB.
+The public plan and provenance record the asset manifest and file hashes.
+Without an asset bundle, the original procedural renderer is used.
+Judge both methods by the same visible-quality standard; using generated
+artwork grants no automatic aesthetic approval.
+
 The trusted renderer consumes ONLY, per deterministic scene:
 
 - the six palette colours: `sky_top`, `sky_bot`, `far`, `near`, `moon`,

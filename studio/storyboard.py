@@ -1,4 +1,4 @@
-"""Declarative storyboard validation (Muse output is data, never code).
+"""Declarative storyboard validation (Codex-authored data, never code).
 
 Scenes must align exactly to deterministic DSP scene IDs. Palettes and
 bounded render parameters are the only creative levers; paths, commands
@@ -42,6 +42,11 @@ def validate_storyboard(sb: dict, deterministic_scenes: list[dict]) -> dict:
         return {"ok": False, "failures": ["storyboard must be an object"]}
     if sb.get("schema_version") != "1.0":
         failures.append("schema_version must be 1.0")
+    if "asset_bundle" in sb:
+        # Project intake runs before scientific/image dependencies install.
+        from .config import PAINTED_ASSET_BUNDLE_ID
+        if sb["asset_bundle"] != PAINTED_ASSET_BUNDLE_ID:
+            failures.append("unknown asset_bundle")
     for key in sb:
         if key.lower() in _FORBIDDEN_KEYS or "/" in str(key) or "\\" in str(key):
             failures.append(f"forbidden top-level key: {key}")

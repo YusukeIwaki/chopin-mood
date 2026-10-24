@@ -49,8 +49,13 @@ sampled movement only.
 
 ## What the renderer can actually execute (capability truth)
 
-The current drawing remains procedural. The only executable
-controls are, per deterministic scene:
+The optional top-level `asset_bundle` selects a registered, hash-checked
+background painting and transparent traveler. The same assets persist
+across scenes; palette values drive spatial colour grading and light
+while preserving painted detail. No images are generated during rendering.
+Without an asset bundle, the original procedural renderer is used.
+Judge either method by the same quality standard; generated artwork earns
+no automatic approval. The executable controls are, per deterministic scene:
 
 - the six palette colours: `sky_top`, `sky_bot`, `far`, `near`,
   `moon`, `glow`; and
