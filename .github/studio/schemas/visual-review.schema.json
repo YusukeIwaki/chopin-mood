@@ -17,9 +17,11 @@
   ],
   "properties": {
     "schema_version": {
+      "type": "string",
       "const": "1.0"
     },
     "stage": {
+      "type": "string",
       "enum": ["still", "motion"]
     },
     "evidence_sha256": {
@@ -28,6 +30,7 @@
       "description": "SHA-256 of the exact evidence.json bytes reviewed."
     },
     "verdict": {
+      "type": "string",
       "enum": ["pass", "fail"]
     },
     "checks": {
@@ -78,6 +81,7 @@
       "required": ["route", "instructions"],
       "properties": {
         "route": {
+          "type": "string",
           "enum": ["none", "storyboard", "engine"]
         },
         "instructions": {
