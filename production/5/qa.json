@@ -83,15 +83,15 @@
         1931
       ],
       "motion_diffs_blur_downscaled": [
-        7.5247,
-        7.4092,
-        6.2591
+        7.3045,
+        7.9592,
+        6.3136
       ],
       "motion_floor": 0.4,
       "mean_abs_diffs_raw": [
-        13.64,
-        7.047,
-        8.57
+        12.737,
+        7.288,
+        8.671
       ]
     },
     {
@@ -110,13 +110,20 @@
     {
       "name": "studio:rendered_frame_spotcheck",
       "pass": true,
-      "method": "decoded MP4 frames vs deterministic clean-renderer reference frames; per-frame whole-frame MAE and 8x12 patch MAE (0-255), both must pass",
+      "method": "decoded MP4 frames vs deterministic clean-renderer reference frames; per-frame whole-frame MAE and 8x12 patch MAE (0-255), plus encoded transition phase; all must pass",
       "thresholds": {
         "global_mae_max": 8.0,
         "patch_mae_max": 16.0,
         "patch_grid": [
           8,
           12
+        ],
+        "transition_min_relative_margin": 0.1,
+        "transition_feature_std_min": 0.25,
+        "transition_separation_ratio_min": 2.0,
+        "transition_gain_range": [
+          0.9,
+          1.1
         ]
       },
       "probed_frames": [
@@ -181,9 +188,9 @@
             "scene_start"
           ],
           "ok": true,
-          "global_mae": 1.601,
-          "patch_mae_max": 1.854,
-          "patch_mae_mean": 1.601
+          "global_mae": 1.567,
+          "patch_mae_max": 1.796,
+          "patch_mae_mean": 1.567
         },
         {
           "frame": 1,
@@ -191,9 +198,9 @@
             "scene_start_post"
           ],
           "ok": true,
-          "global_mae": 1.611,
-          "patch_mae_max": 1.878,
-          "patch_mae_mean": 1.611
+          "global_mae": 1.584,
+          "patch_mae_max": 1.816,
+          "patch_mae_mean": 1.584
         },
         {
           "frame": 154,
@@ -201,9 +208,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.651,
-          "patch_mae_max": 1.903,
-          "patch_mae_mean": 1.652
+          "global_mae": 1.627,
+          "patch_mae_max": 1.831,
+          "patch_mae_mean": 1.628
         },
         {
           "frame": 386,
@@ -211,9 +218,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.661,
-          "patch_mae_max": 1.951,
-          "patch_mae_mean": 1.661
+          "global_mae": 1.63,
+          "patch_mae_max": 1.846,
+          "patch_mae_mean": 1.63
         },
         {
           "frame": 392,
@@ -221,9 +228,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.657,
-          "patch_mae_max": 1.972,
-          "patch_mae_mean": 1.657
+          "global_mae": 1.628,
+          "patch_mae_max": 1.848,
+          "patch_mae_mean": 1.629
         },
         {
           "frame": 393,
@@ -231,9 +238,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.488,
-          "patch_mae_max": 1.807,
-          "patch_mae_mean": 1.488
+          "global_mae": 1.642,
+          "patch_mae_max": 2.026,
+          "patch_mae_mean": 1.642
         },
         {
           "frame": 394,
@@ -241,9 +248,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.68,
-          "patch_mae_max": 1.889,
-          "patch_mae_mean": 1.68
+          "global_mae": 1.632,
+          "patch_mae_max": 1.932,
+          "patch_mae_mean": 1.633
         },
         {
           "frame": 456,
@@ -251,9 +258,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.657,
-          "patch_mae_max": 1.96,
-          "patch_mae_mean": 1.658
+          "global_mae": 1.628,
+          "patch_mae_max": 1.871,
+          "patch_mae_mean": 1.628
         },
         {
           "frame": 457,
@@ -261,9 +268,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.491,
-          "patch_mae_max": 1.797,
-          "patch_mae_mean": 1.491
+          "global_mae": 1.643,
+          "patch_mae_max": 1.996,
+          "patch_mae_mean": 1.643
         },
         {
           "frame": 458,
@@ -271,9 +278,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.683,
-          "patch_mae_max": 1.902,
-          "patch_mae_mean": 1.683
+          "global_mae": 1.634,
+          "patch_mae_max": 1.987,
+          "patch_mae_mean": 1.634
         },
         {
           "frame": 517,
@@ -281,9 +288,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.662,
-          "patch_mae_max": 1.979,
-          "patch_mae_mean": 1.662
+          "global_mae": 1.653,
+          "patch_mae_max": 1.858,
+          "patch_mae_mean": 1.653
         },
         {
           "frame": 518,
@@ -291,9 +298,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.488,
-          "patch_mae_max": 1.715,
-          "patch_mae_mean": 1.488
+          "global_mae": 1.659,
+          "patch_mae_max": 1.944,
+          "patch_mae_mean": 1.66
         },
         {
           "frame": 519,
@@ -301,9 +308,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.68,
-          "patch_mae_max": 1.882,
-          "patch_mae_mean": 1.68
+          "global_mae": 1.646,
+          "patch_mae_max": 1.884,
+          "patch_mae_mean": 1.647
         },
         {
           "frame": 605,
@@ -311,9 +318,9 @@
             "scene_start_pre"
           ],
           "ok": true,
-          "global_mae": 1.646,
-          "patch_mae_max": 1.89,
-          "patch_mae_mean": 1.646
+          "global_mae": 1.661,
+          "patch_mae_max": 1.945,
+          "patch_mae_mean": 1.661
         },
         {
           "frame": 606,
@@ -321,9 +328,89 @@
             "scene_start"
           ],
           "ok": true,
-          "global_mae": 1.557,
-          "patch_mae_max": 1.986,
-          "patch_mae_mean": 1.557
+          "global_mae": 1.686,
+          "patch_mae_max": 1.972,
+          "patch_mae_mean": 1.686,
+          "transition_timing": {
+            "ok": true,
+            "boundary": 606,
+            "probe_frames": [
+              576,
+              577,
+              578,
+              579,
+              580,
+              581,
+              582,
+              583,
+              584,
+              585,
+              586,
+              587,
+              588,
+              589,
+              590,
+              591,
+              592,
+              593,
+              594,
+              595,
+              596,
+              597,
+              598,
+              599,
+              600,
+              601,
+              602,
+              603,
+              604,
+              605,
+              606,
+              607,
+              608,
+              609,
+              610,
+              611,
+              612,
+              613,
+              614,
+              615,
+              616,
+              617,
+              618,
+              619,
+              620,
+              621,
+              622,
+              623,
+              624,
+              625,
+              626,
+              627,
+              628,
+              629,
+              630,
+              631,
+              632,
+              633,
+              634,
+              635,
+              636
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 15.55028,
+            "hypothesis_separation_rms": 0.337831,
+            "fit_rms": 0.085796,
+            "separation_ratio": 3.93761,
+            "scores": {
+              "-2": 0.249027,
+              "-1": 0.124757,
+              "0": 0.007361,
+              "1": 0.121825,
+              "2": 0.236867
+            },
+            "reason": "aligned"
+          }
         },
         {
           "frame": 607,
@@ -331,9 +418,9 @@
             "scene_start_post"
           ],
           "ok": true,
-          "global_mae": 1.767,
-          "patch_mae_max": 2.147,
-          "patch_mae_mean": 1.767
+          "global_mae": 1.63,
+          "patch_mae_max": 1.923,
+          "patch_mae_mean": 1.631
         },
         {
           "frame": 675,
@@ -341,9 +428,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.726,
-          "patch_mae_max": 2.154,
-          "patch_mae_mean": 1.726
+          "global_mae": 1.687,
+          "patch_mae_max": 2.11,
+          "patch_mae_mean": 1.687
         },
         {
           "frame": 709,
@@ -351,9 +438,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.777,
-          "patch_mae_max": 2.23,
-          "patch_mae_mean": 1.778
+          "global_mae": 1.744,
+          "patch_mae_max": 2.164,
+          "patch_mae_mean": 1.744
         },
         {
           "frame": 710,
@@ -361,9 +448,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.779,
-          "patch_mae_max": 2.284,
-          "patch_mae_mean": 1.779
+          "global_mae": 1.742,
+          "patch_mae_max": 2.288,
+          "patch_mae_mean": 1.742
         },
         {
           "frame": 711,
@@ -371,9 +458,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.778,
-          "patch_mae_max": 2.269,
-          "patch_mae_mean": 1.778
+          "global_mae": 1.742,
+          "patch_mae_max": 2.274,
+          "patch_mae_mean": 1.742
         },
         {
           "frame": 780,
@@ -381,9 +468,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.767,
-          "patch_mae_max": 2.213,
-          "patch_mae_mean": 1.766
+          "global_mae": 1.732,
+          "patch_mae_max": 2.069,
+          "patch_mae_mean": 1.732
         },
         {
           "frame": 781,
@@ -391,9 +478,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.779,
-          "patch_mae_max": 2.228,
-          "patch_mae_mean": 1.779
+          "global_mae": 1.596,
+          "patch_mae_max": 1.995,
+          "patch_mae_mean": 1.596
         },
         {
           "frame": 782,
@@ -401,9 +488,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.77,
-          "patch_mae_max": 2.262,
-          "patch_mae_mean": 1.77
+          "global_mae": 1.766,
+          "patch_mae_max": 2.087,
+          "patch_mae_mean": 1.766
         },
         {
           "frame": 851,
@@ -411,9 +498,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.767,
-          "patch_mae_max": 2.233,
-          "patch_mae_mean": 1.767
+          "global_mae": 1.662,
+          "patch_mae_max": 2.014,
+          "patch_mae_mean": 1.663
         },
         {
           "frame": 852,
@@ -421,9 +508,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.789,
-          "patch_mae_max": 2.271,
-          "patch_mae_mean": 1.789
+          "global_mae": 1.479,
+          "patch_mae_max": 1.931,
+          "patch_mae_mean": 1.479
         },
         {
           "frame": 853,
@@ -431,9 +518,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.786,
-          "patch_mae_max": 2.281,
-          "patch_mae_mean": 1.786
+          "global_mae": 1.646,
+          "patch_mae_max": 1.95,
+          "patch_mae_mean": 1.647
         },
         {
           "frame": 859,
@@ -441,9 +528,9 @@
             "scene_start_pre"
           ],
           "ok": true,
-          "global_mae": 1.813,
-          "patch_mae_max": 2.2,
-          "patch_mae_mean": 1.812
+          "global_mae": 1.654,
+          "patch_mae_max": 1.897,
+          "patch_mae_mean": 1.655
         },
         {
           "frame": 860,
@@ -451,9 +538,89 @@
             "scene_start"
           ],
           "ok": true,
-          "global_mae": 1.585,
-          "patch_mae_max": 1.953,
-          "patch_mae_mean": 1.586
+          "global_mae": 1.648,
+          "patch_mae_max": 1.884,
+          "patch_mae_mean": 1.648,
+          "transition_timing": {
+            "ok": true,
+            "boundary": 860,
+            "probe_frames": [
+              830,
+              831,
+              832,
+              833,
+              834,
+              835,
+              836,
+              837,
+              838,
+              839,
+              840,
+              841,
+              842,
+              843,
+              844,
+              845,
+              846,
+              847,
+              848,
+              849,
+              850,
+              851,
+              852,
+              853,
+              854,
+              855,
+              856,
+              857,
+              858,
+              859,
+              860,
+              861,
+              862,
+              863,
+              864,
+              865,
+              866,
+              867,
+              868,
+              869,
+              870,
+              871,
+              872,
+              873,
+              874,
+              875,
+              876,
+              877,
+              878,
+              879,
+              880,
+              881,
+              882,
+              883,
+              884,
+              885,
+              886,
+              887,
+              888,
+              889,
+              890
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 17.87886,
+            "hypothesis_separation_rms": 0.387364,
+            "fit_rms": 0.088818,
+            "separation_ratio": 4.3613,
+            "scores": {
+              "-2": 0.37422,
+              "-1": 0.157014,
+              "0": 0.007889,
+              "1": 0.14893,
+              "2": 0.358929
+            },
+            "reason": "aligned"
+          }
         },
         {
           "frame": 861,
@@ -461,9 +628,9 @@
             "scene_start_post"
           ],
           "ok": true,
-          "global_mae": 1.572,
-          "patch_mae_max": 1.945,
-          "patch_mae_mean": 1.573
+          "global_mae": 1.683,
+          "patch_mae_max": 1.93,
+          "patch_mae_mean": 1.683
         },
         {
           "frame": 965,
@@ -471,9 +638,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.599,
-          "patch_mae_max": 1.864,
-          "patch_mae_mean": 1.599
+          "global_mae": 1.582,
+          "patch_mae_max": 1.857,
+          "patch_mae_mean": 1.582
         },
         {
           "frame": 1038,
@@ -481,9 +648,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.594,
-          "patch_mae_max": 1.921,
-          "patch_mae_mean": 1.595
+          "global_mae": 1.579,
+          "patch_mae_max": 1.938,
+          "patch_mae_mean": 1.579
         },
         {
           "frame": 1039,
@@ -491,9 +658,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.594,
-          "patch_mae_max": 1.939,
-          "patch_mae_mean": 1.595
+          "global_mae": 1.58,
+          "patch_mae_max": 1.909,
+          "patch_mae_mean": 1.58
         },
         {
           "frame": 1040,
@@ -501,9 +668,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.593,
-          "patch_mae_max": 1.964,
-          "patch_mae_mean": 1.594
+          "global_mae": 1.577,
+          "patch_mae_max": 1.899,
+          "patch_mae_mean": 1.577
         },
         {
           "frame": 1226,
@@ -511,9 +678,9 @@
             "scene_start_pre"
           ],
           "ok": true,
-          "global_mae": 1.606,
-          "patch_mae_max": 1.813,
-          "patch_mae_mean": 1.606
+          "global_mae": 1.675,
+          "patch_mae_max": 1.983,
+          "patch_mae_mean": 1.675
         },
         {
           "frame": 1227,
@@ -521,9 +688,89 @@
             "scene_start"
           ],
           "ok": true,
-          "global_mae": 1.665,
-          "patch_mae_max": 2.031,
-          "patch_mae_mean": 1.666
+          "global_mae": 1.7,
+          "patch_mae_max": 2.006,
+          "patch_mae_mean": 1.699,
+          "transition_timing": {
+            "ok": true,
+            "boundary": 1227,
+            "probe_frames": [
+              1197,
+              1198,
+              1199,
+              1200,
+              1201,
+              1202,
+              1203,
+              1204,
+              1205,
+              1206,
+              1207,
+              1208,
+              1209,
+              1210,
+              1211,
+              1212,
+              1213,
+              1214,
+              1215,
+              1216,
+              1217,
+              1218,
+              1219,
+              1220,
+              1221,
+              1222,
+              1223,
+              1224,
+              1225,
+              1226,
+              1227,
+              1228,
+              1229,
+              1230,
+              1231,
+              1232,
+              1233,
+              1234,
+              1235,
+              1236,
+              1237,
+              1238,
+              1239,
+              1240,
+              1241,
+              1242,
+              1243,
+              1244,
+              1245,
+              1246,
+              1247,
+              1248,
+              1249,
+              1250,
+              1251,
+              1252,
+              1253,
+              1254,
+              1255,
+              1256,
+              1257
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 11.48091,
+            "hypothesis_separation_rms": 0.274418,
+            "fit_rms": 0.078236,
+            "separation_ratio": 3.50758,
+            "scores": {
+              "-2": 0.169789,
+              "-1": 0.085718,
+              "0": 0.006121,
+              "1": 0.076393,
+              "2": 0.158523
+            },
+            "reason": "aligned"
+          }
         },
         {
           "frame": 1228,
@@ -531,9 +778,9 @@
             "scene_start_post"
           ],
           "ok": true,
-          "global_mae": 1.687,
-          "patch_mae_max": 2.055,
-          "patch_mae_mean": 1.687
+          "global_mae": 1.69,
+          "patch_mae_max": 2.051,
+          "patch_mae_mean": 1.69
         },
         {
           "frame": 1255,
@@ -541,9 +788,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.683,
-          "patch_mae_max": 2.004,
-          "patch_mae_mean": 1.684
+          "global_mae": 1.712,
+          "patch_mae_max": 2.012,
+          "patch_mae_mean": 1.713
         },
         {
           "frame": 1299,
@@ -551,9 +798,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.708,
-          "patch_mae_max": 1.982,
-          "patch_mae_mean": 1.708
+          "global_mae": 1.717,
+          "patch_mae_max": 2.05,
+          "patch_mae_mean": 1.718
         },
         {
           "frame": 1300,
@@ -561,9 +808,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.685,
-          "patch_mae_max": 2.067,
-          "patch_mae_mean": 1.685
+          "global_mae": 1.705,
+          "patch_mae_max": 2.164,
+          "patch_mae_mean": 1.705
         },
         {
           "frame": 1301,
@@ -571,9 +818,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.683,
-          "patch_mae_max": 2.047,
-          "patch_mae_mean": 1.683
+          "global_mae": 1.708,
+          "patch_mae_max": 2.1,
+          "patch_mae_mean": 1.708
         },
         {
           "frame": 1386,
@@ -581,9 +828,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.696,
-          "patch_mae_max": 2.062,
-          "patch_mae_mean": 1.696
+          "global_mae": 1.7,
+          "patch_mae_max": 2.044,
+          "patch_mae_mean": 1.7
         },
         {
           "frame": 1387,
@@ -591,9 +838,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.5,
-          "patch_mae_max": 1.902,
-          "patch_mae_mean": 1.5
+          "global_mae": 1.516,
+          "patch_mae_max": 1.96,
+          "patch_mae_mean": 1.516
         },
         {
           "frame": 1388,
@@ -601,9 +848,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.686,
-          "patch_mae_max": 1.99,
-          "patch_mae_mean": 1.686
+          "global_mae": 1.714,
+          "patch_mae_max": 2.051,
+          "patch_mae_mean": 1.714
         },
         {
           "frame": 1467,
@@ -611,9 +858,9 @@
             "accent_pre"
           ],
           "ok": true,
-          "global_mae": 1.69,
-          "patch_mae_max": 2.111,
-          "patch_mae_mean": 1.69
+          "global_mae": 1.678,
+          "patch_mae_max": 2.043,
+          "patch_mae_mean": 1.678
         },
         {
           "frame": 1468,
@@ -621,9 +868,9 @@
             "accent"
           ],
           "ok": true,
-          "global_mae": 1.67,
-          "patch_mae_max": 2.097,
-          "patch_mae_mean": 1.67
+          "global_mae": 1.665,
+          "patch_mae_max": 2.032,
+          "patch_mae_mean": 1.666
         },
         {
           "frame": 1469,
@@ -631,9 +878,9 @@
             "accent_post"
           ],
           "ok": true,
-          "global_mae": 1.677,
-          "patch_mae_max": 2.095,
-          "patch_mae_mean": 1.677
+          "global_mae": 1.633,
+          "patch_mae_max": 2.056,
+          "patch_mae_mean": 1.634
         },
         {
           "frame": 1477,
@@ -641,9 +888,9 @@
             "scene_start_pre"
           ],
           "ok": true,
-          "global_mae": 1.692,
-          "patch_mae_max": 2.021,
-          "patch_mae_mean": 1.692
+          "global_mae": 1.705,
+          "patch_mae_max": 2.063,
+          "patch_mae_mean": 1.705
         },
         {
           "frame": 1478,
@@ -651,9 +898,89 @@
             "scene_start"
           ],
           "ok": true,
-          "global_mae": 1.639,
-          "patch_mae_max": 1.976,
-          "patch_mae_mean": 1.639
+          "global_mae": 1.693,
+          "patch_mae_max": 2.058,
+          "patch_mae_mean": 1.694,
+          "transition_timing": {
+            "ok": true,
+            "boundary": 1478,
+            "probe_frames": [
+              1448,
+              1449,
+              1450,
+              1451,
+              1452,
+              1453,
+              1454,
+              1455,
+              1456,
+              1457,
+              1458,
+              1459,
+              1460,
+              1461,
+              1462,
+              1463,
+              1464,
+              1465,
+              1466,
+              1467,
+              1468,
+              1469,
+              1470,
+              1471,
+              1472,
+              1473,
+              1474,
+              1475,
+              1476,
+              1477,
+              1478,
+              1479,
+              1480,
+              1481,
+              1482,
+              1483,
+              1484,
+              1485,
+              1486,
+              1487,
+              1488,
+              1489,
+              1490,
+              1491,
+              1492,
+              1493,
+              1494,
+              1495,
+              1496,
+              1497,
+              1498,
+              1499,
+              1500,
+              1501,
+              1502,
+              1503,
+              1504,
+              1505,
+              1506,
+              1507,
+              1508
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 10.67336,
+            "hypothesis_separation_rms": 0.277004,
+            "fit_rms": 0.081717,
+            "separation_ratio": 3.38977,
+            "scores": {
+              "-2": 0.173855,
+              "-1": 0.08252,
+              "0": 0.006678,
+              "1": 0.077952,
+              "2": 0.162392
+            },
+            "reason": "aligned"
+          }
         },
         {
           "frame": 1479,
@@ -661,9 +988,9 @@
             "scene_start_post"
           ],
           "ok": true,
-          "global_mae": 1.644,
-          "patch_mae_max": 1.973,
-          "patch_mae_mean": 1.644
+          "global_mae": 1.692,
+          "patch_mae_max": 2.084,
+          "patch_mae_mean": 1.693
         },
         {
           "frame": 1544,
@@ -671,9 +998,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.671,
-          "patch_mae_max": 1.928,
-          "patch_mae_mean": 1.671
+          "global_mae": 1.658,
+          "patch_mae_max": 1.905,
+          "patch_mae_mean": 1.658
         },
         {
           "frame": 1776,
@@ -681,9 +1008,9 @@
             "interior"
           ],
           "ok": true,
-          "global_mae": 1.666,
-          "patch_mae_max": 1.9,
-          "patch_mae_mean": 1.666
+          "global_mae": 1.651,
+          "patch_mae_max": 1.905,
+          "patch_mae_mean": 1.652
         },
         {
           "frame": 1931,
@@ -691,11 +1018,334 @@
             "last_frame"
           ],
           "ok": true,
-          "global_mae": 1.669,
-          "patch_mae_max": 1.885,
-          "patch_mae_mean": 1.67
+          "global_mae": 1.659,
+          "patch_mae_max": 1.881,
+          "patch_mae_mean": 1.659
         }
-      ]
+      ],
+      "transition_timing": [
+        {
+          "ok": true,
+          "boundary": 606,
+          "probe_frames": [
+            576,
+            577,
+            578,
+            579,
+            580,
+            581,
+            582,
+            583,
+            584,
+            585,
+            586,
+            587,
+            588,
+            589,
+            590,
+            591,
+            592,
+            593,
+            594,
+            595,
+            596,
+            597,
+            598,
+            599,
+            600,
+            601,
+            602,
+            603,
+            604,
+            605,
+            606,
+            607,
+            608,
+            609,
+            610,
+            611,
+            612,
+            613,
+            614,
+            615,
+            616,
+            617,
+            618,
+            619,
+            620,
+            621,
+            622,
+            623,
+            624,
+            625,
+            626,
+            627,
+            628,
+            629,
+            630,
+            631,
+            632,
+            633,
+            634,
+            635,
+            636
+          ],
+          "best_offset_frames": 0,
+          "relative_margin": 15.55028,
+          "hypothesis_separation_rms": 0.337831,
+          "fit_rms": 0.085796,
+          "separation_ratio": 3.93761,
+          "scores": {
+            "-2": 0.249027,
+            "-1": 0.124757,
+            "0": 0.007361,
+            "1": 0.121825,
+            "2": 0.236867
+          },
+          "reason": "aligned"
+        },
+        {
+          "ok": true,
+          "boundary": 860,
+          "probe_frames": [
+            830,
+            831,
+            832,
+            833,
+            834,
+            835,
+            836,
+            837,
+            838,
+            839,
+            840,
+            841,
+            842,
+            843,
+            844,
+            845,
+            846,
+            847,
+            848,
+            849,
+            850,
+            851,
+            852,
+            853,
+            854,
+            855,
+            856,
+            857,
+            858,
+            859,
+            860,
+            861,
+            862,
+            863,
+            864,
+            865,
+            866,
+            867,
+            868,
+            869,
+            870,
+            871,
+            872,
+            873,
+            874,
+            875,
+            876,
+            877,
+            878,
+            879,
+            880,
+            881,
+            882,
+            883,
+            884,
+            885,
+            886,
+            887,
+            888,
+            889,
+            890
+          ],
+          "best_offset_frames": 0,
+          "relative_margin": 17.87886,
+          "hypothesis_separation_rms": 0.387364,
+          "fit_rms": 0.088818,
+          "separation_ratio": 4.3613,
+          "scores": {
+            "-2": 0.37422,
+            "-1": 0.157014,
+            "0": 0.007889,
+            "1": 0.14893,
+            "2": 0.358929
+          },
+          "reason": "aligned"
+        },
+        {
+          "ok": true,
+          "boundary": 1227,
+          "probe_frames": [
+            1197,
+            1198,
+            1199,
+            1200,
+            1201,
+            1202,
+            1203,
+            1204,
+            1205,
+            1206,
+            1207,
+            1208,
+            1209,
+            1210,
+            1211,
+            1212,
+            1213,
+            1214,
+            1215,
+            1216,
+            1217,
+            1218,
+            1219,
+            1220,
+            1221,
+            1222,
+            1223,
+            1224,
+            1225,
+            1226,
+            1227,
+            1228,
+            1229,
+            1230,
+            1231,
+            1232,
+            1233,
+            1234,
+            1235,
+            1236,
+            1237,
+            1238,
+            1239,
+            1240,
+            1241,
+            1242,
+            1243,
+            1244,
+            1245,
+            1246,
+            1247,
+            1248,
+            1249,
+            1250,
+            1251,
+            1252,
+            1253,
+            1254,
+            1255,
+            1256,
+            1257
+          ],
+          "best_offset_frames": 0,
+          "relative_margin": 11.48091,
+          "hypothesis_separation_rms": 0.274418,
+          "fit_rms": 0.078236,
+          "separation_ratio": 3.50758,
+          "scores": {
+            "-2": 0.169789,
+            "-1": 0.085718,
+            "0": 0.006121,
+            "1": 0.076393,
+            "2": 0.158523
+          },
+          "reason": "aligned"
+        },
+        {
+          "ok": true,
+          "boundary": 1478,
+          "probe_frames": [
+            1448,
+            1449,
+            1450,
+            1451,
+            1452,
+            1453,
+            1454,
+            1455,
+            1456,
+            1457,
+            1458,
+            1459,
+            1460,
+            1461,
+            1462,
+            1463,
+            1464,
+            1465,
+            1466,
+            1467,
+            1468,
+            1469,
+            1470,
+            1471,
+            1472,
+            1473,
+            1474,
+            1475,
+            1476,
+            1477,
+            1478,
+            1479,
+            1480,
+            1481,
+            1482,
+            1483,
+            1484,
+            1485,
+            1486,
+            1487,
+            1488,
+            1489,
+            1490,
+            1491,
+            1492,
+            1493,
+            1494,
+            1495,
+            1496,
+            1497,
+            1498,
+            1499,
+            1500,
+            1501,
+            1502,
+            1503,
+            1504,
+            1505,
+            1506,
+            1507,
+            1508
+          ],
+          "best_offset_frames": 0,
+          "relative_margin": 10.67336,
+          "hypothesis_separation_rms": 0.277004,
+          "fit_rms": 0.081717,
+          "separation_ratio": 3.38977,
+          "scores": {
+            "-2": 0.173855,
+            "-1": 0.08252,
+            "0": 0.006678,
+            "1": 0.077952,
+            "2": 0.162392
+          },
+          "reason": "aligned"
+        }
+      ],
+      "transition_timing_supported": true
     }
   ],
   "pass": true,

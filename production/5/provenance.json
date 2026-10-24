@@ -16,41 +16,41 @@
     "identity": {
       "candidate_id": "cand-01",
       "child_issue": 5,
-      "engine_sha": "32f5056c9259af49b64a522411e89382ca15061c",
+      "engine_sha": "7feb71393d76adbe67199963caecc3a4ad7af83c",
       "iteration": 0,
       "parent_issue": 1,
       "run_attempt": 1,
-      "run_id": 40108142876
+      "run_id": 40117157557
     },
     "binding": {
       "brief_sha256": "faca89da4f68440b906dd07b01d6a62894389002ac9508bd449c373b5d77222c",
       "candidate_sha256": "c530604c8ce8a7c13e4974488d6ee1e7f6236abd923261eadce98bd7527807c0",
       "controls_sha256": "ccb2345ecc0c94bff9d9a99fd3181def5c95c3207b64654af27459a3159d74e5",
       "height": 960,
-      "public_plan_sha256": "31602a30a7d33d41110587b05d66f5fddac8508eac94171ae8c02bbf7e44b776",
+      "public_plan_sha256": "25a6327dbd8e7d6fee164c3e9472e8e5ed053dafb64b4a158717b0aa788fbf40",
       "seed": 20261019,
       "source_sha256": "3709d143e232d5244ea81924823d724e156019723572dd3d0b220c5932fc8b7b",
-      "storyboard_sha256": "b2b0f875f8e5f95c720c7f5456b68bb66300820447bbb8277cf0038dc4ef3416",
+      "storyboard_sha256": "d54ccdfd96e7febbc15499f635e87208031cd40c0adcc276a590835779b0bfb9",
       "width": 540
     },
-    "still_evidence_sha256": "b74ccfbbfb3212f3cc8f112acfd5fbdcf1238f542f521df493da6fc2d1e55c5f",
-    "motion_evidence_sha256": "749cdc0bf76ebb1406e071b8a4f31cc3f03364e6f6edef2bfe44713f20153509",
-    "still_review_sha256": "3df1986fff619bb48cae4a6924ae27a3ff73c2e9104d85f44a9bb96ea961d440",
-    "motion_review_sha256": "7026102e9706a09afe934f29a4039b9c36c1a3e23252160f5ef21d261b87327d",
+    "still_evidence_sha256": "7aa2104d9b813317f75dcda21705d7431b342b20e872e50f5085af05b4faea15",
+    "motion_evidence_sha256": "8a683be2e183de6200936b826bc8a72eba94ef4e4d167e32fff59c0d6de644fe",
+    "still_review_sha256": "d37ad01b0689c7b39f942b2f7025053b4bbf4e307635c71503293240f53eaeb0",
+    "motion_review_sha256": "38ee3ec176f4f8d67c7893306f3d2aa0dc07ec8a2f57396652132c33029d5ded",
     "still": {
       "stage": "still",
-      "evidence_sha256": "b74ccfbbfb3212f3cc8f112acfd5fbdcf1238f542f521df493da6fc2d1e55c5f",
-      "review_sha256": "3df1986fff619bb48cae4a6924ae27a3ff73c2e9104d85f44a9bb96ea961d440"
+      "evidence_sha256": "7aa2104d9b813317f75dcda21705d7431b342b20e872e50f5085af05b4faea15",
+      "review_sha256": "d37ad01b0689c7b39f942b2f7025053b4bbf4e307635c71503293240f53eaeb0"
     },
     "motion": {
       "stage": "motion",
-      "evidence_sha256": "749cdc0bf76ebb1406e071b8a4f31cc3f03364e6f6edef2bfe44713f20153509",
-      "review_sha256": "7026102e9706a09afe934f29a4039b9c36c1a3e23252160f5ef21d261b87327d"
+      "evidence_sha256": "8a683be2e183de6200936b826bc8a72eba94ef4e4d167e32fff59c0d6de644fe",
+      "review_sha256": "38ee3ec176f4f8d67c7893306f3d2aa0dc07ec8a2f57396652132c33029d5ded"
     }
   },
   "media_sha256": {
-    "video.mp4": "23448a506efb27fbb0198bdc637815332d240746f2b59634a2cf640c827075fe",
-    "contact-sheet.jpg": "b4591292d430e2c56dab8a50274db79f4de4e5bef3b535779964c72dc2a40ce4",
+    "video.mp4": "88b35037d442e88c7c08574b9a68f6d3abfd4463d5d2076af88afbeb97e0a4a5",
+    "contact-sheet.jpg": "21fff565ceb0feb4a4af1c7e40e2b48679d1308e49b6ed3c5d84b809290f7c47",
     "timeline.html": "b32e67b071f09bcf19b56063192b5613132fa88baecd463a74d2901d6b30fb70"
   }
 }
