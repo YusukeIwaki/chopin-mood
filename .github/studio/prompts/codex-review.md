@@ -3,7 +3,7 @@
 You receive labelled sections, in order:
 1. SOURCE BRIEF (`brief.json`: owner creative fields verbatim +
    planner candidate brief + deterministic candidate/scenes)
-2. STORYBOARD (`storyboard.json` as implemented by Muse)
+2. STORYBOARD (`storyboard.json` authored by the production Codex session)
 3. PRODUCTION FILES (committed `production/<child>/` paths with sha256
    digests from the commit step, plus the expected head SHA)
 4. PLAN + QA (`plan.json`, `qa.json`: encoded-media QA on the real MP4)
