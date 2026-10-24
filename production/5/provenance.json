@@ -11,9 +11,46 @@
   "planning_fingerprint": "f5260e4f60550374a06fa9ba986de3a0cbe9c97cdf1bf0b6fffdd6d87e51c747",
   "brief_fingerprint": "f5260e4f60550374a06fa9ba986de3a0cbe9c97cdf1bf0b6fffdd6d87e51c747",
   "prototype": "procedural prototype, not finished anime",
+  "visual_approval": {
+    "schema_version": "1.0",
+    "identity": {
+      "candidate_id": "cand-01",
+      "child_issue": 5,
+      "engine_sha": "32f5056c9259af49b64a522411e89382ca15061c",
+      "iteration": 0,
+      "parent_issue": 1,
+      "run_attempt": 1,
+      "run_id": 40108142876
+    },
+    "binding": {
+      "brief_sha256": "faca89da4f68440b906dd07b01d6a62894389002ac9508bd449c373b5d77222c",
+      "candidate_sha256": "c530604c8ce8a7c13e4974488d6ee1e7f6236abd923261eadce98bd7527807c0",
+      "controls_sha256": "ccb2345ecc0c94bff9d9a99fd3181def5c95c3207b64654af27459a3159d74e5",
+      "height": 960,
+      "public_plan_sha256": "31602a30a7d33d41110587b05d66f5fddac8508eac94171ae8c02bbf7e44b776",
+      "seed": 20261019,
+      "source_sha256": "3709d143e232d5244ea81924823d724e156019723572dd3d0b220c5932fc8b7b",
+      "storyboard_sha256": "b2b0f875f8e5f95c720c7f5456b68bb66300820447bbb8277cf0038dc4ef3416",
+      "width": 540
+    },
+    "still_evidence_sha256": "b74ccfbbfb3212f3cc8f112acfd5fbdcf1238f542f521df493da6fc2d1e55c5f",
+    "motion_evidence_sha256": "749cdc0bf76ebb1406e071b8a4f31cc3f03364e6f6edef2bfe44713f20153509",
+    "still_review_sha256": "3df1986fff619bb48cae4a6924ae27a3ff73c2e9104d85f44a9bb96ea961d440",
+    "motion_review_sha256": "7026102e9706a09afe934f29a4039b9c36c1a3e23252160f5ef21d261b87327d",
+    "still": {
+      "stage": "still",
+      "evidence_sha256": "b74ccfbbfb3212f3cc8f112acfd5fbdcf1238f542f521df493da6fc2d1e55c5f",
+      "review_sha256": "3df1986fff619bb48cae4a6924ae27a3ff73c2e9104d85f44a9bb96ea961d440"
+    },
+    "motion": {
+      "stage": "motion",
+      "evidence_sha256": "749cdc0bf76ebb1406e071b8a4f31cc3f03364e6f6edef2bfe44713f20153509",
+      "review_sha256": "7026102e9706a09afe934f29a4039b9c36c1a3e23252160f5ef21d261b87327d"
+    }
+  },
   "media_sha256": {
-    "video.mp4": "9f466bae035941000e8ebc22ee6f958df6f201e5e705a9ec51293beb0e0ed044",
-    "contact-sheet.jpg": "25f2aa08c19c96293d4d38ea86360c9493c601e4318b7a2ab73c1b6a11232d39",
+    "video.mp4": "23448a506efb27fbb0198bdc637815332d240746f2b59634a2cf640c827075fe",
+    "contact-sheet.jpg": "b4591292d430e2c56dab8a50274db79f4de4e5bef3b535779964c72dc2a40ce4",
     "timeline.html": "b32e67b071f09bcf19b56063192b5613132fa88baecd463a74d2901d6b30fb70"
   }
 }
