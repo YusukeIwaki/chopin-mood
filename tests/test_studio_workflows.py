@@ -48,9 +48,16 @@ def test_all_workflow_referenced_scripts_exist():
 
 def test_schemas_strict_required_covers_properties():
     for name in ("planner-output.schema.json", "review.schema.json",
-                 "storyboard.schema.json"):
+                 "visual-review.schema.json"):
         schema = json.loads((ROOT / ".github/studio/schemas" / name).read_text())
         assert set(schema.get("required", [])) == set(schema.get("properties", {})), name
+    # Codex-led production loads a saved storyboard; no model emits it.
+    # Keep its sole root optional field explicit rather than requiring it
+    # in legacy procedural projects or permitting arbitrary optional keys.
+    schema = json.loads((ROOT / ".github/studio/schemas/storyboard.schema.json").read_text())
+    assert set(schema["properties"]) - set(schema["required"]) == {"asset_bundle"}
+    from studio.config import PAINTED_ASSET_BUNDLE_ID
+    assert schema["properties"]["asset_bundle"]["enum"] == [PAINTED_ASSET_BUNDLE_ID]
 
 
 def test_actual_muse_wrapper_mounts_only_work_and_provider_auth(tmp_path):
