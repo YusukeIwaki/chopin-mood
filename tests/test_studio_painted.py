@@ -3,6 +3,8 @@ import copy
 import hashlib
 import json
 import shutil
+import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -21,6 +23,19 @@ PLAN = {"clip": {"n_frames": N},
         "scenes": [{"id": "scene01", "start_frame": 0, "end_frame": B},
                    {"id": "scene02", "start_frame": B, "end_frame": N}],
         "accents": [{"frame": A}]}
+
+
+def test_saved_project_intake_works_without_site_packages():
+    # The Actions planning job intentionally has only standard Python.
+    code = """import json
+from pathlib import Path
+from studio.project import load_project
+p = json.loads(Path('studio/projects/issue-1/project.json').read_text())
+load_project(Path('studio/projects'), 1, p['source_url'])
+"""
+    result = subprocess.run([sys.executable, "-S", "-c", code],
+                            cwd=painted.ROOT, text=True, capture_output=True)
+    assert result.returncode == 0, result.stderr
 
 
 def controls(boundary=B, accent=A, strength=1.0):

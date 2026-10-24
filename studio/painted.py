@@ -7,8 +7,9 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
+from .config import PAINTED_ASSET_BUNDLE_ID
 
-BUNDLE_ID = "moonlit-recollection-v1"
+BUNDLE_ID = PAINTED_ASSET_BUNDLE_ID
 ROOT = Path(__file__).resolve().parents[1]
 DIRECTORY = Path("assets/visual") / BUNDLE_ID
 BASE_PALETTE = {"sky_top": (14, 22, 38), "sky_bot": (82, 98, 116),

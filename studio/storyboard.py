@@ -43,8 +43,9 @@ def validate_storyboard(sb: dict, deterministic_scenes: list[dict]) -> dict:
     if sb.get("schema_version") != "1.0":
         failures.append("schema_version must be 1.0")
     if "asset_bundle" in sb:
-        from .painted import BUNDLE_ID
-        if sb["asset_bundle"] != BUNDLE_ID:
+        # Project intake runs before scientific/image dependencies install.
+        from .config import PAINTED_ASSET_BUNDLE_ID
+        if sb["asset_bundle"] != PAINTED_ASSET_BUNDLE_ID:
             failures.append("unknown asset_bundle")
     for key in sb:
         if key.lower() in _FORBIDDEN_KEYS or "/" in str(key) or "\\" in str(key):
