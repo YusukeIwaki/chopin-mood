@@ -1483,7 +1483,8 @@ def test_history_validation_rejects_symlink_partial_and_rehashed_tamper(tmp_path
 def test_config_alignment_latest_and_no_stale_aliases():
     cfg = json.loads((ROOT / ".github/studio/config.json").read_text())
     assert config.CODEX_VERSION == "latest" and cfg["codex"]["version"] == "latest"
-    assert cfg["muse"]["timeout_minutes_per_candidate"] == 15
+    assert "muse" not in cfg
+    assert cfg["production_mode"] == "codex-authored-project"
     assert not hasattr(config, "AGENT_ATTEMPT_TIMEOUT_SEC")
     assert not hasattr(config, "REPAIR_TIMEOUT_SEC")
     assert not hasattr(repair, "ATTEMPT_TIMEOUT_SEC")

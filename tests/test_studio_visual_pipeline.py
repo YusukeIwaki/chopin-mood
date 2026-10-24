@@ -332,6 +332,18 @@ def test_visual_cli_blocked_result_keeps_existing_storyboard(tmp_path, monkeypat
     assert json.loads((work / "storyboard.json").read_text()) == old_sb
 
 
+def test_codex_led_cli_has_no_worker_or_new_issue_route(tmp_path, monkeypatch):
+    result = {"status": "needs_engine", "proceed": False,
+              "repairs_used": 0, "version": 1}
+    cli, args, work, old_sb, seen = _visual_cli_world(tmp_path, monkeypatch, result)
+    args.codex_led = True
+    assert cli._run(args, work) == 0
+    assert seen["muse_repair"] is None
+    assert seen["allow_repair"] is False
+    assert seen["create_engineering_issue"] is False
+    assert json.loads((work / "storyboard.json").read_text()) == old_sb
+
+
 # --- final repair adapter: visual_blocked + shared remaining budget --------
 
 

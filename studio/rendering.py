@@ -539,148 +539,114 @@ def _tapered_stroke(start, segments, w_start: float, w_end: float,
 
 
 def _traveller_layer(fs: float, pal: dict) -> Image.Image:
-    """Static weary traveller silhouette as a small RGBA layer.
+    """Original three-quarter rear silhouette, painted at fourfold resolution.
 
-    Drawn on a locally supersampled mask (4x, figure-sized only, so
-    there is no full-frame supersampling cost) from sampled cubic
-    Bezier outlines, then downscaled. The pose is still: a small
-    head (about 6-7 units wide, 8 tall) tilted forward and down with
-    a subtle rear hair contour, sloped asymmetric shoulders on an
-    A-line coat with an uneven hem near y=14, a rear arm held close
-    to the body, the near arm bent to the lantern hand anchor, and a
-    contrapposto stance (weight on one planted boot, the other leg
-    narrower, receding, at a different angle). No face, no walking
-    or bobbing. Coat shading is 2-3 opaque tonal planes plus a
-    restrained moon-side rim; translucent accents are source-over
-    composited so they can never punch holes. Local coordinates are
-    in ``fs`` units: x in [-17, 17], y in [-3, 57] upward from feet.
+    One continuous shoulder/neck/profile outline, a draped travelling coat,
+    overlapping sleeves, weighted trousers and planted boots. Highlights are
+    clipped to the opaque silhouette; they cannot cut transparent seams into it.
+    Feet use the same world anchor as the terrain. No face or walking animation.
     """
     ss = 4
-    wf = max(2, int(np.ceil(34 * fs)))
-    hf = max(2, int(np.ceil(60 * fs)))
-    img = Image.new("RGBA", (wf * ss, hf * ss), (0, 0, 0, 0))
-    d = ImageDraw.Draw(img)
+    wf, hf = max(2, int(np.ceil(34 * fs))), max(2, int(np.ceil(60 * fs)))
+    size = (wf * ss, hf * ss)
+    img = Image.new("RGBA", size)
+    def pts(shape):
+        return [((x + 17) * fs * ss, (57 - y) * fs * ss) for x, y in shape]
+    def curve(start, segments):
+        return _bezier_chain(start, segments)
+    def paint(shape, color):
+        ImageDraw.Draw(img).polygon(pts(shape), fill=tuple(color) + (255,))
 
-    def pts(shape, dx=0.0, dy_up=0.0):
-        return [((x + 17.0 + dx) * fs * ss, (57.0 - (y + dy_up)) * fs * ss)
-                for x, y in shape]
-
-    body = (10, 10, 17)
-    coat_col, leg_col = (13, 13, 21), (9, 9, 15)
-    hair_col, neck_col = (6, 6, 11), (12, 10, 14)
-    scarf_col = _mix(pal["glow"], pal["near"], 0.85)
-    rim_col = _mix(pal["glow"], body, 0.50)
-
-    # A-line coat: rounded higher back shoulder, front shoulder
-    # sloping lower, sides flaring gently to an uneven hem near
-    # y=14 (front corner higher than the back). About 15 units wide.
-    coat = _bezier_chain((-7.8, 13.8), [
-        ((-8.4, 20.0), (-8.0, 28.0), (-6.8, 36.0)),
-        ((-6.2, 39.5), (-4.8, 41.2), (-2.6, 42.0)),
-        ((-1.2, 42.6), (0.6, 42.3), (2.2, 41.6)),
-        ((3.4, 40.8), (4.4, 39.0), (5.2, 36.5)),
-        ((6.4, 28.0), (7.0, 20.0), (6.6, 14.6)),
-        ((4.2, 13.2), (0.5, 15.0), (-2.0, 13.5)),
-        ((-4.5, 12.6), (-6.4, 14.8), (-7.8, 13.8))])
-    # Small bowed head, about 6-7 wide and 8 tall: crown tipped
-    # forward/down toward the lantern side, chin tucked, and hair
-    # falling in one subtle contour down the back to the neck. One
-    # leaning mass, never a round ball; no face is drawn.
-    head = _bezier_chain((1.4, 42.9), [
-        ((3.0, 43.8), (3.4, 45.4), (3.1, 47.6)),
-        ((2.9, 49.3), (1.9, 50.6), (0.4, 51.1)),
-        ((-1.2, 51.0), (-2.3, 50.2), (-2.7, 48.6)),
-        ((-3.0, 46.8), (-2.9, 45.0), (-2.5, 43.6)),
-        ((-1.8, 42.8), (-0.4, 42.7), (1.4, 42.9))])
-    # Contrapposto legs: the back leg bears the weight, near
-    # vertical and planted flat; the front leg is narrower, angled
-    # away and receding, its trouser ending at a different height.
-    leg_planted = _bezier_chain((-5.0, 15.6), [
-        ((-5.2, 10.0), (-4.9, 5.0), (-4.3, 2.6)),
-        ((-3.6, 2.1), (-2.7, 2.1), (-2.2, 2.5)),
-        ((-1.7, 6.0), (-1.5, 11.0), (-1.4, 15.2)),
-        ((-3.0, 16.0), (-4.1, 15.9), (-5.0, 15.6))])
-    leg_receding = _bezier_chain((0.6, 15.2), [
-        ((1.4, 10.0), (2.8, 5.5), (3.8, 3.0)),
-        ((4.4, 2.6), (5.0, 2.6), (5.3, 3.0)),
-        ((4.9, 7.0), (4.0, 11.0), (3.4, 14.8)),
-        ((2.2, 15.5), (1.3, 15.4), (0.6, 15.2))])
-
-    def boot(x0):
-        return _bezier_chain((x0, 0.2), [
-            ((x0 - 0.1, 1.6), (x0 + 0.4, 2.6), (x0 + 1.8, 2.8)),
-            ((x0 + 3.2, 2.6), (x0 + 3.8, 1.4), (x0 + 4.1, 0.5)),
-            ((x0 + 4.0, 0.1), (x0 + 2.1, 0.0), (x0, 0.2))])
-
-    boot_planted = boot(-5.0)
-    boot_receding = _bezier_chain((3.3, 0.2), [
-        ((3.2, 1.4), (3.6, 2.3), (4.6, 2.5)),
-        ((5.6, 2.3), (6.1, 1.3), (6.3, 0.5)),
-        ((6.2, 0.1), (4.8, 0.0), (3.3, 0.2))])
-    # Rear arm held close against the coat edge (drawn behind the
-    # coat, so only its outer sliver reads); near arm bent at the
-    # elbow toward the lantern hand anchor (10.7, 27.4).
-    arm_rear = _tapered_stroke((-5.9, 37.4),
-                               [((-7.0, 31.0), (-6.7, 25.0),
-                                 (-5.4, 20.6))],
-                               2.7, 1.9)
-    arm_front = _tapered_stroke((4.9, 36.8), [
-        ((6.2, 34.0), (7.6, 32.0), (8.0, 30.2)),
-        ((9.2, 29.0), (10.0, 28.0), (10.7, 27.4))],
-        3.1, 2.1)
-    neck = [(-1.2, 43.2), (1.5, 43.0), (1.2, 40.4), (-0.9, 40.5)]
-    scarf = _bezier_chain((-2.9, 42.5), [
-        ((-1.4, 43.1), (0.9, 42.9), (2.7, 42.0)),
-        ((2.4, 41.0), (1.9, 40.5), (1.2, 40.2)),
-        ((-0.4, 39.9), (-2.0, 40.3), (-2.9, 41.1)),
-        ((-3.1, 41.7), (-3.0, 42.1), (-2.9, 42.5))])
-    tail = _tapered_stroke((-2.3, 41.0),
-                           [((-3.9, 39.6), (-4.7, 37.6), (-4.1, 35.3))],
-                           1.5, 0.8)
-    # Opaque coat tonal planes (back shadow / moonlit front), with
-    # irregular diagonal boundaries: shading follows the coat form
-    # instead of running as long parallel torso seams.
-    plane_shadow = [(-7.2, 14.2), (-6.6, 30.0), (-5.2, 38.5),
-                    (-2.4, 41.6), (0.2, 41.0), (-0.8, 30.0),
-                    (-2.4, 14.8)]
-    plane_light = [(1.6, 38.0), (4.9, 36.2), (6.3, 20.0),
-                   (6.2, 15.0), (3.2, 13.9), (2.6, 26.0),
-                   (1.9, 34.0)]
-
-    silhouette = [leg_planted, leg_receding, boot_planted,
-                  boot_receding, coat, arm_rear, arm_front, head]
-    # Restrained moon-side edge light. This is the base layer (only
-    # transparency underneath), drawn as one uniform union offset
-    # toward the moon; the opaque body shapes below overwrite its
-    # interior part, leaving a thin rim following the contours.
-    for shape in silhouette:
-        d.polygon(pts(shape, dx=0.55, dy_up=0.35), fill=rim_col + (115,))
-    # Rear arm first, so the coat overlaps its inner edge and it
-    # reads as held close to the body, not a separated tube.
-    for shape, col in ((leg_planted, leg_col), (leg_receding, leg_col),
-                       (boot_planted, leg_col), (boot_receding, leg_col),
-                       (arm_rear, coat_col), (coat, coat_col)):
-        d.polygon(pts(shape), fill=col + (255,))
-    # Opaque tonal planes over the coat base: a darker back plane
-    # and a moonlit front plane. Both are fully opaque, so the torso
-    # interior stays solid at every scale (no new transparent holes).
-    d.polygon(pts(plane_shadow), fill=(11, 11, 18, 255))
-    d.polygon(pts(plane_light),
-              fill=_mix(coat_col, pal["glow"], 0.12) + (255,))
-    d.polygon(pts(arm_front), fill=coat_col + (255,))
-    d.polygon(pts(neck), fill=neck_col + (255,))
-    # The scarf tail is also translucent over the coat, so composite
-    # it the same way; unclipped, because its free-hanging part is a
-    # real garment shape that must keep its own alpha over the
-    # background while the part over the coat becomes opaque.
-    tail_overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    ImageDraw.Draw(tail_overlay).polygon(
-        pts(tail), fill=scarf_col + (235,))
-    img = Image.alpha_composite(img, tail_overlay)
-    d = ImageDraw.Draw(img)
-    d.polygon(pts(scarf), fill=scarf_col + (255,))
-    d.polygon(pts(head), fill=hair_col + (255,))
-    return img.resize((wf, hf), Image.LANCZOS)
+    dark = (10, 13, 20)
+    cloth = _mix((15, 20, 29), pal['near'], 0.18)
+    light = _mix(cloth, pal['moon'], 0.14)
+    # Weight-bearing leg and a slightly withdrawn leg; the feet are joined
+    # directly to the trouser contours (no detached shoe triangles).
+    back_leg = curve((0.2, 17), [
+        ((1, 12), (1.9, 7), (2.3, 3.2)),
+        ((2.1, 1.7), (2.6, 0.4), (3.7, 0.1)),
+        ((5.1, -0.1), (6.9, 0), (7.1, 0.6)),
+        ((6.7, 1.4), (5.1, 1.8), (4.8, 3.3)),
+        ((4.2, 8.3), (4.5, 12.7), (3.5, 17.6)),
+        ((2.5, 18.3), (1, 18.4), (0.2, 17))])
+    front_leg = curve((-5.4, 18), [
+        ((-5.9, 12), (-5.1, 7), (-4.7, 3.2)),
+        ((-5.2, 2.1), (-5.8, 0.9), (-5.5, 0.2)),
+        ((-4.2, -0.2), (-1.6, -0.1), (-0.2, 0.4)),
+        ((0.4, 1.1), (-1.1, 1.6), (-1.9, 2.8)),
+        ((-2.2, 7.4), (-1.3, 12.4), (-1.2, 17.6)),
+        ((-2.4, 19.1), (-4.1, 19.4), (-5.4, 18))])
+    paint(back_leg, (9, 12, 18)); paint(front_leg, (13, 17, 24))
+    # Coat and head share an uninterrupted outer contour. The slight nose /
+    # chin turn is kept in silhouette, without dots or a detached oval.
+    body = curve((-9.7, 14.1), [
+        ((-9.3, 18.8), (-7.2, 25.9), (-7.1, 32.2)),
+        ((-8.3, 34.3), (-7.4, 38.5), (-5.4, 40.3)),
+        ((-4.1, 41.5), (-2.9, 42.0), (-2.8, 43.5)),
+        ((-4.0, 45.6), (-3.7, 48.6), (-2.0, 50.0)),
+        ((-0.8, 51.3), (1.2, 51.2), (2.9, 50.1)),
+        ((4.1, 49.3), (4.2, 47.9), (4.0, 47.1)),
+        ((4.0, 46.4), (4.6, 45.9), (4.9, 45.4)),
+        ((5.1, 45.0), (4.3, 44.9), (4.1, 44.7)),
+        ((4.0, 43.8), (3.7, 43.1), (2.7, 42.9)),
+        ((2.0, 42.7), (2.4, 41.7), (3.0, 41.1)),
+        ((4.6, 40.2), (5.5, 38.9), (6.2, 36.9)),
+        ((6.8, 33.4), (5.2, 29.3), (5.4, 25.9)),
+        ((5.7, 22.3), (7.0, 18.9), (7.7, 15.6)),
+        ((6.5, 15.5), (5.7, 14.4), (4.1, 14.4)),
+        ((2.4, 13.3), (1.0, 13.8), (-0.2, 13.1)),
+        ((-2.2, 12.8), (-3.7, 13.7), (-5.5, 13.2)),
+        ((-7.0, 13.0), (-8.7, 13.6), (-9.7, 14.1))])
+    paint(body, cloth)
+    mask = Image.new('L', size); ImageDraw.Draw(mask).polygon(pts(body), fill=255)
+    # Broad curved fabric folds follow the shoulder and weight of the cloth.
+    overlay = Image.new('RGBA', size); d = ImageDraw.Draw(overlay)
+    folds = [
+        (curve((-5.1, 39.9), [((-6.0, 32), (-3.3, 29), (-4.3, 23)),
+          ((-4.8, 19), (-6.4, 16), (-6.1, 13.3)),
+          ((-3.8, 13.2), (-2.8, 15.0), (-2.4, 17.0)),
+          ((-0.5, 28), (-3.6, 35.0), (-5.1, 39.9))]), dark),
+        (curve((1.7, 39.5), [((1.0, 33), (1.9, 29), (1.0, 24)),
+          ((0.3, 20), (-0.3, 16.0), (0.1, 13.1)),
+          ((1.3, 13.5), (2.3, 13.9), (3.3, 14.2)),
+          ((3.0, 24), (3.4, 32), (1.7, 39.5))]), light)]
+    for shape,col in folds: d.polygon(pts(shape), fill=col+(255,))
+    overlay.putalpha(ImageChops.multiply(overlay.getchannel('A'), mask))
+    img = Image.alpha_composite(img, overlay)
+    # Hair mass sits inside the connected profile and nape, with a small
+    # swept edge. No high-contrast scarf separating the head from shoulders.
+    hair = curve((-2.8, 43.1), [((-4.2, 46.5), (-3.5, 49.7), (-1.3, 50.6)),
+        ((1.7, 51.9), (4.6, 49.9), (4.1, 47.5)),
+        ((2.8, 47.7), (1.4, 46.7), (1.0, 45.0)),
+        ((0.3, 43.3), (-0.6, 42.6), (-2.8, 43.1))])
+    paint(hair, (8, 11, 17))
+    # Turned collar joins the nape to the shoulder with a muted fabric plane.
+    collar = curve((-3.6, 42), [((-1.7, 42.7), (0.4, 42.1), (2.4, 41.3)),
+        ((2.0, 40.4), (1.8, 39.8), (1.4, 39.0)),
+        ((-0.2, 40.0), (-2.2, 40.4), (-3.6, 42))])
+    paint(collar, _mix(cloth, pal['moon'], 0.12))
+    # Resting near arm: softly bent, close to the torso, with a thumb and
+    # curled fingers at the cuff. No hanging luminous bead / lantern icon.
+    sleeve = curve((3.7, 39.5), [((6.5, 39.0), (7.5, 35.6), (7.1, 32.6)),
+        ((6.8, 30.4), (5.0, 28.5), (3.7, 27.3)),
+        ((2.8, 27.2), (2.2, 27.7), (2.0, 28.4)),
+        ((3.0, 30.6), (4.0, 32.3), (4.1, 34.3)),
+        ((4.0, 36.1), (3.5, 37.9), (3.7, 39.5))])
+    paint(sleeve, _mix(cloth, pal['moon'], 0.06))
+    hand = curve((2.0, 28.7), [((1.2, 28.5), (0.9, 27.7), (1.3, 27.0)),
+        ((0.7, 26.7), (1.0, 25.9), (1.6, 25.7)),
+        ((2.6, 25.5), (3.5, 26.3), (3.6, 27.5)),
+        ((3.3, 28.3), (2.7, 28.6), (2.0, 28.7))])
+    paint(hand, _mix(cloth, pal['glow'], 0.13))
+    # Selective edge light, clipped to the body, never a uniform outline.
+    overlay = Image.new('RGBA',size); d=ImageDraw.Draw(overlay)
+    for start,segments in [((3.0,50.0), [((4.1,49.2),(4.2,48.0),(4.0,47.3))]),
+                           ((4.8,39.7), [((6.2,38.6),(6.8,36.7),(6.5,35.2))]),
+                           ((5.3,24.5), [((5.6,21.6),(6.9,17.9),(7.2,16.0))])]:
+        d.line(pts(curve(start,segments)),fill=_mix(cloth,pal['moon'],.25)+(110,),width=max(1,int(.24*fs*ss)))
+    overlay.putalpha(ImageChops.multiply(overlay.getchannel('A'),mask))
+    img=Image.alpha_composite(img,overlay)
+    return img.resize((wf,hf),Image.Resampling.LANCZOS)
 
 
 def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
@@ -799,12 +765,10 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
         lay, w, h, f, camx=camx, camy=camy, zoom=zoom, drift=drift,
         near=near_r)
     fs = figure_scale * u
-    # The figure is static (no bob, no walking loop): feet stay planted
-    # at feet_y. The lantern hangs from the raised hand; this ONE
-    # position drives both the accent bloom below and the lantern dot
-    # drawn with the figure, so they can never drift apart.
+    # The figure is static: feet stay planted on the foreground. Subtle
+    # accent light is local to the resting hand, with no luminous icon.
     fy = feet_y
-    lx, ly = tx_c + 11 * fs, fy - 27 * fs
+    lx, ly = tx_c + 3 * fs, fy - 26 * fs
 
     # Worn earth path: a narrow track grounded exactly at the
     # traveller's feet, widening gradually in perspective down the
@@ -849,13 +813,12 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
             + (path_col[None, None, :] * row_shade[:, :, None]) \
             * pa[:, :, None]
 
-    # soft accent bloom at the lantern (diffuse, localised; not a ring,
-    # not a whole-frame flash). Shares (lx, ly) with the lantern dot.
+    # Soft accent light at the resting hand (diffuse and localised).
     if acc > 0.01:
         d2 = (xs[None, :] - lx) ** 2 + ((yy[:, None] * h) - ly) ** 2
         img += np.array(pal["glow"], float)[None, None, :] * (
             np.exp(-d2 / (2 * (0.10 * min(w, h)) ** 2))
-            * (0.38 * acc))[:, :, None]
+            * (0.18 * acc))[:, :, None]
 
     canvas = Image.fromarray(np.clip(img, 0, 255).astype(np.uint8), "RGB")
     d = ImageDraw.Draw(canvas, "RGBA")
@@ -933,18 +896,6 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
         dest=(int(round(tx_c - 17 * fs)), int(round(fy - 57 * fs))))
     canvas = canvas_rgba.convert("RGB")
     d = ImageDraw.Draw(canvas, "RGBA")
-    # lantern dot at the SAME (lx, ly) as the accent bloom above
-    # (brightens with the accent pulse; stays a subdued point, never
-    # a ring/flash). A hairline links it to the raised hand.
-    d.line([tx_c + 10.7 * fs, fy - 27.4 * fs, lx, ly - 1.2 * fs],
-           fill=(10, 10, 17, 200), width=max(1, int(0.35 * fs)))
-    lr = (1.7 + 1.5 * acc) * fs
-    d.ellipse([lx - lr, ly - lr, lx + lr, ly + lr],
-              fill=pal["glow"] + (int(145 + 95 * acc),))
-    cr = 0.6 * fs
-    d.ellipse([lx - cr, ly - cr, lx + cr, ly + cr],
-              fill=_mix(pal["glow"], pal["moon"], 0.4) + (190,))
-
     # sparse drifting particles (count follows audio-linked density)
     n_part = int(round(dens * N_PARTICLES))
     if n_part > 0:

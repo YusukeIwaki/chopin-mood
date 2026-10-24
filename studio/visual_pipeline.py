@@ -510,6 +510,7 @@ def run_visual_pipeline(*, work_dir, context_provider, storyboard, brief,
                         engine_sha: str, run_id: int, run_attempt: int,
                         gh=None, reviewer, uploader, muse_repair=None,
                         allow_repair: bool = True, state: dict | None = None,
+                        create_engineering_issue: bool = True,
                         ) -> dict:
     """Run still -> motion preflight for one candidate.
 
@@ -575,7 +576,7 @@ def run_visual_pipeline(*, work_dir, context_provider, storyboard, brief,
     _guard(first_ctx)
 
     def _handoff(*, stage, review, evidence_sha256, artifact, status):
-        if gh is None:
+        if gh is None or not create_engineering_issue:
             return None
         _guard()
         return ctrl.ensure_visual_engineering_issue(

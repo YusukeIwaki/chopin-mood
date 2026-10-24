@@ -142,6 +142,9 @@ def test_renderer_figure_cache_order_independent_nearby_scales():
         reused_second = frame(second_scale, shared)
         fresh_first = frame(first_scale, R.make_layouts(SEED, W, H))
         fresh_second = frame(second_scale, R.make_layouts(SEED, W, H))
-        assert not np.array_equal(fresh_first, fresh_second)
+        # Subpixel changes can quantize to identical pixels. The cache key
+        # must still retain the exact scale; rounded keys are not allowed.
+        expected_scale = second_scale
+        assert shared["_fig_cache"]["key"][0] == expected_scale * min(W, H) / 180.0
         assert np.array_equal(reused_first, fresh_first)
         assert np.array_equal(reused_second, fresh_second)

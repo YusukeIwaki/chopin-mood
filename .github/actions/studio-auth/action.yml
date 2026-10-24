@@ -1,12 +1,12 @@
 name: Studio agent auth lifecycle
 description: >-
-  Restore/persist/cleanup encrypted Codex+Muse auth. Read tokens are
+  Restore/persist/cleanup encrypted Codex auth. Read tokens are
   created and revoked by the caller around the clone; write tokens only
   after the agent ran and only when auth changed. Agent steps must never
   receive passphrases, private keys or repo tokens.
 inputs:
   mode:
-    description: "restore-codex | restore-muse | persist-codex | persist-muse | push-codex | push-muse | cleanup"
+    description: "restore-codex | persist-codex | push-codex | cleanup"
     required: true
 outputs:
   changed:
@@ -24,11 +24,8 @@ runs:
         set -euo pipefail
         case "$STUDIO_AUTH_MODE" in
           restore-codex) bash .github/studio/scripts/auth-restore.sh codex ;;
-          restore-muse)  bash .github/studio/scripts/auth-restore.sh muse ;;
           persist-codex) bash .github/studio/scripts/auth-persist.sh codex ;;
-          persist-muse)  bash .github/studio/scripts/auth-persist.sh muse ;;
           push-codex)    bash .github/studio/scripts/auth-push.sh codex ;;
-          push-muse)     bash .github/studio/scripts/auth-push.sh muse ;;
           cleanup)       bash .github/studio/scripts/auth-cleanup.sh ;;
           *) echo "unknown mode: $STUDIO_AUTH_MODE" >&2; exit 2 ;;
         esac

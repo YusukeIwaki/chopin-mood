@@ -85,8 +85,7 @@ def test_muse_cleanup_state_controls_auth_persistence(tmp_path, cleanup_fails):
     assert lines[-1] == f"STUDIO_MUSE_CLEANUP_SAFE={'false' if cleanup_fails else 'true'}"
     for workflow in ('studio-production.yml', 'studio-auth-smoke.yml'):
         text = (ROOT / '.github/workflows' / workflow).read_text()
-        block = text.split('id: persist_muse', 1)[1].split('uses:', 1)[0]
-        assert "env.STUDIO_MUSE_CLEANUP_SAFE != 'false'" in block
+        assert 'persist_muse' not in text  # retired worker is never called by Actions
 
 
 def test_initial_muse_wrapper_cleanup_failure_is_nonzero_and_blocks_persistence(tmp_path):

@@ -1,0 +1,252 @@
+{
+  "schema_version": "1.0",
+  "style_id": "moonlit-recollection-codex-v1",
+  "prototype_notice": "Original procedural illustration; no generated or replacement performance audio. Musical listening evaluation pending.",
+  "scenes": [
+    {
+      "id": "scene01",
+      "palette": {
+        "sky_top": [
+          14,
+          22,
+          38
+        ],
+        "sky_bot": [
+          82,
+          98,
+          116
+        ],
+        "far": [
+          58,
+          70,
+          88
+        ],
+        "near": [
+          16,
+          20,
+          28
+        ],
+        "moon": [
+          226,
+          228,
+          210
+        ],
+        "glow": [
+          148,
+          162,
+          176
+        ]
+      },
+      "motif": "One grounded traveler in a spacious moonlit landscape. Rounded shoulders and a bowed profile convey the owner-directed weariness.",
+      "camera": "Wide establishing view; small restrained drift.",
+      "params": {
+        "figure_scale": 0.9,
+        "particle_multiplier": 0.4,
+        "light_bias": 0.0,
+        "glow_scale": 0.75,
+        "camera_zoom_start": 1.04,
+        "camera_zoom_end": 1.05,
+        "camera_pan_x_start": -0.18,
+        "camera_pan_x_end": 0.18,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.0
+      }
+    },
+    {
+      "id": "scene02",
+      "palette": {
+        "sky_top": [
+          26,
+          30,
+          44
+        ],
+        "sky_bot": [
+          108,
+          92,
+          72
+        ],
+        "far": [
+          76,
+          66,
+          56
+        ],
+        "near": [
+          26,
+          22,
+          20
+        ],
+        "moon": [
+          238,
+          222,
+          184
+        ],
+        "glow": [
+          188,
+          154,
+          110
+        ]
+      },
+      "motif": "A faint warm recollection in the same landscape; preserve the figure and negative space.",
+      "camera": "Slow inward framing without moving the subject.",
+      "params": {
+        "figure_scale": 0.9,
+        "particle_multiplier": 0.7,
+        "light_bias": 0.07,
+        "glow_scale": 1.15,
+        "camera_zoom_start": 1.02,
+        "camera_zoom_end": 1.12,
+        "camera_pan_x_start": 0.0,
+        "camera_pan_x_end": 0.0,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.05
+      }
+    },
+    {
+      "id": "scene03",
+      "palette": {
+        "sky_top": [
+          14,
+          20,
+          38
+        ],
+        "sky_bot": [
+          68,
+          78,
+          98
+        ],
+        "far": [
+          48,
+          58,
+          78
+        ],
+        "near": [
+          18,
+          22,
+          30
+        ],
+        "moon": [
+          214,
+          222,
+          214
+        ],
+        "glow": [
+          146,
+          142,
+          128
+        ]
+      },
+      "motif": "The warm recollection recedes into slate blue; contours remain readable.",
+      "camera": "Ease outward to the opening scale.",
+      "params": {
+        "figure_scale": 0.9,
+        "particle_multiplier": 0.3,
+        "light_bias": -0.03,
+        "glow_scale": 0.6,
+        "camera_zoom_start": 1.11,
+        "camera_zoom_end": 1.02,
+        "camera_pan_x_start": 0.06,
+        "camera_pan_x_end": 0.0,
+        "camera_pan_y_start": 0.04,
+        "camera_pan_y_end": 0.0
+      }
+    },
+    {
+      "id": "scene04",
+      "palette": {
+        "sky_top": [
+          20,
+          28,
+          44
+        ],
+        "sky_bot": [
+          86,
+          80,
+          68
+        ],
+        "far": [
+          60,
+          58,
+          52
+        ],
+        "near": [
+          20,
+          22,
+          26
+        ],
+        "moon": [
+          230,
+          216,
+          188
+        ],
+        "glow": [
+          168,
+          142,
+          110
+        ]
+      },
+      "motif": "A weaker dusty amber echo; no literal memory objects or dramatic reveal.",
+      "camera": "Almost still, with a small lateral drift.",
+      "params": {
+        "figure_scale": 0.9,
+        "particle_multiplier": 0.48,
+        "light_bias": 0.03,
+        "glow_scale": 0.9,
+        "camera_zoom_start": 1.03,
+        "camera_zoom_end": 1.05,
+        "camera_pan_x_start": 0.12,
+        "camera_pan_x_end": -0.08,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.0
+      }
+    },
+    {
+      "id": "scene05",
+      "palette": {
+        "sky_top": [
+          16,
+          26,
+          42
+        ],
+        "sky_bot": [
+          76,
+          90,
+          108
+        ],
+        "far": [
+          52,
+          64,
+          82
+        ],
+        "near": [
+          20,
+          24,
+          32
+        ],
+        "moon": [
+          226,
+          224,
+          208
+        ],
+        "glow": [
+          152,
+          156,
+          148
+        ]
+      },
+      "motif": "Cool quiet persistence under the moon; residual warmth, no triumphant ending.",
+      "camera": "Settle into a balanced wide view.",
+      "params": {
+        "figure_scale": 0.9,
+        "particle_multiplier": 0.22,
+        "light_bias": -0.01,
+        "glow_scale": 0.68,
+        "camera_zoom_start": 1.05,
+        "camera_zoom_end": 1.02,
+        "camera_pan_x_start": 0.06,
+        "camera_pan_x_end": 0.0,
+        "camera_pan_y_start": 0.03,
+        "camera_pan_y_end": 0.0
+      }
+    }
+  ]
+}
