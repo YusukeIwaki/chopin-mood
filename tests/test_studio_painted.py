@@ -23,13 +23,13 @@ PLAN = {"clip": {"n_frames": N},
         "accents": [{"frame": A}]}
 
 
-def controls(boundary=B, accent=A):
+def controls(boundary=B, accent=A, strength=1.0):
     c = {"light": np.full(N, .55), "zoom": np.ones(N),
          "camx": np.full(N, .5), "camy": np.full(N, .5),
          "particle": np.full(N, .25), "accent_pulse": np.zeros(N),
          "scene_id": np.array([0]*boundary+[1]*(N-boundary))}
     if accent is not None:
-        c["accent_pulse"][accent:accent+15] = np.exp(-np.arange(15)/4)
+        c["accent_pulse"][accent:accent+15] = strength*np.exp(-np.arange(15)/4)
     return c
 
 
@@ -126,3 +126,53 @@ def test_painted_encoded_timing_faults(encoded, name):
     if name != "good":
         target = B if name == "scene_late" else A
         assert any(f["frame"] == target and not f["ok"] for f in result["frames"])
+
+
+@pytest.mark.parametrize("scene_index", range(5))
+def test_weakest_supported_accent_rejects_absent_and_late_encodes(tmp_path, scene_index):
+    scene = SB["scenes"][scene_index]
+    pals, params = [scene["palette"]], [scene["params"]]
+    plan = {"clip": {"n_frames": N},
+            "scenes": [{"id": "scene01", "start_frame": 0, "end_frame": N}],
+            "accents": [{"frame": A}]}
+    wav = tmp_path / "silence.wav"
+    sf.write(wav, np.zeros(22050*3), 22050)
+    def frame_fn(accent):
+        ctrl = controls(boundary=N, accent=accent, strength=.5)
+        return rendering.make_reference_frame_fn(ctrl, W, H, SEED,
+            scene_palettes=pals, scene_params=params, layouts=layout())
+    for name, accent in (("good", A), ("missing", None), ("late", A+1)):
+        path = tmp_path / f"{name}.mp4"
+        fn = frame_fn(accent)
+        render.render_video((fn(f) for f in range(N)), str(wav), str(path), W, H, 30, 1, N)
+        result = qa.check_rendered_frames(str(path), plan, Timebase(22050, 30, 1),
+                                          W, H, N, frame_fn(A), require_transition_timing=True)
+        assert result["pass"] == (name == "good"), (scene_index, name, result)
+        if name != "good":
+            assert any(f["frame"] == A and not f["ok"] for f in result["frames"])
+
+
+@pytest.mark.parametrize("scale", [.5, .9, 2.0])
+def test_light_follows_scaled_figure_in_actual_pixels(scale):
+    params = [dict(PARAMS[0], figure_scale=scale, camera_zoom_start=1,
+                   camera_zoom_end=1)]
+    on, off = controls(boundary=N), controls(boundary=N, accent=None)
+    lay = layout()
+    def draw(c):
+        return rendering.draw_clean_frame(A, c, W, H, SEED, lay,
+                                           scene_palettes=[PALS[0]], scene_params=params)
+    diff = np.maximum(draw(on).astype(float)-draw(off), 0).mean(axis=2)
+    yy, xx = np.mgrid[:H, :W]
+    actual_y = float((diff*yy).sum()/diff.sum())
+    expected_y = H*(.825-.155*scale/.9*.55)
+    assert abs(actual_y-expected_y) < .035*H, (scale, actual_y, expected_y)
+
+
+@pytest.mark.parametrize("limit", [0, -1, 17, float("nan")])
+def test_provider_cannot_relax_spatial_threshold(limit):
+    def ref(f):
+        raise AssertionError("invalid policy must fail before reading pixels")
+    ref.patch_mae_max = limit
+    with pytest.raises(ValueError, match="tighten"):
+        qa.check_rendered_frames("unused.mp4", PLAN, Timebase(22050, 30, 1),
+                                  W, H, N, ref)

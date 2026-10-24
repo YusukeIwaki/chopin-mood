@@ -1033,5 +1033,5 @@ def make_reference_frame_fn(ctrl: dict, w: int, h: int, seed: int,
     if "painted_assets" in lay:
         # Calibrated with real CRF18 encoded positives and missing/late
         # accents: this provider has subtle light, so use a stricter bound.
-        fn.patch_mae_max = 8.0
+        fn.patch_mae_max = 5.0
     return fn

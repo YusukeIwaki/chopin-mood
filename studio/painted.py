@@ -77,7 +77,8 @@ def draw_frame(f, ctrl, w, h, seed, lay, scene_palettes, scene_params):
     figure_w = max(1, int(round(figure_h*source.width/source.height)))
     sprite = source.resize((figure_w, figure_h), Image.Resampling.LANCZOS)
     acc = float(np.clip(ctrl["accent_pulse"][f], 0, 1))
-    hand = np.exp(-((x-.51)**2+((y-(.825-.155*.55))*h/w)**2)/(.10**2*2))
+    hx, hy = fx + figure_w*.20, fy - figure_h*.55
+    hand = np.exp(-((x-hx/w)**2+((y-hy/h)*h/w)**2)/(.10**2*2))
     img += hand[:, :, None]*np.asarray(pal["glow"])*(.18*acc)
     canvas = Image.fromarray(np.clip(img, 0, 255).astype(np.uint8)).convert("RGBA")
     shadow = Image.new("RGBA", (w, h))
