@@ -105,7 +105,7 @@ RELEASE_ASSET_FILES = ("video.mp4", "plan.json", "qa.json", "storyboard.json",
                        "timeline.html", "receipt.json")
 
 AUTH_SECRETS = ("CODEX_ENC_APP_ID", "CODEX_ENC_APP_PRIVATE_KEY",
-                "CODEX_ENC_PASSPHRASE", "MUSE_ENC_PASSPHRASE")
+                "CODEX_ENC_PASSPHRASE")
 PERIOD_DIRECTIONS = {
     "early": "aspiration for professional performance",
     "middle": "concert presence and expressiveness",

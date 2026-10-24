@@ -1,8 +1,6 @@
 name: Studio production
 
 on:
-  issues:
-    types: [opened, edited]
   workflow_dispatch:
     inputs:
       issue_number:
@@ -84,190 +82,44 @@ jobs:
           fi
 
   plan:
-    name: Plan excerpts with Codex
+    name: Load Codex-authored production project
     needs: preflight
     if: needs.preflight.outputs.proceed == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 5
     permissions:
       contents: read
-      issues: write
+      issues: read
     outputs:
-      matrix: ${{ steps.children.outputs.matrix }}
-      fingerprint: ${{ steps.fp.outputs.fingerprint }}
+      matrix: ${{ steps.project.outputs.matrix }}
+      fingerprint: ${{ steps.project.outputs.fingerprint }}
     steps:
-      - name: Check out main
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Set runtime paths
-        run: |
-          {
-            echo "CODEX_RUNTIME_HOME=$RUNNER_TEMP/codex-home"
-            echo "CODEX_ENC_REPO_DIR=$RUNNER_TEMP/codex-enc-repository"
-            echo "CODEX_AUTH_BEFORE_HASH=$RUNNER_TEMP/codex-auth-before.sha256"
-            echo "STUDIO_SOURCE_DIR=$PWD/output/studio/source"
-          } >> "$GITHUB_ENV"
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.13"
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24"
-      - name: Install ffmpeg, DSP dependencies and Codex (latest)
-        run: |
-          set -euo pipefail
-          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-          ffmpeg -version | head -n 1
-          pip install -r requirements-p0.txt
-          npm install --global "@openai/codex@latest"
-          codex --version
-          bash .github/studio/scripts/setup-codex-sandbox.sh
-      - name: Download, decode (lossless) and analyze source
+      - name: Validate saved project and existing issue links
+        id: project
         env:
-          ATTACHMENT_URL: ${{ needs.preflight.outputs.attachment_url }}
           ISSUE_NUMBER: ${{ needs.preflight.outputs.issue_number }}
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          mkdir -p output/studio/source output/studio/plan
-          gh api "/repos/${REPO}/issues/${ISSUE_NUMBER}" --jq .body > "$RUNNER_TEMP/issue-body.md"
-          python3 -m studio creative --body-file "$RUNNER_TEMP/issue-body.md" --out output/studio/plan/creative.json
-          python3 scripts/studio_download.py --url "$ATTACHMENT_URL" \
-            --out output/studio/source/source.bin \
-            --meta-out output/studio/plan/source-meta.json \
-            --decode-out output/studio/source/source.wav
-          python3 scripts/studio_analyze.py --wav output/studio/source/source.wav \
-            --creative output/studio/plan/creative.json --out output/studio/plan
-          python3 - <<'PY'
-          import json
-          cands = json.load(open("output/studio/plan/candidates.json"))["candidates"]
-          if not cands:
-              raise SystemExit("no 60-120s candidate: source too short or no diverse window (no padding/stretch applied)")
-          PY
-      - name: Compute canonical fingerprint (creative incl. multi-line notes)
-        id: fp
-        env:
           ATTACHMENT_URL: ${{ needs.preflight.outputs.attachment_url }}
-        run: |
-          set -euo pipefail
-          decoded="$(python3 -c 'import json;print(json.load(open("output/studio/plan/source-meta.json"))["decoded_wav_sha256"])')"
-          piece="$(python3 -c 'import json;print(json.load(open("output/studio/plan/creative.json"))["piece"] or "")')"
-          period="$(python3 -c 'import json;print(json.load(open("output/studio/plan/creative.json"))["period"] or "")')"
-          export ART_NOTES="$(python3 -c 'import json;print(json.load(open("output/studio/plan/creative.json"))["art_notes"] or "")')"
-          fp="$(python3 -m studio fingerprint --source-url "$ATTACHMENT_URL" --source-sha256 "$decoded" --piece "$piece" --period "$period" --art-notes "$ART_NOTES" | python3 -c 'import json,sys;print(json.load(sys.stdin)["fingerprint"])')"
-          echo "fingerprint=$fp" >> "$GITHUB_OUTPUT"
-      - name: Restore original plan on retry
-        id: reuse
-        env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          PARENT: ${{ needs.preflight.outputs.issue_number }}
-          FP: ${{ steps.fp.outputs.fingerprint }}
-        run: python3 scripts/studio_restore_plan.py --parent "$PARENT" --fingerprint "$FP" --out output/studio/plan
-      - name: Create Codex read token
-        if: steps.reuse.outputs.reused != 'true'
-        id: codex_read
-        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
-        with:
-          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
-          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
-          owner: YusukeIwaki
-          repositories: codex.enc
-          permission-contents: read
-          skip-token-revoke: true
-      - name: Clone encrypted Codex auth
-        if: steps.reuse.outputs.reused != 'true'
-        env:
-          GH_TOKEN: ${{ steps.codex_read.outputs.token }}
-        run: |
-          gh auth setup-git
-          git clone --branch main --single-branch https://github.com/YusukeIwaki/codex.enc.git "$CODEX_ENC_REPO_DIR"
-          test -s "$CODEX_ENC_REPO_DIR/codex.enc"
-      - name: Revoke Codex read token
-        if: always() && steps.codex_read.outcome == 'success'
-        env:
-          GH_TOKEN: ${{ steps.codex_read.outputs.token }}
-        run: gh api --method DELETE /installation/token
-      - name: Restore Codex auth
-        if: steps.reuse.outputs.reused != 'true'
-        id: restore_codex
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: restore-codex
-        env:
-          CODEX_ENC_PASSPHRASE: ${{ secrets.CODEX_ENC_PASSPHRASE }}
-      - name: Run Codex planner (bounded DSP JSON only, 15 min)
-        if: steps.reuse.outputs.reused != 'true'
-        timeout-minutes: 15
-        run: |
-          set +e
-          { echo '## Planner instructions'; cat .github/studio/prompts/planner.md; echo; echo '## Owner creative fields (verbatim)'; cat output/studio/plan/creative.json; echo; echo '## Plan context (DSP candidates + deterministic scenes)'; cat output/studio/plan/plan-context.json; } > "$RUNNER_TEMP/planner-prompt.md"
-          CODEX_HOME="$CODEX_RUNTIME_HOME" codex --ask-for-approval never exec --strict-config --ephemeral --model gpt-6.1-sol --config 'model_reasoning_effort="xhigh"' --config 'default_permissions="studio"' --output-schema .github/studio/schemas/planner-output.schema.json --output-last-message output/studio/plan/selection.json - < "$RUNNER_TEMP/planner-prompt.md" > "$RUNNER_TEMP/codex.stdout" 2> "$RUNNER_TEMP/codex.stderr"
-          code=$?
-          set -e
-          if [ "$code" -ne 0 ]; then python3 .github/studio/scripts/report-agent-error.py "$RUNNER_TEMP/codex.stderr" || true; echo "::error::Codex planner failed with exit $code" >&2; exit "$code"; fi
-          test -s output/studio/plan/selection.json
-      - name: Validate planner output (IDs + candidate briefs, no timing)
-        run: |
-          python3 -m studio validate-planner --candidates output/studio/plan/candidates.json --selection output/studio/plan/selection.json
-      - name: Persist refreshed Codex auth
-        id: persist_codex
-        if: always() && steps.restore_codex.outcome == 'success'
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: persist-codex
-        env:
-          CODEX_ENC_PASSPHRASE: ${{ secrets.CODEX_ENC_PASSPHRASE }}
-      - name: Create Codex write token (only when auth changed)
-        id: codex_write
-        if: always() && steps.persist_codex.outcome == 'success' && steps.persist_codex.outputs.changed == 'true'
-        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
-        with:
-          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
-          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
-          owner: YusukeIwaki
-          repositories: codex.enc
-          permission-contents: write
-      - name: Push refreshed Codex auth (only when changed)
-        if: always() && steps.persist_codex.outputs.changed == 'true' && steps.codex_write.outcome == 'success'
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: push-codex
-        env:
-          GH_TOKEN: ${{ steps.codex_write.outputs.token }}
-      - name: Create or reuse sub-issues (original plan wins on retry)
-        id: children
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          ISSUE_NUMBER: ${{ needs.preflight.outputs.issue_number }}
-          FINGERPRINT: ${{ steps.fp.outputs.fingerprint }}
-        run: |
-          set -euo pipefail
-          python3 scripts/studio_ensure_children.py --candidates output/studio/plan/candidates.json --selection output/studio/plan/selection.json --parent "$ISSUE_NUMBER" --fingerprint "$FINGERPRINT" --creative output/studio/plan/creative.json --out output/studio/plan/matrix.json
-          python3 -c 'import json; print("matrix=" + json.dumps(json.load(open("output/studio/plan/matrix.json")), separators=(",", ":")))' >> "$GITHUB_OUTPUT"
-      - name: Upload plan bundle (no source media, logs or secrets)
+        run: python3 scripts/studio_prepare_project.py --issue "$ISSUE_NUMBER" --url "$ATTACHMENT_URL" --out output/studio/plan
+      - name: Upload production inputs (no source audio)
         uses: actions/upload-artifact@v7
         with:
           name: studio-plan-issue-${{ needs.preflight.outputs.issue_number }}
           path: output/studio/plan/
           retention-days: 90
-      - name: Cleanup credentials
-        if: always()
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: cleanup
 
   build:
     name: Build candidate
     needs: [preflight, plan]
     if: needs.plan.outputs.matrix != '' && needs.plan.outputs.matrix != '{"include":[]}'
     runs-on: ubuntu-latest
-    # Covers all calls under the shared two-repair budget plus cleanup.
-    timeout-minutes: 300
+    # Bounded review and deterministic rendering of the saved project.
+    timeout-minutes: 120
     permissions:
       contents: write
       pull-requests: write
@@ -289,10 +141,6 @@ jobs:
             echo "CODEX_RUNTIME_HOME=$RUNNER_TEMP/codex-home"
             echo "CODEX_ENC_REPO_DIR=$RUNNER_TEMP/codex-enc-repository"
             echo "CODEX_AUTH_BEFORE_HASH=$RUNNER_TEMP/codex-auth-before.sha256"
-            echo "MUSE_RUNTIME_HOME=$RUNNER_TEMP/muse-config"
-            echo "MUSE_ENC_REPO_DIR=$RUNNER_TEMP/muse-enc-repository"
-            echo "MUSE_AUTH_BEFORE_HASH=$RUNNER_TEMP/muse-auth-before.sha256"
-            echo "XDG_CONFIG_HOME=$RUNNER_TEMP/muse-config"
             echo "STUDIO_SOURCE_DIR=$PWD/output/studio/source"
           } >> "$GITHUB_ENV"
       - uses: actions/setup-python@v7
@@ -301,7 +149,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
-      - name: Install ffmpeg, tools (Codex latest; Muse official launcher)
+      - name: Install ffmpeg and Codex review tools (latest)
         run: |
           set -euo pipefail
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
@@ -317,92 +165,11 @@ jobs:
         with:
           name: studio-plan-issue-${{ needs.preflight.outputs.issue_number }}
           path: output/studio/plan
-      - name: Prepare brief and Muse workspace (no source audio on disk yet)
-        env:
-          MATRIX_ITEM: ${{ toJSON(matrix) }}
-          FINGERPRINT: ${{ needs.plan.outputs.fingerprint }}
-          PARENT_ISSUE: ${{ needs.preflight.outputs.issue_number }}
-          GH_TOKEN: ${{ github.token }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          CHILD_ISSUE: ${{ matrix.child_issue }}
+      - name: Load saved brief and storyboard
         run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import json, os
-          from pathlib import Path
-          from studio import config
-          item = json.loads(os.environ["MATRIX_ITEM"])
-          cand = item["candidate"]
-          creative = json.loads(Path("output/studio/plan/creative.json").read_text())
-          ctx = json.loads(Path("output/studio/plan/plan-context.json").read_text())
-          meta = json.loads(Path("output/studio/plan/source-meta.json").read_text())
-          period = creative.get("period")
-          brief = {"schema_version": "1.0",
-                   "parent_issue": int(os.environ["PARENT_ISSUE"]),
-                   "child_issue": int(item["child_issue"]),
-                   "candidate_id": cand["id"],
-                   "fingerprint": os.environ["FINGERPRINT"], "candidate": cand,
-                   "piece": creative.get("piece"), "period": period,
-                   "period_direction": config.PERIOD_DIRECTIONS.get(period or ""),
-                   "art_notes": creative.get("art_notes") or "",
-                   "creative_brief": item.get("creative_brief"),
-                   "source_hashes": {
-                       "attachment_sha256": meta.get("attachment_sha256"),
-                       "decoded_wav_sha256": meta.get("decoded_wav_sha256")}}
-          Path("output/studio/work").mkdir(parents=True, exist_ok=True)
-          Path("output/studio/work/brief.json").write_text(json.dumps(brief, indent=2))
-          Path("output/studio/work/candidate.json").write_text(json.dumps(cand, indent=2))
-          Path("output/studio/work/scenes.json").write_text(json.dumps({"scenes": cand.get("scenes", [])}, indent=2))
-          PY
-          work="$RUNNER_TEMP/muse-work"
-          mkdir -p "$work"
-          { cat .github/studio/prompts/muse-storyboard.md; echo; echo '## brief.json (verbatim)'; cat output/studio/work/brief.json; echo; echo '## scenes.json (deterministic)'; cat output/studio/work/scenes.json; } > "$work/prompt.md"
-          cp output/studio/work/brief.json output/studio/work/scenes.json "$work/"
-          cp .github/studio/schemas/storyboard.schema.json "$work/"
-          python3 scripts/studio_feedback.py --child "$CHILD_ISSUE" --out "$work/feedback.md"
-          { echo; echo '## Previous automated critique (for this retry)'; cat "$work/feedback.md"; } >> "$work/prompt.md"
-      - name: Create Muse read token
-        id: muse_read
-        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
-        with:
-          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
-          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
-          owner: YusukeIwaki
-          repositories: muse.enc
-          permission-contents: read
-          skip-token-revoke: true
-      - name: Clone encrypted Muse auth
-        env:
-          GH_TOKEN: ${{ steps.muse_read.outputs.token }}
-        run: |
-          gh auth setup-git
-          git clone --branch main --single-branch https://github.com/YusukeIwaki/muse.enc.git "$MUSE_ENC_REPO_DIR"
-          test -s "$MUSE_ENC_REPO_DIR/muse.enc"
-      - name: Revoke Muse read token
-        if: always() && steps.muse_read.outcome == 'success'
-        env:
-          GH_TOKEN: ${{ steps.muse_read.outputs.token }}
-        run: gh api --method DELETE /installation/token
-      - name: Restore Muse auth
-        id: restore_muse
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: restore-muse
-        env:
-          MUSE_ENC_PASSPHRASE: ${{ secrets.MUSE_ENC_PASSPHRASE }}
-      - name: Run Muse in isolated container (no source or trusted checkout mounted)
-        timeout-minutes: 15
-        run: |
-          set +e
-          work="$RUNNER_TEMP/muse-work"
-          test ! -e output/studio/source/source.wav
-          timeout --kill-after=10s 900 bash .github/studio/scripts/muse-run.sh "$work" > "$RUNNER_TEMP/muse.stdout" 2> "$RUNNER_TEMP/muse.stderr"
-          code=$?
-          set -e
-          if [ "$code" -ne 0 ]; then python3 .github/studio/scripts/report-agent-error.py "$RUNNER_TEMP/muse.stderr" || true; echo "::error::Muse failed with exit $code" >&2; exit "$code"; fi
-          test -s "$work/storyboard.json"
-          cp "$work/storyboard.json" output/studio/work/storyboard.json
-      - name: Download source AFTER Muse and verify both hashes
+          mkdir -p output/studio/work
+          cp output/studio/plan/{brief,candidate,scenes,storyboard}.json output/studio/work/
+      - name: Download source and verify both hashes
         env:
           ATTACHMENT_URL: ${{ needs.preflight.outputs.attachment_url }}
         run: |
@@ -413,9 +180,8 @@ jobs:
           import json
           plan_meta = json.load(open("output/studio/plan/source-meta.json"))
           work_meta = json.load(open("output/studio/work/source-meta.json"))
-          ctx = json.load(open("output/studio/plan/plan-context.json"))
           assert work_meta["attachment_sha256"] == plan_meta["attachment_sha256"], "attachment hash changed since planning"
-          assert work_meta["decoded_wav_sha256"] == plan_meta["decoded_wav_sha256"] == ctx["source_sha256"], "decoded WAV hash does not match plan context"
+          assert work_meta["decoded_wav_sha256"] == plan_meta["decoded_wav_sha256"], "decoded WAV hash does not match plan context"
           print("source hashes verified (attachment + decoded)")
           PY
       - name: Create Codex read token (review)
@@ -449,8 +215,8 @@ jobs:
           CODEX_ENC_PASSPHRASE: ${{ secrets.CODEX_ENC_PASSPHRASE }}
       - name: Staged visual preflight (still to motion)
         id: visual
-        # Worst case: 6 reviews + 2 repairs, each bounded to 15 min.
-        timeout-minutes: 150
+        # One still review and one motion review; content changes stay in Codex.
+        timeout-minutes: 40
         uses: actions/github-script@v8
         env:
           GH_TOKEN: ${{ github.token }}
@@ -461,11 +227,10 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
           VISUAL_WORK: output/studio/work
-          VISUAL_MUSE_WORK: ${{ runner.temp }}/muse-work
           VISUAL_WAV: output/studio/source/source.wav
         with:
           script: |
-            await exec.exec('python3', ['scripts/studio_visual_preflight.py', '--work', process.env.VISUAL_WORK, '--muse-work', process.env.VISUAL_MUSE_WORK, '--wav', process.env.VISUAL_WAV, '--parent', process.env.PARENT_ISSUE, '--child', process.env.CHILD_ISSUE, '--engine-sha', process.env.ENGINE_SHA, '--run-id', process.env.RUN_ID, '--run-attempt', process.env.RUN_ATTEMPT]);
+            await exec.exec('python3', ['scripts/studio_visual_preflight.py', '--work', process.env.VISUAL_WORK, '--codex-led', '--wav', process.env.VISUAL_WAV, '--parent', process.env.PARENT_ISSUE, '--child', process.env.CHILD_ISSUE, '--engine-sha', process.env.ENGINE_SHA, '--run-id', process.env.RUN_ID, '--run-attempt', process.env.RUN_ATTEMPT]);
       - name: Validate storyboard and render (trusted renderer + encoded QA)
         if: steps.visual.outputs.proceed == 'true'
         run: |
@@ -530,51 +295,6 @@ jobs:
           files = {p.name: p.read_bytes() for p in d.iterdir() if p.is_file() and p.name != "hashes.json"}
           (d / "hashes.json").write_text(json.dumps(artifacts.build_hash_manifest(files), indent=2))
           PY
-      - name: Bounded aesthetic repair (max 2 Muse + render + Codex re-review)
-        id: repair
-        if: steps.visual.outputs.proceed == 'true'
-        # At most 2 * (Muse + still + motion + render + final review).
-        timeout-minutes: 180
-        uses: actions/github-script@v8
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          PARENT_ISSUE: ${{ needs.preflight.outputs.issue_number }}
-          CHILD_ISSUE: ${{ matrix.child_issue }}
-          ENGINE_SHA: ${{ github.sha }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-          REPAIR_WORK: output/studio/work
-          REPAIR_MUSE_WORK: ${{ runner.temp }}/muse-work
-          REPAIR_WAV: output/studio/source/source.wav
-        with:
-          script: |
-            await exec.exec('python3', ['scripts/studio_repair.py', '--work', process.env.REPAIR_WORK, '--muse-work', process.env.REPAIR_MUSE_WORK, '--wav', process.env.REPAIR_WAV, '--parent', process.env.PARENT_ISSUE, '--child', process.env.CHILD_ISSUE, '--engine-sha', process.env.ENGINE_SHA, '--run-id', process.env.RUN_ID, '--run-attempt', process.env.RUN_ATTEMPT, '--require-visual-preflight']);
-      - name: Persist refreshed Muse auth
-        id: persist_muse
-        if: always() && steps.restore_muse.outcome == 'success' && env.STUDIO_MUSE_CLEANUP_SAFE != 'false'
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: persist-muse
-        env:
-          MUSE_ENC_PASSPHRASE: ${{ secrets.MUSE_ENC_PASSPHRASE }}
-      - name: Create Muse write token (only when auth changed)
-        id: muse_write
-        if: always() && steps.persist_muse.outcome == 'success' && steps.persist_muse.outputs.changed == 'true'
-        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
-        with:
-          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
-          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
-          owner: YusukeIwaki
-          repositories: muse.enc
-          permission-contents: write
-      - name: Push refreshed Muse auth (only when changed)
-        if: always() && steps.persist_muse.outputs.changed == 'true' && steps.muse_write.outcome == 'success'
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: push-muse
-        env:
-          GH_TOKEN: ${{ steps.muse_write.outputs.token }}
       - name: Validate bundle allowlist before upload
         if: steps.visual.outputs.proceed == 'true'
         run: |
@@ -584,46 +304,8 @@ jobs:
         id: upload
         uses: actions/upload-artifact@v7
         with:
-          name: studio-child-${{ matrix.child_issue }}-pr-${{ steps.repair.outputs.pr_number }}-${{ steps.repair.outputs.head_sha }}-run-${{ github.run_id }}-a${{ github.run_attempt }}
+          name: studio-child-${{ matrix.child_issue }}-pr-${{ steps.commit.outputs.pr_number }}-${{ steps.commit.outputs.head_sha }}-run-${{ github.run_id }}-a${{ github.run_attempt }}
           path: output/studio/work/bundle/
-          retention-days: 90
-      - name: Validate review-attempt history bundles (fully reviewed only)
-        id: validate_history
-        if: always() && steps.repair.outcome != 'cancelled' && hashFiles('output/studio/work/review-attempts/**') != ''
-        env:
-          HISTORY_PARENT: ${{ needs.preflight.outputs.issue_number }}
-          HISTORY_CHILD: ${{ matrix.child_issue }}
-          HISTORY_RUN_ID: ${{ github.run_id }}
-          HISTORY_RUN_ATTEMPT: ${{ github.run_attempt }}
-          HISTORY_ENGINE_SHA: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import os, sys
-          from pathlib import Path
-          from studio import repair
-          r = repair.validate_attempt_history(
-              Path("output/studio/work/review-attempts"),
-              parent=int(os.environ["HISTORY_PARENT"]),
-              child=int(os.environ["HISTORY_CHILD"]),
-              run_id=int(os.environ["HISTORY_RUN_ID"]),
-              run_attempt=int(os.environ["HISTORY_RUN_ATTEMPT"]),
-              engine_sha=os.environ["HISTORY_ENGINE_SHA"])
-          if not r["ok"]:
-              print("history validation failed: " + "; ".join(r["failures"]))
-              sys.exit(2)
-          summary = os.environ.get("GITHUB_STEP_SUMMARY")
-          if summary:
-              with open(summary, "a", encoding="utf-8") as fh:
-                  fh.write(f"validated {r['count']} review-attempt bundle(s)\n")
-          print(f"validated {r['count']} review-attempt bundle(s)")
-          PY
-      - name: Upload review-attempt history (not release-eligible)
-        if: always() && steps.validate_history.outcome == 'success'
-        uses: actions/upload-artifact@v7
-        with:
-          name: studio-review-attempts-child-${{ matrix.child_issue }}-run-${{ github.run_id }}-a${{ github.run_attempt }}
-          path: output/studio/work/review-attempts/
           retention-days: 90
       - name: Build aggregate visual history
         id: validate_visual_history
@@ -643,9 +325,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          PR_NUMBER: ${{ steps.repair.outputs.pr_number }}
+          PR_NUMBER: ${{ steps.commit.outputs.pr_number }}
           CHILD_ISSUE: ${{ matrix.child_issue }}
-          HEAD_SHA: ${{ steps.repair.outputs.head_sha }}
+          HEAD_SHA: ${{ steps.commit.outputs.head_sha }}
           ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
           ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
           RUN_ID: ${{ github.run_id }}
@@ -654,23 +336,20 @@ jobs:
           set -euo pipefail
           mech=""
           python3 -c 'import json,sys; sys.exit(0 if json.load(open("output/studio/work/bundle/qa.json"))["pass"] else 1)' && mech="--mechanical-pass" || true
-          python3 scripts/studio_publish_review.py --review output/studio/work/bundle/review.json --pr "$PR_NUMBER" --child "$CHILD_ISSUE" --head-sha "$HEAD_SHA" --run-id "$RUN_ID" --run-attempt "$RUN_ATTEMPT" --artifact-id "$ARTIFACT_ID" --artifact-url "$ARTIFACT_URL" --repair-result output/studio/work/repair-result.json $mech
-      - name: Summarize final quality status
-        if: steps.repair.outcome == 'success'
+          python3 scripts/studio_publish_review.py --review output/studio/work/bundle/review.json --pr "$PR_NUMBER" --child "$CHILD_ISSUE" --head-sha "$HEAD_SHA" --run-id "$RUN_ID" --run-attempt "$RUN_ATTEMPT" --artifact-id "$ARTIFACT_ID" --artifact-url "$ARTIFACT_URL" $mech
+      - name: Summarize reviewed production
+        if: steps.visual.outputs.proceed == 'true'
         run: |
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           import json
-          r = json.load(open("output/studio/work/repair-result.json"))
-          status = r.get("status")
-          print(f"## Studio final quality status: {status}")
-          print(f"- attempts: {r.get('attempt_count')}/{int(r.get('max_repairs', 0)) + 1} (repairs used: {r.get('repairs_used')})")
-          print(f"- final PR: #{r.get('pr_number')} head: {r.get('final_head_sha')}")
-          print(f"- next action: {r.get('next_action')}")
-          if status == "passed":
-              print("- owner-ready: pending exact-head owner Approve + Merge (workflow success alone is not approval)")
-          else:
-              print("- owner-ready: NO - aesthetic/engineering handoff required; this workflow completing is not a quality pass")
-              print("- engineering handoff: see the bot engineering Issue from publish-review (when applicable) and the review-attempts history artifact; no automated engine-coding job exists yet")
+          from pathlib import Path
+          d = Path("output/studio/work")
+          review = json.loads((d / "bundle/review.json").read_text())
+          qa = json.loads((d / "bundle/qa.json").read_text())
+          head = json.loads((d / "pr.json").read_text())["head_sha"]
+          print(f"Final review: {review['verdict']}; mechanical QA: {qa['pass']}")
+          print(f"Reviewed production head: {head}")
+          print("Owner approval and merge are required before release. Failed reviews return to the Codex production session.")
           PY
       - name: Summarize early visual block
         if: always() && steps.visual.outputs.proceed == 'false'

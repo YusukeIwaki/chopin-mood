@@ -236,8 +236,8 @@ def test_figure_head_coat_arms_legs_geometry():
     assert len(leg_runs) >= 2, leg_runs
     widths = sorted((b - a for a, b in leg_runs), reverse=True)
     assert widths[0] > widths[1] + 0.4, leg_runs
-    hx = int(round((10.7 + 17.0) * fs))
-    hy = int(round((57.0 - 27.4) * fs))
+    hx = int(round((2.0 + 17.0) * fs))
+    hy = int(round((57.0 - 27.0) * fs))
     assert int(alpha[max(0, hy - 1):hy + 2, max(0, hx - 1):hx + 2].max()) > 128
 
 

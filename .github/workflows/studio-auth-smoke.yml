@@ -16,9 +16,9 @@ concurrency:
 
 jobs:
   smoke:
-    name: Auth smoke (Codex + Muse exact models)
+    name: Auth smoke (Codex exact model)
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 20
     permissions:
       contents: read
     steps:
@@ -39,10 +39,6 @@ jobs:
             echo "CODEX_RUNTIME_HOME=$RUNNER_TEMP/codex-home"
             echo "CODEX_ENC_REPO_DIR=$RUNNER_TEMP/codex-enc-repository"
             echo "CODEX_AUTH_BEFORE_HASH=$RUNNER_TEMP/codex-auth-before.sha256"
-            echo "MUSE_RUNTIME_HOME=$RUNNER_TEMP/muse-config"
-            echo "MUSE_ENC_REPO_DIR=$RUNNER_TEMP/muse-enc-repository"
-            echo "MUSE_AUTH_BEFORE_HASH=$RUNNER_TEMP/muse-auth-before.sha256"
-            echo "XDG_CONFIG_HOME=$RUNNER_TEMP/muse-config"
           } >> "$GITHUB_ENV"
       - uses: actions/setup-python@v7
         with:
@@ -50,7 +46,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
-      - name: Install Codex (latest) and Muse
+      - name: Install Codex (latest)
         run: |
           set -euo pipefail
           npm install --global "@openai/codex@latest"
@@ -118,69 +114,6 @@ jobs:
           mode: push-codex
         env:
           GH_TOKEN: ${{ steps.codex_write.outputs.token }}
-      - name: Create Muse read token
-        id: muse_read
-        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
-        with:
-          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
-          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
-          owner: YusukeIwaki
-          repositories: muse.enc
-          permission-contents: read
-          skip-token-revoke: true
-      - name: Clone encrypted Muse auth
-        env:
-          GH_TOKEN: ${{ steps.muse_read.outputs.token }}
-        run: |
-          gh auth setup-git
-          git clone --branch main --single-branch https://github.com/YusukeIwaki/muse.enc.git "$MUSE_ENC_REPO_DIR"
-          test -s "$MUSE_ENC_REPO_DIR/muse.enc"
-      - name: Revoke Muse read token
-        if: always() && steps.muse_read.outcome == 'success'
-        env:
-          GH_TOKEN: ${{ steps.muse_read.outputs.token }}
-        run: gh api --method DELETE /installation/token
-      - name: Restore Muse auth
-        id: restore_muse
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: restore-muse
-        env:
-          MUSE_ENC_PASSPHRASE: ${{ secrets.MUSE_ENC_PASSPHRASE }}
-      - name: Muse minimal prompt (exact model, max)
-        timeout-minutes: 15
-        run: |
-          set -euo pipefail
-          work="$RUNNER_TEMP/smoke-muse"
-          mkdir -p "$work"
-          printf 'Reply with exactly: OK\n' > "$work/prompt.md"
-          timeout --kill-after=10s 900 bash .github/studio/scripts/muse-run.sh "$work" > "$RUNNER_TEMP/smoke/muse.json" 2> "$RUNNER_TEMP/smoke/muse.stderr"
-          python3 .github/studio/scripts/check-muse-smoke.py "$RUNNER_TEMP/smoke/muse.json"
-      - name: Persist refreshed Muse auth
-        id: persist_muse
-        if: always() && steps.restore_muse.outcome == 'success' && env.STUDIO_MUSE_CLEANUP_SAFE != 'false'
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: persist-muse
-        env:
-          MUSE_ENC_PASSPHRASE: ${{ secrets.MUSE_ENC_PASSPHRASE }}
-      - name: Create Muse write token (only when changed)
-        id: muse_write
-        if: always() && steps.persist_muse.outcome == 'success' && steps.persist_muse.outputs.changed == 'true'
-        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
-        with:
-          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
-          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
-          owner: YusukeIwaki
-          repositories: muse.enc
-          permission-contents: write
-      - name: Push refreshed Muse auth (only when changed)
-        if: always() && steps.persist_muse.outputs.changed == 'true' && steps.muse_write.outcome == 'success'
-        uses: ./.github/actions/studio-auth
-        with:
-          mode: push-muse
-        env:
-          GH_TOKEN: ${{ steps.muse_write.outputs.token }}
       - name: Cleanup credentials
         if: always()
         uses: ./.github/actions/studio-auth

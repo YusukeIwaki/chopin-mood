@@ -17,32 +17,8 @@ CI = (ROOT / ".github/workflows/studio-ci.yml").read_text()
 SMOKE_WF = (ROOT / ".github/workflows/studio-auth-smoke.yml").read_text()
 
 
-def test_production_uses_shared_isolated_muse_runner():
-    assert "scripts/muse-run.sh" in PROD and "scripts/muse-run.sh" in SMOKE_WF
-    assert "muse exec --yolo" not in PROD  # no unconfined host exec
-    assert "Muse failed with exit" in PROD
 
 
-def test_production_workflow_ordering_and_gates():
-    # Source download happens AFTER the Muse step (no full audio during --yolo).
-    assert PROD.index("Run Muse in isolated container") < PROD.index("Download source AFTER Muse")
-    # Compact matrix JSON (single-line GITHUB_OUTPUT safe).
-    assert 'separators=(",", ":")' in PROD
-    # Changed-gated write tokens for both agents.
-    assert PROD.count("outputs.changed == 'true'") >= 4
-    # No swallowed model exit codes: planner/reviewer propagate.
-    assert 'Codex planner failed with exit' in PROD
-    assert 'Codex reviewer failed with exit' in PROD
-    assert 'Muse failed with exit' in PROD
-    # ffmpeg installed, python module CLI used, both hashes verified.
-    assert "apt-get install -y -qq ffmpeg" in PROD
-    assert "python3 -m studio" in PROD
-    assert "attachment hash changed since planning" in PROD
-    assert "decoded WAV hash does not match plan context" in PROD
-    # Labelled review sections.
-    for label in ("## 1 SOURCE BRIEF", "## 2 STORYBOARD",
-                  "## 3 PRODUCTION FILES", "## 4 PLAN", "## 5 HASHES"):
-        assert label in PROD, label
 
 
 def test_ci_checks_out_event_revision_and_smoke_size():
@@ -54,7 +30,7 @@ def test_ci_checks_out_event_revision_and_smoke_size():
 
 def test_auth_smoke_workflow_contract():
     assert "workflow_dispatch" in SMOKE_WF
-    assert "gpt-6.1-sol" in SMOKE_WF and "scripts/muse-run.sh" in SMOKE_WF
+    assert "gpt-6.1-sol" in SMOKE_WF and "muse" not in SMOKE_WF.lower()
     assert "${{ github.sha }}" in SMOKE_WF
     for forbidden in ("issues: write", "pull-requests: write"):
         assert forbidden not in SMOKE_WF
@@ -135,14 +111,14 @@ def test_codex_cli_is_not_version_pinned_and_version_is_logged():
         assert "codex --version" in text
         assert "Codex pinned" not in text
     # Production installs latest in both the plan and build jobs.
-    assert PROD.count('npm install --global "@openai/codex@latest"') == 2
+    assert PROD.count('npm install --global "@openai/codex@latest"') == 1
     assert SMOKE_WF.count('npm install --global "@openai/codex@latest"') == 1
 
 
 def test_exact_models_preserved_after_unpinning():
-    assert PROD.count("--model gpt-6.1-sol") == 2
+    assert PROD.count("--model gpt-6.1-sol") == 1
     assert SMOKE_WF.count("--model gpt-6.1-sol") == 1
-    assert PROD.count('model_reasoning_effort="xhigh"') == 2
+    assert PROD.count('model_reasoning_effort="xhigh"') == 1
     assert SMOKE_WF.count('model_reasoning_effort="xhigh"') == 1
 
 
@@ -152,146 +128,13 @@ def _step_block(name_fragment):
     return PROD[start:] if nxt == -1 else PROD[start:nxt]
 
 
-def test_repair_wiring_order_args_and_final_refs():
-    # Sequence preserved: initial Muse -> download -> render -> commit
-    # -> receipt -> initial Codex review -> repair -> final upload/publish.
-    order = [
-        "Run Muse in isolated container",
-        "Download source AFTER Muse",
-        "Validate storyboard and render",
-        "Commit production bundle and create or reuse PR",
-        "Generate artifact receipt and hash manifest",
-        "Run Codex evidence review",
-        "Bounded aesthetic repair",
-        "Validate bundle allowlist before upload",
-        "Upload production artifact",
-        "Publish review (ping only on pass",
-    ]
-    idx = [PROD.index(s) for s in order]
-    assert idx == sorted(idx), list(zip(order, idx))
-    # Repair CLI: actual entrypoint + inputs from the task contract.
-    # The step runs via actions/github-script (JS argv form) so the
-    # trusted child inherits the artifact runtime environment; numbers
-    # and paths arrive via env, never via JS expression interpolation.
-    repair_block = _step_block("Bounded aesthetic repair")
-    assert "id: repair" in repair_block
-    assert "timeout-minutes: 180" in repair_block
-    assert "actions/github-script@v8" in repair_block
-    assert "exec.exec('python3'" in repair_block
-    assert "${{" not in repair_block.split("script: |", 1)[1]
-    assert "GH_TOKEN: ${{ github.token }}" in repair_block
-    assert "GITHUB_REPOSITORY: ${{ github.repository }}" in repair_block
-    for arg in (
-        "'scripts/studio_repair.py'",
-        "'--work', process.env.REPAIR_WORK",
-        "'--muse-work', process.env.REPAIR_MUSE_WORK",
-        "'--wav', process.env.REPAIR_WAV",
-        "'--parent', process.env.PARENT_ISSUE",
-        "'--child', process.env.CHILD_ISSUE",
-        "'--engine-sha', process.env.ENGINE_SHA",
-        "'--run-id', process.env.RUN_ID",
-        "'--run-attempt', process.env.RUN_ATTEMPT",
-        "'--require-visual-preflight'",
-        "REPAIR_WORK: output/studio/work",
-        "REPAIR_MUSE_WORK: ${{ runner.temp }}/muse-work",
-        "REPAIR_WAV: output/studio/source/source.wav",
-        "PARENT_ISSUE: ${{ needs.preflight.outputs.issue_number }}",
-        "CHILD_ISSUE: ${{ matrix.child_issue }}",
-        "ENGINE_SHA: ${{ github.sha }}",
-        "RUN_ID: ${{ github.run_id }}",
-        "RUN_ATTEMPT: ${{ github.run_attempt }}",
-    ):
-        assert arg in repair_block, arg
-    # Repair agents are inside the Python module, not new shell Codex calls.
-    assert PROD.count("--model gpt-6.1-sol") == 2
-    # Final artifact + publish use the LAST repair outputs, never initial.
-    upload_block = _step_block("Upload production artifact")
-    assert "steps.repair.outputs.pr_number" in upload_block
-    assert "steps.repair.outputs.head_sha" in upload_block
-    assert "steps.commit.outputs" not in upload_block
-    publish_block = _step_block("Publish review (ping only on pass")
-    assert "steps.repair.outputs.pr_number" in publish_block
-    assert "steps.repair.outputs.head_sha" in publish_block
-    assert "steps.commit.outputs" not in publish_block
-    assert "--repair-result output/studio/work/repair-result.json" in publish_block
-    # Initial receipt/review keep the initial-commit binding.
-    receipt_block = _step_block("Generate artifact receipt and hash manifest")
-    assert "steps.commit.outputs.head_sha" in receipt_block
-    review_block = _step_block("Run Codex evidence review")
-    assert "steps.commit.outputs.head_sha" in review_block
-    # Fail-closed allowlist still guards the final (12-file) bundle.
-    assert "python3 -m studio check-bundle --dir output/studio/work/bundle" in PROD
-    # No recursive dispatch / second concurrency group / new permissions.
-    assert PROD.count("concurrency:") == 1
-    assert PROD.count("group: studio-agent-auth") == 1
-    assert "gh workflow run" not in PROD and "workflow_dispatch" in PROD
 
 
-def test_repair_history_artifact_is_validated_and_not_release_eligible():
-    validate_block = _step_block("Validate review-attempt history bundles")
-    assert "id: validate_history" in validate_block
-    assert "validate_attempt_history" in validate_block
-    assert "review-attempts" in validate_block
-    history_block = _step_block("Upload review-attempt history")
-    assert ("name: studio-review-attempts-child-${{ matrix.child_issue }}"
-            "-run-${{ github.run_id }}-a${{ github.run_attempt }}") in history_block
-    assert "path: output/studio/work/review-attempts/" in history_block
-    assert "retention-days: 90" in history_block
-    assert "steps.validate_history.outcome == 'success'" in history_block
-    # History name must not match the release-eligible production pattern.
-    assert not history_block.split("name: ", 1)[1].splitlines()[0].strip().startswith(
-        "studio-child-")
-    # Validation happens before the history upload.
-    assert PROD.index("Validate review-attempt history bundles") < PROD.index(
-        "Upload review-attempt history")
-    # Final summary distinguishes quality status from workflow completion.
-    summary_block = _step_block("Summarize final quality status")
-    assert "Studio final quality status" in summary_block
-    assert "owner-ready: NO" in summary_block
-    assert "attempt_count" in summary_block
 
 
-def test_muse_auth_persist_moved_after_repair_and_timeouts_bounded():
-    # Build + initial-Muse timeouts bound the total; repair step covers
-    # max 2 repairs x (Muse 900s + Codex 900s).
-    import yaml
-    wf = yaml.safe_load(PROD)
-    assert wf["jobs"]["build"]["timeout-minutes"] == 300
-    muse_block = _step_block("Run Muse in isolated container")
-    assert "timeout-minutes: 15" in muse_block
-    assert "timeout --kill-after=10s 900 bash .github/studio/scripts/muse-run.sh" in muse_block
-    repair_block = _step_block("Bounded aesthetic repair")
-    assert int(repair_block.split("timeout-minutes:")[1].split()[0]) >= 60
-    # The whole Muse persist block moved AFTER the last model call
-    # (the repair step) and before cleanup; exactly one copy exists.
-    assert PROD.count("id: persist_muse") == 1
-    assert PROD.count("id: muse_write") == 1
-    repair_at = PROD.index("Bounded aesthetic repair")
-    persist_at = PROD.index("Persist refreshed Muse auth")
-    codex_review_at = PROD.index("Run Codex evidence review")
-    assert persist_at > repair_at > codex_review_at
-    assert persist_at > PROD.index("Download source AFTER Muse")
-    assert persist_at < PROD.rindex("Cleanup credentials")
-    persist_block = _step_block("Persist refreshed Muse auth")
-    assert "always() && steps.restore_muse.outcome == 'success'" in persist_block
-    write_block = _step_block("Create Muse write token")
-    assert "steps.persist_muse.outputs.changed == 'true'" in write_block
-    # Codex persist/cleanup stay always-gated after repair as well.
-    assert PROD.rindex("Persist refreshed Codex auth") > repair_at
 
 
 def test_agent_failure_diagnostics_are_guarded_and_preserve_exit():
-    script = ".github/studio/scripts/report-agent-error.py"
-    assert (ROOT / script).exists()
-    # Planner, reviewer and Muse failures in production.
-    assert PROD.count(script) >= 3
-    assert PROD.count(f'python3 {script} "$RUNNER_TEMP/codex.stderr" || true') == 2
-    assert PROD.count(f'python3 {script} "$RUNNER_TEMP/muse.stderr" || true') == 1
-    # The original nonzero agent exit is still propagated after diagnostics.
-    assert 'Codex planner failed with exit $code' in PROD
-    assert 'Codex reviewer failed with exit $code' in PROD
-    assert 'Muse failed with exit $code' in PROD
-    for label in ("Codex planner failed", "Codex reviewer failed", "Muse failed"):
-        line = next(ln for ln in PROD.splitlines() if label in ln)
-        assert "report-agent-error.py" in line and "|| true" in line
-        assert 'exit "$code"' in line
+    line = next(ln for ln in PROD.splitlines() if 'Codex reviewer failed with exit' in ln)
+    assert 'report-agent-error.py' in line and '|| true' in line
+    assert 'exit "$code"' in line

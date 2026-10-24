@@ -74,6 +74,8 @@ def main() -> int:
     ap.add_argument("--run-id", type=int, default=0)
     ap.add_argument("--run-attempt", type=int, default=1)
     ap.add_argument("--validate-history", action="store_true")
+    ap.add_argument("--codex-led", action="store_true",
+                    help="Review the saved project once; no worker or new issue")
     a = ap.parse_args()
     work = Path(a.work)
     if a.validate_history:
@@ -138,8 +140,9 @@ def _run(a, work: Path) -> int:
         node_script=ROOT / ".github/studio/scripts/upload-visual-artifact.cjs",
         result_dir=runner_temp / "visual-uploads")
     muse_work_root = Path(a.muse_work) if a.muse_work else runner_temp / "muse-work"
-    base_prompt = (ROOT / ".github/studio/prompts/muse-storyboard.md").read_text()
-    schema_text = (ROOT / ".github/studio/schemas/storyboard.schema.json").read_text()
+    codex_led = getattr(a, "codex_led", False)
+    base_prompt = "" if codex_led else (ROOT / ".github/studio/prompts/muse-storyboard.md").read_text()
+    schema_text = "" if codex_led else (ROOT / ".github/studio/schemas/storyboard.schema.json").read_text()
 
     def _muse_repair(*, review, storyboard, brief, scenes):
         prior = state_holder.get("version", 0)
@@ -185,8 +188,9 @@ def _run(a, work: Path) -> int:
         brief=brief, candidate=candidate, scenes=scenes,
         parent=a.parent, child=a.child, engine_sha=a.engine_sha,
         run_id=a.run_id, run_attempt=a.run_attempt, gh=gh,
-        reviewer=reviewer, uploader=uploader, muse_repair=_tracked_muse,
-        allow_repair=True)
+        reviewer=reviewer, uploader=uploader,
+        muse_repair=None if codex_led else _tracked_muse,
+        allow_repair=not codex_led, create_engineering_issue=not codex_led)
     # Only a both-stage approval may replace the storyboard the full
     # renderer will read; a blocked/repaired-but-unapproved result must
     # never leave a stale-or-new unreviewed storyboard in place.
