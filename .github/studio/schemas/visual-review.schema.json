@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Studio visual preflight review (still or motion evidence)",
+  "description": "Review of bounded visual evidence only (native still frames / sparse decoded motion samples + contact sheet). A pass is a preflight pass, not final approval: sparse motion samples cannot certify full continuous movement or musical taste. For stage 'still', checks.motion_quality true explicitly means not-applicable (no motion was presented), never a motion judgement. Prefer false for any applicable check whose evidence is unavailable. This review binds an evidence digest only; it carries no PR head SHA and is not the full mechanical QA review.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "stage",
+    "evidence_sha256",
+    "verdict",
+    "checks",
+    "blockers",
+    "summary",
+    "repair",
+    "listening_note"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "stage": {
+      "enum": ["still", "motion"]
+    },
+    "evidence_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 of the exact evidence.json bytes reviewed."
+    },
+    "verdict": {
+      "enum": ["pass", "fail"]
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_reviewed",
+        "brief_adherence",
+        "visual_quality",
+        "motion_quality"
+      ],
+      "properties": {
+        "evidence_reviewed": {
+          "type": "boolean",
+          "description": "The actual attached frames/contact sheet were inspected."
+        },
+        "brief_adherence": {
+          "type": "boolean",
+          "description": "The evidence implements the provided brief within executable controls."
+        },
+        "visual_quality": {
+          "type": "boolean",
+          "description": "Composition, shape, readability and style consistency are acceptable."
+        },
+        "motion_quality": {
+          "type": "boolean",
+          "description": "For stage motion: sampled movement is acceptable (sparse samples only, not full-movement certification). For stage still: true explicitly means not-applicable."
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "repair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route", "instructions"],
+      "properties": {
+        "route": {
+          "enum": ["none", "storyboard", "engine"]
+        },
+        "instructions": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        }
+      }
+    },
+    "listening_note": {
+      "type": "string",
+      "enum": ["audio listening unavailable; not a full musical judgement"]
+    }
+  }
+}

@@ -25,20 +25,12 @@ import json
 import subprocess
 from pathlib import Path
 
-import numpy as np
-import soundfile as sf
-
-from p0 import clip as clipmod
-from p0 import events as eventsmod
-from p0 import features as featmod
-from p0 import plan as planmod
 from p0 import qa as qamod
 from p0 import render as rendermod
 from p0.pipeline import write_crop_lossless
-from p0.timebase import Timebase
-from studio import storyboard as sbmod
 from studio import artifacts as artmod
 from studio import rendering as cleanmod
+from studio.render_context import prepare_context
 
 
 def sha256_file(p: Path) -> str:
@@ -55,60 +47,57 @@ def main() -> int:
     ap.add_argument("--width", type=int, default=540)
     ap.add_argument("--height", type=int, default=960)
     ap.add_argument("--seed", type=int, default=20261019)
+    ap.add_argument("--visual-approval", default=None,
+                    help="optional visual approval file (see "
+                         "studio.visual_preflight.validate_approval_file); "
+                         "requires --engine-sha")
+    ap.add_argument("--engine-sha", default=None,
+                    help="engine commit SHA binding the visual approval")
     a = ap.parse_args()
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    cand = json.loads(Path(a.candidate).read_text())
-    if "candidate" in cand:  # brief-wrapped form
-        cand = cand["candidate"]
-    sb = json.loads(Path(a.storyboard).read_text())
-    brief = json.loads(Path(a.brief).read_text())
-
-    y, sr = sf.read(a.wav, dtype="float64", always_2d=True)
-    y_mono = y.mean(axis=1) if y.shape[1] > 1 else y.ravel()
-    tb = Timebase(int(sr), 30, 1)
-    feat = featmod.compute_features(y_mono, int(sr))
-    events = eventsmod.detect_all(feat)
-    clip = {"start_sample": int(cand["start_sample"]),
-            "end_sample": int(cand["end_sample"]),
-            "n_frames": int(cand["n_frames"]),
-            "selection_reason": "DSP candidate selected by ID; no LLM timing",
-            "edge_100ms_rms_dbfs": None, "edge_energy_note": "studio render"}
-    det_scenes = cand.get("scenes") or clipmod.plan_scenes(
-        clip, events, feat, tb)["scenes"]
-    v = sbmod.validate_storyboard(sb, det_scenes)
-    if not v["ok"]:
-        print(json.dumps({"ok": False, "failures": v["failures"]}))
+    try:
+        ctx = prepare_context(a.wav, a.candidate, a.storyboard, a.brief,
+                              width=a.width, height=a.height, seed=a.seed)
+    except ValueError as e:
+        failures = getattr(e, "failures", None) or [str(e)]
+        print(json.dumps({"ok": False, "failures": failures}))
         return 2
-    accents = planmod.pick_accents(events, clip, int(sr))
-    params = {"seed": a.seed, "width": a.width, "height": a.height,
-              "analysis_hop": int(feat["meta"]["hop"]),
-              "analysis_nfft": int(feat["meta"]["n_fft"]),
-              "light_floor": planmod.LIGHT_FLOOR}
-    plan = planmod.build_plan_json(clip, {"scenes": det_scenes,
-                                          "reason": cand.get("scene_reason", "deterministic"),
-                                          "candidate_cuts": []},
-                                   accents, tb, a.seed, params, [])
-    plan["_asset_abspath"] = str(Path(a.wav).resolve())
-    plan["storyboard_style"] = sb.get("style_id")
-    palettes = [s["palette"] for s in sb["scenes"]]
-    sparams = [s.get("params", {}) for s in sb["scenes"]]
-    ctrl = planmod.build_controls("structured", clip["n_frames"], tb, clip,
-                                  det_scenes, accents, feat, a.seed)
+    cand = ctx.candidate
+    sb = ctx.storyboard
+    brief = ctx.brief
+    clip = ctx.clip
+    det_scenes = ctx.det_scenes
+    plan = ctx.plan
+    tb = ctx.tb
     # Lossless crop of the ORIGINAL decoded stream (no gain/fade/stretch).
+    # Optional visual-preflight approval: validated against the live
+    # context immediately before encoding (no flag = legacy local
+    # render; the approval file is never trusted without rechecking
+    # the actual evidence/review files it references).
+    visual_approval = None
+    if a.visual_approval is not None:
+        if not a.engine_sha:
+            print(json.dumps({"ok": False, "failures": [
+                "--visual-approval requires --engine-sha"]}))
+            return 2
+        try:
+            from studio.visual_preflight import validate_approval_file
+            visual_approval = validate_approval_file(
+                Path(a.visual_approval), ctx,
+                expected_engine_sha=a.engine_sha)
+        except ValueError as e:
+            print(json.dumps({"ok": False, "failures": [str(e)]}))
+            return 2
     clip_wav = out / "clip_audio.wav"
     write_crop_lossless(Path(a.wav), clip_wav, clip["start_sample"],
-                        clip["end_sample"], int(sr))
-    lay = cleanmod.make_layouts(a.seed, a.width, a.height)
+                        clip["end_sample"], ctx.sample_rate)
     mp4 = out / "video.mp4"
     # Clean creative renderer (no captions/markers); p0.render is only
     # reused for its ffmpeg encode/mux helper, never for Studio pixels.
     rendermod.render_video(
-        (cleanmod.draw_clean_frame(f, ctrl, a.width, a.height,
-                                   a.seed, lay, scene_palettes=palettes,
-                                   scene_params=sparams)
-         for f in range(clip["n_frames"])),
-        str(clip_wav), str(mp4), a.width, a.height, 30, 1, clip["n_frames"])
+        (ctx.frame(f) for f in range(clip["n_frames"])),
+        str(clip_wav), str(mp4), ctx.width, ctx.height, 30, 1, clip["n_frames"])
     # Contact sheet for the visual reviewer: START / MIDDLE / END of
     # EVERY deterministic scene, sampled from the ENCODED MP4, in
     # chronological scene row groups (one row per scene, 3 columns).
@@ -144,10 +133,10 @@ def main() -> int:
     # against the deterministic clean renderer (computed on demand,
     # cached per frame); all other file-level checks run unchanged.
     reference_fn = cleanmod.make_reference_frame_fn(
-        ctrl, a.width, a.height, a.seed, scene_palettes=palettes,
-        scene_params=sparams, layouts=lay)
-    qa = qamod.check_file(str(mp4), str(clip_wav), plan, tb, a.width,
-                          a.height, sha256_file(Path(a.wav)), str(out),
+        ctx.controls, ctx.width, ctx.height, ctx.seed, scene_palettes=ctx.palettes,
+        scene_params=ctx.scene_params, layouts=ctx.layouts)
+    qa = qamod.check_file(str(mp4), str(clip_wav), plan, tb, ctx.width,
+                          ctx.height, ctx.source_sha256, str(out),
                           "studio", reference_frame_fn=reference_fn)
     timeline = {"schema_version": "1.0", "candidate_id": cand["id"],
                 "clip": plan["clip"], "scenes": plan["scenes"],
@@ -165,8 +154,7 @@ def main() -> int:
              "timeline.json": out / "timeline.json",
              "timeline.html": out / "timeline.html",
              "contact-sheet.jpg": out / "contact-sheet.jpg"}
-    (out / "plan.json").write_text(json.dumps(
-        {k: v for k, v in plan.items() if not k.startswith("_")}, indent=2))
+    (out / "plan.json").write_text(json.dumps(ctx.public_plan, indent=2))
     (out / "timeline.json").write_text(json.dumps(timeline, indent=2))
     (out / "qa.json").write_text(json.dumps(
         {"checks": qa["checks"], "pass": qa["pass"],
@@ -174,11 +162,13 @@ def main() -> int:
     prov = {"schema_version": "1.0", "candidate_id": cand["id"],
             "child_issue": brief.get("child_issue"),
             "parent_issue": brief.get("parent_issue"),
-            "source_sha256": sha256_file(Path(a.wav)),
+            "source_sha256": ctx.source_sha256,
             "source_hashes": brief.get("source_hashes"),
             "planning_fingerprint": brief.get("fingerprint"),
             "brief_fingerprint": brief.get("fingerprint"),
             "prototype": "procedural prototype, not finished anime"}
+    if visual_approval is not None:
+        prov["visual_approval"] = visual_approval
     # Approving a commit must approve these exact media bytes, even if a
     # later rerender uses identical plans but a different encoder version.
     prov["media_sha256"] = {

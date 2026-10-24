@@ -31,9 +31,9 @@ MAX_ATTEMPTS = config.REPAIR_MAX_ATTEMPTS
 AGENT_TIMEOUT_SEC = config.REPAIR_AGENT_TIMEOUT_SEC
 
 STATUSES = ("passed", "needs_engine", "attempts_exhausted",
-            "no_change", "no_visual_change")
+            "no_change", "no_visual_change", "visual_blocked")
 ESCALATION_STATUSES = ("needs_engine", "attempts_exhausted",
-                       "no_change", "no_visual_change")
+                       "no_change", "no_visual_change", "visual_blocked")
 
 _NEXT_ACTIONS = {
     "passed": ("Publish the final reviewed bundle and request exact-head "
@@ -47,6 +47,9 @@ _NEXT_ACTIONS = {
                   "rerunning the source workflow."),
     "no_visual_change": ("Engineering implementation and review before "
                          "rerunning the source workflow."),
+    "visual_blocked": ("Visual preflight blocked the repaired storyboard; "
+                       "engineering implementation and review before "
+                       "rerunning the source workflow."),
 }
 
 WORKER_FILES = ("brief.json", "scenes.json", "storyboard.schema.json",
@@ -488,6 +491,34 @@ def run_repair_loop(*, initial_review, initial_mechanical_pass: bool,
                 "repair attempt runner returned no outcome")
         kind = outcome.get("kind") or outcome.get("outcome") or (
             "reviewed" if "review" in outcome else None)
+        if kind == "visual_blocked":
+            # New storyboard blocked by still/motion preflight: retain
+            # the LAST fully reviewed final bundle/head/review. The
+            # newest visual review travels separately so published
+            # feedback uses it, never the old final review.
+            blocked = _result(status="visual_blocked",
+                              attempt_count=attempt_count,
+                              max_repairs=max_repairs,
+                              head_sha=current_head,
+                              pr_number=current_pr, review=current_review,
+                              history=history,
+                              repairs_attempted=repairs_attempted)
+            blocked["visual_blocked"] = True
+            blocked["visual_review"] = outcome.get(
+                "visual_review", outcome.get("review"))
+            blocked["visual_stage"] = outcome.get("visual_stage",
+                                                  outcome.get("stage"))
+            blocked["visual_evidence_sha256"] = outcome.get(
+                "visual_evidence_sha256", outcome.get("evidence_sha256"))
+            blocked["visual"] = outcome.get("visual")
+            _vart = outcome.get("visual_artifact")
+            if not isinstance(_vart, dict) and isinstance(
+                    outcome.get("visual"), dict):
+                _vart = outcome["visual"].get("artifact")
+            blocked["visual_artifact"] = _vart if isinstance(
+                _vart, dict) else None
+            blocked["previous_final_review"] = current_review
+            return blocked
         if kind in ("no_change", "no_visual_change"):
             return _result(status=kind, attempt_count=attempt_count,
                            max_repairs=max_repairs, head_sha=current_head,
@@ -652,9 +683,14 @@ def prepare_muse_workspace(workspace, *, brief, scenes, storyboard_schema,
 
 
 def sanitized_worker_env(env=None) -> dict:
-    """Environment for the isolated worker: no GitHub credentials."""
+    """Environment for a MODEL child process: no runtime/GitHub tokens.
+
+    Strips ACTIONS_RUNTIME_TOKEN / ACTIONS_RESULTS_URL /
+    ACTIONS_ID_TOKEN_REQUEST_TOKEN and GH_TOKEN/GITHUB_TOKEN. The
+    trusted artifact uploader never uses this helper.
+    """
     out = dict(os.environ if env is None else env)
-    for key in ("GH_TOKEN", "GITHUB_TOKEN"):
+    for key in config.MODEL_ENV_STRIP_KEYS:
         out.pop(key, None)
     return out
 
@@ -847,14 +883,12 @@ def build_codex_review_command(*, contact_sheet, schema_path, output_path) -> li
 def run_codex_review(*, contact_sheet, schema_path, output_path, prompt_path,
                      runner_temp, report_script=None,
                      timeout: int = AGENT_TIMEOUT_SEC, env=None) -> None:
-    codex_env = dict(os.environ if env is None else env)
+    codex_env = sanitized_worker_env(env)
     runtime_home = codex_env.get("CODEX_RUNTIME_HOME")
     if runtime_home:
         codex_env["CODEX_HOME"] = runtime_home
     # Reviewer reads labelled JSON + contact sheet only: no raw audio,
-    # no GitHub credentials in the model environment.
-    codex_env.pop("GH_TOKEN", None)
-    codex_env.pop("GITHUB_TOKEN", None)
+    # no runtime/GitHub tokens in the model environment.
     rt = Path(runner_temp)
     run_agent_command(
         build_codex_review_command(contact_sheet=contact_sheet,
@@ -875,7 +909,7 @@ def build_repair_result(loop_result: dict, *, parent: int, child: int) -> dict:
         attempted = loop_result.get(
             "repairs_used", max(0, loop_result["attempt_count"] - 1))
     attempted = int(attempted)
-    return {
+    result = {
         "schema_version": "1.0",
         "status": loop_result["status"],
         "attempt_count": loop_result["attempt_count"],
@@ -894,6 +928,24 @@ def build_repair_result(loop_result: dict, *, parent: int, child: int) -> dict:
         "next_action": loop_result.get("next_action")
         or next_action_for(loop_result["status"]),
     }
+    if loop_result.get("visual_blocked") or loop_result.get("status") == "visual_blocked":
+        # Distinguish the retained final bundle's previous failing
+        # review (final_review/history) from the newest preflight stop.
+        result["visual_blocked"] = True
+        result["visual_review"] = loop_result.get("visual_review")
+        result["visual_stage"] = loop_result.get("visual_stage")
+        result["visual_evidence_sha256"] = loop_result.get(
+            "visual_evidence_sha256")
+        result["visual"] = loop_result.get("visual")
+        _vart = loop_result.get("visual_artifact")
+        if not isinstance(_vart, dict) and isinstance(
+                loop_result.get("visual"), dict):
+            _vart = loop_result["visual"].get("artifact")
+        result["visual_artifact"] = _vart if isinstance(
+            _vart, dict) else None
+        result["previous_final_review"] = loop_result.get(
+            "previous_final_review", final_review)
+    return result
 
 
 def write_repair_result(work_dir, result: dict) -> Path:

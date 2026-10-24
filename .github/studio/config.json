@@ -8,6 +8,7 @@
   "source": {"max_bytes": 536870912, "max_duration_sec": 900, "max_sample_rate": 96000, "max_channels": 2, "download_timeout_sec": 120},
   "artifact": {"retention_days": 90},
   "repair": {"max_repairs": 2, "max_attempts": 3, "agent_timeout_sec": 900},
+  "visual": {"max_versions": 3, "max_preview_artifacts": 6, "max_shared_repairs": 2, "agent_timeout_sec": 900, "artifact_retention_days": 90, "actions_artifact_version": "2.3.2"},
   "secrets": ["CODEX_ENC_APP_ID", "CODEX_ENC_APP_PRIVATE_KEY", "CODEX_ENC_PASSPHRASE", "MUSE_ENC_PASSPHRASE"],
   "period_directions": {"early": "aspiration for professional performance", "middle": "concert presence and expressiveness", "late": "healing"},
   "github_attachment_doc_limits_mb": {"wav_mp3": 25, "video_free": 10, "video_paid": 100}

@@ -18,6 +18,23 @@ MAX_REPAIRS = 2
 REPAIR_MAX_ATTEMPTS = MAX_REPAIRS + 1
 REPAIR_AGENT_TIMEOUT_SEC = 900
 
+# Staged visual preflight (still -> motion before any full render).
+# The 2 Muse repair calls are SHARED between the early visual
+# preflight and the existing full-video repair loop: one global
+# budget persisted in work/visual-state.json, never two budgets.
+VISUAL_MAX_VERSIONS = 3
+VISUAL_MAX_PREVIEW_ARTIFACTS = 6
+VISUAL_ARTIFACT_RETENTION_DAYS = 90
+VISUAL_AGENT_TIMEOUT_SEC = REPAIR_AGENT_TIMEOUT_SEC
+ACTIONS_ARTIFACT_VERSION = "2.3.2"
+# Environment keys stripped from every MODEL child process (Codex
+# reviewer/planner, Muse runner). The trusted artifact uploader
+# keeps them; models never see runtime/GitHub tokens.
+MODEL_ENV_STRIP_KEYS = (
+    "ACTIONS_RUNTIME_TOKEN", "ACTIONS_RESULTS_URL",
+    "ACTIONS_ID_TOKEN_REQUEST_TOKEN", "GH_TOKEN", "GITHUB_TOKEN",
+)
+
 CANDIDATE_MIN_SEC = 60.0
 CANDIDATE_MAX_SEC = 120.0
 MAX_CANDIDATES = 3

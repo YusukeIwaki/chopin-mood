@@ -170,21 +170,36 @@ def test_repair_wiring_order_args_and_final_refs():
     idx = [PROD.index(s) for s in order]
     assert idx == sorted(idx), list(zip(order, idx))
     # Repair CLI: actual entrypoint + inputs from the task contract.
+    # The step runs via actions/github-script (JS argv form) so the
+    # trusted child inherits the artifact runtime environment; numbers
+    # and paths arrive via env, never via JS expression interpolation.
     repair_block = _step_block("Bounded aesthetic repair")
     assert "id: repair" in repair_block
-    assert "timeout-minutes: 75" in repair_block
+    assert "timeout-minutes: 180" in repair_block
+    assert "actions/github-script@v8" in repair_block
+    assert "exec.exec('python3'" in repair_block
+    assert "${{" not in repair_block.split("script: |", 1)[1]
     assert "GH_TOKEN: ${{ github.token }}" in repair_block
     assert "GITHUB_REPOSITORY: ${{ github.repository }}" in repair_block
     for arg in (
-        "python3 scripts/studio_repair.py",
-        "--work output/studio/work",
-        '--muse-work "$RUNNER_TEMP/muse-work"',
-        "--wav output/studio/source/source.wav",
-        "--parent ${{ needs.preflight.outputs.issue_number }}",
-        "--child ${{ matrix.child_issue }}",
-        "--engine-sha ${{ github.sha }}",
-        "--run-id ${{ github.run_id }}",
-        "--run-attempt ${{ github.run_attempt }}",
+        "'scripts/studio_repair.py'",
+        "'--work', process.env.REPAIR_WORK",
+        "'--muse-work', process.env.REPAIR_MUSE_WORK",
+        "'--wav', process.env.REPAIR_WAV",
+        "'--parent', process.env.PARENT_ISSUE",
+        "'--child', process.env.CHILD_ISSUE",
+        "'--engine-sha', process.env.ENGINE_SHA",
+        "'--run-id', process.env.RUN_ID",
+        "'--run-attempt', process.env.RUN_ATTEMPT",
+        "'--require-visual-preflight'",
+        "REPAIR_WORK: output/studio/work",
+        "REPAIR_MUSE_WORK: ${{ runner.temp }}/muse-work",
+        "REPAIR_WAV: output/studio/source/source.wav",
+        "PARENT_ISSUE: ${{ needs.preflight.outputs.issue_number }}",
+        "CHILD_ISSUE: ${{ matrix.child_issue }}",
+        "ENGINE_SHA: ${{ github.sha }}",
+        "RUN_ID: ${{ github.run_id }}",
+        "RUN_ATTEMPT: ${{ github.run_attempt }}",
     ):
         assert arg in repair_block, arg
     # Repair agents are inside the Python module, not new shell Codex calls.
@@ -241,7 +256,7 @@ def test_muse_auth_persist_moved_after_repair_and_timeouts_bounded():
     # max 2 repairs x (Muse 900s + Codex 900s).
     import yaml
     wf = yaml.safe_load(PROD)
-    assert wf["jobs"]["build"]["timeout-minutes"] == 120
+    assert wf["jobs"]["build"]["timeout-minutes"] == 300
     muse_block = _step_block("Run Muse in isolated container")
     assert "timeout-minutes: 15" in muse_block
     assert "timeout --kill-after=10s 900 bash .github/studio/scripts/muse-run.sh" in muse_block
