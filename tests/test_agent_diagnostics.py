@@ -6,6 +6,7 @@ never echo them. No real models, no network, no real credentials.
 import subprocess
 import sys
 from pathlib import Path
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / ".github/studio/scripts/report-agent-error.py"
@@ -193,3 +194,19 @@ def test_output_is_only_fixed_lines(tmp_path):
     assert lines[0].startswith("classification: ")
     assert lines[1].startswith("label: ")
     assert lines[2].startswith("next_step: ")
+
+
+@pytest.mark.parametrize('message, expected', [
+    ('HTTP 413 request body too large', 'input_limit'),
+    ('too many images', 'input_limit'),
+    ('context_length_exceeded', 'input_limit'),
+    ('invalid schema for response_format', 'invalid_model_request'),
+    ('unexpected argument --example', 'invalid_model_request'),
+    ('stream disconnected before completion', 'provider_connection'),
+    ('HTTP 503 upstream unavailable', 'provider_connection'),
+])
+def test_image_review_failures_remain_fixed_and_secret_free(tmp_path, message, expected):
+    out = run_diag(tmp_path, f'{message} {DUMMY_SECRET} {DUMMY_TOKEN} {DUMMY_PATH} {DUMMY_PROMPT}')
+    assert f'classification: {expected}' in out
+    assert len(out.splitlines()) == 3
+    assert_clean(out)

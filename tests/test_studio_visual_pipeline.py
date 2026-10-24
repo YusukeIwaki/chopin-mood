@@ -267,6 +267,28 @@ def test_codex_visual_reviewer_sets_codex_home_and_strips_tokens(tmp_path, monke
         assert secret not in env
 
 
+@pytest.mark.parametrize('stderr, expected', [
+    ('invalid_refresh_token', 'expired_authentication'),
+    ('HTTP 413 payload too large', 'input_limit'),
+    ('stream disconnected before completion', 'provider_connection'),
+    ('unknown failure', 'generic'),
+])
+def test_visual_reviewer_preserves_safe_failure_category(tmp_path, monkeypatch, stderr, expected):
+    (tmp_path/'evidence.json').write_text('{"samples":[]}')
+    def fail(cmd, **kw):
+        Path(kw['stderr_path']).write_text(stderr + ' DUMMY_PRIVATE_TOKEN')
+        raise repair.RepairInfrastructureError('DUMMY_PRIVATE_TOKEN raw provider exception')
+    monkeypatch.setattr(repair, 'run_agent_command', fail)
+    reviewer = vpipe.make_codex_visual_reviewer(
+        base_prompt='BASE', schema_path=tmp_path/'schema.json',
+        runner_temp=tmp_path/'rt', report_script=ROOT/'.github/studio/scripts/report-agent-error.py')
+    with pytest.raises(vpipe.VisualInfrastructureError) as error:
+        reviewer(evidence_dir=tmp_path, stage='still', brief={}, storyboard={}, evidence={'samples': []})
+    assert f'classification: {expected}' in str(error.value)
+    assert 'DUMMY_PRIVATE_TOKEN' not in str(error.value)
+    assert 'raw provider exception' not in str(error.value)
+
+
 def _load_visual_cli():
     spec = importlib.util.spec_from_file_location(
         "studio_visual_cli_under_test", ROOT / "scripts/studio_visual_preflight.py")
