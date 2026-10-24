@@ -14,6 +14,7 @@ from studio.render_context import prepare_context
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE = "a" * 40
+W, H = 288, 512  # The gentle synthetic fade is codec-ambiguous at 180x320.
 
 
 def test_approved_full_render_and_changed_input_rejected():
@@ -38,7 +39,7 @@ def test_approved_full_render_and_changed_input_rejected():
         for name, obj in (("candidate", cand), ("brief", brief), ("storyboard", sb)):
             (work / f"{name}.json").write_text(json.dumps(obj))
         ctx = prepare_context(wav, work / "candidate.json", work / "storyboard.json",
-                              work / "brief.json", width=180, height=320)
+                              work / "brief.json", width=W, height=H)
         for stage in ("still", "motion"):
             directory = work / stage
             vp.generate_evidence(ctx, directory, stage=stage, engine_sha=ENGINE,
@@ -64,10 +65,10 @@ def test_approved_full_render_and_changed_input_rejected():
                    "--wav", str(wav), "--candidate", str(work / "candidate.json"),
                    "--brief", str(work / "brief.json"),
                    "--storyboard", str(work / "storyboard.json"),
-                   "--width", "180", "--height", "320",
+                   "--width", str(W), "--height", str(H),
                    "--visual-approval", str(apath), "--engine-sha", ENGINE]
         rendered = subprocess.run(command + ["--out", str(work / "bundle")],
-                                  capture_output=True, text=True, cwd=ROOT, timeout=300)
+                                  capture_output=True, text=True, cwd=ROOT, timeout=600)
         assert rendered.returncode == 0, (rendered.stdout, rendered.stderr)
         qa = json.loads((work / "bundle/qa.json").read_text())
         assert qa["pass"] and len(qa["checks"]) == 11

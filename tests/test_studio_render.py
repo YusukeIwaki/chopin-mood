@@ -1,7 +1,9 @@
 """Full synthetic >=60 s render: real MP4, decoded-media QA, palette reach.
 
 Runs the offline smoke (75 s synthetic -> 60-120 s candidate -> trusted
-render) at reduced frame size. Duration/frames stay native (30 fps).
+render) at 288x512. At 180x320 one gentle transition is intentionally
+rejected as codec-ambiguous by the temporal QA; the successful end-to-end
+fixture needs observable transitions. Duration/frames stay native (30 fps).
 """
 import json
 import subprocess
@@ -12,6 +14,7 @@ import numpy as np
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
+W, H = 288, 512
 
 
 @pytest.fixture(scope="module")
@@ -19,7 +22,7 @@ def smoke(tmp_path_factory):
     out = tmp_path_factory.mktemp("smoke") / "smoke"
     r = subprocess.run(
         [sys.executable, str(ROOT / "scripts/studio_smoke.py"),
-         "--out", str(out), "--width", "180", "--height", "320"],
+         "--out", str(out), "--width", str(W), "--height", str(H)],
         capture_output=True, text=True, cwd=str(ROOT), timeout=1200)
     assert r.returncode == 0, (r.stdout[-2000:], r.stderr[-2000:])
     return out
@@ -49,9 +52,10 @@ def test_storyboard_palette_reaches_decoded_frames(smoke):
     bundle = smoke / "bundle"
     sb = json.loads((bundle / "storyboard.json").read_text())
     sky = np.array(sb["scenes"][0]["palette"]["sky_top"], dtype=float)
-    frame = Q.decode_frame_rgb(str(bundle / "video.mp4"), 10, 180, 320)
-    # Sky corner away from the moon glow (x~133) and side vignette.
-    top_mean = frame[:25, 20:70].reshape(-1, 3).mean(axis=0)
+    frame = Q.decode_frame_rgb(str(bundle / "video.mp4"), 10, W, H)
+    # Same normalized sky corner, away from moon glow and side vignette.
+    top_mean = frame[:round(H * 25 / 320),
+                     round(W * 20 / 180):round(W * 70 / 180)].reshape(-1, 3).mean(axis=0)
     dist_story = float(np.abs(top_mean - sky).mean())
     dist_other = float(np.abs(top_mean - np.array([200.0, 30.0, 30.0])).mean())
     assert dist_story < dist_other, (top_mean, sky)
