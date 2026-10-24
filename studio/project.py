@@ -54,7 +54,8 @@ def load_project(root: Path, issue: int, source_url: str, gh=None) -> dict:
         parent = gh.get_issue(issue)
         if parent.get("state") != "open" or parent.get("user", {}).get("login") != config.OWNER:
             raise ValueError("source issue must be open and owner-authored")
-        urls = validate.extract_attachment_urls(parent.get("body") or "")
+        urls = [url for url in validate.extract_attachment_urls(parent.get("body") or "")
+                if validate.validate_attachment_url(url)["ok"]]
         if urls != [source_url]:
             raise ValueError("live source attachment changed")
         fields = creative.parse_issue_body(parent.get("body"))

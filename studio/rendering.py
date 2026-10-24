@@ -884,7 +884,7 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
         canvas.convert("RGBA"),
         shadow.filter(ImageFilter.GaussianBlur(
             radius=max(1.0, 1.1 * u)))).convert("RGB")
-    fig_key = (float(fs), pal["glow"], pal["near"])
+    fig_key = (float(fs), pal["glow"], pal["near"], pal["moon"])
     fig_cache = lay.setdefault("_fig_cache", {})
     if fig_cache.get("key") != fig_key:
         fig_cache.clear()

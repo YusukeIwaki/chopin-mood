@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 from studio.project import load_project
 from studio.fingerprint import child_marker
+from studio.fingerprint import canonical_fingerprint
 ROOT=Path(__file__).resolve().parents[1]
 @pytest.fixture
 def project(tmp_path):
@@ -40,6 +41,15 @@ def test_live_binding_failures(project,change):
 def test_missing_project_cannot_spawn_planner(project):
     root,url=project
     with pytest.raises(ValueError,match='missing'):load_project(root,2,url)
+
+def test_reference_link_is_not_a_second_recording(project):
+    root,url=project;p=root/'issue-1/brief.json';brief=json.loads(p.read_text())
+    brief['art_notes']+='\n\nReference: https://example.com/illustration'
+    brief['fingerprint']=canonical_fingerprint(
+        source_url=url,source_sha256=brief['source_hashes']['decoded_wav_sha256'],
+        piece=brief['piece'],period=brief['period'],art_notes=brief['art_notes'])
+    p.write_text(json.dumps(brief))
+    assert load_project(root,1,url,GitHub(root,url))['brief']==brief
 
 def test_symlink_and_storyboard_rejected(project,tmp_path):
     root,url=project;p=root/'issue-1/storyboard.json'
