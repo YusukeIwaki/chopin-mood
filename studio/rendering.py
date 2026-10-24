@@ -109,13 +109,16 @@ def make_layouts(seed: int, w: int, h: int) -> dict:
         "streaks": rng.rand(36, 2),
         "seed": int(seed),
     }
-    tex_small = rng.randn(36, 64).astype(np.float32)
+    # Roughly square world-space cells. A fixed 36x64 lattice stretched
+    # into a portrait frame creates tall narrow streaks in every hill.
+    cell = max(4.0, min(w, h) / 22.0)
+    tex_small = rng.randn(max(4, int(np.ceil(h / cell))),
+                          max(4, int(np.ceil(w / cell)))).astype(np.float32)
     tex_img = Image.fromarray(
         np.clip((tex_small - tex_small.min())
                 / (tex_small.max() - tex_small.min() + 1e-9) * 255,
                 0, 255).astype(np.uint8)).resize((w, h), Image.BICUBIC)
-    # Down/up resample: broad tonal variation only, never the tall
-    # thin block streaks a direct 36x64 -> frame upscale would leave.
+    # Soft isotropic mottling rather than elongated column texture.
     tex_img = tex_img.resize((max(8, w // 6), max(8, h // 6)),
                              Image.BICUBIC).resize((w, h), Image.BICUBIC)
     tex_img = tex_img.filter(
@@ -264,8 +267,11 @@ def _far_frac(t: np.ndarray, p: dict) -> np.ndarray:
 
 
 def _mid_frac(t: np.ndarray, p: dict) -> np.ndarray:
-    """Middle silhouette: right mass falling toward the left/centre."""
+    """Right mass and an off-screen left shoulder enclosing a shallow valley."""
     y = np.full_like(np.asarray(t, dtype=np.float64), p["low"])
+    # The clamped ramp alone has a flat left tail. This broad shoulder
+    # continues beyond the image edge without introducing a wrap seam.
+    y = y - (0.030 + p["a1"]) * _gauss(t, -0.04, 0.19)
     y = y - p["drop"] * _sramp(t, 0.18, 0.82)
     y = y - p["pk"] * _gauss(t, p["cr"], p["sr"])
     y = y + p["a1"] * np.cos(2.0 * np.pi * (t - p["p1"]))
@@ -353,21 +359,21 @@ _FACETS = ((0.64, 0.30, 0.045, 0.30, 0.24, -0.035),
 def _slope_facet_factor(layer_index: int, x_norm, depth) -> np.ndarray:
     """Broad tonal facet factor (1.0 = neutral) for one landform.
 
-    Two large softly bounded internal facets per layer -- a moonlit
-    plane toward the moon side and a shadow plane away from it --
-    whose vertical envelope is a smooth function of depth below the
-    ridge, so the facets follow the slope instead of running as a
-    column gradient. The far layer is softer/lower contrast and the
-    foreground firmer, with no hard outline anywhere (Gaussian in
-    x, smoothstep in depth). Pure and deterministic.
+    Two oblique, elliptical tonal planes follow depth below the ridge.
+    Their centres and widths vary with depth, so light is never a
+    one-dimensional ridge derivative extruded down a screen column.
+    The far layer is softer/lower contrast than the foreground.
     """
     lc, lw, la, sc, sw, sa = _FACETS[int(layer_index)]
     xn, dep = np.broadcast_arrays(
         np.asarray(x_norm, dtype=np.float64),
         np.asarray(depth, dtype=np.float64))
-    env = _sramp(dep, 0.06, 0.30) * (1.0 - _sramp(dep, 0.62, 0.95))
-    spatial = la * _gauss(xn, lc, lw) + sa * _gauss(xn, sc, sw)
-    return 1.0 + env * spatial
+    env = _sramp(dep, 0.02, 0.18) * (1.0 - _sramp(dep, 0.70, 1.0))
+    lit = _gauss(xn - 0.30 * (dep - 0.25), lc, lw) \
+        * _gauss(dep, 0.32, 0.23)
+    shadow = _gauss(xn + 0.22 * (dep - 0.25), sc, sw) \
+        * _gauss(dep, 0.43, 0.28)
+    return 1.0 + env * (la * lit + sa * shadow)
 
 
 # --- executable storyboard camera (pure helpers) --------------------------
@@ -714,9 +720,8 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
     # Layered terrain: deliberately shaped landforms (see
     # terrain_profiles) with slow parallax drift. Distant layers
     # dissolve into the haze with soft feathered edges; nearer layers
-    # keep firmer edges. Directional tonal planes (slope facing the
-    # moon plus a broad brightening toward the moon side) keep the
-    # slopes from reading as flat parallel colour bands.
+    # keep firmer edges. Two-dimensional oblique tonal planes and
+    # isotropic surface texture avoid vertical curtain-like stripes.
     drift = f * 0.0016  # slow environment motion even if camx is still
     ypix = yy[:, None] * h
     haze_arr = np.array(_mix(pal["sky_bot"], pal["far"], 0.45), float)
@@ -733,12 +738,6 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
                         / np.maximum(1.0, h - ridge[None, :]), 0, 1)
         atmo = (0.42, 0.22, 0.06)[li]  # far layers sit deeper in haze
         col_arr = np.array(col, float) * (1.0 - atmo) + haze_arr * atmo
-        slope = np.gradient(ridge)
-        k = np.ones(17) / 17.0  # smooth so shading cannot stripe
-        slope = np.convolve(np.pad(slope, 8, mode="edge"), k,
-                            mode="valid")[:len(slope)]
-        shade = np.clip(1.0 - slope * 0.24, 0.93, 1.07)[None, :, None]
-        moon_grad = (0.95 + 0.08 * x_norm)[None, :, None]
         # Foreground ground deepens more strongly (dry slope falling
         # into shadow toward the bottom); upper depths stay gentle.
         if li < 2:
@@ -747,8 +746,9 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
             dshade = 0.55 * (depth[:, :, None] ** 1.5)
         layer_col = (col_arr[None, None, :] * (1 - dshade)
                      + np.array((4, 5, 10), float)[None, None, :] * dshade)
-        facet = _slope_facet_factor(li, x_norm, depth)
-        layer_col = layer_col * shade * moon_grad * facet[:, :, None] \
+        world_x = x_norm - _parallax_shift(camx, drift, li)
+        facet = _slope_facet_factor(li, world_x, depth)
+        layer_col = layer_col * facet[:, :, None] \
             + tex[:, :, None] * 6.0
         if li == 2:
             layer_col = layer_col + gtex[:, :, None] \

@@ -143,6 +143,33 @@ def test_slope_facet_factor_broad_soft_and_layered():
     assert ranges[2] > 0.05
 
 
+@pytest.mark.parametrize("seed", [1, 7, SEED])
+@pytest.mark.parametrize("w,h", [(180, 320), (540, 960)])
+def test_terrain_mottling_has_similar_horizontal_and_vertical_scale(seed, w, h):
+    # The old landscape stretched a wide noise lattice into portrait
+    # dimensions, producing vertical streaks. This measures spatial
+    # variation, not a particular implementation or an aesthetic score.
+    tex = R.make_layouts(seed, w, h)["_texture"]
+    ratio = np.std(np.diff(tex, axis=0)) / np.std(np.diff(tex, axis=1))
+    assert 0.70 < ratio < 1.40, ratio
+
+
+@pytest.mark.parametrize("seed", [1, 7, SEED])
+def test_left_midground_is_not_a_flat_slab(seed):
+    mid = R.terrain_profiles(R.make_layouts(seed, W, H), W, H)[1]
+    assert np.ptp(mid[:int(W * 0.20)]) > 0.012 * H
+
+
+def test_terrain_light_planes_change_shape_with_depth():
+    x = np.linspace(0, 1, 361)
+    for li in range(3):
+        upper = R._slope_facet_factor(li, x, np.full_like(x, 0.22)) - 1.0
+        lower = R._slope_facet_factor(li, x, np.full_like(x, 0.60)) - 1.0
+        # Extruding a 1D profile with only an envelope gives correlation
+        # 1.0. Oblique planes move laterally as they descend the slope.
+        assert np.corrcoef(upper, lower)[0, 1] < 0.995
+
+
 def test_figure_support_uses_fixed_world_anchor_projection():
     lay = R.make_layouts(SEED, W, H)
     # No autonomous figure motion: with the drift held fixed, the
