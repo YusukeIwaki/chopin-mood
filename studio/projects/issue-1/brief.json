@@ -19,8 +19,8 @@
         "kind": "accent",
         "method": "flux_peak_v1",
         "source_sample": 7547435,
-        "strength": 1,
-        "time_sec": 157.238229166667
+        "strength": 1.0,
+        "time_sec": 157.23822916666666
       },
       {
         "frame": 518,
@@ -28,31 +28,31 @@
         "method": "flux_peak_v1",
         "source_sample": 7645555,
         "strength": 0.7619,
-        "time_sec": 159.282395833333
+        "time_sec": 159.28239583333334
       },
       {
         "frame": 710,
         "kind": "accent",
         "method": "flux_peak_v1",
         "source_sample": 7952180,
-        "strength": 1,
-        "time_sec": 165.670416666667
+        "strength": 1.0,
+        "time_sec": 165.67041666666665
       },
       {
         "frame": 781,
         "kind": "accent",
         "method": "flux_peak_v1",
         "source_sample": 8065910,
-        "strength": 1,
-        "time_sec": 168.039791666667
+        "strength": 1.0,
+        "time_sec": 168.03979166666667
       },
       {
         "frame": 852,
         "kind": "accent",
         "method": "flux_peak_v1",
         "source_sample": 8180755,
-        "strength": 1,
-        "time_sec": 170.432395833333
+        "strength": 1.0,
+        "time_sec": 170.43239583333335
       },
       {
         "frame": 1039,
@@ -67,23 +67,23 @@
         "kind": "accent",
         "method": "flux_peak_v1",
         "source_sample": 8896585,
-        "strength": 1,
-        "time_sec": 185.345520833333
+        "strength": 1.0,
+        "time_sec": 185.34552083333332
       },
       {
         "frame": 1387,
         "kind": "accent",
         "method": "flux_peak_v1",
         "source_sample": 9035960,
-        "strength": 1,
-        "time_sec": 188.249166666667
+        "strength": 1.0,
+        "time_sec": 188.24916666666667
       },
       {
         "frame": 1468,
         "kind": "accent",
         "method": "flux_peak_v1",
         "source_sample": 9165300,
-        "strength": 1,
+        "strength": 1.0,
         "time_sec": 190.94375
       }
     ],
@@ -112,11 +112,11 @@
     "id": "cand-01",
     "n_frames": 1932,
     "parts": {
-      "attack_prox_pen": 0,
+      "attack_prox_pen": 0.0,
       "contrast": 0.3317,
       "edge_dip": 1.6677,
       "edge_rms_pen": 0.0372,
-      "edge_slope": 0,
+      "edge_slope": 0.0,
       "mean_activity": 0.3978,
       "n_peaks_inside": 5,
       "n_struct_inside": 9
