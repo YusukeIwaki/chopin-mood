@@ -10,47 +10,56 @@
   },
   "planning_fingerprint": "f5260e4f60550374a06fa9ba986de3a0cbe9c97cdf1bf0b6fffdd6d87e51c747",
   "brief_fingerprint": "f5260e4f60550374a06fa9ba986de3a0cbe9c97cdf1bf0b6fffdd6d87e51c747",
-  "prototype": "procedural prototype, not finished anime",
+  "prototype": "AI-painted assets with deterministic animation; no generated audio",
   "visual_approval": {
     "schema_version": "1.0",
     "identity": {
       "candidate_id": "cand-01",
       "child_issue": 5,
-      "engine_sha": "7feb71393d76adbe67199963caecc3a4ad7af83c",
+      "engine_sha": "2b8d80ab70832332e0850ea31f3c3ec6c13bb47a",
       "iteration": 0,
       "parent_issue": 1,
       "run_attempt": 1,
-      "run_id": 40117157557
+      "run_id": 40125410878
     },
     "binding": {
-      "brief_sha256": "faca89da4f68440b906dd07b01d6a62894389002ac9508bd449c373b5d77222c",
-      "candidate_sha256": "c530604c8ce8a7c13e4974488d6ee1e7f6236abd923261eadce98bd7527807c0",
-      "controls_sha256": "ccb2345ecc0c94bff9d9a99fd3181def5c95c3207b64654af27459a3159d74e5",
+      "brief_sha256": "9b63e4badc2533869054b9dfff1dafedca800148a86b45ff4dc6e6f77429c07c",
+      "candidate_sha256": "10256f080db06352de1379f29aaf356581fd2b3b0441aa45b8baf97406ee73e7",
+      "controls_sha256": "da6fdb33811a69ff5ce2b3cf3c11a9a1adfa0ccd92e88d81a9c60d8ff0bf413c",
       "height": 960,
-      "public_plan_sha256": "25a6327dbd8e7d6fee164c3e9472e8e5ed053dafb64b4a158717b0aa788fbf40",
+      "public_plan_sha256": "87d78633fb1263d3912b6c6989ff9461b5a47030947f274218a9531d035eb9ae",
       "seed": 20261019,
       "source_sha256": "3709d143e232d5244ea81924823d724e156019723572dd3d0b220c5932fc8b7b",
-      "storyboard_sha256": "d54ccdfd96e7febbc15499f635e87208031cd40c0adcc276a590835779b0bfb9",
+      "storyboard_sha256": "2190bc9cbdd04e88f7dafafd7c3b106568201ae908f0d23dabfd512c8908530f",
       "width": 540
     },
-    "still_evidence_sha256": "7aa2104d9b813317f75dcda21705d7431b342b20e872e50f5085af05b4faea15",
-    "motion_evidence_sha256": "8a683be2e183de6200936b826bc8a72eba94ef4e4d167e32fff59c0d6de644fe",
-    "still_review_sha256": "d37ad01b0689c7b39f942b2f7025053b4bbf4e307635c71503293240f53eaeb0",
-    "motion_review_sha256": "38ee3ec176f4f8d67c7893306f3d2aa0dc07ec8a2f57396652132c33029d5ded",
+    "still_evidence_sha256": "36054158085593ea895d527754a09d800b89e19046f9a5722b247ff7d422b9d7",
+    "motion_evidence_sha256": "7bbe5a5d67005429ed8897c5a485827f6c8894b80def565a6f6f8f39ba911b3c",
+    "still_review_sha256": "84baba502d91a9c300bea22e050af4298e54b70daf6fcdef25b28c759c636dc3",
+    "motion_review_sha256": "8c39106d8a72fe11df980fd70734cd479122912d1d497b2bb2256839b052ecc9",
     "still": {
       "stage": "still",
-      "evidence_sha256": "7aa2104d9b813317f75dcda21705d7431b342b20e872e50f5085af05b4faea15",
-      "review_sha256": "d37ad01b0689c7b39f942b2f7025053b4bbf4e307635c71503293240f53eaeb0"
+      "evidence_sha256": "36054158085593ea895d527754a09d800b89e19046f9a5722b247ff7d422b9d7",
+      "review_sha256": "84baba502d91a9c300bea22e050af4298e54b70daf6fcdef25b28c759c636dc3"
     },
     "motion": {
       "stage": "motion",
-      "evidence_sha256": "8a683be2e183de6200936b826bc8a72eba94ef4e4d167e32fff59c0d6de644fe",
-      "review_sha256": "38ee3ec176f4f8d67c7893306f3d2aa0dc07ec8a2f57396652132c33029d5ded"
+      "evidence_sha256": "7bbe5a5d67005429ed8897c5a485827f6c8894b80def565a6f6f8f39ba911b3c",
+      "review_sha256": "8c39106d8a72fe11df980fd70734cd479122912d1d497b2bb2256839b052ecc9"
+    }
+  },
+  "visual_assets": {
+    "bundle_id": "moonlit-recollection-v1",
+    "manifest_path": "assets/visual/moonlit-recollection-v1/manifest.json",
+    "manifest_sha256": "da885f9cf019fbd43da1f5c7ec4998f6eefa0530d300e7017da0deb778705594",
+    "files": {
+      "assets/visual/moonlit-recollection-v1/background.png": "ad853e14d50c49f22b229029f9c6dfcc8c3d11540094440f91bc589245d4b79b",
+      "assets/visual/moonlit-recollection-v1/traveler.png": "e6f2cb29ce32e4797d352c0a8aba30c5e31d5540bc5f240f669842717249b64a"
     }
   },
   "media_sha256": {
-    "video.mp4": "88b35037d442e88c7c08574b9a68f6d3abfd4463d5d2076af88afbeb97e0a4a5",
-    "contact-sheet.jpg": "21fff565ceb0feb4a4af1c7e40e2b48679d1308e49b6ed3c5d84b809290f7c47",
+    "video.mp4": "54e581085401737b62359f3c0323ad39cbecb5a7e4d20ecdac30afd61720e609",
+    "contact-sheet.jpg": "4e7cb61921b929060ab486536eae0fe1c3429f2637c41cedf4ad50381fe56e60",
     "timeline.html": "b32e67b071f09bcf19b56063192b5613132fa88baecd463a74d2901d6b30fb70"
   }
 }
