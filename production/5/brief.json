@@ -1,0 +1,221 @@
+{
+  "schema_version": "1.0",
+  "parent_issue": 1,
+  "child_issue": 5,
+  "candidate_id": "cand-01",
+  "fingerprint": "f5260e4f60550374a06fa9ba986de3a0cbe9c97cdf1bf0b6fffdd6d87e51c747",
+  "candidate": {
+    "accents": [
+      {
+        "frame": 393,
+        "kind": "accent",
+        "method": "flux_peak_v1",
+        "source_sample": 7445970,
+        "strength": 0.8899,
+        "time_sec": 155.124375
+      },
+      {
+        "frame": 457,
+        "kind": "accent",
+        "method": "flux_peak_v1",
+        "source_sample": 7547435,
+        "strength": 1,
+        "time_sec": 157.238229166667
+      },
+      {
+        "frame": 518,
+        "kind": "accent",
+        "method": "flux_peak_v1",
+        "source_sample": 7645555,
+        "strength": 0.7619,
+        "time_sec": 159.282395833333
+      },
+      {
+        "frame": 710,
+        "kind": "accent",
+        "method": "flux_peak_v1",
+        "source_sample": 7952180,
+        "strength": 1,
+        "time_sec": 165.670416666667
+      },
+      {
+        "frame": 781,
+        "kind": "accent",
+        "method": "flux_peak_v1",
+        "source_sample": 8065910,
+        "strength": 1,
+        "time_sec": 168.039791666667
+      },
+      {
+        "frame": 852,
+        "kind": "accent",
+        "method": "flux_peak_v1",
+        "source_sample": 8180755,
+        "strength": 1,
+        "time_sec": 170.432395833333
+      },
+      {
+        "frame": 1039,
+        "kind": "accent",
+        "method": "flux_peak_v1",
+        "source_sample": 8479575,
+        "strength": 0.6677,
+        "time_sec": 176.6578125
+      },
+      {
+        "frame": 1300,
+        "kind": "accent",
+        "method": "flux_peak_v1",
+        "source_sample": 8896585,
+        "strength": 1,
+        "time_sec": 185.345520833333
+      },
+      {
+        "frame": 1387,
+        "kind": "accent",
+        "method": "flux_peak_v1",
+        "source_sample": 9035960,
+        "strength": 1,
+        "time_sec": 188.249166666667
+      },
+      {
+        "frame": 1468,
+        "kind": "accent",
+        "method": "flux_peak_v1",
+        "source_sample": 9165300,
+        "strength": 1,
+        "time_sec": 190.94375
+      }
+    ],
+    "duration_sec": 64.4,
+    "end_origin": "music-endpoint",
+    "end_sample": 9907200,
+    "endpoint_basis": "",
+    "endpoint_evidence": {
+      "end": {
+        "edge_rms_ratio": 0.0114,
+        "nearest_accent_s": 2.192,
+        "nearest_dip_s": 0.014,
+        "nearest_struct_s": 2.541
+      },
+      "start": {
+        "edge_rms_ratio": 0.0629,
+        "nearest_accent_s": 1.045,
+        "nearest_dip_s": 0.65,
+        "nearest_struct_s": 4.507
+      }
+    },
+    "fps": [
+      30,
+      1
+    ],
+    "id": "cand-01",
+    "n_frames": 1932,
+    "parts": {
+      "attack_prox_pen": 0,
+      "contrast": 0.3317,
+      "edge_dip": 1.6677,
+      "edge_rms_pen": 0.0372,
+      "edge_slope": 0,
+      "mean_activity": 0.3978,
+      "n_peaks_inside": 5,
+      "n_struct_inside": 9
+    },
+    "sample_rate": 48000,
+    "scene_reason": "DP chose 4 cut(s) from 7 candidate(s) (7 after frame snap); min scene 6s = 180 frames, max cuts 5",
+    "scenes": [
+      {
+        "duration_sec": 20.2,
+        "end_frame": 606,
+        "end_sample": 7785600,
+        "id": "scene01",
+        "start_frame": 0,
+        "start_sample": 6816000
+      },
+      {
+        "duration_sec": 8.4667,
+        "end_frame": 860,
+        "end_sample": 8192000,
+        "id": "scene02",
+        "start_frame": 606,
+        "start_sample": 7785600
+      },
+      {
+        "duration_sec": 12.2333,
+        "end_frame": 1227,
+        "end_sample": 8779200,
+        "id": "scene03",
+        "start_frame": 860,
+        "start_sample": 8192000
+      },
+      {
+        "duration_sec": 8.3667,
+        "end_frame": 1478,
+        "end_sample": 9180800,
+        "id": "scene04",
+        "start_frame": 1227,
+        "start_sample": 8779200
+      },
+      {
+        "duration_sec": 15.1333,
+        "end_frame": 1932,
+        "end_sample": 9907200,
+        "id": "scene05",
+        "start_frame": 1478,
+        "start_sample": 9180800
+      }
+    ],
+    "score": 2.7096,
+    "start_origin": "grid",
+    "start_sample": 6816000
+  },
+  "piece": null,
+  "period": null,
+  "period_direction": null,
+  "art_notes": "Expresses \"Tired... tired...\" with abstract image, with dimly reminiscing past.",
+  "creative_brief": {
+    "character": "One stationary silhouetted traveler, small against the landscape. Convey weariness through isolation, scale, and framing, without relying on facial expression or character animation.",
+    "creative_interpretation": "Honor the owner's note: Expresses \"Tired... tired...\" with abstract image, with dimly reminiscing past. Repeated cool compositions evoke fatigue; faint warm palette returns suggest recollection. This is an owner-directed procedural study, not a claim about the recording's meaning.",
+    "evidence_notes": "The ending is marked music-endpoint and closely matches a detected dip with very low RMS. The opening is grid-derived and less closely supported by dip and structural evidence. The empty endpoint_basis leaves the boundary rationale incomplete. Supplied structural and accent detections guide rendering, not emotional interpretation.",
+    "narrative_arc": "Stillness establishes exhaustion. Dim warmth introduces an uncertain recollection, withdraws, and returns as a weaker echo. The landscape settles into quiet persistence without a triumphant resolution.",
+    "renderer_constraints": "Use the existing landscape, one silhouetted traveler, moon, particles, palette changes, and restrained camera movement. Preserve supplied deterministic scenes and original performance audio. Keep accent responses subtle, without extra cuts or flashes. Facial acting, literal memory objects, and new character animation require a future asset provider.",
+    "scene_guidance": [
+      {
+        "composition": "Wide landscape; small traveler below center, broad negative space above, moon offset from the figure.",
+        "direction": "Establish weariness through stillness, sparse particles, and restrained lateral camera drift. Keep the traveler stationary.",
+        "palette_intent": "Desaturated blue-gray and charcoal, with a dim pearl moon; preserve silhouette readability.",
+        "scene_id": "scene01"
+      },
+      {
+        "composition": "Slightly closer framing; traveler remains small and grounded, with the moon as a stable visual anchor.",
+        "direction": "Suggest an indistinct recollection through muted warmth and a gentle inward camera move. Retain the same landscape and traveler.",
+        "palette_intent": "Introduce faded amber into the existing blue-gray palette; keep warmth dim and restrained.",
+        "scene_id": "scene02"
+      },
+      {
+        "composition": "Return toward the opening's spacious framing; maintain the traveler's screen position and landscape continuity.",
+        "direction": "Let the recollection withdraw through cooler color and reduced particle visibility. Settle the camera.",
+        "palette_intent": "Slate and muted indigo; retain only a faint trace of amber.",
+        "scene_id": "scene03"
+      },
+      {
+        "composition": "Keep the traveler isolated within the same wide landscape; preserve generous negative space.",
+        "direction": "Echo the recollection with a smaller warm shift and restrained camera drift. Avoid a dramatic reveal or literal memory imagery.",
+        "palette_intent": "A faint dusty amber returns within charcoal and blue; keep contrast subdued.",
+        "scene_id": "scene04"
+      },
+      {
+        "composition": "Balanced wide view with the small traveler beneath the moon; retain readable landscape contours.",
+        "direction": "Allow the warmth to recede and camera movement to settle. Keep the traveler present as particles become visually quieter.",
+        "palette_intent": "Muted blue-gray with a residual warm tint; end in subdued visibility rather than complete black.",
+        "scene_id": "scene05"
+      }
+    ],
+    "uncertainty": "No audio or listening assessment is available; musical quality and phrase completeness are not demonstrated. Fatigue and recollection are creative interpretations supplied by the owner. Piece and period are unspecified, and no recording identity is inferred. Alternative candidates are unavailable for comparison.",
+    "world": "An abstract moonlit landscape of subdued ridges and open darkness. Sparse particles suggest indistinct traces of the past without depicting literal memories."
+  },
+  "source_hashes": {
+    "attachment_sha256": "842c5cee6e6c44fd1636c910ecef567f5c85299eb9ee2053228c18e4c8262225",
+    "decoded_wav_sha256": "3709d143e232d5244ea81924823d724e156019723572dd3d0b220c5932fc8b7b"
+  }
+}

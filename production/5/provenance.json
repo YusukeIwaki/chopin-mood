@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "candidate_id": "cand-01",
+  "child_issue": 5,
+  "parent_issue": 1,
+  "source_sha256": "3709d143e232d5244ea81924823d724e156019723572dd3d0b220c5932fc8b7b",
+  "source_hashes": {
+    "attachment_sha256": "842c5cee6e6c44fd1636c910ecef567f5c85299eb9ee2053228c18e4c8262225",
+    "decoded_wav_sha256": "3709d143e232d5244ea81924823d724e156019723572dd3d0b220c5932fc8b7b"
+  },
+  "planning_fingerprint": "f5260e4f60550374a06fa9ba986de3a0cbe9c97cdf1bf0b6fffdd6d87e51c747",
+  "brief_fingerprint": "f5260e4f60550374a06fa9ba986de3a0cbe9c97cdf1bf0b6fffdd6d87e51c747",
+  "prototype": "procedural prototype, not finished anime",
+  "media_sha256": {
+    "video.mp4": "9f466bae035941000e8ebc22ee6f958df6f201e5e705a9ec51293beb0e0ed044",
+    "contact-sheet.jpg": "25f2aa08c19c96293d4d38ea86360c9493c601e4318b7a2ab73c1b6a11232d39",
+    "timeline.html": "b32e67b071f09bcf19b56063192b5613132fa88baecd463a74d2901d6b30fb70"
+  }
+}

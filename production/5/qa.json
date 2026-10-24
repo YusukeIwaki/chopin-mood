@@ -1,0 +1,703 @@
+{
+  "checks": [
+    {
+      "name": "studio:stream_kinds",
+      "pass": true,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "w": 540,
+      "h": 960
+    },
+    {
+      "name": "studio:frame_count",
+      "pass": true,
+      "nb_read_frames": 1932,
+      "expected": 1932
+    },
+    {
+      "name": "studio:video_stream",
+      "pass": true,
+      "start_time": 0.0,
+      "duration": 64.4,
+      "expected_duration": 64.4,
+      "start_tol_1_frame": 0.033333,
+      "dur_tol_frames": 1.5
+    },
+    {
+      "name": "studio:audio_stream",
+      "pass": true,
+      "start_time": 0.0,
+      "duration": 64.4,
+      "expected_duration": 64.4,
+      "start_tol_1_frame": 0.033333,
+      "dur_tol_frames": 1.5
+    },
+    {
+      "name": "studio:audio_sync",
+      "pass": true,
+      "verdict": "measured",
+      "lag_pass_samples": 1600,
+      "search_samples": 6400,
+      "full": {
+        "lag_samples": 0,
+        "peak_corr": 1.0,
+        "level_diff_db": -0.008,
+        "ref_rms": 0.030464,
+        "dec_rms": 0.030436
+      },
+      "segments": {
+        "head": {
+          "lag_samples": 0,
+          "peak_corr": 1.0
+        },
+        "mid": {
+          "lag_samples": 0,
+          "peak_corr": 1.0
+        },
+        "tail": {
+          "lag_samples": 0,
+          "peak_corr": 1.0
+        }
+      },
+      "segment_drift_samples": 0
+    },
+    {
+      "name": "studio:crop_pcm_exact",
+      "pass": true,
+      "mode": "float_tight",
+      "max_abs_diff": 0.0
+    },
+    {
+      "name": "studio:no_black_frames",
+      "pass": true,
+      "black_segments": [],
+      "black_sec_beyond_intro": 0
+    },
+    {
+      "name": "studio:content_changes",
+      "pass": true,
+      "probe_frames": [
+        0,
+        644,
+        1288,
+        1931
+      ],
+      "motion_diffs_blur_downscaled": [
+        7.197,
+        6.3554,
+        5.3716
+      ],
+      "motion_floor": 0.4,
+      "mean_abs_diffs_raw": [
+        12.243,
+        6.209,
+        7.511
+      ]
+    },
+    {
+      "name": "studio:scene_invariants",
+      "pass": true,
+      "n_scenes": 5,
+      "coverage_ok": true,
+      "contiguous_ok": true,
+      "min_len_ok": true
+    },
+    {
+      "name": "studio:input_hash_unchanged",
+      "pass": true,
+      "sha256": "3709d143e232d524..."
+    },
+    {
+      "name": "studio:rendered_frame_spotcheck",
+      "pass": true,
+      "method": "decoded MP4 frames vs deterministic clean-renderer reference frames; per-frame whole-frame MAE and 8x12 patch MAE (0-255), both must pass",
+      "thresholds": {
+        "global_mae_max": 8.0,
+        "patch_mae_max": 16.0,
+        "patch_grid": [
+          8,
+          12
+        ]
+      },
+      "probed_frames": [
+        0,
+        1,
+        154,
+        386,
+        392,
+        393,
+        394,
+        456,
+        457,
+        458,
+        517,
+        518,
+        519,
+        605,
+        606,
+        607,
+        675,
+        709,
+        710,
+        711,
+        780,
+        781,
+        782,
+        851,
+        852,
+        853,
+        859,
+        860,
+        861,
+        965,
+        1038,
+        1039,
+        1040,
+        1226,
+        1227,
+        1228,
+        1255,
+        1299,
+        1300,
+        1301,
+        1386,
+        1387,
+        1388,
+        1467,
+        1468,
+        1469,
+        1477,
+        1478,
+        1479,
+        1544,
+        1776,
+        1931
+      ],
+      "frames": [
+        {
+          "frame": 0,
+          "kinds": [
+            "first_frame",
+            "scene_start"
+          ],
+          "ok": true,
+          "global_mae": 1.599,
+          "patch_mae_max": 1.777,
+          "patch_mae_mean": 1.599
+        },
+        {
+          "frame": 1,
+          "kinds": [
+            "scene_start_post"
+          ],
+          "ok": true,
+          "global_mae": 1.617,
+          "patch_mae_max": 1.913,
+          "patch_mae_mean": 1.616
+        },
+        {
+          "frame": 154,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.651,
+          "patch_mae_max": 1.912,
+          "patch_mae_mean": 1.652
+        },
+        {
+          "frame": 386,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.656,
+          "patch_mae_max": 2.044,
+          "patch_mae_mean": 1.657
+        },
+        {
+          "frame": 392,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.653,
+          "patch_mae_max": 2.051,
+          "patch_mae_mean": 1.654
+        },
+        {
+          "frame": 393,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.664,
+          "patch_mae_max": 2.279,
+          "patch_mae_mean": 1.664
+        },
+        {
+          "frame": 394,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.656,
+          "patch_mae_max": 2.266,
+          "patch_mae_mean": 1.656
+        },
+        {
+          "frame": 456,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.644,
+          "patch_mae_max": 2.111,
+          "patch_mae_mean": 1.644
+        },
+        {
+          "frame": 457,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.655,
+          "patch_mae_max": 2.265,
+          "patch_mae_mean": 1.655
+        },
+        {
+          "frame": 458,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.656,
+          "patch_mae_max": 2.217,
+          "patch_mae_mean": 1.656
+        },
+        {
+          "frame": 517,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.681,
+          "patch_mae_max": 2.074,
+          "patch_mae_mean": 1.681
+        },
+        {
+          "frame": 518,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.683,
+          "patch_mae_max": 2.118,
+          "patch_mae_mean": 1.684
+        },
+        {
+          "frame": 519,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.676,
+          "patch_mae_max": 2.096,
+          "patch_mae_mean": 1.676
+        },
+        {
+          "frame": 605,
+          "kinds": [
+            "scene_start_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.683,
+          "patch_mae_max": 1.892,
+          "patch_mae_mean": 1.683
+        },
+        {
+          "frame": 606,
+          "kinds": [
+            "scene_start"
+          ],
+          "ok": true,
+          "global_mae": 1.686,
+          "patch_mae_max": 2.253,
+          "patch_mae_mean": 1.686
+        },
+        {
+          "frame": 607,
+          "kinds": [
+            "scene_start_post"
+          ],
+          "ok": true,
+          "global_mae": 1.672,
+          "patch_mae_max": 2.223,
+          "patch_mae_mean": 1.672
+        },
+        {
+          "frame": 675,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.658,
+          "patch_mae_max": 2.116,
+          "patch_mae_mean": 1.658
+        },
+        {
+          "frame": 709,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.678,
+          "patch_mae_max": 2.292,
+          "patch_mae_mean": 1.678
+        },
+        {
+          "frame": 710,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.71,
+          "patch_mae_max": 2.566,
+          "patch_mae_mean": 1.711
+        },
+        {
+          "frame": 711,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.7,
+          "patch_mae_max": 2.479,
+          "patch_mae_mean": 1.7
+        },
+        {
+          "frame": 780,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.673,
+          "patch_mae_max": 2.211,
+          "patch_mae_mean": 1.673
+        },
+        {
+          "frame": 781,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.725,
+          "patch_mae_max": 2.614,
+          "patch_mae_mean": 1.726
+        },
+        {
+          "frame": 782,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.711,
+          "patch_mae_max": 2.508,
+          "patch_mae_mean": 1.712
+        },
+        {
+          "frame": 851,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.702,
+          "patch_mae_max": 2.129,
+          "patch_mae_mean": 1.702
+        },
+        {
+          "frame": 852,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.756,
+          "patch_mae_max": 2.822,
+          "patch_mae_mean": 1.756
+        },
+        {
+          "frame": 853,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.725,
+          "patch_mae_max": 2.554,
+          "patch_mae_mean": 1.725
+        },
+        {
+          "frame": 859,
+          "kinds": [
+            "scene_start_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.713,
+          "patch_mae_max": 2.186,
+          "patch_mae_mean": 1.713
+        },
+        {
+          "frame": 860,
+          "kinds": [
+            "scene_start"
+          ],
+          "ok": true,
+          "global_mae": 1.436,
+          "patch_mae_max": 1.679,
+          "patch_mae_mean": 1.436
+        },
+        {
+          "frame": 861,
+          "kinds": [
+            "scene_start_post"
+          ],
+          "ok": true,
+          "global_mae": 1.652,
+          "patch_mae_max": 1.945,
+          "patch_mae_mean": 1.653
+        },
+        {
+          "frame": 965,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.566,
+          "patch_mae_max": 2.054,
+          "patch_mae_mean": 1.566
+        },
+        {
+          "frame": 1038,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.576,
+          "patch_mae_max": 2.086,
+          "patch_mae_mean": 1.576
+        },
+        {
+          "frame": 1039,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.576,
+          "patch_mae_max": 2.078,
+          "patch_mae_mean": 1.577
+        },
+        {
+          "frame": 1040,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.573,
+          "patch_mae_max": 2.073,
+          "patch_mae_mean": 1.573
+        },
+        {
+          "frame": 1226,
+          "kinds": [
+            "scene_start_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.577,
+          "patch_mae_max": 1.853,
+          "patch_mae_mean": 1.578
+        },
+        {
+          "frame": 1227,
+          "kinds": [
+            "scene_start"
+          ],
+          "ok": true,
+          "global_mae": 1.573,
+          "patch_mae_max": 1.967,
+          "patch_mae_mean": 1.574
+        },
+        {
+          "frame": 1228,
+          "kinds": [
+            "scene_start_post"
+          ],
+          "ok": true,
+          "global_mae": 1.581,
+          "patch_mae_max": 2.013,
+          "patch_mae_mean": 1.582
+        },
+        {
+          "frame": 1255,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.595,
+          "patch_mae_max": 1.951,
+          "patch_mae_mean": 1.596
+        },
+        {
+          "frame": 1299,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.63,
+          "patch_mae_max": 2.032,
+          "patch_mae_mean": 1.63
+        },
+        {
+          "frame": 1300,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.655,
+          "patch_mae_max": 2.387,
+          "patch_mae_mean": 1.656
+        },
+        {
+          "frame": 1301,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.651,
+          "patch_mae_max": 2.42,
+          "patch_mae_mean": 1.652
+        },
+        {
+          "frame": 1386,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.623,
+          "patch_mae_max": 1.93,
+          "patch_mae_mean": 1.623
+        },
+        {
+          "frame": 1387,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.458,
+          "patch_mae_max": 2.14,
+          "patch_mae_mean": 1.458
+        },
+        {
+          "frame": 1388,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.667,
+          "patch_mae_max": 2.12,
+          "patch_mae_mean": 1.667
+        },
+        {
+          "frame": 1467,
+          "kinds": [
+            "accent_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.622,
+          "patch_mae_max": 2.001,
+          "patch_mae_mean": 1.622
+        },
+        {
+          "frame": 1468,
+          "kinds": [
+            "accent"
+          ],
+          "ok": true,
+          "global_mae": 1.638,
+          "patch_mae_max": 2.306,
+          "patch_mae_mean": 1.639
+        },
+        {
+          "frame": 1469,
+          "kinds": [
+            "accent_post"
+          ],
+          "ok": true,
+          "global_mae": 1.64,
+          "patch_mae_max": 2.329,
+          "patch_mae_mean": 1.64
+        },
+        {
+          "frame": 1477,
+          "kinds": [
+            "scene_start_pre"
+          ],
+          "ok": true,
+          "global_mae": 1.625,
+          "patch_mae_max": 2.047,
+          "patch_mae_mean": 1.626
+        },
+        {
+          "frame": 1478,
+          "kinds": [
+            "scene_start"
+          ],
+          "ok": true,
+          "global_mae": 1.659,
+          "patch_mae_max": 2.03,
+          "patch_mae_mean": 1.66
+        },
+        {
+          "frame": 1479,
+          "kinds": [
+            "scene_start_post"
+          ],
+          "ok": true,
+          "global_mae": 1.656,
+          "patch_mae_max": 2.039,
+          "patch_mae_mean": 1.657
+        },
+        {
+          "frame": 1544,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.664,
+          "patch_mae_max": 1.987,
+          "patch_mae_mean": 1.664
+        },
+        {
+          "frame": 1776,
+          "kinds": [
+            "interior"
+          ],
+          "ok": true,
+          "global_mae": 1.666,
+          "patch_mae_max": 2.008,
+          "patch_mae_mean": 1.667
+        },
+        {
+          "frame": 1931,
+          "kinds": [
+            "last_frame"
+          ],
+          "ok": true,
+          "global_mae": 1.669,
+          "patch_mae_max": 1.891,
+          "patch_mae_mean": 1.67
+        }
+      ]
+    }
+  ],
+  "pass": true,
+  "musical_naturalness": "NOT verified (no listening)"
+}
