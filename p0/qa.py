@@ -60,13 +60,15 @@ ACCENT_G_LOW = 90
 #: check only when a reference callback is supplied). A frame passes
 #: when BOTH its whole-frame mean-abs error and its worst patch error
 #: stay within these bounds. Patch errors keep small localised faults
-#: (a missing accent bloom, a one-frame-late palette change) from being
+#: (a missing accent bloom or wrong local drawing) from being
 #: diluted by the whole-frame average. Values are calibrated against
 #: real CRF-18 encodes of the clean renderer (see
 #: tests/test_studio_clean_render.py); do not widen them to pass.
 RENDERED_GLOBAL_MAE_MAX = 8.0
 RENDERED_PATCH_MAE_MAX = 16.0
 RENDERED_PATCH_GRID = (8, 12)  # (columns, rows) over the full frame
+TRANSITION_MIN_MARGIN = 0.10
+TRANSITION_FEATURE_STD_MIN = 0.25
 
 
 def lag_pass_samples(tb) -> int:
@@ -333,8 +335,65 @@ def rendered_probe_frames(plan: dict, n_frames: int) -> dict:
     return probes
 
 
+def _transition_features(frame: np.ndarray) -> np.ndarray:
+    """4x4 RGB region means suppress codec/grain noise, without markers."""
+    h, w = frame.shape[:2]
+    bh, bw = h // 4, w // 4
+    return frame[:bh * 4, :bw * 4].astype(np.float64).reshape(
+        4, bh, 4, bw, 3).mean(axis=(1, 3)).reshape(-1)
+
+
+def check_transition_timing(mp4, boundary, window, w, h, n_frames,
+                            reference_frame_fn):
+    """Compare actual encoded progression with -2..+2-frame boundary models.
+
+    A smooth fade can hide a one-frame error inside a spatial MAE tolerance.
+    These counterfactuals move only the scene boundary; audio controls and
+    frame-dependent motion remain at their actual time. Region-wise constant
+    colour offsets and <=10% gain compensate codec conversion, then the
+    nonlinear progression over the complete join determines its phase.
+    Ambiguous or unobservable timing fails instead of claiming precision.
+    """
+    left, right, _ = window
+    start, end = max(0, left - 6), min(n_frames - 1, right + 6)
+    frames = sorted(set(range(start, end + 1, 3)) | {boundary, start, end})
+    expr = "select=" + "+".join(f"eq(n\\,{f})" for f in frames)
+    raw = subprocess.run(
+        ["ffmpeg", "-v", "error", "-i", mp4, "-vf", expr,
+         "-vsync", "0", "-pix_fmt", "rgb24", "-f", "rawvideo", "-"],
+        capture_output=True, check=True).stdout
+    decoded = np.frombuffer(raw, np.uint8).reshape(len(frames), h, w, 3)
+    observed = np.stack([_transition_features(frame) for frame in decoded])
+    observed -= observed.mean(axis=0)
+    del decoded, raw
+    reference = np.stack([_transition_features(reference_frame_fn(f)) for f in frames])
+    active = reference.std(axis=0) > TRANSITION_FEATURE_STD_MIN
+    if np.count_nonzero(active) < 3:
+        return {"ok": False, "reason": "transition timing is not observable",
+                "boundary": boundary, "probe_frames": frames}
+    scores = {}
+    for shift in (-2, -1, 0, 1, 2):
+        ref = reference if shift == 0 else np.stack([
+            _transition_features(reference_frame_fn.shifted_boundary_frame(
+                boundary, shift, f)) for f in frames])
+        x = ref - ref.mean(axis=0)
+        gain = np.clip(np.sum(x * observed, axis=0)
+                       / np.maximum(np.sum(x * x, axis=0), 1e-8), .9, 1.1)
+        scores[shift] = float(np.mean(
+            (observed[:, active] - x[:, active] * gain[active]) ** 2))
+    ranked = sorted(scores, key=scores.get)
+    best, second = ranked[:2]
+    margin = (scores[second] - scores[best]) / max(scores[best], .001)
+    ok = best == 0 and margin >= TRANSITION_MIN_MARGIN
+    return {"ok": bool(ok), "boundary": boundary, "probe_frames": frames,
+            "best_offset_frames": best, "relative_margin": round(margin, 5),
+            "scores": {str(k): round(v, 6) for k, v in scores.items()},
+            "reason": "aligned" if ok else "shifted or ambiguous transition"}
+
+
 def check_rendered_frames(mp4: str, plan: dict, tb, w: int, h: int,
-                          n_frames: int, reference_frame_fn) -> dict:
+                          n_frames: int, reference_frame_fn, *,
+                          require_transition_timing: bool = False) -> dict:
     """Verify DECODED frames against deterministic reference frames.
 
     Clean Studio video carries no diagnostic marker, so this is the
@@ -342,7 +401,9 @@ def check_rendered_frames(mp4: str, plan: dict, tb, w: int, h: int,
     frame is compared with the frame the clean renderer deterministi-
     cally produces for the same index, using compression-tolerant
     whole-frame and patch mean-abs errors. Any probed frame outside
-    tolerance fails the check (no averaging away of a bad frame).
+    tolerance fails the check (no averaging away of a bad frame). Smooth
+    scene transitions additionally require a uniquely aligned temporal
+    match against deliberately early/late boundary hypotheses.
     """
     probe_map = rendered_probe_frames(plan, n_frames)
     results = []
@@ -359,17 +420,41 @@ def check_rendered_frames(mp4: str, plan: dict, tb, w: int, h: int,
               and m["patch_mae_max"] <= RENDERED_PATCH_MAE_MAX)
         results.append({"frame": f, "kinds": probe_map[f], "ok": bool(ok),
                         **m})
+    # Studio callbacks expose boundary-specific counterfactuals. Legacy P0
+    # callbacks still use the original spatial/marker path. Never increase
+    # spatial thresholds to accommodate the new smooth visual transitions.
+    transitions = []
+    timing_supported = (callable(getattr(reference_frame_fn, "transition_window", None))
+                        and callable(getattr(reference_frame_fn, "shifted_boundary_frame", None)))
+    if timing_supported:
+        by_frame = {item["frame"]: item for item in results}
+        for scene in plan.get("scenes", [])[1:]:
+            boundary = int(scene["start_frame"])
+            window = reference_frame_fn.transition_window(boundary)
+            if window is None:
+                continue
+            timing = check_transition_timing(mp4, boundary, window, w, h,
+                                             n_frames, reference_frame_fn)
+            transitions.append(timing)
+            by_frame[boundary]["transition_timing"] = timing
+            by_frame[boundary]["ok"] &= timing["ok"]
     return {
-        "pass": bool(results) and all(r["ok"] for r in results),
+        "pass": (bool(results) and all(r["ok"] for r in results)
+                 and (not require_transition_timing or timing_supported)),
         "method": ("decoded MP4 frames vs deterministic clean-renderer "
                    "reference frames; per-frame whole-frame MAE and "
                    f"{RENDERED_PATCH_GRID[0]}x{RENDERED_PATCH_GRID[1]} "
-                   "patch MAE (0-255), both must pass"),
+                   "patch MAE (0-255), plus encoded transition phase; all must pass"),
         "thresholds": {"global_mae_max": RENDERED_GLOBAL_MAE_MAX,
                        "patch_mae_max": RENDERED_PATCH_MAE_MAX,
-                       "patch_grid": list(RENDERED_PATCH_GRID)},
+                       "patch_grid": list(RENDERED_PATCH_GRID),
+                       "transition_min_relative_margin": TRANSITION_MIN_MARGIN,
+                       "transition_feature_std_min": TRANSITION_FEATURE_STD_MIN,
+                       "transition_gain_range": [.9, 1.1]},
         "probed_frames": sorted(probe_map),
         "frames": results,
+        "transition_timing": transitions,
+        "transition_timing_supported": timing_supported,
     }
 
 
@@ -508,7 +593,8 @@ def check_file(mp4: str, clip_wav: str, plan: dict, tb, w: int, h: int,
     if reference_frame_fn is not None:
         try:
             rf = check_rendered_frames(mp4, plan, tb, w, h, n_frames,
-                                       reference_frame_fn)
+                                       reference_frame_fn,
+                                       require_transition_timing=True)
             rec("rendered_frame_spotcheck", rf["pass"],
                 **{k: v for k, v in rf.items() if k != "pass"})
         except Exception as e:  # noqa: BLE001

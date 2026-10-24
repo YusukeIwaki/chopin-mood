@@ -1003,5 +1003,28 @@ def make_reference_frame_fn(ctrl: dict, w: int, h: int, seed: int,
                                          scene_params=scene_params)
         return cache[f]
 
+    def shifted_boundary_frame(boundary: int, shift: int, frame: int):
+        # Counterfactual for encoded timing QA: move only this scene
+        # boundary. Audio-linked controls and the evaluated frame stay
+        # fixed, so an accent near a transition cannot mask its lag.
+        ids = np.asarray(ctrl["scene_id"]).copy()
+        b, delta = int(boundary), int(shift)
+        if not 0 < b < len(ids) or ids[b - 1] == ids[b]:
+            raise ValueError("not a scene boundary")
+        if delta > 0:
+            if b + delta >= len(ids) or np.any(ids[b:b + delta] != ids[b]):
+                raise ValueError("shift crosses another scene")
+            ids[b:b + delta] = ids[b - 1]
+        elif delta < 0:
+            if b + delta < 0 or np.any(ids[b + delta:b] != ids[b - 1]):
+                raise ValueError("shift crosses another scene")
+            ids[b + delta:b] = ids[b]
+        shifted = dict(ctrl, scene_id=ids)
+        return draw_clean_frame(int(frame), shifted, w, h, seed, lay,
+                                scene_palettes=scene_palettes,
+                                scene_params=scene_params)
+
     fn.cache = cache  # type: ignore[attr-defined]
+    fn.transition_window = lambda b: scene_transition(b, ctrl["scene_id"])
+    fn.shifted_boundary_frame = shifted_boundary_frame
     return fn
