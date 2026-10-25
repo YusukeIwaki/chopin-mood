@@ -1,91 +1,95 @@
 # Studio運用
 
-制作はCodexセッションで行い、Actionsは保存された作品の再現と検証を行う。
-人向けの制作フローは[README](../README.md)、エージェントのルールは[AGENTS.md](../AGENTS.md)を参照する。
+人向けの流れは[README](../README.md)、制作担当の手順は[studio-produce](../.agents/skills/studio-produce/SKILL.md)、評価と裁定は[創作レビュー規約](12_CREATIVE_REVIEW_PROTOCOL.md)を参照する。
 
-## 保存する制作入力
+## 制作と候補PR
 
-`studio/projects/issue-<親Issue番号>/` に3ファイルを置く。
+新作は元Issueへ直接結び付ける。子Issueを作らず、最大3候補をそれぞれ別のPRにする。Issueの作成・コメントだけではモデルを起動せず、Codexへの制作／改訂依頼を入口にする。
 
-| ファイル | 内容 |
+保存先は `studio/projects/issue-<番号>/candidates/cand-01/` 〜 `cand-03/`。
+
+| 入力 | 内容 |
 | --- | --- |
-| `project.json` | schema version、親Issue、既存制作Issue、GitHub添付URL |
-| `brief.json` | 元の候補、整数サンプル／フレーム位置、企画、音源ハッシュ、fingerprint |
-| `storyboard.json` | Codexが制作した場面別パレットと実行可能な数値設定 |
+| `project.json` | v2、元Issue、候補ID、添付URL、検証したengine SHA |
+| `brief.json` | 本人の希望、創作案、原音源ハッシュ、DSP候補と整数時刻、fingerprint |
+| `storyboard.json` | レンダラーが実行する構図・パレット・カメラ・登録固定素材 |
+| `editorial.json` | ローカルの動画／入力ハッシュ、機械QA、音楽・映像の独立レビュー、編集責任者の裁定 |
 
-コードと一緒にレビューしてmainへ保存する。個人の録音をgitへ入れない。
-現時点では既存の制作Issue・PRを引き継ぐ入力契約であり、未登録の作品を自動分割する機能は使わない。
-`studio_prepare_project.py` は、ファイル、元Issueの作成者／Open状態／添付／創作方針、既存制作Issueのbot markerと親子関係を検証する。作成・更新APIは呼ばない。
+ブランチは `codex/studio-issue-<番号>-cand-01` の形式とする。候補PRの差分はその候補の4 JSONだけ。元音源、動画、認証、モデルの非公開ログをコミットしない。新しい固定素材・描画機能はエンジニアリングPRで先にレビューする。候補を公開する前にエンジンの変更が必要なら、制作担当がその作業も引き受ける。
 
-## Actions
+ローカルで `studio_candidate.py init` から取得・解析し、描画を改善する。静止画、短い動き、本編を確認し、独立レビューと裁定を記録して `validate` を通す。具体的な呼出しは[開発ガイド](../scripts/README.md)に置く。helperは制作を補助するもので、自動的に美的合格を付けない。
 
-- `Studio production`: オーナーによるmainからの `workflow_dispatch` のみ。`issue_number` に親Issueを指定する。
-- `Studio CI`: Secret・モデル・録音なしで、テストと合成音源の書き出しを行う。
-- `Studio auth smoke`: Codexだけの最小認証確認。Museのインストール・実行・復号・認証保存はない。
-- `Studio release`: 本人が承認・マージした制作PRの成果物を照合して公開する。
+候補ごとのコミット・PR作成後、制作担当が以下を実行する。人がActions画面で毎回作業する必要はない。
 
-productionは次の順に進む。
+```bash
+gh workflow run studio-candidate.yml --ref main -f pr_number=104
+```
 
-1. APIで元Issueの作成者と実行者がともに `YusukeIwaki`、IssueがOpen、添付が1件であることを確認する。
-2. 保存済み制作入力を読み込み、原録音を一時領域へダウンロード・可逆復号する。添付と復号WAVの両ハッシュを検証する。
-3. 各場面の開始／中間／終了の静止画を生成し、Artifactへ保存して既存制作Issueへ開始コメントを出す。Codexが実画像をレビューし、検証済みJSONから結果コメントを出す。
-4. 静止画合格後、各場面の中点付近から最大2秒の無音プレビューを生成する。デコードしたサンプル画像を別のCodex呼び出しでレビューする。
-5. 両方に合格した同一入力だけ本編をレンダリングし、既存の機械QAを実行する。新しい制作コミットとPRを作成または更新する。
-6. exact-headのreceiptを作り、本編の画像・ハッシュ・QAをCodexがレビューする。12ファイルの許可リストに一致するbundleだけアップロードする。
-7. 最終レビューと機械QAの両方が合格した場合だけ、本人をPRへassignし `@YusukeIwaki please check this` とCOMMENTする。
+実際のPR番号に置き換える。実行アカウントと元Issue作成者は `YusukeIwaki` に限る。PRは同一リポジトリのownerまたは許可bot作成で、baseはmainであることをAPIで再確認する。forkの実行コードを認証付きで動かさない。
 
-途中コメントへの返信や人間の承認は不要。同じrun内の検証済みJSONが進行を制御し、`issue_comment` トリガーは使わない。
-不合格ならその段階で停止する。Actions内でコンテンツを修復するモデル呼び出しや、新しいエンジニアリングIssue作成は行わない。制作担当のCodexが同じIssueを継続する。
+## Actionsの役割
 
-## 品質状態
+| Workflow | 起動と責務 |
+| --- | --- |
+| `Studio candidate` | ownerがmainからPR番号をdispatch。ローカル検証済みの保存入力を再現し、独立レビューとArtifact保存を行う |
+| `Studio release` | PRのMerge、またはownerのmainからの復旧dispatch。採用動画を照合して公開し、関連候補を閉じる |
+| `Studio CI` | push／PR。Secret・モデル・本人録音なしのテストと合成信号レンダリング |
+| `Studio auth smoke` | ownerによるCodexの最小認証確認 |
+| `Studio production` | 旧v1保存プロジェクト専用。既存作品の互換経路として維持 |
 
-ワークフローの成功は作品の承認を意味しない。
-`needs_engine` / `visual_blocked` は静止画または動きの不合格であり、本編は生成されない。
-最終 `review.json` のfailも公開対象外である。具体的な指摘は制作IssueまたはPRに残る。
-インフラ障害や不正なJSON・入力の差し替えは非ゼロ終了する。
+新方式の再現処理は次の順で進む。
 
-各モデル呼び出しは15分、途中レビューは40分、build全体は120分を上限とする。
-途中のreview履歴は保存し、不正なモデル出力・生ログ・認証・原録音全体はArtifactへ入れない。
+1. 信頼済みmainをcheckoutする。PRのheadをAPIで固定し、4 JSONだけを取得する。ローカル編集記録の機械QA・必須レビュー・入力ハッシュ・修正上限を検査する。
+2. 音源を一時領域へ取得し、添付と復号WAVのハッシュを照合する。v2はPCMバイトを変えずにWAVの可変メタデータを除く。実デコーダ差による音声サンプル不一致は止める。
+3. DSPを再計算し、候補が同じ出力かexact比較する。手入力した時刻は採用しない。
+4. 各場面の静止画、短い無音プレビューを生成し、それぞれ独立したCodex呼出しでレビューする。途中結果は同じ候補PRへ記録する。レビュー・アップロード・コメント前にも元IssueとPRのhead／入力を確認する。
+5. 合格した同一入力から本編を生成し、圧縮後の音声・映像の機械QAと最終Codex映像レビューを実施する。
+6. 許可リストとハッシュを検査したArtifactを保存する。機械・美的ゲートの両方が合格した場合だけ、本人へassignし `@YusukeIwaki please check this` とCOMMENTする。AIによるApproveではない。
 
-## 成果物と承認
+原音源をモデルへ渡さず、Actionsはコンテンツを新たに制作・修復しない。不合格は非成功で終了し、PRの証拠を制作担当が引き取る。静止画／短いプレビューのレビューを、全編を聴いて視聴した判断と表現しない。
 
-- 途中成果物: `studio-visual-child-<id>-run-<run>-a<attempt>-v1-still|motion`。
-- 途中履歴: `studio-visual-reviews-child-<id>-run-<run>-a<attempt>`。
-- 本編: `studio-child-<id>-pr-<pr>-<head>-run-<run>-a<attempt>`。
-- 保持期間は90日。期限切れ成果物に旧承認を流用しない。
+`project.engine_sha` とdispatch時のmain SHAは一致が必要。mainが先に更新された場合は新しいエンジンでローカル再検証して入力と証拠を更新する。古い合格を流用する自動リベースはしない。これは保守的な再現条件であり、コードの無関係な更新を除外する最適化は未実装。
 
-途中承認は、source・brief・candidate・storyboard・plan・controlsのハッシュ、寸法、seed、engine SHA、run、attemptに結び付く。本編は書き出す直前に同じ入力か再検証する。
-原音源の相対パスは内部処理だけに使い、公開JSONへ絶対パスを含めない。
+## 改訂
 
-制作コミットに保存するのはbrief、storyboard、plan、QA、provenance、timelineである。
-commit後に生成する `receipt.json` は、PR/head/run/attempt/engine/音源/企画/commitファイルを結び付ける。
-provenanceはMP4・確認画像・timeline.htmlの実バイトをハッシュで結び付ける。
-これらを更新せず、画像・動画・承認だけを差し替えてはならない。
+「PR #104 のコメントに対応」の依頼で、最新headと本人コメントを取得する。コメントの取得記録はgit管理外へ保存し、PR本文に希望ごとの対応・証拠・未解決事項を残す。同じ候補・PRを更新してローカル検証、Actions再現をやり直す。
 
-Releaseには、本人による現在のheadへのApproveと本人によるMerge、信頼できるproduction runの成功、receiptと全成果物の一致が必要。
-botはApprove／Mergeしない。COMMENTを本人のApproveと混同しない。
-Release公開後に制作Issueを閉じ、全候補が公開済みまたは本人により明示却下された場合だけ親Issueを閉じる。
-PR本文に `Fixes #child` を書かず、Release前に自動クローズさせない。
-既存の公開済みReleaseに異なる資産を上書きしない。
+1依頼につき初回＋最大2回の実質修正を静止画から本編まで共有する。新しい本人の依頼で再開するときも、以前の不合格や裁定を履歴から消さない。`editorial.round` は現在の依頼の範囲を検査するが、全セッションを通じた回数を暗号学的に証明するものではない。Git履歴とPRの依頼・回答も確認する。
 
-## 認証・実行環境
+## Artifactと採用
 
-既存Codexレビュー経路のSecretは `CODEX_ENC_APP_ID`、`CODEX_ENC_APP_PRIVATE_KEY`、`CODEX_ENC_PASSPHRASE` の3件。
-Muse用Secretはproduction／auth smokeから参照しない。保存済みSecret自体を自動削除する必要はない。
+本編Artifact名は `studio-candidate-pr-<PR>-<head>-run-<run>-a<attempt>`。保存期間は90日。14ファイルだけを許可する。
 
-Codex CLIはNode 24で `@openai/codex@latest` をインストールし、バージョンをログへ記録する。
-read tokenでcodex.encをcloneした後、モデル呼び出し前にtokenを失効する。
-復号先はRUNNER_TEMP配下。モデルにはGitHub／Artifact tokenを渡さない。
-認証が変わったときだけ再暗号化し、新しいwrite tokenでforceなしに保存する。remoteが動いていれば上書きせず失敗する。
-認証の保存と削除は不合格時も実行する。共有認証の競合を防ぐため `studio-agent-auth` の並列実行を禁止する。
+- 作品と確認用：`video.mp4`、`contact-sheet.jpg`、`timeline.html`
+- 4入力：`project.json`、`brief.json`、`storyboard.json`、`editorial.json`
+- 再現結果：`plan.json`、`timeline.json`、`qa.json`、`provenance.json`
+- 承認の結合：`review.json`、`receipt.json`、`hashes.json`
 
-公開リポジトリでのChatGPT認証のCI持ち込みは、[現在の公式ガイド](https://learn.chatgpt.com/docs/auth/ci-cd-auth)の推奨条件を満たさない。既存経路をAPI認証へ移行する際は、モデルの利用可否と費用上限を確認してから変更する。
+ローカル動画とActions動画はエンコーダ環境でバイトが異なり得る。PRへ提示して採用するのはActionsが検証したArtifactの実バイトであり、ローカル動画と同じバイトだとは主張しない。ローカル証拠とActions証拠は同じ制作入力・エンジンへ結び付け、別々のQAとレビューを持つ。
 
-## 制限
+本人がMergeしたPRを採用する。新方式では別途Approveは要求しないが、Merge済みというだけで検証を免除しない。Releaseは次を再確認する。
 
-DSP境界は音楽的フレーズの正解ではない。音声聴取による自然さの評価は別に行う。
-静止画・動きのサンプル画像によるレビューで、全編の連続した動きや演奏との一体感まで確認したと表現しない。
-曲名や時期は未指定ならunknownとし、添付ファイル名から断定しない。
-現在の作品はCodex内蔵画像生成で作った背景・透過人物素材を使用する。`asset_bundle` は既知の登録IDのみ受け付け、パスやURLを受け付けない。素材のハッシュはmanifest、公的planの承認用ハッシュ、provenanceに含まれ、差し替えには再レビューが必要となる。生成方法とプロンプトは素材ディレクトリに保存する。手続き描画は合成信号の検証用として残す。
+- 本人のMerge、同じリポジトリ／main、レビュー対象headとmerge結果の4入力の一致。
+- ownerの信頼済みmain workflow実行、そのrun／attemptに属する未失効Artifact、botの該当headへのreceipt。
+- 全ファイルのハッシュ、原音源・メディアのprovenance、機械QA、ローカル裁定、Actionsの美的合格。
 
-Actionsは固定素材を読み込み、カメラ・色・光・粒子だけを決定的に動かす。画像生成や生成動画APIを呼ばず、同期時刻もモデルに決めさせない。追加APIへの課金・外部への演奏送信・投稿は事前承認なしに実行しない。
+`studio-issue-<番号>` を採用枠としてdraft Releaseを作り、14ファイルをアップロード・照合して公開する。公開確認後に同じ元Issueの他候補PRを閉じ、最後に元Issueを閉じる。PR本文の `Fixes` / `Closes` で先にIssueを閉じない。
+
+Releaseは直列実行とし、同じ元Issueで別の候補が先に選択枠を取得していれば上書きしない。二つのPRをMergeしても二作品の採用にはならない。採用は一つだけ。公開済みReleaseの異なる資産の差替えや、自動的な別案への切替は行わない。
+
+## 失敗と復旧
+
+- **美的・機械的な不合格**：同じCodex制作セッションでPRの指摘を修正する。閾値を広げたり、判定JSONを成功に書き換えたりしない。
+- **認証・モデル・実行環境の障害**：作品の判定と分け、原因を修正して同じ入力を再実行する。
+- **Releaseのアップロード／公開／クローズ途中の失敗**：採用したPR番号で `gh workflow run studio-release.yml --ref main -f pr_number=104` を実行する。同じdraft／公開済み資産を照合し、未完の処理を復旧する。
+- **Artifact失効、head変更、入力不一致**：古いreceiptでは公開しない。再現・独立検証が必要。マージ後の入力を勝手に別内容へ書き換えない。
+
+## 認証
+
+Codexレビューは `CODEX_ENC_APP_ID`、`CODEX_ENC_APP_PRIVATE_KEY`、`CODEX_ENC_PASSPHRASE` を使用する。MuseはActionsに含めない。CLIは `@openai/codex@latest`、モデルは設定とコマンドを `gpt-6.1-sol / xhigh` に揃える。
+
+認証はRUNNER_TEMPへ復号し、GitHub／Artifact tokenをモデルから除去する。read tokenをモデル呼出し前に失効し、変更された認証だけ別のwrite tokenでforceなしに保存する。失敗時にも認証保存と削除を行う。モデルを使うworkflowは `studio-agent-auth` で直列化し、Releaseは認証を使わない別の直列キューで動かす。
+
+## 既存v1作品
+
+`studio/projects/issue-1/` と既存の制作PR #6は旧入力・receipt・計画記録を保持する。`Studio production` と従来のRelease controllerが対応し、**旧作品だけは現在headへの本人Approve＋Merge**を要求する。新作の4 JSON契約に見せかけて古いArtifactを承認済みとして流用しない。旧作品の子Issue終了規則も従来契約を維持する。

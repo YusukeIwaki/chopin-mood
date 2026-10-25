@@ -67,12 +67,39 @@ P0 は従来のオフライン比較用である。現在の Studio 制作（60�
 
 ## Codex主導のStudio制作
 
-制作入力は `studio/projects/issue-<親Issue番号>/` の `project.json`、`brief.json`、`storyboard.json` に保存する。原録音は含めない。
+新作は元Issueへ直接紐づく最大3候補。手順は [studio-produce](../.agents/skills/studio-produce/SKILL.md)、裁定は [レビュー規約](../docs/12_CREATIVE_REVIEW_PROTOCOL.md)。以下の番号は実際のIssue・PRに置き換える。`gh` は本人アカウントで認証する。完全な音源は無視対象の `output/` にだけ置く。
 
-- `scripts/studio_prepare_project.py` は保存済み入力とGitHub上の作成者・音源・創作方針・既存Issueの関連を検証し、Actions用の入力を出力する。モデル呼び出しや子Issueの作成は行わない。
-- `scripts/studio_visual_preflight.py --codex-led` は、静止画と短い無音プレビューを順に生成・レビューする。新しい子Issueや修復ワーカーは起動しない。Actionsのrun・engine・artifactに結び付けるため、本番の呼び出し引数はワークフローを参照する。
-- `scripts/studio_render.py` は同じ入力から本編・タイムライン・機械QAを生成する。本番では途中承認のハッシュとengine SHAも照合する。
-- 不合格時は制作担当のCodexが同じ作品の絵コンテや描画コードを修正する。変更前後で原音源・自動計算した時刻・機械QA基準を保持する。
+```bash
+# ownerのIssueを取得し、未切り取り録音からDSP候補を作る。再実行で既存入力は上書きしない。
+.venv/bin/python scripts/studio_candidate.py init --issue 103 --max-candidates 3 --creator-id production-session
 
-以前の `scripts/studio_repair.py` とMuse用アダプターは旧実装の回帰検証用に残っているが、現在のActionsでは使用しない。
-制作・確認・公開の流れは [README](../README.md)、認証と成果物の契約は [Studio運用](../docs/10_GITHUB_STUDIO_OPERATIONS.md) を参照する。
+# Codexが企画・storyboardを制作し、静止画と短い動きを確認した後、本編を生成する。
+.venv/bin/python scripts/studio_candidate.py render --issue 103 --candidate cand-01 --wav output/studio/issue-103/source.wav --creator-id production-session --round 0
+
+# 出力された editorial.template.json に独立2役の評価と編集判断を記入し、候補のeditorial.jsonへ保存する。
+# テンプレートは未レビュー。passにするために証拠や不合格を消さない。
+.venv/bin/python scripts/studio_candidate.py validate --issue 103 --candidate cand-01 --media-dir output/studio/issue-103/cand-01/round-0
+
+# PR作成後、Codexが再現・独立レビューを依頼する。
+gh workflow run studio-candidate.yml --ref main -f pr_number=104
+
+# 明示された改訂依頼で本人コメントを取得する（書込み・自動制作はしない）。
+.venv/bin/python scripts/studio_candidate.py feedback --pr 104 --out output/studio/issue-103/feedback-pr-104-request-1.json
+```
+
+候補を `codex/studio-issue-103-cand-01` のような別ブランチにコミットし、1案1PRにする。4入力の保存先は `studio/projects/issue-103/candidates/cand-01/`。他候補のファイルを同じPRへ混ぜない。PR作成は通常のgit／gh操作を使い、作成したPRをCodexのtaskへattachする。改訂も同じブランチで行う。PRを提示するときは対象headのActions成功とArtifactを確認する。
+
+`render --round 1` / `--round 2` で修正証拠を別保存する。同じ出力先に動画があれば上書きを拒否する。新しい本人依頼でroundを0へ戻す場合は新しい `--out output/...` を使い、PRに依頼と前版を記録する。`validate --offline` は診断用であり、ownerのライブ確認を置き換えない。
+
+`init` と `render` はエンジン・素材・依存ファイルが `project.engine_sha` と同じことを確認する。新しい描画コード・素材は先にエンジニアリングPRへまとめる。Actionsはdispatch時のmain SHAと照合し、PRコードを実行しない。
+
+低水準の処理：
+
+- `studio_download.py --canonical-wav`：v2の可逆復号とWAVメタデータ正規化。音声の実サンプルは変更しない。flagなしは旧契約を保持する。
+- `studio_analyze.py`：ネイティブレートの特徴量から60–120秒候補・場面・アクセントを計算する。
+- `studio_candidate.py verify-dsp --brief <brief.json> --analysis <plan-context.json>`：手修正していない候補か再解析結果とexact比較する。
+- `studio_render.py`：同じ入力から本編・タイムライン・機械QAを生成する。
+- `studio_candidate_actions.py`：trusted main用のprepare／seal／review／check／publish。通常はworkflow経由で使用する。
+- `studio_visual_preflight.py --codex-led`：静止画と短い無音プレビューの独立レビュー。新方式は `--candidate-context` でPR・元Issue・headのguardを選び、旧方式は子Issueのguardを保つ。
+
+旧 `studio_prepare_project.py` はv1保存済み作品の互換用。`studio_repair.py` とMuse用アダプターは旧実装の回帰検証用に残るが、現行Actionsの制作には使用しない。

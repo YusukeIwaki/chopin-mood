@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       issue_number:
-        description: "Source issue number (owner only)"
+        description: "Legacy saved source issue (owner only; new works use Studio candidate)"
         required: true
         type: number
 

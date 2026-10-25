@@ -4,8 +4,9 @@ You receive labelled sections, in order:
 1. SOURCE BRIEF (`brief.json`: owner creative fields verbatim +
    planner candidate brief + deterministic candidate/scenes)
 2. STORYBOARD (`storyboard.json` authored by the production Codex session)
-3. PRODUCTION FILES (committed `production/<child>/` paths with sha256
-   digests from the commit step, plus the expected head SHA)
+3. PRODUCTION FILES (committed input names/paths with sha256 digests,
+   plus the expected head SHA; v2 uses a direct candidate PR, legacy
+   uses `production/<child>/`)
 4. PLAN + QA (`plan.json`, `qa.json`: encoded-media QA on the real MP4)
 5. HASHES (`hashes.json` manifest over the artifact bundle)
 plus the contact-sheet image(s) via --image.
@@ -22,7 +23,11 @@ and zero blockers. Do NOT lower standards: placeholder aesthetics may
 and should fail aesthetic approval; reject frames that are still
 visibly placeholder if that is what the evidence shows. Do not declare
 the result polished merely because no labels, captions or QA markers
-are visible. Do not assume musical listening: audio listening is
+are visible. Intentional simplicity can succeed: do not demand a character,
+many cuts, elaborate acting or extra particles solely to make it busier.
+Distinguish an observable defect or unfulfilled brief from a personal colour
+preference. State the visible evidence and its effect on the viewing
+experience for every blocker. Do not assume musical listening: audio listening is
 unavailable, this is not a full musical judgement, and you must never
 claim the excerpt is musically proven. Set `listening_note` to exactly
 `audio listening unavailable; not a full musical judgement`.

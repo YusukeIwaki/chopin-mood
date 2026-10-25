@@ -1,16 +1,16 @@
 name: Studio source recording
-description: Piano recording for the automated 1-2 minute studio (owner only)
+description: 本人演奏とおおまかな希望から、最大3案の映像作品を制作します（ownerのみ）
 title: "Studio: "
 labels: []
 body:
   - type: markdown
     attributes:
       value: |
-        This repository is public: attached recordings are publicly accessible.
-        Attach exactly ONE recording (audio or video). The studio picks a
-        60-120s excerpt automatically; no manual seconds/cuts are accepted.
-        GitHub limits (Oct 2026): .wav/.mp3 up to 25 MB; video 10 MB free /
-        100 MB paid. The controller's 512 MB cap is defence, not allowance.
+        切り取る前の本人演奏を1件添付し、下におおまかな希望を書いてください。
+        このリポジトリは公開されているため、添付も公開されます。
+        Issue作成後、Codexへ「Issue #番号 の映像作品化をお願いします」と依頼します。
+        抜粋は60–120秒から自動選定し、最大3案のPRで比較します。
+        秒指定・カット割り・エフェクト同期を手作業で行う必要はありません。
   - type: textarea
     id: attachment
     attributes:

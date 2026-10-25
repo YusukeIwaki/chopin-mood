@@ -76,7 +76,11 @@ def main() -> int:
     ap.add_argument("--validate-history", action="store_true")
     ap.add_argument("--codex-led", action="store_true",
                     help="Review the saved project once; no worker or new issue")
+    ap.add_argument("--candidate-context", default="",
+                    help="Trusted direct-candidate context JSON; requires --codex-led")
     a = ap.parse_args()
+    if a.candidate_context and not a.codex_led:
+        ap.error("--candidate-context requires --codex-led")
     work = Path(a.work)
     if a.validate_history:
         try:
@@ -106,6 +110,50 @@ def main() -> int:
         return 2
 
 
+def _candidate_guard(a, work, gh, *, brief, candidate, scenes, storyboard):
+    """Bind local work to the same raw inputs rechecked through the live API."""
+    from studio import artifacts
+    from studio.candidate_pipeline import verify_candidate_guard
+    from studio.candidate_project import INPUT_NAMES
+
+    if not getattr(a, "codex_led", False):
+        raise vpipe.VisualInfrastructureError("candidate context requires Codex-led mode")
+    try:
+        path = Path(a.candidate_context)
+        if path.is_symlink() or not path.is_file() or path.stat().st_size > config.MAX_PRODUCTION_FILE_BYTES:
+            raise ValueError("invalid context file")
+        context = _load(path)
+        if (context["source_issue"] != a.parent or context["pr"] != a.child
+                or context["engine_sha"] != a.engine_sha):
+            raise ValueError("candidate context identity mismatch")
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        raise vpipe.VisualInfrastructureError("visual candidate context is invalid") from exc
+
+    def guard():
+        try:
+            raw = {}
+            for name in INPUT_NAMES:
+                path = work / name
+                if (path.is_symlink() or not path.is_file()
+                        or path.stat().st_size > config.MAX_PRODUCTION_FILE_BYTES):
+                    raise ValueError("invalid local candidate input")
+                raw[name] = path.read_bytes()
+            if artifacts.build_hash_manifest(raw) != context["input_sha256"]:
+                raise ValueError("local candidate inputs changed")
+            original = json.loads(raw["brief.json"])
+            if (brief != original or candidate != original["candidate"]
+                    or scenes != original["candidate"]["scenes"]
+                    or storyboard != json.loads(raw["storyboard.json"])):
+                raise ValueError("local candidate objects changed")
+            verify_candidate_guard(gh, context)
+        except Exception as exc:
+            raise vpipe.VisualInfrastructureError(
+                "visual candidate guard rejected current inputs") from exc
+
+    guard()  # Reject drift before constructing model/upload adapters.
+    return guard
+
+
 def _run(a, work: Path) -> int:
     brief = _load(work / "brief.json")
     candidate = _load(work / "candidate.json")
@@ -118,6 +166,11 @@ def _run(a, work: Path) -> int:
         raise vpipe.VisualInfrastructureError(
             "GitHub repository/token unavailable for visual preflight")
     gh = GitHubClient(repo, token)
+    candidate_guard = None
+    if getattr(a, "candidate_context", ""):
+        candidate_guard = _candidate_guard(
+            a, work, gh, brief=brief, candidate=candidate, scenes=scenes,
+            storyboard=storyboard)
     runner_temp = Path(os.environ.get("RUNNER_TEMP") or work.parent)
     runner_temp.mkdir(parents=True, exist_ok=True)
     sb_dir = runner_temp / "visual-storyboards"
@@ -190,7 +243,8 @@ def _run(a, work: Path) -> int:
         run_id=a.run_id, run_attempt=a.run_attempt, gh=gh,
         reviewer=reviewer, uploader=uploader,
         muse_repair=None if codex_led else _tracked_muse,
-        allow_repair=not codex_led, create_engineering_issue=not codex_led)
+        allow_repair=not codex_led, create_engineering_issue=not codex_led,
+        candidate_guard=candidate_guard)
     # Only a both-stage approval may replace the storyboard the full
     # renderer will read; a blocked/repaired-but-unapproved result must
     # never leave a stale-or-new unreviewed storyboard in place.
