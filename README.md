@@ -1,65 +1,73 @@
 # Piano × Animation — Codex Studio
 
-本人のピアノ演奏を使い、音楽に自動同期する縦型の短編映像を制作します。
-タイミングを人が秒指定したり、毎回タイムラインを手編集したりしないことが最優先です。
+本人のピアノ演奏から、音楽に同期する縦型の短編映像を制作します。
+目指すのは、演奏を主役にした、素朴でも見飽きない作品です。抜粋・場面境界・アクセントは音源から計算し、人が毎回タイムラインを合わせる運用にしません。
 
-**制作はCodexが一貫して担当します。GitHub Actionsは、保存された制作データの再現、検証、成果物保存を担当します。**
-Museによるコンテンツ生成・修復は行いません。Codex内蔵画像生成で制作した背景・人物の固定画像を、ローカルのレンダラーが音源に同期して動かします。生成動画APIは使っていません。
+制作はCodex、再現検証と成果物保存はGitHub Actionsが担当します。Museへのコンテンツ委任や、Issue投稿だけで始まるモデル処理はありません。
 
 ## 動画制作の流れ
 
+1. **Issueに録音と希望を書く。** 切り取る前の本人演奏を1件添付し、雰囲気や避けたい表現を書きます。曲名・時期は任意です。受付は `YusukeIwaki` が作成したOpenなIssueに限ります。このリポジトリの添付は公開されます。
+2. **Codexに制作を頼む。** このリポジトリで「Issue #103 の映像作品化をお願いします」と依頼します。Codexが解析・抜粋選択・企画・素材・描画・検証を進めます。子Issueへの分割は不要です。
+3. **最大3案のPRを受け取る。** 1案につき1PRです。Codexは静止画、短い動き、本編をローカルで確認し、独立レビューを経た案を提出します。3案を埋めるために似た案や未合格案を増やしません。ActionsがそのPRの保存入力から再現し、同期QAと独立した映像レビューを通した動画をArtifactに保存します。確認可能になったPRには `@YusukeIwaki please check this` が付きます。
+4. **修正希望をPRに書く。** 「Pull Request #104 のコメントに対応してください」とCodexに依頼します。コメントだけで勝手に制作は再開しません。
+5. **同じPRで修正版を確認する。** Codexは要望と対応結果を整理し、変更した実映像を再検証します。古い動画の合格結果は流用せず、新しいコミットに対応するArtifactを提示します。
+6. **採用するPRを本人がMergeする。** Mergeを採用・公開の意思表示として扱います。Actionsが採用コミットと検証済みArtifactを照合してReleaseを作り、**公開成功後に**元Issueと他の候補PRを閉じます。新方式では別途Approve操作は必須ではありません。エージェントは制作PRを自動Mergeしません。
+
 ```mermaid
 flowchart TD
-  A["本人がIssueに録音と任意の表現方針を添付"]
-  B["Codexに『Issue #xを進めてください』と指示"]
-  C["DSPで抜粋・場面・アクセントを計算"]
-  D["Codexが企画・絵コンテ・描画コードを制作"]
-  E["実画像を見て修正：静止画 → 短い動き → 本編"]
-  F["制作データとコードをレビューしてmainに保存"]
-  G["Actionsが静止画・短い動きを再生成し、独立したCodexがレビュー"]
-  H["合格した入力から本編MP4を生成し、同期QA・最終レビュー"]
-  I["PRとArtifactを本人に提示"]
-  J["本人が現在のPRコミットをApproveしてMerge"]
-  K["承認したコミットと成果物の一致を確認してRelease"]
-  A --> B --> C --> D --> E --> F --> G --> H --> I --> J --> K
-  G -->|不合格| D
-  H -->|不合格| D
+  A["本人：録音と希望をIssueへ"] --> B["Codexへ制作依頼"]
+  B --> C["自動解析・企画・ローカル制作"]
+  C --> D["音楽／同期と映像／視聴者の独立レビュー"]
+  D --> E["編集責任者が裁定：修正は最大2回"]
+  E -->|合格案のみ| F["最大3本の候補PR"]
+  F --> G["Actions：再現・独立検証・Artifact"]
+  G --> H["本人が比較・コメント"]
+  H -->|Codexへ修正依頼| C
+  H -->|1案をMerge| I["成果物照合 → Release公開"]
+  I --> J["元Issueと他候補PRを閉じる"]
 ```
 
-制作担当のCodexは、色やカメラの数値だけでなく、必要な描画コードも修正します。
-原音源・自動で決めた時刻・品質基準を守りながら実画像で検証します。
-画像素材は `assets/visual/` に保存し、プロンプト・生成方法・ハッシュを記録します。Actionsはこれらを再生成せず、同じ素材から書き出します。画像の生成はタイミングの決定を担当しません。
-作業を再開するときも元のIssueを入口にでき、委任のための子課題分割は必須にしません。
-Actionsが新しい子IssueやエンジニアリングIssueを自動で増やすことはありません。
-既存作品の子Issue・制作PRは、承認と成果物の照合に必要な関連情報として引き継ぎます。
+Artifactの `video.mp4` が作品、`timeline.html` が同期の可視化です。
+`qa.json` は機械検査、`editorial.json` はローカルの独立レビューと裁定、`review.json` はActionsの映像レビューです。
+Releaseには採用動画とこれらの検証記録を保存します。YouTubeへの自動投稿は行いません。
 
-## 使い方
+## 品質の決め方
 
-1. 録音をGitHub Issueに1件添付します。受付は `YusukeIwaki` のOpenなIssueだけです。公開リポジトリなので添付も公開されます。曲名・時期・表現方針は任意です。
-2. このリポジトリのCodexセッションで「Issue #xを進めてください」と指示します。制作担当は `gpt-6.1-sol / xhigh` を第一候補にします。
-3. Codexが保存する制作データは `studio/projects/issue-<番号>/` にあります。`project.json` は音源と既存制作Issueの対応、`brief.json` は企画とDSPの計画、`storyboard.json` は実行可能な描画設定です。人がこれらを毎回手編集する必要はありません。
-4. コードと制作データをmainへ反映したら、[Studio production](https://github.com/YusukeIwaki/chopin-mood/actions/workflows/studio-production.yml)をmainから手動実行し、`issue_number` に親Issueの番号を指定します。Issueの投稿・編集だけでは制作モデルは起動しません。
-5. 静止画・動きのレビュー結果は既存制作Issueのコメントに残ります。不合格なら制作担当のCodexが同じ作品を修正します。Actions内で別の制作モデルを起動する修復ループはありません。
-6. 最終レビューまで合格すると、制作PRに担当者の割り当てと `@YusukeIwaki please check this` が付きます。Artifactの `video.mp4`、`timeline.html`、`qa.json`、`review.json` を確認します。
-7. 本人による現在のコミットへのApproveとMergeを確認したものだけReleaseします。エージェントは制作PRを自動承認・自動マージしません。
+制作担当と、音楽・同期を見る担当、構図・動き・飽きやすさを見る担当を分けます。
+レビューは実際の画像・動画・検査結果に基づきます。「もっと派手にする」「何も動かさない」のどちらも正解とは決めず、演奏と希望に対して必要な変化かを確かめます。
 
-現在のActions入力は、既存制作Issueに紐づく保存済みプロジェクトです。
-未登録のIssueを指定した場合は止まり、自動で企画や子課題を生成しません。新作の受付一般化より、まず再現できる完成例を作る段階です。
+意見が割れた場合は編集責任者が理由を残して決定します。初回制作に対して修正は最大2回。同期失敗、証拠不足、本人の明示した制約への違反は裁定で免除できません。合格に届かなければ、合格済みの別案を出すか、未合格と理由を報告します。本人から新たな修正依頼が来た場合は、その依頼を単位に再開します。
 
-## 品質と同期
+**機械的同期、美的品質、音楽的自然さは別評価です。** 聴取できない環境ではその限界を明記し、数値や静止画だけで「音楽的にも自然」と断定しません。モデルの感情解釈や曲名推測も音楽的事実として扱いません。
 
-- 元の本人演奏を保持し、DSPがサンプル／フレーム単位で時間を決めます。LLMの感情解釈から秒数を決めません。
-- 場面境界を動かさず、その前後で色・光・カメラを自動補間し、急な画面全体の変化を抑えます。
-- 静止画レビューに合格してから短い無音プレビュー、両方に合格してから本編へ進みます。
-- 画像・レビュー・制作入力・実行番号・コミットのハッシュを照合し、別の生成物の承認を流用しません。
-- 補間の時刻は、圧縮後の映像を、同じ圧縮を通した前後の境界モデルと比較して検証します。圧縮による誤差より十分に区別できない場合は同期を確認済みとせず停止します。既知のずれを使って校正する機械検査であり、音楽的自然さの評価とは分けます。
-- **機械QAの合格と、美的・音楽的な合格は別です。** Actionsが緑になったことだけを公開承認としません。
-- 動きの途中レビューは短いプレビューの抽出画像を用います。全編の動きや音楽的自然さを保証するものではありません。音声聴取の評価は未実施です。
-- 高額な生成API、外部への演奏送信、YouTube投稿は承認なしに行いません。
+## 別のマシンで使い始める
 
-## ローカル開発
+Codex CLIをインストール・ログイン済みの端末で、リポジトリをcloneしてルートから起動します。
 
-Python 3.13、uv、ffmpeg／ffprobeを用意します。
+```bash
+git clone https://github.com/YusukeIwaki/chopin-mood.git
+cd chopin-mood
+codex
+```
+
+3つのStudioスキルは `.agents/skills/` に同梱しています。Codexの[リポジトリスキルの自動検出](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)で読み込まれるため、個人のスキル置き場へのコピーや追加インストールは不要です。参照文書・スクリプトも同じリポジトリに含まれ、パスは相対です。
+
+起動後に「Issue #103 の映像作品化をお願いします」と依頼できます。明示的に選ぶ場合は `$studio-produce` を指定します。動画制作を実行するためのPython・uv・ffmpeg／ffprobeと、GitHub操作用の `gh` のインストール・本人認証は各端末で用意します。これらはスキルの検出とは別の実行環境です。
+
+## 開発と運用
+
+- 制作手順：[studio-produce](.agents/skills/studio-produce/SKILL.md)
+- 独立レビュー：[studio-review](.agents/skills/studio-review/SKILL.md)／[裁定](.agents/skills/studio-arbitrate/SKILL.md)
+- 制作データ：`studio/projects/issue-<番号>/candidates/cand-01/`（最大 `cand-03`）
+- 運用・再実行・既存作品：[Studio運用](docs/10_GITHUB_STUDIO_OPERATIONS.md)
+- エージェントの恒久ルール：[AGENTS.md](AGENTS.md)
+- 開発コマンド：[scripts/README.md](scripts/README.md)
+- 音響解析と限界：[同期設計](docs/03_AUDIO_AND_SYNC.md)／[目的](docs/01_CONTEXT_AND_GOALS.md)
+
+新しい描画機能・固定素材はエンジン側でレビューしてから使用します。候補PRには実行コードや録音を含めず、Actionsは信頼済みのエンジンで再現します。本人演奏を外部モデルへ送らず、有料生成API・外部アップロード・投稿は承認なしに実行しません。
+
+Python 3.13、uv、ffmpeg／ffprobeを用意すると、個人の録音・Secretなしで検証できます。
 
 ```bash
 uv venv --python 3.13
@@ -68,15 +76,4 @@ uv pip install -r requirements-p0.txt
 .venv/bin/python scripts/studio_smoke.py --out output/studio-smoke
 ```
 
-合成信号のsmokeには個人の録音やSecretは不要です。
-`assets/reference_audio.wav` はクローン直後には存在しません。
-
-| 用途 | 文書 |
-| --- | --- |
-| 制作担当のルール | [AGENTS.md](AGENTS.md) |
-| Actions・承認・公開の運用 | [Studio運用](docs/10_GITHUB_STUDIO_OPERATIONS.md) |
-| ローカルのコマンド | [開発ガイド](scripts/README.md) |
-| 目的 | [背景と目的](docs/01_CONTEXT_AND_GOALS.md) |
-| 同期設計 | [音響解析と同期](docs/03_AUDIO_AND_SYNC.md) |
-| 方式判断 | [アーキテクチャ判断](docs/09_ARCHITECTURE_DECISION_AND_ACCEPTANCE.md) |
-| 実験の測定証跡 | [P0実測](docs/07_DESIGN_REVIEW_AND_P0.md)・[独立レビュー](docs/08_INDEPENDENT_SIGNAL_REVIEW.md)・[レート校正](docs/11_SAMPLE_RATE_TUNING.md) |
+`assets/reference_audio.wav` や過去のローカル生成物はクローンには含まれません。P0の測定文書は実験記録であり、現在の作品品質を保証するものではありません。

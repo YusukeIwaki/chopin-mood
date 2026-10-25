@@ -520,6 +520,7 @@ def run_visual_pipeline(*, work_dir, context_provider, storyboard, brief,
                         gh=None, reviewer, uploader, muse_repair=None,
                         allow_repair: bool = True, state: dict | None = None,
                         create_engineering_issue: bool = True,
+                        candidate_guard=None,
                         ) -> dict:
     """Run still -> motion preflight for one candidate.
 
@@ -531,6 +532,11 @@ def run_visual_pipeline(*, work_dir, context_provider, storyboard, brief,
     Legitimate aesthetic outcomes return a result dict; malformed,
     stale, tampered, drift or agent/upload failures raise
     :class:`VisualInfrastructureError` (fail closed).
+
+    ``candidate_guard()`` supplies the equivalent live API guard for a direct
+    candidate PR. It replaces only the legacy linked-child relationship check;
+    local source/candidate/state checks always run. The callback is rechecked
+    before every model call, upload and comment, like the legacy guard.
     """
     from . import controller as ctrl
     from . import storyboard as sbmod
@@ -550,8 +556,17 @@ def run_visual_pipeline(*, work_dir, context_provider, storyboard, brief,
                 f"context preparation failed: {type(e).__name__}") from e
 
     def _guard(ctx=None):
+        if candidate_guard is not None:
+            try:
+                candidate_guard()
+            except VisualInfrastructureError:
+                raise
+            except Exception as exc:  # API/validation errors must fail before side effects
+                raise VisualInfrastructureError(
+                    "visual candidate guard rejected current inputs") from exc
         verify_visual_guard(
-            gh, parent=parent, child=child, brief=brief, candidate=candidate,
+            gh if candidate_guard is None else None,
+            parent=parent, child=child, brief=brief, candidate=candidate,
             scenes=scene_list, state=state,
             source_sha256=getattr(ctx, "source_sha256", None)
             if ctx is not None else (state or {}).get("source_sha256") or None)
@@ -933,9 +948,16 @@ def validate_visual_history(work_dir) -> dict:
             binding = (checked.get("evidence") or {}).get("binding") or {}
             ev = checked["evidence"]
             identity = ev["identity"]
+            # v2 has no child Issue: state.child_issue is the PR comment
+            # destination used by this shared runner, while evidence identity
+            # describes the source brief. Never invent a child in the brief.
+            evidence_child = state["child_issue"]
+            if state["brief"].get("schema_version") == "2.0" \
+                    and state["brief"].get("child_issue") is None:
+                evidence_child = None
             for key, expected in (("iteration", ver["version"] - 1),
                                   ("parent_issue", state["parent_issue"]),
-                                  ("child_issue", state["child_issue"]),
+                                  ("child_issue", evidence_child),
                                   ("candidate_id", state["candidate_id"])):
                 if identity.get(key) != expected:
                     failures.append(f"visual history identity {key} mismatch")

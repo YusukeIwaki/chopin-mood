@@ -66,6 +66,8 @@ def main() -> int:
     ap.add_argument("--meta-out", required=True)
     ap.add_argument("--decode-out", default="",
                     help="also decode losslessly to this WAV (native subtype kept)")
+    ap.add_argument("--canonical-wav", action="store_true",
+                    help="v2: strip volatile WAV metadata without changing PCM")
     a = ap.parse_args()
     dest = Path(a.out)
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -86,7 +88,9 @@ def main() -> int:
             "channels": s0.get("channels"), "codec": s0.get("codec_name"),
             "attachment_sha256": decmod.sha256_file(dest)}
     if a.decode_out and lim["ok"]:
-        dec = decmod.decode_lossless(dest, a.decode_out)
+        dec = decmod.decode_lossless(dest, a.decode_out, canonical_wav=a.canonical_wav)
+        if a.canonical_wav:
+            dec["container"] = "canonical-riff-v1"
         meta["decode"] = dec
         meta["decoded_wav_sha256"] = decmod.sha256_file(a.decode_out)
     Path(a.meta_out).write_text(json.dumps(meta, indent=2))

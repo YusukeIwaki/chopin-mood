@@ -13,19 +13,21 @@ on:
 permissions: {}
 
 concurrency:
-  group: studio-agent-auth
+  group: studio-release-selection
   queue: max
   cancel-in-progress: false
 
 jobs:
   release:
-    name: Release exact approved head
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    name: Publish owner-selected video
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.actor == 'YusukeIwaki' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: write
-      pull-requests: read
+      pull-requests: write
       issues: write
       actions: read
     steps:
@@ -38,7 +40,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - name: Release (gate, draft-first publish, close child/parent)
+      - name: Release (verify, publish, close source and competing PRs)
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}

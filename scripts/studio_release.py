@@ -14,7 +14,7 @@ import argparse
 import json
 import os
 
-from studio import controller
+from studio import candidate_release, controller
 from studio.github_client import GitHubClient
 
 
@@ -24,7 +24,12 @@ def main() -> int:
     a = ap.parse_args()
     via_dispatch = os.environ.get("EVENT_NAME") == "workflow_dispatch"
     gh = GitHubClient(os.environ["GITHUB_REPOSITORY"], os.environ["GH_TOKEN"])
-    r = controller.release_controller(
+    pr = gh.request("GET", f"/pulls/{a.pr}")
+    branch = (pr.get("head") or {}).get("ref", "")
+    release = (candidate_release.release_controller
+               if branch.startswith("codex/studio-issue-")
+               else controller.release_controller)
+    r = release(
         gh, pr_number=a.pr, actor=os.environ.get("DISPATCH_ACTOR"),
         via_dispatch=via_dispatch)
     print(json.dumps(r))

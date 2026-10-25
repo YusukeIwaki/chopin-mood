@@ -1484,7 +1484,10 @@ def test_config_alignment_latest_and_no_stale_aliases():
     cfg = json.loads((ROOT / ".github/studio/config.json").read_text())
     assert config.CODEX_VERSION == "latest" and cfg["codex"]["version"] == "latest"
     assert "muse" not in cfg
-    assert cfg["production_mode"] == "codex-authored-project"
+    assert cfg["production_mode"] == "codex-local-candidate-pr"
+    from studio.candidate_project import MAX_REPAIR_ROUNDS
+    assert cfg["editorial"]["max_repair_rounds"] == MAX_REPAIR_ROUNDS
+    assert cfg["editorial"]["max_candidates"] == config.MAX_CANDIDATES
     assert not hasattr(config, "AGENT_ATTEMPT_TIMEOUT_SEC")
     assert not hasattr(config, "REPAIR_TIMEOUT_SEC")
     assert not hasattr(repair, "ATTEMPT_TIMEOUT_SEC")

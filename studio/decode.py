@@ -9,7 +9,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import struct
 import subprocess
+import tempfile
+import os
 from pathlib import Path
 
 
@@ -25,7 +28,76 @@ def probe(path) -> dict:
     return json.loads(out)
 
 
-def decode_lossless(src, dst) -> dict:
+def canonicalize_wav(path) -> None:
+    """Strip volatile WAV metadata without touching a single sample byte.
+
+    The v2 contract uses a minimal RIFF fmt/fact/data container. Decoder
+    versions can still produce different PCM; the resulting hash mismatch is
+    intentional and must be resolved by using the same decoder, never waived.
+    """
+    path = Path(path)
+    with path.open("rb") as source:
+        header = source.read(12)
+        if len(header) != 12 or header[:4] != b"RIFF" or header[8:] != b"WAVE":
+            raise ValueError("canonical decode requires little-endian RIFF WAV")
+        fmt, data_offset, data_size = None, None, None
+        while chunk := source.read(8):
+            if len(chunk) != 8:
+                raise ValueError("truncated WAV chunk header")
+            kind, size = struct.unpack("<4sI", chunk)
+            if kind == b"fmt ":
+                if size > 128:
+                    raise ValueError("unsupported WAV fmt chunk")
+                fmt = source.read(size)
+                if len(fmt) != size:
+                    raise ValueError("truncated WAV fmt chunk")
+            elif kind == b"data":
+                if data_offset is not None:
+                    raise ValueError("multiple WAV data chunks")
+                data_offset, data_size = source.tell(), size
+                source.seek(size, 1)
+            else:
+                source.seek(size, 1)
+            if size % 2:
+                source.seek(1, 1)
+        if fmt is None or len(fmt) < 16 or data_offset is None:
+            raise ValueError("missing WAV audio chunks")
+        tag, channels, sr, rate, alignment, bits = struct.unpack("<HHIIHH", fmt[:16])
+        if tag == 65534 and len(fmt) >= 40:
+            tag = struct.unpack("<H", fmt[24:26])[0]
+        if (tag not in (1, 3) or bits not in (8, 16, 24, 32, 64)
+                or not alignment or alignment != channels * bits // 8
+                or rate != sr * alignment or data_size % alignment):
+            raise ValueError("unsupported canonical WAV PCM format")
+        if data_offset + data_size > path.stat().st_size:
+            raise ValueError("truncated WAV samples")
+        canonical_fmt = struct.pack("<HHIIHH", tag, channels, sr, rate, alignment, bits)
+        chunks = b"fmt " + struct.pack("<I", 16) + canonical_fmt
+        if tag == 3:
+            chunks += b"fact" + struct.pack("<II", 4, data_size // alignment)
+        riff_size = 4 + len(chunks) + 8 + data_size + data_size % 2
+        fd, temporary = tempfile.mkstemp(prefix=".canonical-", suffix=".wav", dir=path.parent)
+        try:
+            with os.fdopen(fd, "wb") as output:
+                output.write(b"RIFF" + struct.pack("<I", riff_size) + b"WAVE" + chunks)
+                output.write(b"data" + struct.pack("<I", data_size))
+                source.seek(data_offset)
+                remaining = data_size
+                while remaining:
+                    chunk = source.read(min(remaining, 1024 * 1024))
+                    if not chunk:
+                        raise ValueError("truncated WAV samples")
+                    output.write(chunk)
+                    remaining -= len(chunk)
+                if data_size % 2:
+                    output.write(b"\x00")
+            os.replace(temporary, path)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
+
+
+def decode_lossless(src, dst, *, canonical_wav=False) -> dict:
     """Decode to WAV without truncating bit depth. Returns meta."""
     import soundfile as sf
     src, dst = Path(src), Path(dst)
@@ -50,6 +122,8 @@ def decode_lossless(src, dst) -> dict:
         else:
             sf.write(str(dst), data, sr, subtype=info.subtype)
         mode = f"wav_native_{info.subtype.lower()}"
+        if canonical_wav:
+            canonicalize_wav(dst)
         out_info = sf.info(str(dst))
         return {"mode": mode, "subtype": out_info.subtype,
                 "channels": out_info.channels, "sample_rate": out_info.samplerate,
@@ -58,6 +132,8 @@ def decode_lossless(src, dst) -> dict:
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(src),
                     "-map", "0:a:0", "-c:a", "pcm_f32le", str(dst)],
                    check=True, timeout=600)
+    if canonical_wav:
+        canonicalize_wav(dst)
     out_info = sf.info(str(dst))
     return {"mode": "compressed_pcm_f32le", "subtype": out_info.subtype,
             "channels": out_info.channels, "sample_rate": out_info.samplerate,

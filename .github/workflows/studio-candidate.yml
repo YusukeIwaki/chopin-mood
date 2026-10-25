@@ -1,0 +1,211 @@
+name: Studio candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Locally validated candidate PR (owner only)"
+        required: true
+        type: number
+
+permissions: {}
+
+# Credential refresh is shared with legacy production and auth smoke.
+concurrency:
+  group: studio-agent-auth
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  reproduce:
+    name: Reproduce and independently review candidate
+    if: github.actor == 'YusukeIwaki' && github.triggering_actor == 'YusukeIwaki' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      actions: read
+    steps:
+      - name: Check out trusted main only
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Validate owner source, candidate PR and local evidence
+        id: prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+        run: python3 scripts/studio_candidate_actions.py prepare --pr "$PR_NUMBER" --work output/studio/work
+      - name: Set runtime paths
+        run: |
+          {
+            echo "CODEX_RUNTIME_HOME=$RUNNER_TEMP/codex-home"
+            echo "CODEX_ENC_REPO_DIR=$RUNNER_TEMP/codex-enc-repository"
+            echo "CODEX_AUTH_BEFORE_HASH=$RUNNER_TEMP/codex-auth-before.sha256"
+            echo "STUDIO_SOURCE_DIR=$PWD/output/studio/source"
+          } >> "$GITHUB_ENV"
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Install ffmpeg and Codex review tools (latest)
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -n 1
+          pip install -r requirements-p0.txt
+          npm install --global "@openai/codex@latest"
+          codex --version
+          bash .github/studio/scripts/setup-codex-sandbox.sh
+          npm install --prefix "$RUNNER_TEMP/studio-artifact-tools" --ignore-scripts --no-audit --no-fund @actions/artifact@2.3.2
+          echo "STUDIO_ARTIFACT_TOOLS=$RUNNER_TEMP/studio-artifact-tools" >> "$GITHUB_ENV"
+      - name: Download source and verify the locally analyzed bytes
+        env:
+          SOURCE_URL: ${{ steps.prepare.outputs.source_url }}
+        run: |
+          set -euo pipefail
+          mkdir -p output/studio/source
+          python3 scripts/studio_download.py --url "$SOURCE_URL" --out output/studio/source/source.bin --meta-out output/studio/work/source-meta.json --decode-out output/studio/source/source.wav --canonical-wav
+          python3 - <<'PYCODE'
+          import json
+          expected = json.load(open("output/studio/work/brief.json"))["source_hashes"]
+          actual = json.load(open("output/studio/work/source-meta.json"))
+          for key in ("attachment_sha256", "decoded_wav_sha256"):
+              assert actual[key] == expected[key], f"source mismatch: {key}; reproduce local decode before continuing"
+          PYCODE
+      - name: Recompute DSP candidate (no manual timing edits)
+        run: |
+          set -euo pipefail
+          python3 scripts/studio_analyze.py --wav output/studio/source/source.wav --out output/studio/analysis
+          python3 scripts/studio_candidate.py verify-dsp --brief output/studio/work/brief.json --analysis output/studio/analysis/plan-context.json
+      - name: Create Codex read token (review)
+        id: codex_read
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
+          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
+          owner: YusukeIwaki
+          repositories: codex.enc
+          permission-contents: read
+          skip-token-revoke: true
+      - name: Clone Codex auth (review)
+        env:
+          GH_TOKEN: ${{ steps.codex_read.outputs.token }}
+        run: |
+          gh auth setup-git
+          git clone --branch main --single-branch https://github.com/YusukeIwaki/codex.enc.git "$CODEX_ENC_REPO_DIR"
+          test -s "$CODEX_ENC_REPO_DIR/codex.enc"
+      - name: Revoke Codex read token (review)
+        if: always() && steps.codex_read.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ steps.codex_read.outputs.token }}
+        run: gh api --method DELETE /installation/token
+      - name: Restore Codex auth (review)
+        id: restore_codex
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: restore-codex
+        env:
+          CODEX_ENC_PASSPHRASE: ${{ secrets.CODEX_ENC_PASSPHRASE }}
+      - name: Staged visual preflight (still to motion)
+        id: visual
+        # One still review and one motion review; content changes stay in Codex.
+        timeout-minutes: 40
+        uses: actions/github-script@v8
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PARENT_ISSUE: ${{ steps.prepare.outputs.source_issue }}
+          CHILD_ISSUE: ${{ steps.prepare.outputs.pr }}
+          ENGINE_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          VISUAL_WORK: output/studio/work
+          VISUAL_WAV: output/studio/source/source.wav
+        with:
+          script: |
+            await exec.exec('python3', ['scripts/studio_visual_preflight.py', '--work', process.env.VISUAL_WORK, '--codex-led', '--candidate-context', 'output/studio/work/context.json', '--wav', process.env.VISUAL_WAV, '--parent', process.env.PARENT_ISSUE, '--child', process.env.CHILD_ISSUE, '--engine-sha', process.env.ENGINE_SHA, '--run-id', process.env.RUN_ID, '--run-attempt', process.env.RUN_ATTEMPT]);
+      - name: Validate storyboard and render (trusted renderer + encoded QA)
+        if: steps.visual.outputs.proceed == 'true'
+        run: |
+          set -euo pipefail
+          python3 -m studio validate-storyboard --storyboard output/studio/work/storyboard.json --scenes output/studio/work/scenes.json
+          python3 scripts/studio_render.py --wav output/studio/source/source.wav --candidate output/studio/work/candidate.json --storyboard output/studio/work/storyboard.json --brief output/studio/work/brief.json --out output/studio/work/bundle --visual-approval output/studio/work/visual-approval.json --engine-sha ${{ github.sha }}
+      - name: Bind the reproduced output to the exact candidate head
+        if: steps.visual.outputs.proceed == 'true'
+        run: python3 scripts/studio_candidate_actions.py seal --work output/studio/work
+      - name: Independent final evidence review
+        if: steps.visual.outputs.proceed == 'true'
+        timeout-minutes: 15
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/studio_candidate_actions.py review --work output/studio/work
+      - name: Check artifact allowlist and hashes
+        if: steps.visual.outputs.proceed == 'true'
+        run: python3 scripts/studio_candidate_actions.py check --work output/studio/work
+      - name: Upload the reviewed candidate
+        if: steps.visual.outputs.proceed == 'true'
+        id: upload
+        uses: actions/upload-artifact@v7
+        with:
+          name: studio-candidate-pr-${{ steps.prepare.outputs.pr }}-${{ steps.prepare.outputs.head_sha }}-run-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: output/studio/work/bundle/
+          retention-days: 90
+      - name: Publish result on the same PR (notify only on pass)
+        if: steps.visual.outputs.proceed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
+          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+        run: python3 scripts/studio_candidate_actions.py publish --work output/studio/work
+      - name: Report early aesthetic failure
+        if: steps.visual.outputs.proceed == 'false'
+        run: |
+          echo "Local production session must address the PR evidence; no automatic content repair." >> "$GITHUB_STEP_SUMMARY"
+          exit 2
+      - name: Build aggregate visual history
+        id: validate_visual_history
+        if: always() && hashFiles('output/studio/work/visual-state.json') != ''
+        run: python3 scripts/studio_visual_preflight.py --work output/studio/work --validate-history
+      - name: Upload visual history
+        if: always() && steps.validate_visual_history.outcome == 'success'
+        uses: actions/upload-artifact@v7
+        with:
+          name: studio-candidate-history-pr-${{ steps.prepare.outputs.pr }}-run-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: output/studio/work/visual-history/
+          retention-days: 90
+      - name: Persist refreshed Codex auth
+        id: persist_codex
+        if: always() && steps.restore_codex.outcome == 'success'
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: persist-codex
+        env:
+          CODEX_ENC_PASSPHRASE: ${{ secrets.CODEX_ENC_PASSPHRASE }}
+      - name: Create Codex write token (only when auth changed)
+        id: codex_write
+        if: always() && steps.persist_codex.outcome == 'success' && steps.persist_codex.outputs.changed == 'true'
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
+          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
+          owner: YusukeIwaki
+          repositories: codex.enc
+          permission-contents: write
+      - name: Push refreshed Codex auth (only when changed)
+        if: always() && steps.persist_codex.outputs.changed == 'true' && steps.codex_write.outcome == 'success'
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: push-codex
+        env:
+          GH_TOKEN: ${{ steps.codex_write.outputs.token }}
+      - name: Cleanup credentials
+        if: always()
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: cleanup

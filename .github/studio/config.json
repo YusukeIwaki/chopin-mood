@@ -57,5 +57,15 @@
     "video_free": 10,
     "video_paid": 100
   },
-  "production_mode": "codex-authored-project"
+  "production_mode": "codex-local-candidate-pr",
+  "editorial": {
+    "max_candidates": 3,
+    "max_repair_rounds": 2,
+    "review_roles": [
+      "music",
+      "visual"
+    ],
+    "final_decision": "lead_editor",
+    "selection": "owner_merge"
+  }
 }
