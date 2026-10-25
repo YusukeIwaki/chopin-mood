@@ -23,6 +23,7 @@ def make_candidate(tmp_path):
     media.mkdir(parents=True)
     legacy = ROOT / "studio/projects/issue-1"
     brief = json.loads((legacy / "brief.json").read_text())
+    brief["schema_version"] = "2.0"
     brief.pop("child_issue")
     project = {"schema_version": "2.0", "source_issue": 1, "candidate_id": "cand-01",
                "engine_sha": "a" * 40,
@@ -64,6 +65,14 @@ def test_ready_exact_local_media(candidate):
     data = cp.load_candidate(directory, issue=1, candidate_id="cand-01", media_dir=media)
     assert data["candidate"] == data["brief"]["candidate"]
     assert set(data["input_sha256"]) == set(cp.INPUT_NAMES)
+
+
+@pytest.mark.parametrize("version", [None, "1.0", "3.0"])
+def test_legacy_or_missing_brief_schema_rejected_at_intake(candidate, version):
+    directory, _ = candidate
+    update(directory, "brief.json", lambda d: d.update(schema_version=version))
+    with pytest.raises(ValueError, match="brief schema must be 2.0"):
+        cp.load_candidate(directory, require_ready=False)
 
 
 @pytest.mark.parametrize("change", ["brief", "project", "storyboard", "video", "qa_bytes", "qa_record", "review_binding"])

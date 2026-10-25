@@ -272,7 +272,9 @@ def validate_candidate_documents(documents, *, input_sha256=None, issue=None,
     _require(candidate_id is None or project["candidate_id"] == candidate_id, "candidate identity mismatch")
     _require(_digest(project["engine_sha"], 40), "engine commit SHA required")
     _require(validate.validate_attachment_url(project["source_url"])["ok"], "untrusted source URL")
-    _require(isinstance(brief, dict) and brief.get("parent_issue") == project["source_issue"]
+    _require(isinstance(brief, dict) and brief.get("schema_version") == "2.0",
+             "candidate brief schema must be 2.0")
+    _require(brief.get("parent_issue") == project["source_issue"]
              and brief.get("child_issue") is None and brief.get("candidate_id") == project["candidate_id"],
              "brief issue/candidate binding mismatch")
     candidate = brief.get("candidate")

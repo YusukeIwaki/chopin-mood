@@ -60,7 +60,7 @@ class Transport(FakeTransport):
 def input_files(issue, candidate="cand-01"):
     old = Path("studio/projects/issue-1")
     brief = json.loads((old / "brief.json").read_text())
-    brief.update(parent_issue=issue, child_issue=None, candidate_id=candidate,
+    brief.update(schema_version="2.0", parent_issue=issue, child_issue=None, candidate_id=candidate,
                  piece=None, period=None, art_notes="quiet recollection")
     brief["candidate"]["id"] = candidate
     brief["fingerprint"] = fingerprint.canonical_fingerprint(
