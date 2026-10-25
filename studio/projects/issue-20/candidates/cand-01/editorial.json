@@ -4,15 +4,15 @@
   "creator_id": "codex-issue20-producer",
   "input_sha256": {
     "project.json": "f5a3939acb723bbe3343b0c3af570ea96dfaa76e4a906469490cfdbee0e9ccc2",
-    "brief.json": "aa1458f7de197c56ba3fc631d741348f1568f55d534c811ca0e379c2a14d0425",
+    "brief.json": "87b90cfe4bd1966901e1273c387fc8c78818dd270801d65293ebb6bee66a191c",
     "storyboard.json": "026c9791c298af5eb1524e4a66c1acb0a7a07a53f9d2d89ca3eca4fa12636b79"
   },
   "media_sha256": {
-    "video.mp4": "2c8a9b422c0fccd92700cc6a50f61d5b7ff30673c93b58567cdce3abcfce8d59",
-    "contact-sheet.jpg": "8f172292e02726c5dd4b0a35780c2bdbab435f9c0656c986c3820569b5d60804",
+    "video.mp4": "30b3ad59a0314ff32288171637d84e6747d88d0fd6b46b0ca28670015f166ae8",
+    "contact-sheet.jpg": "38eddd77c8a121a7d49ff5497f4b1cfddc1d41e899f3904c7eb656b0a625d868",
     "timeline.html": "425d86fae58dcdf11a6fc1b27f620b4cd28bfbef417de5695928235ac67e1fba"
   },
-  "qa_sha256": "7badfb0a56e88e7114132ce9a3a730569f4c24dd7f75c43ec41739914b1d831b",
+  "qa_sha256": "24f9015dbcef7da319bda936583c3fb880a51882e88af06dd0ec3279e1677069",
   "qa": {
     "checks": [
       {
@@ -98,14 +98,14 @@
           2537
         ],
         "motion_diffs_blur_downscaled": [
-          34.6302,
-          6.2253,
+          34.629,
+          6.2276,
           35.9213
         ],
         "motion_floor": 0.4,
         "mean_abs_diffs_raw": [
-          36.251,
-          11.066,
+          36.255,
+          11.077,
           38.242
         ]
       },
@@ -120,7 +120,7 @@
       {
         "name": "studio:input_hash_unchanged",
         "pass": true,
-        "sha256": "cee5e31417b5be4c..."
+        "sha256": "0b934c18e325998b..."
       },
       {
         "name": "studio:rendered_frame_spotcheck",
@@ -477,9 +477,9 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 2.502,
-            "patch_mae_max": 3.77,
-            "patch_mae_mean": 2.504
+            "global_mae": 2.505,
+            "patch_mae_max": 3.768,
+            "patch_mae_mean": 2.507
           },
           {
             "frame": 790,
@@ -487,9 +487,9 @@
               "scene_start"
             ],
             "ok": true,
-            "global_mae": 2.559,
-            "patch_mae_max": 3.412,
-            "patch_mae_mean": 2.562,
+            "global_mae": 2.555,
+            "patch_mae_max": 3.296,
+            "patch_mae_mean": 2.557,
             "transition_timing": {
               "ok": true,
               "boundary": 790,
@@ -557,16 +557,16 @@
                 820
               ],
               "best_offset_frames": 0,
-              "relative_margin": 29.60936,
-              "hypothesis_separation_rms": 1.01932,
-              "fit_rms": 0.183725,
-              "separation_ratio": 5.54807,
+              "relative_margin": 29.51651,
+              "hypothesis_separation_rms": 1.019218,
+              "fit_rms": 0.183806,
+              "separation_ratio": 5.54508,
               "scores": {
-                "-2": 3.994363,
-                "-1": 1.071892,
-                "0": 0.033755,
-                "1": 1.033219,
-                "2": 3.956667
+                "-2": 3.996092,
+                "-1": 1.073627,
+                "0": 0.033785,
+                "1": 1.030988,
+                "2": 3.947202
               },
               "reason": "aligned"
             }
@@ -577,9 +577,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 2.676,
-            "patch_mae_max": 3.391,
-            "patch_mae_mean": 2.678
+            "global_mae": 2.67,
+            "patch_mae_max": 3.317,
+            "patch_mae_mean": 2.672
           },
           {
             "frame": 887,
@@ -597,8 +597,8 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.561,
-            "patch_mae_max": 3.346,
+            "global_mae": 2.56,
+            "patch_mae_max": 3.332,
             "patch_mae_mean": 2.561
           },
           {
@@ -627,9 +627,9 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 2.742,
+            "global_mae": 2.74,
             "patch_mae_max": 3.441,
-            "patch_mae_mean": 2.743
+            "patch_mae_mean": 2.742
           },
           {
             "frame": 1166,
@@ -637,9 +637,9 @@
               "scene_start"
             ],
             "ok": true,
-            "global_mae": 2.517,
-            "patch_mae_max": 3.184,
-            "patch_mae_mean": 2.52,
+            "global_mae": 2.519,
+            "patch_mae_max": 3.175,
+            "patch_mae_mean": 2.521,
             "transition_timing": {
               "ok": true,
               "boundary": 1166,
@@ -707,16 +707,16 @@
                 1196
               ],
               "best_offset_frames": 0,
-              "relative_margin": 18.85945,
-              "hypothesis_separation_rms": 1.061431,
-              "fit_rms": 0.241105,
-              "separation_ratio": 4.40236,
+              "relative_margin": 18.90537,
+              "hypothesis_separation_rms": 1.061415,
+              "fit_rms": 0.240921,
+              "separation_ratio": 4.40565,
               "scores": {
-                "-2": 4.351557,
-                "-1": 1.188623,
-                "0": 0.058132,
-                "1": 1.154462,
-                "2": 4.339037
+                "-2": 4.350336,
+                "-1": 1.187776,
+                "0": 0.058043,
+                "1": 1.155368,
+                "2": 4.341576
               },
               "reason": "aligned"
             }
@@ -727,9 +727,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 2.463,
-            "patch_mae_max": 3.291,
-            "patch_mae_mean": 2.465
+            "global_mae": 2.46,
+            "patch_mae_max": 3.256,
+            "patch_mae_mean": 2.462
           },
           {
             "frame": 1268,
@@ -737,9 +737,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 2.22,
-            "patch_mae_max": 3.415,
-            "patch_mae_mean": 2.223
+            "global_mae": 2.216,
+            "patch_mae_max": 3.412,
+            "patch_mae_mean": 2.219
           },
           {
             "frame": 1284,
@@ -747,9 +747,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.269,
-            "patch_mae_max": 3.219,
-            "patch_mae_mean": 2.271
+            "global_mae": 2.267,
+            "patch_mae_max": 3.194,
+            "patch_mae_mean": 2.269
           },
           {
             "frame": 1285,
@@ -757,9 +757,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.675,
-            "patch_mae_max": 3.946,
-            "patch_mae_mean": 2.677
+            "global_mae": 2.666,
+            "patch_mae_max": 3.817,
+            "patch_mae_mean": 2.669
           },
           {
             "frame": 1286,
@@ -767,9 +767,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.613,
-            "patch_mae_max": 4.181,
-            "patch_mae_mean": 2.615
+            "global_mae": 2.589,
+            "patch_mae_max": 3.814,
+            "patch_mae_mean": 2.592
           },
           {
             "frame": 1466,
@@ -857,16 +857,16 @@
                 1497
               ],
               "best_offset_frames": 0,
-              "relative_margin": 39.31513,
-              "hypothesis_separation_rms": 1.02044,
-              "fit_rms": 0.161462,
-              "separation_ratio": 6.32001,
+              "relative_margin": 39.39471,
+              "hypothesis_separation_rms": 1.020413,
+              "fit_rms": 0.161311,
+              "separation_ratio": 6.32576,
               "scores": {
-                "-2": 3.993546,
-                "-1": 1.054904,
-                "0": 0.02607,
-                "1": 1.051012,
-                "2": 3.99268
+                "-2": 3.993479,
+                "-1": 1.054853,
+                "0": 0.026021,
+                "1": 1.051118,
+                "2": 3.992436
               },
               "reason": "aligned"
             }
@@ -887,9 +887,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.654,
-            "patch_mae_max": 3.355,
-            "patch_mae_mean": 2.654
+            "global_mae": 2.656,
+            "patch_mae_max": 3.388,
+            "patch_mae_mean": 2.656
           },
           {
             "frame": 1528,
@@ -897,9 +897,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.853,
+            "global_mae": 2.85,
             "patch_mae_max": 3.483,
-            "patch_mae_mean": 2.855
+            "patch_mae_mean": 2.852
           },
           {
             "frame": 1529,
@@ -907,9 +907,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.735,
-            "patch_mae_max": 3.478,
-            "patch_mae_mean": 2.737
+            "global_mae": 2.734,
+            "patch_mae_max": 3.431,
+            "patch_mae_mean": 2.736
           },
           {
             "frame": 1649,
@@ -1300,16 +1300,16 @@
               820
             ],
             "best_offset_frames": 0,
-            "relative_margin": 29.60936,
-            "hypothesis_separation_rms": 1.01932,
-            "fit_rms": 0.183725,
-            "separation_ratio": 5.54807,
+            "relative_margin": 29.51651,
+            "hypothesis_separation_rms": 1.019218,
+            "fit_rms": 0.183806,
+            "separation_ratio": 5.54508,
             "scores": {
-              "-2": 3.994363,
-              "-1": 1.071892,
-              "0": 0.033755,
-              "1": 1.033219,
-              "2": 3.956667
+              "-2": 3.996092,
+              "-1": 1.073627,
+              "0": 0.033785,
+              "1": 1.030988,
+              "2": 3.947202
             },
             "reason": "aligned"
           },
@@ -1380,16 +1380,16 @@
               1196
             ],
             "best_offset_frames": 0,
-            "relative_margin": 18.85945,
-            "hypothesis_separation_rms": 1.061431,
-            "fit_rms": 0.241105,
-            "separation_ratio": 4.40236,
+            "relative_margin": 18.90537,
+            "hypothesis_separation_rms": 1.061415,
+            "fit_rms": 0.240921,
+            "separation_ratio": 4.40565,
             "scores": {
-              "-2": 4.351557,
-              "-1": 1.188623,
-              "0": 0.058132,
-              "1": 1.154462,
-              "2": 4.339037
+              "-2": 4.350336,
+              "-1": 1.187776,
+              "0": 0.058043,
+              "1": 1.155368,
+              "2": 4.341576
             },
             "reason": "aligned"
           },
@@ -1460,16 +1460,16 @@
               1497
             ],
             "best_offset_frames": 0,
-            "relative_margin": 39.31513,
-            "hypothesis_separation_rms": 1.02044,
-            "fit_rms": 0.161462,
-            "separation_ratio": 6.32001,
+            "relative_margin": 39.39471,
+            "hypothesis_separation_rms": 1.020413,
+            "fit_rms": 0.161311,
+            "separation_ratio": 6.32576,
             "scores": {
-              "-2": 3.993546,
-              "-1": 1.054904,
-              "0": 0.02607,
-              "1": 1.051012,
-              "2": 3.99268
+              "-2": 3.993479,
+              "-1": 1.054853,
+              "0": 0.026021,
+              "1": 1.051118,
+              "2": 3.992436
             },
             "reason": "aligned"
           },
@@ -1563,80 +1563,80 @@
   "reviews": {
     "music": {
       "reviewer_id": "/root/storm_music_final",
-      "evidence_sha256": "da6658b2c3a8bb1461b37471e7b7c6bf78e21df0d02bef1bc1e2e3a379902329",
+      "evidence_sha256": "c15eefdf75cf68e40ee9d0f6a397788e40dc3064d709fe391094b101341f0441",
       "verdict": "pass",
       "hard_blockers": [],
       "concerns": [],
       "evidence": [
-        "New independent music-sync audit of the actual fresh main render in output/studio/issue-20/cand-01/round-2-main, under studio-review and docs/12_CREATIVE_REVIEW_PROTOCOL.md. Current HEAD and project.engine_sha are both 7c61ef1a0ef9ac6096bcf1f7f17fa1d83d8c75fe on codex/studio-issue-20-cand-01. This is a new inspection of current source, inputs, DSP, actual MP4 and freshly emitted QA; the previous pass was not automatically rebound.",
-        "Compared current creative inputs with preserved revisions/round-2-pre-main-inputs: brief.json and storyboard.json are byte-identical; project.json changes only engine_sha from e5ad73262f1d773ff4fe0a9ae1d52675e22b85af to merged main 7c61ef1a0ef9ac6096bcf1f7f17fa1d83d8c75fe. Substantive round remains 2. git diff for studio/storm_recital.py, studio/rendering.py, studio/render_context.py, scripts/studio_render.py and p0 is empty between these heads. The fresh plan/provenance source SHA256 matches current renderer bytes 9bb1be2e3682aa1f47443b6e7a24a07c743d6f50c395586cbda6c583c3d228a3.",
-        "Independently rehashed original attachment ff6f3c7ddb554ec784386c7290fc1b47794a610483cabd8595b489d2636beafe and canonical decoded WAV cee5e31417b5be4c556fbbf3b7bcadf744b6a07ebdad05875d9b3a19a013f03b. Both still match current brief/provenance; no audio source replacement or external audio transfer occurred.",
-        "Ran validate_dsp_candidate on newly generated round-2-main/analysis/plan-context.json. The complete fresh DSP candidate equals current brief.candidate. Independently checked every integer scene sample/frame mapping, every retained accent frame mapping and every time_sec == source_sample/48000 exact value. Source interval stays [0,4060800), native 48000 Hz, 1600 samples/frame and 2538 frames at 30 fps. No timing value was hand-adjusted or re-rounded.",
-        "Compared newly emitted plan.json to candidate: all six scene sample/frame intervals and the entire 10-accent list are exactly equal. Boundaries remain [0,419,790,1166,1467,1764,2538]; sparse accent onsets remain [428,496,564,637,1137,1285,1528,1657,1786,1910]. Source equivalence preserves native strengths, ten 15-frame decays and no new onset. The storm-only shot dissolve is centered on each fixed boundary with endpoints ±4 frames; weather/palette/camera and QA observation retain ±24 frames. No fixed-BPM grid or attack-by-attack scene cutting is introduced.",
-        "Independently ffprobed the actual fresh main MP4: H264 540x960, 30/1 fps, 2538 frames, 84.600000 seconds; AAC 48000 Hz mono, 84.600000 seconds; both stream starts 0. Locally re-decoded this fresh file via ffmpeg pipe and recomputed against original source [0:4060800]: full/head/mid/tail lag 0 samples, segment drift 0, correlation 1.0 rounded and level difference -0.008 dB. This is numerical inspection, not listening.",
-        "Inspected freshly emitted main qa.json directly: all 11 checks pass, including exact source crop max_abs_diff 0.0, source hash unchanged, stream length/count, audio sync, black/content and scene invariants. All 55 actual decoded spatial probes pass unchanged global MAE 8 / storm patch MAE 5 (max global 2.853, patch 4.181), covering every retained accent with immediate neighbors plus scene boundaries/interiors/endpoints.",
-        "Fresh main actual transition QA independently read at frames 419,790,1166,1467,1764: all pass with best_offset_frames 0 and separation ratios 4.70720,5.54807,4.40236,6.32001,6.03678, above unchanged required 2.0. This resolves retained round-1 M-STORM-PHASE-1 for this main output. Source-bound calibration is applicable by independently confirmed identical renderer/source controls: five actual-boundary native positives pass and ten observed ±1-frame negatives correctly fail. Calibration evidence remains separate from this newly inspected whole-film proof.",
-        "Recomputed every current project/brief/storyboard, video/contact-sheet/timeline and QA hash, matched new template and provenance, and checked fresh plan/provenance renderer binding. Video SHA256 2c8a9b422c0fccd92700cc6a50f61d5b7ff30673c93b58567cdce3abcfce8d59; contact sheet 8f172292e02726c5dd4b0a35780c2bdbab435f9c0656c986c3820569b5d60804; timeline HTML 425d86fae58dcdf11a6fc1b27f620b4cd28bfbef417de5695928235ac67e1fba; QA SHA256 7badfb0a56e88e7114132ce9a3a730569f4c24dd7f75c43ec41739914b1d831b. New evidence digest da6658b2c3a8bb1461b37471e7b7c6bf78e21df0d02bef1bc1e2e3a379902329 binds this main render/current inputs only."
+        "New independent music-sync inspection of actual output/studio/issue-20/cand-01/round-2-linux6 files under studio-review and docs/12_CREATIVE_REVIEW_PROTOCOL.md. Current project.engine_sha remains merged main 7c61ef1a0ef9ac6096bcf1f7f17fa1d83d8c75fe, substantive round 2. I inspected newly generated source/DSP/MP4/QA and recomputed current bindings; no prior pass was automatically reused.",
+        "Current brief differs from committed pre-correction input only in decoded source hash and naturally recomputed fingerprint. Original MP3 remains ff6f3c7ddb554ec784386c7290fc1b47794a610483cabd8595b489d2636beafe. Actual canonical Linux6 WAV rehash is 0b934c18e325998b6146034d6e52e8f372bdd8b60f352d6c9a20fefb8465efe1, matching brief, fresh analysis, render provenance and supplied Actions decoder identity. Old source, inputs and media stay preserved. Independent source-only comparisons in reviews/linux6-source-audit.json found unchanged 48000 Hz mono/4061184 samples, max PCM difference 3.2782554626464844e-7, RMS difference 2.5489723053790867e-8 and zero full/segmented lag. That source audit was not media approval.",
+        "Ran validate_dsp_candidate on fresh round-2-linux6/analysis/plan-context.json: complete candidate exactly equals current brief and the original automatic candidate. Independently rechecked every integer sample/frame correspondence and exact accent source_sample/48000 second value. Clip [0,4060800) remains 2538 frames at 30 fps, 1600 samples/frame. Six scene intervals retain frames [0,419,790,1166,1467,1764,2538], with no manually selected times, rounding edits or BPM grid.",
+        "Reconstructed controls directly from new Linux6 PCM with current prepare_context. Only original retained onsets [428,496,564,637,1137,1285,1528,1657,1786,1910] occur, native strengths match exactly, and 150 positive frames represent ten 15-frame decays. All five shot blends remain exactly 50/50 at fixed DSP centers. Actual new plan scene sample/frame fields and entire accent list exactly match brief. Sparse selection remains 2-second minimum gap/cap 10, with minimum scene 9.9 seconds.",
+        "While the new render still retained its temporary clip_audio.wav, independently compared that actual crop with Linux6 source [0:4060800]: float_tight exact check passes with max_abs_diff 0.0. This directly observed crop identity corroborates fresh crop_pcm_exact QA. Crop/encoder path adds no gain, fade, speed change, generated audio or rain/thunder sound; delivery audio is AAC.",
+        "Independently ffprobed fresh Linux6-source video.mp4: H264 540x960, 30/1 fps, 2538 frames and 84.600000 seconds; AAC 48000 Hz mono and 84.600000 seconds; both stream start times 0. Independently re-decoded its actual AAC locally via ffmpeg pipe and compared against Linux6 source crop: full/head/mid/tail lags all 0 samples, segmented drift 0, rounded correlation 1.0 and level difference -0.008 dB. This numerical check did not involve listening or external audio transfer.",
+        "Inspected newly emitted whole-film qa.json: all 11 unchanged checks pass. Every one of 55 decoded pixel probes passes, including all ten accent onsets and immediate neighbors, boundaries, interiors and endpoints. Maximum global MAE 2.850 and patch MAE 3.817 satisfy unchanged global 8 / storm patch 5. Current actual scene phase tests at frames 419,790,1166,1467,1764 all choose offset 0 with separation ratios 4.70720,5.54508,4.40565,6.32576,6.03678, above unchanged required 2.0.",
+        "Verified actual renderer SHA256 9bb1be2e3682aa1f47443b6e7a24a07c743d6f50c395586cbda6c583c3d228a3 and p0/qa.py bytes still equal approved main. Earlier round2-boundaries calibration contains five positive and ten observed ±1-frame-negative MP4s generated with the previous decoded PCM. They remain prior code/renderer calibration; I do not describe those clips as regenerated with Linux6 PCM. New whole-film phase QA uses the current Linux6-source context and encoded shifted references and passes with substantial separation. No concrete new timing/calibration defect requiring another source-specific negative-clip run was found.",
+        "Recomputed every current input/media/QA hash and matched new template, plan and provenance. Fresh video SHA256 30b3ad59a0314ff32288171637d84e6747d88d0fd6b46b0ca28670015f166ae8; contact-sheet SHA256 38eddd77c8a121a7d49ff5497f4b1cfddc1d41e899f3904c7eb656b0a625d868; timeline SHA256 425d86fae58dcdf11a6fc1b27f620b4cd28bfbef417de5695928235ac67e1fba; QA SHA256 24f9015dbcef7da319bda936583c3fb880a51882e88af06dd0ec3279e1677069. New evidence digest c15eefdf75cf68e40ee9d0f6a397788e40dc3064d709fe391094b101341f0441 belongs only to these current Linux6-source inputs/files. Read-only source/candidate/QA audit; wrote only ignored review reports."
       ],
       "listening": "unavailable",
       "limitations": [
-        "No listening capability was available. I have not heard excerpt entrance/exit, phrasing, individual accents or the audiovisual effect of shot joins/lightning. This pass establishes the inspected source/mechanical gates, not musical naturalness or phrase compatibility.",
-        "DSP structure/harmonic novelty and flux accent selections are automatic proposals, not certified tonal modulations or verified musically emphasized moments. Sample/frame precision and AAC correlation do not establish detector confidence or musical semantics.",
-        "Fresh main temporary crop WAV was already removed by normal render cleanup before an independent PCM re-read could complete. I inspected its fresh bound exact-crop QA result, independently checked original source hashes and unchanged crop path, and independently decoded the delivered AAC against the original crop. I do not claim a separate direct re-read of the removed main crop.",
-        "This music-sync review inspected actual encoded technical evidence and source/timing contracts; aesthetic legibility, uninterrupted motion viewing and sustained viewer attention are covered by the separate independent visual review. Later input/media/source changes require new evidence rather than reuse of this report."
+        "Listening was unavailable. I have not heard excerpt entrances/exits, phrasing, individual musical stresses or the audiovisual effect of lightning/shot joins. Pass establishes inspected mechanical/source gates, not musical naturalness or phrase compatibility.",
+        "Automatic harmonic-novelty/energy boundaries and flux accents are not certified tonal modulations or verified musically emphasized moments. Precise sample/frame rendering and waveform correlation do not certify detector semantics.",
+        "Prior observed ±1-frame negative calibration was produced with the old decoded PCM, not this Linux6 PCM. Its code/renderer scope is distinguished from the actual new whole-film QA above. No claim is made that those 15 clips were newly regenerated in this audit.",
+        "This report approves the audited local Linux6-source bundle only within the music-sync role. Actions must reproduce and review its own current evidence; aesthetic legibility and visual attention remain the separate independent visual review. Any later input, source, media or engine change requires renewed binding/checks."
       ]
     },
     "visual": {
       "reviewer_id": "/root/issue20_visual",
-      "evidence_sha256": "da6658b2c3a8bb1461b37471e7b7c6bf78e21df0d02bef1bc1e2e3a379902329",
+      "evidence_sha256": "c15eefdf75cf68e40ee9d0f6a397788e40dc3064d709fe391094b101341f0441",
       "verdict": "pass",
       "hard_blockers": [],
       "concerns": [
         {
           "id": "V1",
-          "note": "Fixed and independently reverified in the fresh main artifact. Freshly decoded every frame c-4 through c+4 at all five boundaries 419,790,1166,1467,1764. The respective single composition is readable at the outer endpoints and the blended images occupy only the immediate midpoint; the long intersecting piano/player double exposure of round 1 is absent. Wide-to-medium, medium-to-overhead, overhead-to-medium, medium-to-overhead and overhead-to-wide arrivals are clear and support the requested dramatic composition changes. The minimum repair, shorter shot dissolve at unchanged DSP boundaries, is confirmed in the actual fresh main MP4, not accepted from a code description. No further correction requested. Fresh visual-storm-round-2-main-frames/boundary-*.jpg and sample-map.json document the exact individual frames; fresh transition QA also passes independently."
+          "note": "Fixed and freshly checked on the Linux6-source render. I decoded every frame c-6 through c+6 plus c-30,c-15,c+15,c+30 at all five unchanged DSP boundaries 419,790,1166,1467,1764. The respective viewpoint is single and readable at c-4/c+4, while the image mixture is confined to the immediate midpoint. The long superposed piano/player shapes that weakened round 1 are absent. The arrival of wide, medium and overhead compositions is decisive and supports the owner request for dramatic visible changes. Minimum repair was the short shot dissolve, already implemented and verified on this new actual MP4. No additional correction requested. Exact new frame map and five boundary sheets are under visual-storm-round-2-linux6-frames; current transition QA also independently passes."
         },
         {
           "id": "V2",
-          "note": "Retained expressive choice and strongest counterargument. The pianist body/hands are held painted poses and fine key/finger/surface detail is soft. This can feel less immediate than a visibly moving performer; the work is an animated illustrated recital tableau. Fresh main medium/overhead/context samples retain readable person, bench, grand, keyboard and wet stone; rain, local lightning/reflections, camera movement and large viewpoint changes provide actual development. No additional creative repair is requested. The editor may deliberately accept this visible held-pose/painterly treatment; a different moving-performer treatment would require actual new visual capability, and a description edit would not animate it. Fresh main still frames604/977/2150, encoded motion1286/976, fresh full frames600/960 and the byte-identical previously reviewed whole-duration sweep substantiate this choice."
+          "note": "Retained expressive choice and strongest counterargument. The fictional pianist keeps painted body/hand poses; the 540x960 image is soft and does not resolve precise fingering. Some viewers may experience an animated tableau more than an active bodily performance. In the freshly viewed medium/overhead/full-size frames, person, bench, grand, keyboard and wet surfaces remain readable; actual rain, reflections, lightning, camera movement and large viewpoint changes give the scene development. This is not an anatomical blocker or a requirement for literal accurate hands. No further repair is requested. Minimum disposition is deliberate editorial acceptance or rejection of this visible painterly/held-pose choice; description edits would not animate it, and a moving-performer treatment would require actual new visual capability. Fresh full-size frames600/960/1285 and the new whole-duration sweep document the limitation."
         }
       ],
       "evidence": [
-        "Independent visual-viewer final main verification under studio-review. Owner direction remains a completely different recital in torrential rain, clear composition changes and showy lightning at dramatic points. Same substantive repair round 2; this is fresh trusted-main reproduction and evidence verification, not another creative iteration. No production source/input, artwork, QA threshold or GitHub mutation was made.",
-        "Independently recomputed current main evidence_digest=da6658b2c3a8bb1461b37471e7b7c6bf78e21df0d02bef1bc1e2e3a379902329 from the actual editorial.template.json. Rehashed all three current creative inputs and actual video.mp4, contact-sheet.jpg, timeline.html and qa.json; all match the new template. Video SHA-256=2c8a9b422c0fccd92700cc6a50f61d5b7ff30673c93b58567cdce3abcfce8d59; QA SHA-256=7badfb0a56e88e7114132ce9a3a730569f4c24dd7f75c43ec41739914b1d831b. Fresh main ffprobe confirms 2538 frames, 540x960, 30/1 fps, 84.6 s.",
-        "Current project.engine_sha is 7c61ef1a0ef9ac6096bcf1f7f17fa1d83d8c75fe. Read current source identity and renderer SHA-256=9bb1be2e3682aa1f47443b6e7a24a07c743d6f50c395586cbda6c583c3d228a3. Independently checked git diff from pre-main engine e5ad732 to main 7c61ef1: no tree differences. Against revisions/round-2-pre-main-inputs, current project is exactly equal after removing engine_sha, and current brief/storyboard are byte-identical.",
-        "Directly compared full file bytes, not only reported hashes: fresh main video.mp4,contact-sheet.jpg,timeline.html each exactly equal the corresponding pre-main round-2 file. This independent equivalence test is the basis for applying the already observed whole-duration image sequence to the new main artifact. It is not an automatic approval rebinding.",
-        "Previously actually viewed pre-main round-2 scope: 251 unique decoded MP4 frames, comprising 85 whole-duration samples at 0,30,...,2520; all 13 consecutive frames c-6..c+6 plus c±15/30 at each of five boundaries; 9 samples around every one of 10 accents; and exact endpoint 2537. The old frame map remains visual-storm-round-2-frames/sample-map.json. That whole-duration sweep was viewed before the main render; I did not pretend to view it anew from main. Verified full-video byte equality makes those image observations applicable to the identical main bytes.",
-        "New viewing after fresh main completed: independently decoded and actually viewed 80 unique source frames from round-2-main/video.mp4, recorded in visual-storm-round-2-main-frames/sample-map.json. These are 45 consecutive boundary frames(c-4..c+4 at all five c), 30 accent frames(pre/peak/post at c-1,c,c+1 for all 10 accents 428,496,564,637,1137,1285,1528,1657,1786,1910), and context/endpoints 0,600,960,2150,2537. Viewed all five boundary sheets, both accent sheets and context/endpoints sheet. These are decoded temporal frames, not continuous playback.",
-        "Fresh main accent peaks preserve a readable pianist/grand: 7 sky-visible events show distinct lightning and local cloud illumination; 3 overhead events 1137/1528/1657 show cool wet-stage illumination rather than a sky bolt over the piano. The earlier byte-identical nine-frame accent sequences also document decay back to base light. Fresh endpoints retain the same solitary storm space, and V1 remains fixed at each newly decoded boundary. No new actual blocker appeared.",
-        "Fresh preflight verification before main full completion: verified-still and verified-motion evidence identify main 7c61ef1 and the expected renderer hash; rehashed every supplied stage media file against its fresh evidence record. Both stage media-hash maps exactly equal their pre-main stage maps. Actually viewed fresh main still 604/977/2150 and encoded short-motion 1286/976 at 540x960. These preflight samples are separate from the fresh 80 full-MP4 frames listed above.",
-        "Fresh actual main QA has all 11 checks passing, maximum rendered-frame patch MAE 4.181, and all 5 transition phase checks pass at best_offset_frames 0 with separation ratios 4.70720,5.54807,4.40236,6.32001,6.03678. The earlier round-1 failure remains preserved; the fresh main gate was read and verified rather than waived from an aesthetic preference.",
-        "The combined verified scope supports the same concrete visual reading: wide isolation under monumental clouds, medium attention to player/keyboard, overhead exposure of piano and wet stone, then a long retreat into continuing storm. Shot scale/angle, weather, light and reflections change while one fictional recital and coherent blue-black/amber materials remain. The held pose and softness remain V2; no new requirement is introduced beyond this final creative budget."
+        "Independent visual-viewer review under studio-review of the newly rendered Linux6 decoded-source bundle, still substantive round 2. Owner direction remains a different recital in torrential rain, clear composition changes and showy lightning at dramatic accents. No candidate/source/artwork/QA modification or GitHub write was performed. No listening claim.",
+        "Independently recomputed current evidence_digest=c15eefdf75cf68e40ee9d0f6a397788e40dc3064d709fe391094b101341f0441 from round-2-linux6/editorial.template.json. Rehashed all three actual current creative inputs, actual video.mp4/contact-sheet.jpg/timeline.html and actual qa.json; every digest matches the new template. New video SHA-256=30b3ad59a0314ff32288171637d84e6747d88d0fd6b46b0ca28670015f166ae8. QA SHA-256=24f9015dbcef7da319bda936583c3fb880a51882e88af06dd0ec3279e1677069. New ffprobe confirms 2538 frames, 540x960, 30/1 fps, 84.6 s.",
+        "The new video digest differs from the prior main video digest 2c8a9b42..., so no complete-byte-equivalence assumption or old pass was used. I freshly decoded and actually viewed 251 unique frames from the completed new full MP4. Exact mapping and source video digest are in output/studio/issue-20/reviews/visual-storm-round-2-linux6-frames/sample-map.json.",
+        "Actual new whole-duration viewing: 85 sweep samples at frames 0,30,...,2520, plus exact last frame 2537. All five sweep sheets and exact-endpoints.jpg were viewed. Actual new boundary viewing: 13 consecutive source frames c-6..c+6 and four outer time samples c±15/30 for each c=419,790,1166,1467,1764. Actual new accent viewing: 9 exact offsets [-6,-1,0,+1,+3,+6,+12,+18,+24] around each of 428,496,564,637,1137,1285,1528,1657,1786,1910. All 10 accent sheets were viewed. These are decoded temporal samples, not continuous playback; black unused cells are sheet padding.",
+        "Also freshly viewed decoded new full-MP4 frames 0,600,960,1285,2537 at actual 540x960 resolution. The large clouds isolate a small but readable recital in the wide shot; medium brings hands/keyboard, bent posture, dark coat and piano lid forward; overhead replaces sky with a diagonal grand and reflective stone. No new cropping, unreadable-subject, material-continuity or anatomy blocker was observed in these views or the complete temporal sweep.",
+        "Seven sky-visible accents show distinct lightning channels and localized cloud illumination; overhead accents 1137/1528/1657 show cool illumination on wet stone rather than a bolt placed over the piano. In all 10 newly inspected accent sequences, player/grand remain readable at the peak and the following samples return toward base light. No white-out or new image break appeared. The strong flash treatment is consistent with the explicit owner request.",
+        "What changes across the actual new sequence: shot angle and scale, rain travel, localized light/reflections and bounded camera placement. What remains: one solitary fictional recital, coherent blue-black storm/amber wet materials, and continuing rain. Wide isolation, close effort, overhead exposure and the long final retreat give a changing subject/environment relationship to follow. The ending preserves the storm; this is a visual interpretation of vulnerability, not a musical or modulation claim.",
+        "Read the current brief and compared it with the previous main rendered brief: the DSP candidate is exactly equal; after removing decoded_wav_sha256 and fingerprint, every remaining brief field is exactly equal. Current decoded source identity is 0b934c18e325998b6146034d6e52e8f372bdd8b60f352d6c9a20fefb8465efe1. Current project engine is 7c61ef1a0ef9ac6096bcf1f7f17fa1d83d8c75fe; local renderer SHA-256 is 9bb1be2e3682aa1f47443b6e7a24a07c743d6f50c395586cbda6c583c3d228a3. This identity check did not substitute for actual new-media viewing.",
+        "Fresh Linux6 verified-still/motion evidence identifies the expected main engine/renderer, source 0b934c... and new controls SHA 7d83d89dc7741f2761ba590b018a9b9e9bf5326101d909c29058f16b48a96feb. Independently rehashed every supplied stage media file against its stage evidence. Viewed the new 18-state still contact sheet and actual still 604/977/2150; decoded the new six disjoint 2 s preview windows at 6 fps and viewed 72 encoded-frame samples. New preview SHA-256=d094615952967649cc6a143e0c94734b4f71bcae401f54d016ccbaed44b05454. Those preflights are separate from the 251 fresh full-MP4 source frames above.",
+        "Read the actual new full QA: all 11 checks pass. Rendered-frame spotcheck maximum patch MAE is 3.817. All 5 phase checks pass at best_offset_frames 0, with separation ratios 4.70720,5.54508,4.40565,6.32576,6.03678. The historical round-1 failure and prior decoder-dependent bindings are not overwritten or treated as approval for this new bundle."
       ],
       "listening": "not_applicable",
       "limitations": [
-        "Continuous playback unavailable. Exact decoded-frame scope is distinguished above: old 251-frame viewing plus independently verified full-byte equivalence, and fresh main 80-frame viewing. This is not uninterrupted 30 fps attention or a guarantee of sustained interest for every viewer.",
-        "No listening, musical-naturalness, modulation identification or recorded-fingering judgment. The fictional painted pianist is not documentary footage or a depiction of the owner.",
-        "Pass applies only to this exact new main input/media/QA binding. Future changes to input, source, actual media or QA need corresponding verification; no approval is inferred merely from another successful workflow."
+        "Continuous playback unavailable. This new review is based on the listed fresh decoded temporal samples and full-size frames, not uninterrupted 30 fps viewing or a guarantee of sustained viewer attention.",
+        "No listening, musical-naturalness, modulation-identification or recorded-fingering judgment. The performer is a fictional painted figure, not documentary footage or a depiction of the owner.",
+        "Pass is bound only to this new actual Linux6-source input/media/QA evidence. It does not assume byte equality with earlier videos or approve any later changed input/output merely because an earlier workflow passed."
       ]
     }
   },
   "decision": {
     "editor_id": "codex-issue20-editor",
     "verdict": "ready",
-    "rationale": "Present The Storm Within as the one materially distinct candidate. Fresh main rendering preserves the original performance and exact automatic sample/frame positions, and all eleven encoded-media QA checks pass. The independent music-sync reviewer checked the fresh actual source, DSP, MP4 and QA while withholding listening or certified-modulation claims. The independent visual reviewer verified complete byte equality with the previously viewed 251-frame sequence, freshly viewed 80 decoded main frames and verified the new main inputs/media/QA binding. The short shot dissolve resolves the actual long double exposure; decisive viewpoints, heavy rain, reflected flashes and sparse branched lightning fulfill the requested storm concept. Accept the fictional held-pose painted performer and continuing storm as the visual form. This remains final substantive round 2; earlier failed evidence is preserved. This decision applies to this local main bundle; Actions must independently reproduce and review its own actual bytes.",
+    "rationale": "Present The Storm Within from the new runner-compatible decoded source. The original MP3 is unchanged; local Linux FFmpeg6.1.1 reproduces the actual Actions WAV hash exactly, and the complete fresh DSP candidate is identical. This is an environment correction within final substantive round2, with no additional creative repair. Fresh full rendering passes all eleven QA checks. The independent music-sync reviewer inspected the exact temporary PCM crop, newly decoded MP4, fresh DSP/controls and QA, with zero measured lag/drift and no listening claim. The independent visual reviewer newly viewed 251 decoded frames spanning the full duration, all five boundaries and all ten accents, without relying on previous-byte equality. The decisive short shot transitions, torrential weather, branched/reflected lightning and continued storm meet the requested direction. Accept the visible fictional held-pose painterly form. Previous failed creative and decoder-dependent evidence remains preserved. This local approval does not approve future Actions bytes; its actual output must independently pass.",
     "resolutions": [
       {
         "role": "visual",
         "concern_id": "V1",
         "action": "fixed",
-        "reason": "Fresh consecutive frames c-4 through c+4 at all five boundaries show readable single viewpoints at the endpoints and only a short midpoint mixture. All five actual main phase checks pass at zero offset without changed event positions or thresholds."
+        "reason": "The new actual Linux6-source output was independently viewed at every frame c-6 through c+6 around all five unchanged boundaries, plus outer samples. Single viewpoints at c-4/c+4 and only a short midpoint blend resolve the former sustained double exposure; fresh phase checks pass at zero offset."
       },
       {
         "role": "visual",
         "concern_id": "V2",
         "action": "accept",
-        "reason": "The fictional painted performer and soft detail are the chosen visual form. Rain, lightning, reflections, camera and major viewpoint changes carry the drama. No animated-fingering, documentary-footage or likeness claim is made."
+        "reason": "The fictional held-pose pianist and soft painted detail remain a deliberate choice, freshly re-observed in this output. Actual weather, lightning, reflections, camera and large viewpoint changes carry the visual drama. No documentary, likeness or animated-fingering claim is made."
       }
     ]
   }
