@@ -1,0 +1,332 @@
+{
+  "schema_version": "1.0",
+  "style_id": "the-storm-within",
+  "renderer": "storm-recital-v1",
+  "prototype_notice": "Fictional AI-painted recital with deterministic moving rain, light and water; original owner recording. No claim of animated fingering or documentary footage.",
+  "scenes": [
+    {
+      "id": "scene01",
+      "palette": {
+        "sky_top": [
+          9,
+          18,
+          35
+        ],
+        "sky_bot": [
+          52,
+          69,
+          91
+        ],
+        "far": [
+          31,
+          48,
+          70
+        ],
+        "near": [
+          24,
+          28,
+          35
+        ],
+        "moon": [
+          225,
+          222,
+          210
+        ],
+        "glow": [
+          240,
+          190,
+          116
+        ]
+      },
+      "motif": "A lone recital under a sky larger than the performer.",
+      "camera": "Bounded slow camera movement, joined at the original automatic scene boundaries.",
+      "params": {
+        "figure_scale": 1.0,
+        "particle_multiplier": 0.0,
+        "light_bias": 0.0,
+        "glow_scale": 1.0,
+        "storm_shot": 0,
+        "rain_density": 0.78,
+        "rain_wind": -0.55,
+        "storm_light": 0.34,
+        "reflection_strength": 0.52,
+        "camera_zoom_start": 1.0,
+        "camera_zoom_end": 1.1,
+        "camera_pan_x_start": -0.2,
+        "camera_pan_x_end": 0.0,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.1
+      }
+    },
+    {
+      "id": "scene02",
+      "palette": {
+        "sky_top": [
+          20,
+          21,
+          30
+        ],
+        "sky_bot": [
+          78,
+          77,
+          85
+        ],
+        "far": [
+          53,
+          53,
+          62
+        ],
+        "near": [
+          24,
+          28,
+          35
+        ],
+        "moon": [
+          225,
+          222,
+          210
+        ],
+        "glow": [
+          240,
+          190,
+          116
+        ]
+      },
+      "motif": "Close enough to see the effort of expression; rain crosses the instrument.",
+      "camera": "Bounded slow camera movement, joined at the original automatic scene boundaries.",
+      "params": {
+        "figure_scale": 1.0,
+        "particle_multiplier": 0.0,
+        "light_bias": 0.0,
+        "glow_scale": 1.0,
+        "storm_shot": 1,
+        "rain_density": 0.9,
+        "rain_wind": 0.3,
+        "storm_light": 0.82,
+        "reflection_strength": 0.58,
+        "camera_zoom_start": 1.02,
+        "camera_zoom_end": 1.12,
+        "camera_pan_x_start": -0.15,
+        "camera_pan_x_end": 0.15,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.1
+      }
+    },
+    {
+      "id": "scene03",
+      "palette": {
+        "sky_top": [
+          9,
+          18,
+          35
+        ],
+        "sky_bot": [
+          52,
+          69,
+          91
+        ],
+        "far": [
+          31,
+          48,
+          70
+        ],
+        "near": [
+          24,
+          28,
+          35
+        ],
+        "moon": [
+          225,
+          222,
+          210
+        ],
+        "glow": [
+          240,
+          190,
+          116
+        ]
+      },
+      "motif": "The piano becomes an exposed island surrounded by water.",
+      "camera": "Bounded slow camera movement, joined at the original automatic scene boundaries.",
+      "params": {
+        "figure_scale": 1.0,
+        "particle_multiplier": 0.0,
+        "light_bias": 0.0,
+        "glow_scale": 1.0,
+        "storm_shot": 2,
+        "rain_density": 0.88,
+        "rain_wind": -0.35,
+        "storm_light": 0.38,
+        "reflection_strength": 0.82,
+        "camera_zoom_start": 1.0,
+        "camera_zoom_end": 1.1,
+        "camera_pan_x_start": 0.1,
+        "camera_pan_x_end": -0.1,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.1
+      }
+    },
+    {
+      "id": "scene04",
+      "palette": {
+        "sky_top": [
+          20,
+          21,
+          30
+        ],
+        "sky_bot": [
+          78,
+          77,
+          85
+        ],
+        "far": [
+          53,
+          53,
+          62
+        ],
+        "near": [
+          24,
+          28,
+          35
+        ],
+        "moon": [
+          225,
+          222,
+          210
+        ],
+        "glow": [
+          240,
+          190,
+          116
+        ]
+      },
+      "motif": "A renewed direct encounter with the player through heavier rain.",
+      "camera": "Bounded slow camera movement, joined at the original automatic scene boundaries.",
+      "params": {
+        "figure_scale": 1.0,
+        "particle_multiplier": 0.0,
+        "light_bias": 0.0,
+        "glow_scale": 1.0,
+        "storm_shot": 1,
+        "rain_density": 1.0,
+        "rain_wind": 0.68,
+        "storm_light": 0.92,
+        "reflection_strength": 0.64,
+        "camera_zoom_start": 1.1,
+        "camera_zoom_end": 1.02,
+        "camera_pan_x_start": 0.1,
+        "camera_pan_x_end": -0.05,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.1
+      }
+    },
+    {
+      "id": "scene05",
+      "palette": {
+        "sky_top": [
+          20,
+          21,
+          30
+        ],
+        "sky_bot": [
+          78,
+          77,
+          85
+        ],
+        "far": [
+          53,
+          53,
+          62
+        ],
+        "near": [
+          24,
+          28,
+          35
+        ],
+        "moon": [
+          225,
+          222,
+          210
+        ],
+        "glow": [
+          240,
+          190,
+          116
+        ]
+      },
+      "motif": "Water and black geometry press around the recital.",
+      "camera": "Bounded slow camera movement, joined at the original automatic scene boundaries.",
+      "params": {
+        "figure_scale": 1.0,
+        "particle_multiplier": 0.0,
+        "light_bias": 0.0,
+        "glow_scale": 1.0,
+        "storm_shot": 2,
+        "rain_density": 0.98,
+        "rain_wind": -0.62,
+        "storm_light": 0.52,
+        "reflection_strength": 1.0,
+        "camera_zoom_start": 1.08,
+        "camera_zoom_end": 1.0,
+        "camera_pan_x_start": -0.1,
+        "camera_pan_x_end": 0.15,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.1
+      }
+    },
+    {
+      "id": "scene06",
+      "palette": {
+        "sky_top": [
+          9,
+          18,
+          35
+        ],
+        "sky_bot": [
+          52,
+          69,
+          91
+        ],
+        "far": [
+          31,
+          48,
+          70
+        ],
+        "near": [
+          24,
+          28,
+          35
+        ],
+        "moon": [
+          225,
+          222,
+          210
+        ],
+        "glow": [
+          240,
+          190,
+          116
+        ]
+      },
+      "motif": "The camera withdraws; the solitary expression persists within the storm.",
+      "camera": "Bounded slow camera movement, joined at the original automatic scene boundaries.",
+      "params": {
+        "figure_scale": 1.0,
+        "particle_multiplier": 0.0,
+        "light_bias": 0.0,
+        "glow_scale": 1.0,
+        "storm_shot": 0,
+        "rain_density": 0.94,
+        "rain_wind": 0.35,
+        "storm_light": 0.42,
+        "reflection_strength": 0.9,
+        "camera_zoom_start": 1.16,
+        "camera_zoom_end": 1.0,
+        "camera_pan_x_start": 0.1,
+        "camera_pan_x_end": -0.1,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.1
+      }
+    }
+  ]
+}

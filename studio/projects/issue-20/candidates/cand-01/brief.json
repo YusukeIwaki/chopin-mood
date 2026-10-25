@@ -1,0 +1,198 @@
+{
+  "schema_version": "2.0",
+  "parent_issue": 20,
+  "candidate_id": "cand-01",
+  "candidate": {
+    "id": "cand-01",
+    "start_sample": 0,
+    "end_sample": 4060800,
+    "n_frames": 2538,
+    "duration_sec": 84.6,
+    "score": 2.7779,
+    "parts": {
+      "contrast": 0.2943,
+      "n_struct_inside": 9,
+      "n_peaks_inside": 3,
+      "edge_dip": 1.9997,
+      "mean_activity": 0.571,
+      "edge_slope": 0.0,
+      "attack_prox_pen": 0.0,
+      "edge_rms_pen": 0.0001
+    },
+    "start_origin": "grid",
+    "end_origin": "music-endpoint",
+    "endpoint_evidence": {
+      "start": {
+        "nearest_dip_s": 0.0,
+        "nearest_struct_s": 3.078,
+        "nearest_accent_s": 2.741,
+        "edge_rms_ratio": 0.0001
+      },
+      "end": {
+        "nearest_dip_s": 0.001,
+        "nearest_struct_s": 1.904,
+        "nearest_accent_s": 6.062,
+        "edge_rms_ratio": 0.0001
+      }
+    },
+    "endpoint_basis": "",
+    "sample_rate": 48000,
+    "fps": [
+      30,
+      1
+    ],
+    "scenes": [
+      {
+        "id": "scene01",
+        "start_sample": 0,
+        "end_sample": 670400,
+        "start_frame": 0,
+        "end_frame": 419,
+        "duration_sec": 13.9667
+      },
+      {
+        "id": "scene02",
+        "start_sample": 670400,
+        "end_sample": 1264000,
+        "start_frame": 419,
+        "end_frame": 790,
+        "duration_sec": 12.3667
+      },
+      {
+        "id": "scene03",
+        "start_sample": 1264000,
+        "end_sample": 1865600,
+        "start_frame": 790,
+        "end_frame": 1166,
+        "duration_sec": 12.5333
+      },
+      {
+        "id": "scene04",
+        "start_sample": 1865600,
+        "end_sample": 2347200,
+        "start_frame": 1166,
+        "end_frame": 1467,
+        "duration_sec": 10.0333
+      },
+      {
+        "id": "scene05",
+        "start_sample": 2347200,
+        "end_sample": 2822400,
+        "start_frame": 1467,
+        "end_frame": 1764,
+        "duration_sec": 9.9
+      },
+      {
+        "id": "scene06",
+        "start_sample": 2822400,
+        "end_sample": 4060800,
+        "start_frame": 1764,
+        "end_frame": 2538,
+        "duration_sec": 25.8
+      }
+    ],
+    "scene_reason": "DP chose 5 cut(s) from 10 candidate(s) (10 after frame snap); min scene 6s = 180 frames, max cuts 5",
+    "accents": [
+      {
+        "kind": "accent",
+        "source_sample": 685725,
+        "time_sec": 14.2859375,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 428
+      },
+      {
+        "kind": "accent",
+        "source_sample": 793880,
+        "time_sec": 16.539166666666667,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 496
+      },
+      {
+        "kind": "accent",
+        "source_sample": 903150,
+        "time_sec": 18.815625,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 564
+      },
+      {
+        "kind": "accent",
+        "source_sample": 1020225,
+        "time_sec": 21.2546875,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 637
+      },
+      {
+        "kind": "accent",
+        "source_sample": 1820795,
+        "time_sec": 37.93322916666666,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 1137
+      },
+      {
+        "kind": "accent",
+        "source_sample": 2057175,
+        "time_sec": 42.8578125,
+        "strength": 0.8777,
+        "method": "flux_peak_v1",
+        "frame": 1285
+      },
+      {
+        "kind": "accent",
+        "source_sample": 2445195,
+        "time_sec": 50.9415625,
+        "strength": 0.9313,
+        "method": "flux_peak_v1",
+        "frame": 1528
+      },
+      {
+        "kind": "accent",
+        "source_sample": 2651470,
+        "time_sec": 55.238958333333336,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 1657
+      },
+      {
+        "kind": "accent",
+        "source_sample": 2858860,
+        "time_sec": 59.559583333333336,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 1786
+      },
+      {
+        "kind": "accent",
+        "source_sample": 3057330,
+        "time_sec": 63.694375,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 1910
+      }
+    ]
+  },
+  "source_hashes": {
+    "attachment_sha256": "ff6f3c7ddb554ec784386c7290fc1b47794a610483cabd8595b489d2636beafe",
+    "decoded_wav_sha256": "0b934c18e325998b6146034d6e52e8f372bdd8b60f352d6c9a20fefb8465efe1"
+  },
+  "fingerprint": "2846c0cfebab621d8faf336f33d9af22d4c5e781585bc01d7e29610a82673913",
+  "piece": "Chopin Scherzo No. 2, Op. 31",
+  "period": null,
+  "art_notes": "The inner struggle toward self-realization. The expression is deeply dramatic, yet not entirely self-assured; a sense of sensitivity and vulnerability remains. “Am I really okay as I am?”\n\nA dialogue with oneself.\n\nWhether or not confidence is already there, one expresses oneself dramatically, trying to build confidence through the act of expression itself.\n\nThat is the feeling I would like the video to convey.",
+  "creative_brief": {
+    "title": "The Storm Within",
+    "premise": "A lone pianist continues an imagined outdoor recital through torrential night rain. The storm makes the vulnerability visible; the act of playing is the dramatic expression. The weather does not conveniently clear at the end.",
+    "visual_language": "Three original AI-painted viewpoints: a small pianist beneath vast storm clouds, an intimate side view of the grand piano and player, and a high oblique view of the instrument surrounded by wet stone. Cool blue rain and limited amber stage light, with no moon, floating ornaments, typography, or inherited traveler assets.",
+    "development": "Wide isolation; close determination; exposed overhead geometry; return to the player; renewed overhead pressure; a long retreat into the wide storm. These are creative interpretations of the owner's direction, not emotions inferred from loudness or labels for musical sections.",
+    "timing": "The original automatic DSP candidate is unchanged: samples 0 to 4060800 at 48000 Hz, 2538 frames at 30 fps, six scenes and ten retained accents. Five scene boundaries drive changes of viewpoint and weather. No manual seconds, fixed BPM, time stretching, or regenerated audio. Detector boundaries combine harmonic novelty and energy evidence; they are not certified tonal modulations.",
+    "motion": "Layered falling rain, ground-contact ripples, slow spray, water reflections, and bounded camera trajectories continue within each scene. Actual viewpoint changes use an eight-frame dissolve centered on each unchanged automatic boundary, while weather, palette and camera keep their slower easing. Sparse retained accents create visible branched lightning in sky shots and strong reflected flashes overhead; the higher-light scenes emphasize these events. Each bolt keeps a stable shape as its original DSP pulse decays. No thunder or rain sound is added.",
+    "comparison": "Replaces the initial paper dialogue after the owner found insufficient visual change at modulations and explicitly requested a completely different dramatic rain-concert theme. The prior adopted moonlit-recollection-v1 artwork has a moon, landscape and traveler; none of those assets is reused.",
+    "limits": "No musical listening claim. The pianist is a fictional illustrated figure, not a depiction of the owner or a frame-accurate animation of fingering. Motion is weather, lighting and camera. Built-in image generation received written visual prompts only; provenance and applicable usage terms are registered in assets/visual/storm-recital-v1/.",
+    "request": "Issue 20 production, English Issue rewrite completed 2026-10-25. The owner requested stronger changes at modulations, a completely different dramatic recital in torrential rain, and dramatic lightning-like effects at emphasized moments. Round 0 was the paper dialogue; round 1 introduced this storm concept but its long shot dissolves left overlapping piano silhouettes and insufficient encoded transition-phase separation. This final substantive revision is round 2: only the shot dissolve is shortened around the same automatic boundaries. Earlier evidence is preserved; no further automatic creative repair remains in the original request budget. Lightning uses the retained DSP accents without hand-timed events.",
+    "production_record": "Three built-in image-generation calls produced the three registered paintings. No AI video-generation API was used. Billing amounts and end-to-end session time were not exposed/measured; they are not recorded as zero. Round-0 and round-1 evidence is retained. This is the final substantive revision, round 2, of the same request. Deterministic render parameters and random seed are recorded with each actual media bundle. All QA thresholds, automatic sample/frame positions and original performance audio are retained."
+  }
+}
