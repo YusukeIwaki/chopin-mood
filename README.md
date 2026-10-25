@@ -41,6 +41,20 @@ Releaseには採用動画とこれらの検証記録を保存します。YouTube
 
 **機械的同期、美的品質、音楽的自然さは別評価です。** 聴取できない環境ではその限界を明記し、数値や静止画だけで「音楽的にも自然」と断定しません。モデルの感情解釈や曲名推測も音楽的事実として扱いません。
 
+## 別のマシンで使い始める
+
+Codex CLIをインストール・ログイン済みの端末で、リポジトリをcloneしてルートから起動します。
+
+```bash
+git clone https://github.com/YusukeIwaki/chopin-mood.git
+cd chopin-mood
+codex
+```
+
+3つのStudioスキルは `.agents/skills/` に同梱しています。Codexの[リポジトリスキルの自動検出](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)で読み込まれるため、個人のスキル置き場へのコピーや追加インストールは不要です。参照文書・スクリプトも同じリポジトリに含まれ、パスは相対です。
+
+起動後に「Issue #103 の映像作品化をお願いします」と依頼できます。明示的に選ぶ場合は `$studio-produce` を指定します。動画制作を実行するためのPython・uv・ffmpeg／ffprobeと、GitHub操作用の `gh` のインストール・本人認証は各端末で用意します。これらはスキルの検出とは別の実行環境です。
+
 ## 開発と運用
 
 - 制作手順：[studio-produce](.agents/skills/studio-produce/SKILL.md)
