@@ -82,6 +82,7 @@ Releaseは直列実行とし、同じ元Issueで別の候補が先に選択枠�
 - **美的・機械的な不合格**：同じCodex制作セッションでPRの指摘を修正する。閾値を広げたり、判定JSONを成功に書き換えたりしない。
 - **認証・モデル・実行環境の障害**：作品の判定と分け、原因を修正して同じ入力を再実行する。
 - **Releaseのアップロード／公開／クローズ途中の失敗**：採用したPR番号で `gh workflow run studio-release.yml --ref main -f pr_number=104` を実行する。同じdraft／公開済み資産を照合し、未完の処理を復旧する。
+- **Release作成APIの403／404**：過去のマージコミットと現在のmainで `.github/workflows/` が異なる場合、GitHubは作成トークンにもworkflow権限を要求する（[公式API仕様](https://docs.github.com/en/rest/releases/releases#create-a-release)）。既存タグがあっても `target_commitish` を指定する本実装では失敗する場合があり、Actionsの `GITHUB_TOKEN` にはこの権限を付けられない。採用・Artifactの全検証が通った後に限り、本人がworkflow権限を持つ認証で、コントローラーと同じタグ・マージSHA・本文の**下書き**Releaseを準備し、Actionsを再実行する。GitHub CLIの権限追加は本人が `gh auth refresh -h github.com -s workflow` で承認する。公開・資産照合・Issue終了は引き続きActionsが担当し、回避のために対象を最新mainへ変更したり、既存タグを移動したりしない。
 - **Artifact失効、head変更、入力不一致**：古いreceiptでは公開しない。再現・独立検証が必要。マージ後の入力を勝手に別内容へ書き換えない。
 
 ## 認証
