@@ -145,6 +145,27 @@
                 "maximum": 1.0,
                 "default": 0.0,
                 "description": "Optional vertical camera pan at the scene's last frame (end_frame-1), as a fraction (-1..1) of the available crop margin."
+              },
+              "dialogue_spread": {
+                "type": "number",
+                "minimum": -1.0,
+                "maximum": 1.0,
+                "default": 0.0,
+                "description": "Optional ribbon-dialogue-v1 separation of the two paper ribbons; joined smoothly across deterministic scene transitions."
+              },
+              "dialogue_twist": {
+                "type": "number",
+                "minimum": -1.0,
+                "maximum": 1.0,
+                "default": 0.0,
+                "description": "Optional ribbon-dialogue-v1 twist of the two paper ribbons; joined smoothly across deterministic scene transitions."
+              },
+              "dialogue_lift": {
+                "type": "number",
+                "minimum": 0.0,
+                "maximum": 1.0,
+                "default": 0.35,
+                "description": "Optional ribbon-dialogue-v1 vertical lift of the paper ribbons; joined smoothly across deterministic scene transitions."
               }
             },
             "required": [
@@ -162,6 +183,12 @@
         "moonlit-recollection-v1"
       ],
       "description": "Optional trusted, versioned in-repository asset bundle; never a path or URL."
+    },
+    "renderer": {
+      "enum": [
+        "ribbon-dialogue-v1"
+      ],
+      "description": "Optional trusted procedural renderer identifier; never a path or URL. Mutually exclusive with asset_bundle."
     }
   },
   "$defs": {
@@ -175,5 +202,11 @@
         "maximum": 255
       }
     }
+  },
+  "not": {
+    "required": [
+      "renderer",
+      "asset_bundle"
+    ]
   }
 }

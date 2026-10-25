@@ -24,6 +24,11 @@ PARAM_RANGES = {
     "camera_pan_x_end": (-1.0, 1.0),
     "camera_pan_y_start": (-1.0, 1.0),
     "camera_pan_y_end": (-1.0, 1.0),
+    # Optional controls of the original procedural ribbon provider.
+    # It interpolates them without changing the legacy visual defaults.
+    "dialogue_spread": (-1.0, 1.0),
+    "dialogue_twist": (-1.0, 1.0),
+    "dialogue_lift": (0.0, 1.0),
 }
 _FORBIDDEN_KEYS = {"path", "file", "filepath", "command", "cmd", "script",
                    "code", "exec", "url", "href", "src"}
@@ -47,6 +52,12 @@ def validate_storyboard(sb: dict, deterministic_scenes: list[dict]) -> dict:
         from .config import PAINTED_ASSET_BUNDLE_ID
         if sb["asset_bundle"] != PAINTED_ASSET_BUNDLE_ID:
             failures.append("unknown asset_bundle")
+    if "renderer" in sb:
+        from .config import RIBBON_DIALOGUE_RENDERER_ID
+        if sb["renderer"] != RIBBON_DIALOGUE_RENDERER_ID:
+            failures.append("unknown renderer")
+        if "asset_bundle" in sb:
+            failures.append("renderer and asset_bundle are mutually exclusive")
     for key in sb:
         if key.lower() in _FORBIDDEN_KEYS or "/" in str(key) or "\\" in str(key):
             failures.append(f"forbidden top-level key: {key}")

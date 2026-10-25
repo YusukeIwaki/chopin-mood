@@ -52,12 +52,14 @@ def test_schemas_strict_required_covers_properties():
         schema = json.loads((ROOT / ".github/studio/schemas" / name).read_text())
         assert set(schema.get("required", [])) == set(schema.get("properties", {})), name
     # Codex-led production loads a saved storyboard; no model emits it.
-    # Keep its sole root optional field explicit rather than requiring it
+    # Keep its root optional fields explicit rather than requiring them
     # in legacy procedural projects or permitting arbitrary optional keys.
     schema = json.loads((ROOT / ".github/studio/schemas/storyboard.schema.json").read_text())
-    assert set(schema["properties"]) - set(schema["required"]) == {"asset_bundle"}
-    from studio.config import PAINTED_ASSET_BUNDLE_ID
+    assert set(schema["properties"]) - set(schema["required"]) == {"asset_bundle", "renderer"}
+    from studio.config import PAINTED_ASSET_BUNDLE_ID, RIBBON_DIALOGUE_RENDERER_ID
     assert schema["properties"]["asset_bundle"]["enum"] == [PAINTED_ASSET_BUNDLE_ID]
+    assert schema["properties"]["renderer"]["enum"] == [RIBBON_DIALOGUE_RENDERER_ID]
+    assert schema["not"] == {"required": ["renderer", "asset_bundle"]}
 
 
 def test_actual_muse_wrapper_mounts_only_work_and_provider_auth(tmp_path):

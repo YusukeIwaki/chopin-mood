@@ -93,6 +93,8 @@ gh workflow run studio-candidate.yml --ref main -f pr_number=104
 
 `init` と `render` はエンジン・素材・依存ファイルが `project.engine_sha` と同じことを確認する。新しい描画コード・素材は先にエンジニアリングPRへまとめる。Actionsはdispatch時のmain SHAと照合し、PRコードを実行しない。
 
+`storyboard.json` の任意の `renderer: "ribbon-dialogue-v1"` は、画像素材を使わないオリジナルの紙リボン描画を選ぶ。`asset_bundle` との同時指定は拒否する。各場面の `params` に `dialogue_spread`・`dialogue_twist`（-1〜1）と `dialogue_lift`（0〜1）を指定でき、既存のDSP境界で滑らかに補間する。既定値は順に0・0・0.35。パレット、`light_bias`、数値カメラも使い、`figure_scale`・`particle_multiplier`・`glow_scale` は紙リボンに作用しない。`plan.json` と `provenance.json` の `visual_renderer` はレンダラーID・リポジトリ相対ソースパス・コードのSHA256を記録し、描画コードが変われば視覚承認を取り直す。
+
 低水準の処理：
 
 - `studio_download.py --canonical-wav`：v2の可逆復号とWAVメタデータ正規化。音声の実サンプルは変更しない。flagなしは旧契約を保持する。

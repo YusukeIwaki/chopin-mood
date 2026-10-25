@@ -724,6 +724,9 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
                      lay: dict, scene_palettes=None,
                      scene_params=None) -> np.ndarray:
     """Render one clean RGB frame. Pure function of (f, ctrl, seed)."""
+    if "ribbon_dialogue" in lay:
+        from .ribbon_dialogue import draw_frame
+        return draw_frame(f, ctrl, w, h, seed, lay, scene_palettes, scene_params)
     if "painted_assets" in lay:
         from .painted import draw_frame
         return draw_frame(f, ctrl, w, h, seed, lay, scene_palettes, scene_params)
@@ -1030,8 +1033,8 @@ def make_reference_frame_fn(ctrl: dict, w: int, h: int, seed: int,
     fn.cache = cache  # type: ignore[attr-defined]
     fn.transition_window = lambda b: scene_transition(b, ctrl["scene_id"])
     fn.shifted_boundary_frame = shifted_boundary_frame
-    if "painted_assets" in lay:
+    if "painted_assets" in lay or "ribbon_dialogue" in lay:
         # Calibrated with real CRF18 encoded positives and missing/late
-        # accents: this provider has subtle light, so use a stricter bound.
+        # accents: these providers have subtle light, so use a stricter bound.
         fn.patch_mae_max = 5.0
     return fn

@@ -53,9 +53,13 @@ The optional top-level `asset_bundle` selects a registered, hash-checked
 background painting and transparent traveler. The same assets persist
 across scenes; palette values drive spatial colour grading and light
 while preserving painted detail. No images are generated during rendering.
-Without an asset bundle, the original procedural renderer is used.
-Judge either method by the same quality standard; generated artwork earns
-no automatic approval. The executable controls are, per deterministic scene:
+The optional `renderer: "ribbon-dialogue-v1"` selects an original
+procedural paper-ribbon sculpture with two continuous gestures, without
+image assets. `renderer` and `asset_bundle` are mutually exclusive;
+omitting both keeps the legacy procedural landscape. The plan and
+provenance bind this renderer's source path and code SHA256.
+Judge all methods by the same quality standard; generated artwork earns
+no automatic approval. Legacy/painted controls are, per deterministic scene:
 
 - the six palette colours: `sky_top`, `sky_bot`, `far`, `near`,
   `moon`, `glow`; and
@@ -64,6 +68,14 @@ no automatic approval. The executable controls are, per deterministic scene:
   `camera_zoom_start`/`camera_zoom_end`,
   `camera_pan_x_start`/`camera_pan_x_end`,
   `camera_pan_y_start`/`camera_pan_y_end`.
+
+The ribbon renderer uses the same palette fields as background, paper,
+lining and reflected light, `light_bias`, and the executable camera.
+Its additional controls are `dialogue_spread` and `dialogue_twist`
+(-1.0-1.0, default 0.0), and `dialogue_lift` (0.0-1.0, default 0.35).
+They alter the two paper gestures and join at the same scene windows.
+Legacy `figure_scale`, `particle_multiplier` and `glow_scale` do not
+alter ribbon artwork; it has no figures, stars or decorative particles.
 
 The renderer joins palettes, the four non-camera controls and camera
 trajectories with smoothstep around existing DSP boundaries: at most

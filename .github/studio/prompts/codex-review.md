@@ -44,11 +44,15 @@ It does not generate images during rendering. The same artwork persists
 across scenes; palette values drive spatial colour grading and light,
 preserving painted detail rather than replacing regions with flat RGB.
 The public plan and provenance record the asset manifest and file hashes.
-Without an asset bundle, the original procedural renderer is used.
-Judge both methods by the same visible-quality standard; using generated
+The optional `renderer: "ribbon-dialogue-v1"` instead selects an original
+procedural paper-ribbon sculpture with two continuous gestures. It uses
+no image assets. `renderer` and `asset_bundle` are mutually exclusive;
+omitting both keeps the legacy procedural landscape. Its public plan
+and provenance bind the renderer source path and code SHA256.
+Judge all methods by the same visible-quality standard; using generated
 artwork grants no automatic aesthetic approval.
 
-The trusted renderer consumes ONLY, per deterministic scene:
+The legacy and painted renderers consume, per deterministic scene:
 
 - the six palette colours: `sky_top`, `sky_bot`, `far`, `near`, `moon`,
   `glow` (RGB triples); and
@@ -65,6 +69,15 @@ The trusted renderer consumes ONLY, per deterministic scene:
   the frame, so no black edges can appear. Omitting the camera keys
   means zoom 1.0 / pan 0.0. Judge framing from the contact sheet's
   start/middle/end row for each scene against these numeric values.
+
+The ribbon renderer uses the same palette fields as background, paper,
+lining and reflected light, `light_bias`, and the executable camera.
+It also consumes `dialogue_spread` (-1.0-1.0, default 0.0),
+`dialogue_twist` (-1.0-1.0, default 0.0), and `dialogue_lift`
+(0.0-1.0, default 0.35) to alter the two paper gestures. These three
+controls join with the same scene transition windows. Legacy
+`figure_scale`, `particle_multiplier` and `glow_scale` do not alter the
+ribbon artwork; there are no figures, stars or decorative particles.
 
 The renderer automatically joins palettes, the four non-camera numeric
 controls, and the camera trajectories around each unchanged DSP scene

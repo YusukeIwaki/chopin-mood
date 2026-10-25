@@ -28,6 +28,7 @@ VISUAL_ARTIFACT_RETENTION_DAYS = 90
 VISUAL_AGENT_TIMEOUT_SEC = REPAIR_AGENT_TIMEOUT_SEC
 ACTIONS_ARTIFACT_VERSION = "2.3.2"
 PAINTED_ASSET_BUNDLE_ID = "moonlit-recollection-v1"
+RIBBON_DIALOGUE_RENDERER_ID = "ribbon-dialogue-v1"
 # Environment keys stripped from every MODEL child process (Codex
 # reviewer/planner, Muse runner). The trusted artifact uploader
 # keeps them; models never see runtime/GitHub tokens.
