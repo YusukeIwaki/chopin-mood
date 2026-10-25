@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "bundle_id": "storm-recital-v1",
+  "provider": "Codex built-in image_gen",
+  "model": "not exposed by built-in tool",
+  "created_on": "2026-10-25",
+  "prompts": "assets/visual/storm-recital-v1/PROMPTS.md",
+  "usage_terms": "assets/visual/storm-recital-v1/USAGE.md",
+  "files": {
+    "wide.png": "260789a4080a6639998dec5b0e360eba1bb92e028d9629c9cd7c3ac7527bda35",
+    "medium.png": "14ee660f22ebf531482d7f9a59ab90f3c820befce69f9a88b365ac057dba5314",
+    "overhead.png": "7121434bc37ba4ae96791f93a663f4919af13edad24ee211af0b763929a6cbec"
+  }
+}

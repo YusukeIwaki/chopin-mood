@@ -172,6 +172,10 @@ def main() -> int:
     if "painted_assets" in ctx.layouts:
         prov["prototype"] = "AI-painted assets with deterministic animation; no generated audio"
         prov["visual_assets"] = ctx.layouts["painted_assets"]["provenance"]
+    if "storm_recital" in ctx.layouts:
+        prov["prototype"] = "AI-painted storm recital shots with deterministic rain, light and reflections; no generated audio"
+        prov["visual_renderer"] = plan["visual_renderer"]
+        prov["visual_assets"] = plan["visual_assets"]
     # Approving a commit must approve these exact media bytes, even if a
     # later rerender uses identical plans but a different encoder version.
     prov["media_sha256"] = {

@@ -24,6 +24,13 @@ PARAM_RANGES = {
     "camera_pan_x_end": (-1.0, 1.0),
     "camera_pan_y_start": (-1.0, 1.0),
     "camera_pan_y_end": (-1.0, 1.0),
+    # Optional storm-recital controls; its provider joins the shot and
+    # numeric controls without changing DSP or legacy visual defaults.
+    "storm_shot": (0, 2),
+    "rain_density": (0.2, 1.0),
+    "rain_wind": (-1.0, 1.0),
+    "storm_light": (0.0, 1.0),
+    "reflection_strength": (0.0, 1.0),
 }
 _FORBIDDEN_KEYS = {"path", "file", "filepath", "command", "cmd", "script",
                    "code", "exec", "url", "href", "src"}
@@ -47,6 +54,12 @@ def validate_storyboard(sb: dict, deterministic_scenes: list[dict]) -> dict:
         from .config import PAINTED_ASSET_BUNDLE_ID
         if sb["asset_bundle"] != PAINTED_ASSET_BUNDLE_ID:
             failures.append("unknown asset_bundle")
+    if "renderer" in sb:
+        from .config import STORM_RECITAL_RENDERER_ID
+        if sb["renderer"] != STORM_RECITAL_RENDERER_ID:
+            failures.append("unknown renderer")
+        if "asset_bundle" in sb:
+            failures.append("renderer and asset_bundle are mutually exclusive")
     for key in sb:
         if key.lower() in _FORBIDDEN_KEYS or "/" in str(key) or "\\" in str(key):
             failures.append(f"forbidden top-level key: {key}")
@@ -83,6 +96,8 @@ def validate_storyboard(sb: dict, deterministic_scenes: list[dict]) -> dict:
                     failures.append(f"{sid}: param {k} must be a number")
                 elif not math.isfinite(float(v)):
                     failures.append(f"{sid}: param {k} must be finite")
+                elif k == "storm_shot" and not float(v).is_integer():
+                    failures.append(f"{sid}: param storm_shot must be an integer")
                 else:
                     lo, hi = PARAM_RANGES[k]
                     if not (lo <= float(v) <= hi):
