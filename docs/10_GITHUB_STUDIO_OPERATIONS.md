@@ -67,7 +67,7 @@ gh workflow run studio-candidate.yml --ref main -f pr_number=104
 
 ローカル動画とActions動画はエンコーダ環境でバイトが異なり得る。PRへ提示して採用するのはActionsが検証したArtifactの実バイトであり、ローカル動画と同じバイトだとは主張しない。ローカル証拠とActions証拠は同じ制作入力・エンジンへ結び付け、別々のQAとレビューを持つ。
 
-本人がMergeしたPRを採用する。新方式では別途Approveは要求しないが、Merge済みというだけで検証を免除しない。Releaseは次を再確認する。
+本人がMergeしたPRを採用する。既存v1作品を含め、別途Approveは要求しないが、Merge済みというだけで検証を免除しない。Releaseは次を再確認する。
 
 - 本人のMerge、同じリポジトリ／main、レビュー対象headとmerge結果の4入力の一致。
 - ownerの信頼済みmain workflow実行、そのrun／attemptに属する未失効Artifact、botの該当headへのreceipt。
@@ -92,4 +92,4 @@ Codexレビューは `CODEX_ENC_APP_ID`、`CODEX_ENC_APP_PRIVATE_KEY`、`CODEX_E
 
 ## 既存v1作品
 
-`studio/projects/issue-1/` と既存の制作PR #6は旧入力・receipt・計画記録を保持する。`Studio production` と従来のRelease controllerが対応し、**旧作品だけは現在headへの本人Approve＋Merge**を要求する。新作の4 JSON契約に見せかけて古いArtifactを承認済みとして流用しない。旧作品の子Issue終了規則も従来契約を維持する。
+`studio/projects/issue-1/` と既存の制作PR #6は旧入力・receipt・計画記録を保持する。`Studio production` と従来のRelease controllerが対応し、**採用承認は新作と同じく本人のMergeのみ**とする。Approve不足で停止したマージ済みPRは、本人がmainから `studio-release.yml` をそのPR番号で再実行できる。動画は再生成せず、既存の合格Artifact、head／merge内入力、ハッシュ、機械QA・美的レビューを再照合する。新作の4 JSON契約に見せかけて古いArtifactを流用しない。旧作品の子Issue終了規則も従来契約を維持する。

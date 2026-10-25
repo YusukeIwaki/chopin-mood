@@ -3,41 +3,9 @@ from __future__ import annotations
 
 from . import config
 
-_SUBSTANTIVE = {"APPROVED", "CHANGES_REQUESTED", "DISMISSED"}
 REVIEW_CHECKS = ("mechanical_qa_reviewed", "brief_adherence",
                  "timing_integrity", "aesthetic_approval")
 LISTENING_NOTE = "audio listening unavailable; not a full musical judgement"
-
-
-def evaluate_approval(reviews: list[dict], *, head_sha: str,
-                      owner: str = config.OWNER) -> dict:
-    """Latest substantive OWNER review wins.
-
-    Only the owner's substantive reviews decide: other people's
-    approvals, changes-requested or dismissals (and anyone's COMMENT)
-    can neither create nor erase the owner's approval. Valid only
-    when the owner's latest substantive review is APPROVED at exactly
-    ``head_sha``; an owner CHANGES_REQUESTED after an approval rejects.
-    """
-    failures: list[str] = []
-    if not isinstance(reviews, list):
-        return {"ok": False, "failures": ["reviews must be a list (no approval)"]}
-    owner_sub = [r for r in reviews
-                 if isinstance(r, dict) and r.get("user") == owner
-                 and r.get("state") in _SUBSTANTIVE]
-    if not owner_sub:
-        return {"ok": False, "failures": [
-            "no substantive owner review (approver must be the repository owner)"]}
-    latest = owner_sub[-1]
-    if latest.get("state") == "CHANGES_REQUESTED":
-        failures.append("latest substantive owner review is CHANGES_REQUESTED")
-    elif latest.get("state") == "DISMISSED":
-        failures.append("latest substantive owner review is DISMISSED")
-    elif latest.get("state") != "APPROVED":
-        failures.append(f"latest substantive owner review is {latest.get('state')}")
-    if latest.get("commit_id") != head_sha:
-        failures.append("approval commit_id does not match head SHA (stale approval)")
-    return {"ok": not failures, "failures": failures, "latest": latest}
 
 
 REVIEW_KEYS = {"verdict", "reviewed_head_sha", "checks", "blockers",
@@ -309,7 +277,9 @@ def evaluate_run_provenance(run: dict | None, artifact: dict | None, *,
 
 
 def evaluate_release_gate(ctx: dict) -> dict:
-    """Full release gate. ``ctx`` keys: pr, reviews, review, mechanical_pass,
+    """Owner merge is the human selection; no separate APPROVED review.
+
+    ``ctx`` keys: pr, review, mechanical_pass,
     run, artifact, manifest_ok, bundle_ok (+ optional expected_workflow_id,
     repo, receipt_ok)."""
     failures: list[str] = []
@@ -333,8 +303,6 @@ def evaluate_release_gate(ctx: dict) -> dict:
     if not _is_int(pr_number):
         failures.append("PR number must be an integer")
         pr_number = 0
-    appr = evaluate_approval(ctx.get("reviews") or [], head_sha=head)
-    failures.extend(f"approval: {f}" for f in appr["failures"])
     rg = evaluate_review_gate(ctx.get("review"), mechanical_pass=ctx.get("mechanical_pass"),
                               expected_head_sha=head or None)
     failures.extend(f"review: {f}" for f in rg["failures"])

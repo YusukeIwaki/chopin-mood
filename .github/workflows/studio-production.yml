@@ -349,7 +349,7 @@ jobs:
           head = json.loads((d / "pr.json").read_text())["head_sha"]
           print(f"Final review: {review['verdict']}; mechanical QA: {qa['pass']}")
           print(f"Reviewed production head: {head}")
-          print("Owner approval and merge are required before release. Failed reviews return to the Codex production session.")
+          print("The owner's merge selects the video for release; no separate Approve is required. Failed quality reviews return to the Codex production session.")
           PY
       - name: Summarize early visual block
         if: always() && steps.visual.outputs.proceed == 'false'

@@ -187,10 +187,7 @@ def _commit_and_artifact(world, idx=0):
     return {"commit": commit, "child": child, "cand": cand, "art_files": art}
 
 
-def _approve_and_merge(gh, pr, head):
-    gh.reviews.setdefault(pr, []).append(
-        {"id": 1, "user": {"login": OWNER}, "state": "APPROVED",
-         "commit_id": head, "body": "looks good"})
+def _merge_as_owner(gh, pr, head):
     pull = gh.pulls[pr]
     head_commit = gh.commits[pull["head"]["sha"]]
     merge_sha = hashlib.sha1(f"merge:{head}".encode()).hexdigest()
@@ -234,7 +231,7 @@ def test_full_lifecycle_plan_children_commit_notify_merge_release_parent(world):
     pings = [r for r in gh.reviews[pr] if r["body"] == controller.EXACT_PING]
     assert len(pings) == 1 and pings[0]["commit_id"] == commit["head_sha"]
     assert {"login": OWNER} in gh.issues[pr]["assignees"]
-    _approve_and_merge(gh, pr, commit["head_sha"])
+    _merge_as_owner(gh, pr, commit["head_sha"])
     rel = controller.release_controller(gh, pr_number=pr)
     assert rel["ok"], rel
     assert rel["parent_closed"] is False  # sibling still open
@@ -309,11 +306,11 @@ def test_commit_unchanged_tree_skips_and_human_guard(world):
     assert not blocked["ok"]
 
 
-def test_release_rejects_tampered_artifact_and_no_approval(world):
+def test_release_rejects_tampered_artifact_after_owner_merge(world):
     gh = world["gh"]
     built = _commit_and_artifact(world, 0)
     commit, pr = built["commit"], built["commit"]["pr_number"]
-    _approve_and_merge(gh, pr, commit["head_sha"])
+    _merge_as_owner(gh, pr, commit["head_sha"])
     # Tamper one artifact byte (plan.json) and rebuild zip.
     files = dict(built["art_files"])
     files["plan.json"] = b'{"tampered": true}'
@@ -334,7 +331,7 @@ def test_release_existing_asset_mismatch_never_overwrites(world):
         gh, pr_number=pr, child=built["child"], head_sha=commit["head_sha"],
         run_id=11, run_attempt=1, artifact_id=42, artifact_url="",
         review=REVIEW_PASS(commit["head_sha"]), mechanical_pass=True)
-    _approve_and_merge(gh, pr, commit["head_sha"])
+    _merge_as_owner(gh, pr, commit["head_sha"])
     assert controller.release_controller(gh, pr_number=pr)["ok"]
     # Corrupt the stored release asset; a rerun must fail, not overwrite.
     rel = list(gh.releases.values())[0]

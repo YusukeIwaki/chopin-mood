@@ -1052,10 +1052,6 @@ def _verify_sibling_release(gh, *, sibling: int, owner_login: str) -> bool:
         rec = find_bot_receipt(gh, sp["number"])
         if not rec or rec["child"] != sibling or rec["head_sha"] != sp["head"]["sha"]:
             continue
-        reviews = [{"user": r["user"]["login"], "state": r["state"], "commit_id": r["commit_id"]}
-                   for r in gh.paginated(f"/pulls/{sp['number']}/reviews")]
-        if not gating.evaluate_approval(reviews, head_sha=sp["head"]["sha"])["ok"]:
-            continue
         stag = f"{config.RELEASE_TAG_PREFIX}{sp['number']}"
         srel = gh.get_or_none(f"/releases/tags/{stag}")
         if srel is None or srel.get("draft"):
@@ -1096,10 +1092,6 @@ def release_controller(gh, *, pr_number: int, actor: str | None = None,
     if head_ref != f"{config.PRODUCTION_BRANCH_PREFIX}{child}":
         return {"ok": False, "failures": ["PR head branch does not match receipt child"]}
     merge_sha = pr.get("merge_commit_sha") or ""
-    reviews_raw = gh.paginated(f"/pulls/{pr_number}/reviews", key=None)
-    review_list = [{"user": (r.get("user") or {}).get("login"),
-                    "state": r.get("state"), "commit_id": r.get("commit_id")}
-                   for r in reviews_raw]
     run = gh.request("GET", f"/actions/runs/{receipt['run_id']}")
     # Workflow lookup takes the file NAME only; the full
     # .github/workflows/... path is not a valid API route (it is kept
@@ -1236,7 +1228,7 @@ def release_controller(gh, *, pr_number: int, actor: str | None = None,
                   "base": (pr.get("base") or {}).get("ref"), "head_sha": head_sha,
                   "head_repo": _full_name((pr.get("head") or {}).get("repo")),
                   "base_repo": _full_name((pr.get("base") or {}).get("repo"))},
-           "reviews": review_list, "review": review,
+           "review": review,
            "mechanical_pass": qa.get("pass"),
            "run": run_view, "artifact": art_view,
            "expected_workflow_id": workflow.get("id"), "repo": gh.repo,

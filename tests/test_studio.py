@@ -160,8 +160,6 @@ def _release_ctx(**over):
     ctx = {
         "pr": {"number": 7, "merged": True, "merged_by": "YusukeIwaki",
                "base": "main", "head_sha": HEAD},
-        "reviews": [{"user": "YusukeIwaki", "state": "COMMENTED", "commit_id": HEAD},
-                    {"user": "YusukeIwaki", "state": "APPROVED", "commit_id": HEAD}],
         "review": {"verdict": "pass", "reviewed_head_sha": HEAD,
                    "checks": {"mechanical_qa_reviewed": True,
                               "brief_adherence": True, "timing_integrity": True,
@@ -181,18 +179,24 @@ def _release_ctx(**over):
 
 
 def test_release_success_exact_head():
-    # COMMENT after APPROVED must not erase the approval.
+    # The owner's merge selects the exact-head artifact without a review record.
     assert gating.evaluate_release_gate(_release_ctx())["ok"]
 
 
+@pytest.mark.parametrize("reviews", [
+    [],
+    [{"user": "YusukeIwaki", "state": "APPROVED", "commit_id": "b" * 40}],
+    [{"user": "YusukeIwaki", "state": "CHANGES_REQUESTED", "commit_id": HEAD}],
+    [{"user": "YusukeIwaki", "state": "DISMISSED", "commit_id": HEAD}],
+])
+def test_owner_merge_is_the_final_human_selection(reviews):
+    assert gating.evaluate_release_gate(_release_ctx(reviews=reviews))["ok"]
+
+
 @pytest.mark.parametrize("over,frag", [
-    ({"reviews": []}, "approval"),
-    ({"reviews": [{"user": "intruder", "state": "APPROVED", "commit_id": HEAD}]}, "owner"),
-    ({"reviews": [{"user": "YusukeIwaki", "state": "APPROVED", "commit_id": "b" * 40}]}, "head SHA"),
-    ({"reviews": [{"user": "YusukeIwaki", "state": "APPROVED", "commit_id": HEAD},
-                  {"user": "YusukeIwaki", "state": "CHANGES_REQUESTED", "commit_id": HEAD}]}, "CHANGES_REQUESTED"),
-    ({"reviews": [{"user": "YusukeIwaki", "state": "APPROVED", "commit_id": HEAD},
-                  {"user": "YusukeIwaki", "state": "DISMISSED", "commit_id": HEAD}]}, "DISMISSED"),
+    ({"pr": {"number": 7, "merged": True, "merged_by": "intruder",
+             "base": "main", "head_sha": HEAD},
+      "reviews": [{"user": "YusukeIwaki", "state": "APPROVED", "commit_id": HEAD}]}, "owner"),
     ({"review": {"verdict": "fail", "reviewed_head_sha": HEAD, "checks": {},
                   "blockers": ["x"], "summary": "no",
                   "listening_note": "audio listening unavailable; not a full musical judgement"}}, "review"),

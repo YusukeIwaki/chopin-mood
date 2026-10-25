@@ -7,7 +7,7 @@ import pytest
 from studio import artifacts, config, controller, fingerprint
 from studio.github_client import GitHubError
 from test_studio_controller import (
-    world, _commit_and_artifact, _approve_and_merge, REVIEW_PASS, CREATIVE, _planner,
+    world, _commit_and_artifact, _merge_as_owner, REVIEW_PASS, CREATIVE, _planner,
 )
 
 
@@ -20,7 +20,7 @@ def ready(world, index=0):
         gh, pr_number=pr, child=built["child"], head_sha=head,
         run_id=11, run_attempt=1, artifact_id=42, artifact_url="",
         review=REVIEW_PASS(head), mechanical_pass=True)["ok"]
-    built["merge"] = _approve_and_merge(gh, pr, head)
+    built["merge"] = _merge_as_owner(gh, pr, head)
     return built
 
 
@@ -32,6 +32,33 @@ def repack(gh, files):
         for name, data in files.items():
             archive.writestr(name, data)
     gh.artifact_bytes[42] = stream.getvalue()
+
+
+def test_owner_merge_without_github_review_releases_existing_artifact(world):
+    built = ready(world)
+    gh, pr = world["gh"], built["commit"]["pr_number"]
+    gh.reviews.clear()
+    gh.calls.clear()
+    result = controller.release_controller(gh, pr_number=pr)
+    assert result["ok"], result
+    assert gh.reviews == {}  # No APPROVED review is required or manufactured.
+    assert ("GET", f"/pulls/{pr}/reviews") not in gh.calls
+    assert gh.issues[built["child"]]["state"] == "closed"
+    assert next(iter(gh.releases.values()))["draft"] is False
+
+
+@pytest.mark.parametrize("merger", ["someone-else", "github-actions[bot]", None])
+def test_review_approval_cannot_replace_owner_merge(world, merger):
+    built = ready(world)
+    gh, pr = world["gh"], built["commit"]["pr_number"]
+    gh.reviews[pr].append({"user": {"login": config.OWNER}, "state": "APPROVED",
+                           "commit_id": built["commit"]["head_sha"]})
+    gh.pulls[pr]["merged_by"] = {"login": merger}
+    gh.calls.clear()
+    result = controller.release_controller(gh, pr_number=pr)
+    assert not result["ok"] and "merged by the repository owner" in str(result)
+    assert not gh.releases and gh.issues[built["child"]]["state"] == "open"
+    assert not any(method in {"POST", "PATCH", "PUT", "DELETE"} for method, _ in gh.calls)
 
 
 @pytest.mark.parametrize("field", ["video.mp4", "contact-sheet.jpg", "timeline.html"])

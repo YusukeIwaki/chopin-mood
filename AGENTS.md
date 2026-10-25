@@ -46,7 +46,7 @@
 ## Studio のゲート（迂回禁止）
 
 - 受付はオーナーのみ。手動dispatchでもAPI側で元Issue作成者とPRを再検証する。
-- 新方式は本人による当該PRのMergeを採用承認とする。別のApprove操作は要求しない。artifactのreceipt／ハッシュ、採用head／merge内入力、美的ゲートは必須。旧経路の既存PRでは従来のexact-head Approve＋Merge契約を維持する。
+- 旧経路の既存PRを含め、本人による当該PRのMergeを採用承認とする。別のApprove操作は要求しない。artifactのreceipt／ハッシュ、採用head／merge内入力、美的ゲートは必須。
 - エージェントが制作PRを自動Approve／Mergeしない。PR本文に `Fixes` / `Closes` などのIssue自動クローズ記法を書かない。
 - Releaseの公開・資産照合が成功するまで元Issueと他候補PRを閉じない。選択済みReleaseに別候補の動画を上書きしない。再実行は同じ採用案の途中処理だけを復旧する。
 - ワークフローの成功だけを美的承認と扱わない。
