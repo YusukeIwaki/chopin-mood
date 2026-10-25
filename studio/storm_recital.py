@@ -48,6 +48,11 @@ def make_layout(seed, w, h):
     ground = [np.broadcast_to(np.clip((y-.78)/.13, 0, 1), (h, w)),
               np.broadcast_to(np.clip((y-.90)/.10, 0, 1), (h, w)),
               np.clip((np.abs(x-.52)/.40 + np.abs(y-.57)/.43 - 1.15)*4, 0, 1)]
+    # Conservatively exclude the complete overhead piano, player and bench,
+    # including the upper-right body beyond the coarse diamond floor mask.
+    occupied = (np.clip((x-.10)/.03, 0, 1)*np.clip((.99-x)/.03, 0, 1)
+                * np.clip((y-.19)/.03, 0, 1)*np.clip((.70-y)/.03, 0, 1))
+    ground[2] = ground[2]*(1-occupied)
     flashes = [np.exp(-((x-.68)/.30)**2-((y-.24)/.20)**2),
                np.exp(-((x-.70)/.30)**2-((y-.25)/.20)**2),
                np.exp(-((x-.75)/.23)**2-((y-.81)/.17)**2)]
@@ -103,11 +108,15 @@ def _lightning(canvas, f, ctrl, state, sky, seed):
         bx = xx[at] + side*np.arange(5)*.016 + rng.normal(0, .009, 5)
         bx[0], by[0] = xx[at], yy[at]
         paths.append([(float(x*w), float(y*h)) for x, y in zip(bx, by)])
-    core = Image.new("L", (w, h))
+    # Subpixel filaments remain smooth in both small previews and delivery.
+    scale = 2
+    core = Image.new("L", (w*scale, h*scale))
     draw = ImageDraw.Draw(core)
     for i, path in enumerate(paths):
-        draw.line(path, fill=255 if i == 0 else 175,
-                  width=max(1, round(w/540*(2 if i == 0 else 1))))
+        draw.line([(x*scale, y*scale) for x, y in path],
+                  fill=255 if i == 0 else 175,
+                  width=max(1, round(w/540*scale*(2 if i == 0 else 1))))
+    core = core.resize((w, h), Image.Resampling.LANCZOS)
     glow = core.filter(ImageFilter.GaussianBlur(max(.8, w*.009)))
     intensity = accent*(.35+.65*state["storm_light"])
     alpha = np.clip((np.asarray(core, dtype=np.float32)
@@ -177,14 +186,25 @@ def draw_frame(f, ctrl, w, h, seed, lay, scene_palettes, scene_params):
     flash_color = np.array([190., 210., 235.]) + delta("moon")*.4
     img += flash[..., None]*flash_color*accent*.52
     img += flash_color*accent*state["storm_light"]*.075
+    # Filmic highlight shoulder preserves warm piano/water detail through
+    # strong reflected flashes instead of clipping colour channels flat.
+    highlights = np.maximum(img-180., 0.)
+    img = np.minimum(img, 180.) + 75.*(-np.expm1(-highlights/75.))
     canvas = Image.fromarray(np.clip(img, 0, 255).astype(np.uint8))
     canvas = _lightning(canvas, f, ctrl, state, sky, seed)
     canvas = _weather(canvas, f, state, asset, ground, light+accent*1.5)
-    frame = R.apply_camera(np.asarray(canvas), *R.camera_for_frame(f, ctrl, scene_params))
-    # Delivery uses 4:2:0 chroma. Antialias colour before subsampling while
-    # retaining luminance detail in rain, piano strings and wet stone.
+    left, top, cw, ch = R.camera_crop_box(w, h, *R.camera_for_frame(f, ctrl, scene_params))
+    if cw < w-1e-9 or ch < h-1e-9:
+        # Bilinear sampling avoids ringing in the moving high-contrast wet
+        # stone/strings. Crop bounds and DSP-driven trajectories are shared
+        # with the other providers; their sampling remains unchanged.
+        canvas = canvas.resize((w, h), Image.Resampling.BILINEAR,
+                               box=(left, top, left+cw, top+ch))
+    # Delivery uses 4:2:0 chroma. Subpixel luminance AA and a wider colour
+    # filter stabilize fine wet-stone, string and rain detail in delivery.
     # The original registered paintings are never modified.
-    y_channel, cb, cr = Image.fromarray(frame).convert("YCbCr").split()
-    chroma_filter = ImageFilter.GaussianBlur(.9)
+    y_channel, cb, cr = canvas.convert("YCbCr").split()
+    y_channel = y_channel.filter(ImageFilter.GaussianBlur(.8))
+    chroma_filter = ImageFilter.GaussianBlur(1.5)
     return np.asarray(Image.merge("YCbCr", (y_channel, cb.filter(chroma_filter),
                                            cr.filter(chroma_filter))).convert("RGB"))

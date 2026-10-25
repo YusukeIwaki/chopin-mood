@@ -48,21 +48,36 @@ def test_m4a_decode_when_libsndfile_cannot_open(tmp_path):
 
 
 def test_nested_schemas_are_closed_with_explicit_saved_data_options():
-    def check(node, optional=frozenset()):
+    def check(node, optional_by_path, path=()):
         if isinstance(node, dict):
-            if node.get("type") == "object":
+            if node.get("type") == "object" or "properties" in node:
+                optional = optional_by_path.get(path, frozenset())
                 assert node.get("additionalProperties") is False
+                assert set(node.get("required", [])).isdisjoint(optional)
                 assert set(node.get("properties", {})) == set(node.get("required", [])) | optional
-            for value in node.values():
-                check(value)
+            for key, value in node.items():
+                check(value, optional_by_path, path + (key,))
         elif isinstance(node, list):
-            for value in node:
-                check(value)
+            for index, value in enumerate(node):
+                check(value, optional_by_path, path + (index,))
     for name in ("planner-output", "review", "visual-review", "storyboard"):
-        # Storyboards are saved production inputs, not model output. Only
-        # their root asset selector is optional; nested contracts stay closed.
-        optional = {"asset_bundle"} if name == "storyboard" else frozenset()
-        check(json.loads((ROOT / f".github/studio/schemas/{name}.schema.json").read_text()), optional)
+        # Saved storyboards permit two explicit root selectors and bounded
+        # optional camera/storm controls. All object properties stay closed;
+        # no model-output or other nested object gains arbitrary options.
+        optional_by_path = {}
+        if name == "storyboard":
+            optional_by_path = {
+                (): {"asset_bundle", "renderer"},
+                ("properties", "scenes", "items", "properties", "params"): {
+                    "camera_zoom_start", "camera_zoom_end",
+                    "camera_pan_x_start", "camera_pan_x_end",
+                    "camera_pan_y_start", "camera_pan_y_end",
+                    "storm_shot", "rain_density", "rain_wind",
+                    "storm_light", "reflection_strength",
+                },
+            }
+        schema = json.loads((ROOT / f".github/studio/schemas/{name}.schema.json").read_text())
+        check(schema, optional_by_path)
 
 
 def test_planning_record_round_trip_with_code_fence_in_direction():

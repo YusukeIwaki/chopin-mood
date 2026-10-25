@@ -14,6 +14,7 @@ import sys
 import numpy as np
 import pytest
 import soundfile as sf
+from PIL import Image
 
 from p0 import qa, render
 from p0.timebase import Timebase
@@ -148,6 +149,44 @@ def test_reference_is_order_independent_and_preserves_controls():
     assert late.shape == (H, W, 3) and late.dtype == np.uint8
 
 
+def _lightning_inputs():
+    base = Image.new("RGB", (W, H), (20, 20, 20))
+    pulses = np.zeros(120)
+    for onset in (18, 80):
+        pulses[onset:onset+15] = .5*np.exp(-np.arange(15)/4)
+    return base, {"accent_pulse": pulses}, dict(storm_recital.DEFAULTS, storm_light=.9)
+
+
+def test_lightning_geometry_is_stable_within_one_dsp_event_and_order_independent():
+    base, ctrl, state = _lightning_inputs()
+    before = ctrl["accent_pulse"].copy()
+    sky = np.ones((H, W), dtype=np.float32)
+    def draw(frame):
+        return np.asarray(storm_recital._lightning(base.copy(), frame, ctrl, state, sky, SEED))
+    later = draw(82)
+    peak = draw(18)
+    assert np.array_equal(later, draw(82))
+    assert not np.array_equal(peak, draw(80))
+    assert np.array_equal(ctrl["accent_pulse"], before)
+    # Equal pulse values within one event expose geometry independently
+    # of its normal exponential fade: a plateau is not a new onset.
+    ctrl["accent_pulse"][19] = ctrl["accent_pulse"][18]
+    assert np.array_equal(draw(18), draw(19))
+
+
+def test_lightning_adds_no_events_and_never_crosses_sky_or_overhead_masks():
+    base, ctrl, state = _lightning_inputs()
+    sky = np.ones((H, W), dtype=np.float32)
+    for frame in (17, 79, 110):
+        assert np.array_equal(np.asarray(base), np.asarray(storm_recital._lightning(
+            base.copy(), frame, ctrl, state, sky, SEED)))
+    assert np.array_equal(np.asarray(base), np.asarray(storm_recital._lightning(
+        base.copy(), 82, ctrl, state, np.zeros_like(sky), SEED)))
+    sky[H//2:] = 0
+    masked = np.asarray(storm_recital._lightning(base.copy(), 18, ctrl, state, sky, SEED))
+    assert np.array_equal(masked[H//2:], np.asarray(base)[H//2:])
+
+
 def test_storm_controls_do_not_change_legacy_pixels_or_style_defaults():
     ctrl, lay = controls(), rendering.make_layouts(SEED, W, H)
     legacy = [scene["params"] for scene in SB["scenes"]]
@@ -244,6 +283,15 @@ def test_registered_asset_digest_mismatch_is_rejected(tmp_path, monkeypatch):
     monkeypatch.setattr(storm_recital, "ROOT", tmp_path)
     with pytest.raises(ValueError, match="digest mismatch"):
         storm_recital.make_layout(SEED, W, H)
+
+
+def test_registered_overhead_piano_is_excluded_from_water_reflections():
+    ground = storm_recital.make_layout(SEED, W, H)["ground"][2]
+    # Regression for the reviewed upper-right piano body and seated player
+    # in overhead.png. The outer wet stone must still support reflections.
+    for x, y in ((.85, .30), (.20, .62), (.50, .50)):
+        assert ground[int(y*H), int(x*W)] == 0
+    assert ground[int(.90*H), int(.05*W)] > .5
 
 
 def test_asset_revision_invalidates_old_visual_evidence(tmp_path, monkeypatch):
