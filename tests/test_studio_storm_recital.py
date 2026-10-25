@@ -1,4 +1,4 @@
-"""Ribbon provider routing, source binding and real encoded timing faults.
+"""Storm recital provider routing, source binding and real encoded timing faults.
 
 Only local synthetic audio is used. Mechanical correspondence here does
 not establish musical naturalness or aesthetic quality.
@@ -7,6 +7,7 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 
@@ -16,8 +17,8 @@ import soundfile as sf
 
 from p0 import qa, render
 from p0.timebase import Timebase
-from studio import rendering, ribbon_dialogue, storyboard
-from studio.config import PAINTED_ASSET_BUNDLE_ID, RIBBON_DIALOGUE_RENDERER_ID
+from studio import rendering, storm_recital, storyboard
+from studio.config import PAINTED_ASSET_BUNDLE_ID, STORM_RECITAL_RENDERER_ID
 
 ROOT = Path(__file__).resolve().parents[1]
 W, H, N, B, A, SR, SEED = 180, 320, 90, 30, 60, 22050, 20261019
@@ -26,12 +27,12 @@ SCENES = [{"id": "scene01", "start_frame": 0, "end_frame": B},
 PLAN = {"clip": {"n_frames": N}, "scenes": SCENES,
         "accents": [{"frame": A}]}
 SB = storyboard.default_storyboard(SCENES)
-SB["renderer"] = RIBBON_DIALOGUE_RENDERER_ID
+SB["renderer"] = STORM_RECITAL_RENDERER_ID
 PALS = [s["palette"] for s in SB["scenes"]]
-PARAMS = [dict(SB["scenes"][0]["params"], dialogue_spread=-.6,
-               dialogue_twist=-.5, dialogue_lift=.2),
-          dict(SB["scenes"][1]["params"], dialogue_spread=.8,
-               dialogue_twist=.7, dialogue_lift=.8)]
+PARAMS = [dict(SB["scenes"][0]["params"], storm_shot=0, rain_density=.5,
+               rain_wind=-.4, storm_light=.3, reflection_strength=.4),
+          dict(SB["scenes"][1]["params"], storm_shot=2, rain_density=1.,
+               rain_wind=.5, storm_light=.9, reflection_strength=.9)]
 
 
 def controls(boundary=B, accent=A, strength=1.0):
@@ -44,9 +45,9 @@ def controls(boundary=B, accent=A, strength=1.0):
     return c
 
 
-def layout():
-    lay = rendering.make_layouts(SEED, W, H)
-    lay["ribbon_dialogue"] = ribbon_dialogue.make_layout(SEED, W, H)
+def layout(w=W, h=H):
+    lay = rendering.make_layouts(SEED, w, h)
+    lay["storm_recital"] = storm_recital.make_layout(SEED, w, h)
     return lay
 
 
@@ -55,7 +56,7 @@ def reference(ctrl, params=PARAMS):
         scene_palettes=PALS, scene_params=params, layouts=layout())
 
 
-@pytest.mark.parametrize("value", ["unknown", "../ribbon_dialogue.py", None, 1])
+@pytest.mark.parametrize("value", ["unknown", "ribbon-dialogue-v1", "../storm_recital.py", None, 1])
 def test_unknown_renderer_rejected(value):
     sb = copy.deepcopy(SB)
     sb["renderer"] = value
@@ -71,17 +72,17 @@ def test_renderer_and_asset_bundle_cannot_be_combined():
 
 
 @pytest.mark.parametrize("key,low,high", [
-    ("dialogue_spread", -1.0, 1.0), ("dialogue_twist", -1.0, 1.0),
-    ("dialogue_lift", 0.0, 1.0),
+    ("rain_density", .2, 1.), ("rain_wind", -1., 1.),
+    ("storm_light", 0., 1.), ("reflection_strength", 0., 1.),
 ])
-def test_dialogue_param_contract_matches_schema_and_rejects_invalid_values(key, low, high):
+def test_storm_param_contract_matches_schema_and_rejects_invalid_values(key, low, high):
     schema = json.loads((ROOT / ".github/studio/schemas/storyboard.schema.json").read_text())
     spec = schema["properties"]["scenes"]["items"]["properties"]["params"]["properties"][key]
     assert spec["type"] == "number"
     assert (spec["minimum"], spec["maximum"]) == (low, high) == storyboard.PARAM_RANGES[key]
-    assert spec["default"] == ribbon_dialogue.DEFAULTS[key]
-    assert ribbon_dialogue.RENDERER_ID == RIBBON_DIALOGUE_RENDERER_ID
-    assert schema["properties"]["renderer"]["enum"] == [RIBBON_DIALOGUE_RENDERER_ID]
+    assert spec["default"] == storm_recital.DEFAULTS[key]
+    assert storm_recital.RENDERER_ID == STORM_RECITAL_RENDERER_ID
+    assert schema["properties"]["renderer"]["enum"] == [STORM_RECITAL_RENDERER_ID]
     assert schema["not"] == {"required": ["renderer", "asset_bundle"]}
     for value in (low, high, (low+high)/2):
         sb = copy.deepcopy(SB)
@@ -93,13 +94,38 @@ def test_dialogue_param_contract_matches_schema_and_rejects_invalid_values(key, 
         assert not storyboard.validate_storyboard(sb, SCENES)["ok"], (key, value)
 
 
+def test_shot_is_bounded_integer_in_schema_and_python():
+    schema = json.loads((ROOT / ".github/studio/schemas/storyboard.schema.json").read_text())
+    spec = schema["properties"]["scenes"]["items"]["properties"]["params"]["properties"]["storm_shot"]
+    assert spec["type"] == "integer"
+    assert (spec["minimum"], spec["maximum"]) == (0, 2) == storyboard.PARAM_RANGES["storm_shot"]
+    assert spec["default"] == storm_recital.DEFAULTS["storm_shot"]
+    for value in (0, 1, 2, 1.0):
+        sb = copy.deepcopy(SB)
+        sb["scenes"][0]["params"]["storm_shot"] = value
+        assert storyboard.validate_storyboard(sb, SCENES)["ok"], value
+    for value in (-1, 3, .5, 1.99, True, "1", None, float("nan"), float("inf")):
+        sb = copy.deepcopy(SB)
+        sb["scenes"][0]["params"]["storm_shot"] = value
+        assert not storyboard.validate_storyboard(sb, SCENES)["ok"], value
+
+
+@pytest.mark.parametrize("key", ["dialogue_spread", "dialogue_twist", "dialogue_lift"])
+def test_unused_dialogue_params_are_rejected(key):
+    schema = json.loads((ROOT / ".github/studio/schemas/storyboard.schema.json").read_text())
+    assert key not in schema["properties"]["scenes"]["items"]["properties"]["params"]["properties"]
+    sb = copy.deepcopy(SB)
+    sb["scenes"][0]["params"][key] = 0
+    assert not storyboard.validate_storyboard(sb, SCENES)["ok"]
+
+
 def test_renderer_intake_needs_only_standard_library():
     # The Actions intake runs before image/scientific dependencies install.
     code = """from studio import storyboard
 scenes = [{'id': 'scene01'}]
 sb = storyboard.default_storyboard(scenes)
-sb['renderer'] = 'ribbon-dialogue-v1'
-sb['scenes'][0]['params']['dialogue_lift'] = .5
+sb['renderer'] = 'storm-recital-v1'
+sb['scenes'][0]['params']['storm_light'] = .5
 assert storyboard.validate_storyboard(sb, scenes)['ok']
 """
     result = subprocess.run([sys.executable, "-S", "-c", code],
@@ -122,7 +148,7 @@ def test_reference_is_order_independent_and_preserves_controls():
     assert late.shape == (H, W, 3) and late.dtype == np.uint8
 
 
-def test_dialogue_controls_do_not_change_legacy_pixels_or_style_defaults():
+def test_storm_controls_do_not_change_legacy_pixels_or_style_defaults():
     ctrl, lay = controls(), rendering.make_layouts(SEED, W, H)
     legacy = [scene["params"] for scene in SB["scenes"]]
     for frame in (1, B, N-1):
@@ -136,20 +162,21 @@ def test_dialogue_controls_do_not_change_legacy_pixels_or_style_defaults():
 
 
 @pytest.mark.parametrize("key,low,high", [
-    ("dialogue_spread", -1.0, 1.0), ("dialogue_twist", -1.0, 1.0),
-    ("dialogue_lift", 0.0, 1.0),
+    ("storm_shot", 0, 2), ("rain_density", .2, 1.),
+    ("rain_wind", -1., 1.), ("storm_light", 0., 1.),
+    ("reflection_strength", 0., 1.),
 ])
-def test_declared_dialogue_controls_reach_actual_pixels(key, low, high):
+def test_declared_storm_controls_reach_actual_pixels(key, low, high):
     a, b = copy.deepcopy(PARAMS), copy.deepcopy(PARAMS)
     a[0][key], b[0][key] = low, high
     assert not np.array_equal(reference(controls(), a)(10), reference(controls(), b)(10)), key
 
 
-def _ribbon_bundle(path):
+def _storm_bundle(path):
     from test_studio_render_context import _make_bundle
     bundle = _make_bundle(path)
     sb = json.loads(bundle["storyboard"].read_text())
-    sb["renderer"] = RIBBON_DIALOGUE_RENDERER_ID
+    sb["renderer"] = STORM_RECITAL_RENDERER_ID
     for index, scene in enumerate(sb["scenes"]):
         scene["params"] = PARAMS[index]
     bundle["storyboard"].write_text(json.dumps(sb))
@@ -159,31 +186,32 @@ def _ribbon_bundle(path):
 def test_context_binds_source_hash_and_invalidates_old_visual_evidence(tmp_path, monkeypatch):
     from test_studio_render_context import _prepare
     from studio import visual_preflight as vp
-    bundle = _ribbon_bundle(tmp_path)
+    bundle = _storm_bundle(tmp_path)
     before = _prepare(bundle)
-    source = Path(ribbon_dialogue.__file__)
-    binding = {"renderer_id": RIBBON_DIALOGUE_RENDERER_ID,
-               "source_path": "studio/ribbon_dialogue.py",
+    source = Path(storm_recital.__file__)
+    binding = {"renderer_id": STORM_RECITAL_RENDERER_ID,
+               "source_path": "studio/storm_recital.py",
                "sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
     assert before.public_plan["visual_renderer"] == binding
-    assert "ribbon_dialogue" in before.layouts and "painted_assets" not in before.layouts
-    assert np.array_equal(before.frame(4), ribbon_dialogue.draw_frame(
+    assert "storm_recital" in before.layouts and "painted_assets" not in before.layouts
+    assert before.public_plan["visual_assets"] == before.layouts["storm_recital"]["provenance"]
+    assert np.array_equal(before.frame(4), storm_recital.draw_frame(
         4, before.controls, W, H, SEED, before.layouts, before.palettes, before.scene_params))
     evidence = tmp_path / "evidence"
     vp.generate_evidence(before, evidence, stage="still", engine_sha="a"*40,
                          run_id=123, run_attempt=1, iteration=0)
     assert vp.validate_evidence(evidence, context=before)["ok"]
     # Equivalent pixels alone cannot preserve a previous source approval.
-    changed_source = tmp_path / "ribbon_dialogue.py"
+    changed_source = tmp_path / "storm_recital.py"
     changed_source.write_bytes(source.read_bytes() + b"\n# new renderer revision\n")
-    monkeypatch.setattr(ribbon_dialogue, "__file__", str(changed_source))
+    monkeypatch.setattr(storm_recital, "__file__", str(changed_source))
     after = _prepare(bundle)
     assert after.public_plan["visual_renderer"]["sha256"] != binding["sha256"]
     assert not vp.validate_evidence(evidence, context=after)["ok"]
 
 
-def test_render_provenance_records_original_provider_and_exact_source(tmp_path):
-    bundle = _ribbon_bundle(tmp_path)
+def test_render_provenance_records_painted_provider_and_exact_source_and_assets(tmp_path):
+    bundle = _storm_bundle(tmp_path)
     out = tmp_path / "render"
     result = subprocess.run([
         sys.executable, str(ROOT / "scripts/studio_render.py"),
@@ -196,18 +224,57 @@ def test_render_provenance_records_original_provider_and_exact_source(tmp_path):
     assert result.returncode in (0, 2), (result.stdout[-1000:], result.stderr[-1000:])
     prov = json.loads((out / "provenance.json").read_text())
     plan = json.loads((out / "plan.json").read_text())
-    assert prov["prototype"] == "original procedural paper-ribbon animation; no generated audio"
+    assert prov["prototype"] == "AI-painted storm recital shots with deterministic rain, light and reflections; no generated audio"
     assert prov["visual_renderer"] == plan["visual_renderer"]
     assert prov["visual_renderer"]["sha256"] == hashlib.sha256(
-        Path(ribbon_dialogue.__file__).read_bytes()).hexdigest()
-    assert "visual_assets" not in prov
+        Path(storm_recital.__file__).read_bytes()).hexdigest()
+    assert prov["visual_assets"] == plan["visual_assets"]
+    assert len(prov["visual_assets"]["files"]) == 3
     assert prov["media_sha256"]["video.mp4"] == hashlib.sha256(
         (out / "video.mp4").read_bytes()).hexdigest()
 
 
+def test_registered_asset_digest_mismatch_is_rejected(tmp_path, monkeypatch):
+    directory = tmp_path / storm_recital.DIRECTORY
+    shutil.copytree(storm_recital.ROOT / storm_recital.DIRECTORY, directory)
+    manifest = json.loads((directory / "manifest.json").read_text())
+    assert len(manifest["files"]) == 3
+    image = directory / next(iter(manifest["files"]))
+    image.write_bytes(image.read_bytes() + b"changed")
+    monkeypatch.setattr(storm_recital, "ROOT", tmp_path)
+    with pytest.raises(ValueError, match="digest mismatch"):
+        storm_recital.make_layout(SEED, W, H)
+
+
+def test_asset_revision_invalidates_old_visual_evidence(tmp_path, monkeypatch):
+    from test_studio_render_context import _prepare
+    from studio import visual_preflight as vp
+    inputs = tmp_path / "inputs"
+    inputs.mkdir()
+    bundle = _storm_bundle(inputs)
+    directory = tmp_path / storm_recital.DIRECTORY
+    shutil.copytree(storm_recital.ROOT / storm_recital.DIRECTORY, directory)
+    monkeypatch.setattr(storm_recital, "ROOT", tmp_path)
+    before = _prepare(bundle)
+    evidence = tmp_path / "evidence"
+    vp.generate_evidence(before, evidence, stage="still", engine_sha="a"*40,
+                         run_id=123, run_attempt=1, iteration=0)
+    assert vp.validate_evidence(evidence, context=before)["ok"]
+    manifest_path = directory / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    image_name = next(iter(manifest["files"]))
+    image = directory / image_name
+    image.write_bytes(image.read_bytes() + b"\nnew registered asset revision\n")
+    manifest["files"][image_name] = hashlib.sha256(image.read_bytes()).hexdigest()
+    manifest_path.write_text(json.dumps(manifest))
+    after = _prepare(bundle)
+    assert before.public_plan["visual_assets"] != after.public_plan["visual_assets"]
+    assert not vp.validate_evidence(evidence, context=after)["ok"]
+
+
 @pytest.fixture(scope="module")
 def encoded(tmp_path_factory):
-    out = tmp_path_factory.mktemp("ribbon-encode")
+    out = tmp_path_factory.mktemp("storm-encode")
     wav = out / "tone.wav"
     sf.write(wav, .1*np.sin(np.arange(SR*3)*2*np.pi*440/SR), SR)
     cases = {"good": controls(), "scene_early": controls(boundary=B-1),
@@ -240,8 +307,9 @@ def test_real_encoded_timing_faults(encoded, name):
             assert timing["best_offset_frames"] == (-1 if name == "scene_early" else 1)
 
 
-@pytest.mark.parametrize("scene_index", range(2))
-def test_native_strength_floor_accent_rejects_missing_and_late_encodes(tmp_path, scene_index):
+@pytest.mark.parametrize("shot_index", range(3))
+@pytest.mark.parametrize("w,h", [(W, H), (540, 960)])
+def test_native_strength_floor_accent_rejects_missing_and_late_encodes(tmp_path, shot_index, w, h):
     # pick_accents retains native DSP strengths >= .5. Use that weakest
     # supported pulse, rather than a hand-amplified event, in each palette.
     from p0.plan import ACCENT_STRENGTH_FLOOR
@@ -255,17 +323,18 @@ def test_native_strength_floor_accent_rejects_missing_and_late_encodes(tmp_path,
     def frame_fn(at):
         ctrl = {key: value[:n] for key, value in controls(
             boundary=N, accent=at, strength=ACCENT_STRENGTH_FLOOR).items()}
-        return rendering.make_reference_frame_fn(ctrl, W, H, SEED,
-            scene_palettes=[PALS[scene_index]], scene_params=[PARAMS[scene_index]],
-            layouts=layout())
+        return rendering.make_reference_frame_fn(ctrl, w, h, SEED,
+            scene_palettes=[PALS[shot_index % len(PALS)]],
+            scene_params=[dict(PARAMS[shot_index % len(PARAMS)], storm_shot=shot_index)],
+            layouts=layout(w, h))
 
     for name, at in (("good", accent), ("missing", None), ("late", accent+1)):
         path = tmp_path / f"{name}.mp4"
         fn = frame_fn(at)
-        render.render_video((fn(f) for f in range(n)), str(wav), str(path), W, H, 30, 1, n)
+        render.render_video((fn(f) for f in range(n)), str(wav), str(path), w, h, 30, 1, n)
         result = qa.check_rendered_frames(str(path), plan, Timebase(SR, 30, 1),
-                                          W, H, n, frame_fn(accent),
+                                          w, h, n, frame_fn(accent),
                                           require_transition_timing=True)
-        assert result["pass"] == (name == "good"), (scene_index, name, result)
+        assert result["pass"] == (name == "good"), (shot_index, name, result)
         if name != "good":
             assert any(f["frame"] == accent and not f["ok"] for f in result["frames"])

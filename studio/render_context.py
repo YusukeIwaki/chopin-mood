@@ -154,14 +154,15 @@ def prepare_context(wav, candidate_path, storyboard_path, brief_path, *,
                                       det_scenes, accents, feat, seed)
     layouts = cleanmod.make_layouts(seed, width, height)
     if storyboard.get("renderer") is not None:
-        from . import ribbon_dialogue
-        layouts["ribbon_dialogue"] = ribbon_dialogue.make_layout(seed, width, height)
+        from . import storm_recital
+        layouts["storm_recital"] = storm_recital.make_layout(seed, width, height)
         # Public-plan binding invalidates old visual approval when the
         # trusted provider code changes, including uncommitted changes.
+        plan["visual_assets"] = layouts["storm_recital"]["provenance"]
         plan["visual_renderer"] = {
             "renderer_id": storyboard["renderer"],
-            "source_path": "studio/ribbon_dialogue.py",
-            "sha256": _sha256_file(Path(ribbon_dialogue.__file__)),
+            "source_path": "studio/storm_recital.py",
+            "sha256": _sha256_file(Path(storm_recital.__file__)),
         }
     if storyboard.get("asset_bundle") is not None:
         from .painted import load_bundle

@@ -93,7 +93,7 @@ gh workflow run studio-candidate.yml --ref main -f pr_number=104
 
 `init` と `render` はエンジン・素材・依存ファイルが `project.engine_sha` と同じことを確認する。新しい描画コード・素材は先にエンジニアリングPRへまとめる。Actionsはdispatch時のmain SHAと照合し、PRコードを実行しない。
 
-`storyboard.json` の任意の `renderer: "ribbon-dialogue-v1"` は、画像素材を使わないオリジナルの紙リボン描画を選ぶ。`asset_bundle` との同時指定は拒否する。各場面の `params` に `dialogue_spread`・`dialogue_twist`（-1〜1）と `dialogue_lift`（0〜1）を指定でき、既存のDSP境界で滑らかに補間する。既定値は順に0・0・0.35。パレット、`light_bias`、数値カメラも使い、`figure_scale`・`particle_multiplier`・`glow_scale` は紙リボンに作用しない。`plan.json` と `provenance.json` の `visual_renderer` はレンダラーID・リポジトリ相対ソースパス・コードのSHA256を記録し、描画コードが変われば視覚承認を取り直す。
+`storyboard.json` の任意の `renderer: "storm-recital-v1"` は、登録済みの豪雨のピアノ公演3ショットに雨・照明・濡れた地面の反射を重ねる。`asset_bundle` との同時指定は拒否する。各場面の `params` は `storm_shot`（整数0〜2、既定0）、`rain_density`（0.2〜1、既定0.7）、`rain_wind`（-1〜1、既定0）、`storm_light`（0〜1、既定0.5）、`reflection_strength`（0〜1、既定0.6）を受け付け、既存のDSP境界でショットと数値を滑らかに補間する。疎な既存DSPアクセントで空のあるショットに枝分かれした雷、俯瞰に反射光を出し、`storm_light` が強度を変える。6色のパレットによる色調・反射・閃光色、`light_bias`、数値カメラも使い、`figure_scale`・`particle_multiplier`・`glow_scale` はこの描画に作用しない。`plan.json` と `provenance.json` の `visual_renderer` はレンダラーID・リポジトリ相対ソースパス・コードのSHA256、`visual_assets` は登録画像とmanifestのハッシュを記録する。描画コードや素材が変われば視覚承認を取り直す。
 
 低水準の処理：
 

@@ -53,11 +53,12 @@ The optional top-level `asset_bundle` selects a registered, hash-checked
 background painting and transparent traveler. The same assets persist
 across scenes; palette values drive spatial colour grading and light
 while preserving painted detail. No images are generated during rendering.
-The optional `renderer: "ribbon-dialogue-v1"` selects an original
-procedural paper-ribbon sculpture with two continuous gestures, without
-image assets. `renderer` and `asset_bundle` are mutually exclusive;
-omitting both keeps the legacy procedural landscape. The plan and
-provenance bind this renderer's source path and code SHA256.
+The optional `renderer: "storm-recital-v1"` selects three registered,
+hash-checked paintings of a solo piano recital in torrential rain,
+with deterministic rain, lighting and wet-ground reflections. Images
+are not generated at runtime. `renderer` and `asset_bundle` are mutually
+exclusive; omitting both keeps the legacy procedural landscape. The
+plan and provenance bind the renderer source code and all shot images.
 Judge all methods by the same quality standard; generated artwork earns
 no automatic approval. Legacy/painted controls are, per deterministic scene:
 
@@ -69,13 +70,17 @@ no automatic approval. Legacy/painted controls are, per deterministic scene:
   `camera_pan_x_start`/`camera_pan_x_end`,
   `camera_pan_y_start`/`camera_pan_y_end`.
 
-The ribbon renderer uses the same palette fields as background, paper,
-lining and reflected light, `light_bias`, and the executable camera.
-Its additional controls are `dialogue_spread` and `dialogue_twist`
-(-1.0-1.0, default 0.0), and `dialogue_lift` (0.0-1.0, default 0.35).
-They alter the two paper gestures and join at the same scene windows.
-Legacy `figure_scale`, `particle_multiplier` and `glow_scale` do not
-alter ribbon artwork; it has no figures, stars or decorative particles.
+The storm renderer uses all six palette fields for colour grading,
+reflections and flash tint, `light_bias`, and the executable camera.
+It adds `storm_shot` (integer 0-2, default 0),
+`rain_density` (0.2-1.0, default 0.7), `rain_wind` (-1.0-1.0, default 0),
+`storm_light` (0.0-1.0, default 0.5), and `reflection_strength` (0.0-1.0,
+default 0.6). It blends shot images and numeric controls across existing
+scene windows. Legacy `figure_scale`, `particle_multiplier` and
+`glow_scale` do not alter this provider. Judge visible rain, composition
+and illumination, without treating prose as implemented artwork.
+Sparse retained DSP accents drive branched lightning in sky views and
+reflected flashes overhead; `storm_light` weights their intensity.
 
 The renderer joins palettes, the four non-camera controls and camera
 trajectories with smoothstep around existing DSP boundaries: at most
