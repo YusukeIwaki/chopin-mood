@@ -77,8 +77,11 @@ reflections and flash tint, `light_bias`, and the executable camera. Its bounded
 are `storm_shot` (integer 0-2, default 0), `rain_density` (0.2-1.0, default
 0.7), `rain_wind` (-1.0-1.0, default 0.0), `storm_light` (0.0-1.0,
 default 0.5), and `reflection_strength` (0.0-1.0, default 0.6). Shot
-images and numeric controls blend across the existing scene transition
-windows; they do not create or move DSP boundaries. Legacy
+images and their spatial masks dissolve over at most four frames per
+side (eight frames total, about 0.27s at 30fps), centered on each
+unchanged DSP boundary. Weather controls retain the slower scene join
+described below; the shot dissolve is also capped by that join for
+short scenes. These transitions do not create or move DSP boundaries. Legacy
 `figure_scale`, `particle_multiplier` and `glow_scale` do not alter this
 provider. Judge rain, shot composition and lighting from actual pixels;
 a declared theme or motif is not visual evidence.
@@ -87,8 +90,8 @@ Sparse retained DSP accent pulses can produce branched lightning in
 sky views and reflected light in the overhead view. `storm_light`
 weights their intensity; these effects do not introduce new event times.
 
-The renderer automatically joins palettes, the four non-camera numeric
-controls, and the camera trajectories around each unchanged DSP scene
+The renderer automatically joins palettes, the legacy four non-camera
+numeric controls, storm weather controls, and camera trajectories around each unchanged DSP scene
 boundary. The join uses smoothstep over at most 24 frames on each side
 (0.8 seconds per side at 30fps), capped to a quarter of each adjacent
 scene. The boundary is the 50% blend point. Start/end samples beside a
@@ -113,8 +116,8 @@ Always return `repair` with exactly `route` and `instructions`:
   to verify it in the re-rendered evidence (contact sheet / QA).
 
 Choose `storyboard` ONLY if EVERY blocker can be resolved using the
-executed controls above: per-scene palette colours and/or the ten
-bounded numeric params (including numeric camera zoom/pan fixes --
+executed controls above: per-scene palette colours and/or the selected
+provider's bounded numeric params (including numeric camera zoom/pan fixes --
 an inward, wider or settling framing that the numeric camera can
 express is a storyboard fix), within their existing ranges, at the
 existing deterministic scene IDs. Write instructions in those terms

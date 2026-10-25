@@ -149,6 +149,44 @@ def test_reference_is_order_independent_and_preserves_controls():
     assert late.shape == (H, W, 3) and late.dtype == np.uint8
 
 
+def test_shot_dissolve_is_eight_frames_while_weather_and_qa_keep_full_window():
+    boundary = 120
+    ctrl = {"scene_id": np.repeat([0, 1], boundary)}
+    before = ctrl["scene_id"].copy()
+    assert storm_recital.SHOT_DISSOLVE_HALF_FRAMES == 4
+    weights = {}
+    for f in range(boundary-24, boundary+25):
+        state, shots = storm_recital._state(f, ctrl, PARAMS)
+        weights[f] = dict(shots)
+        assert set(weights[f]) <= {0, 2}  # No intermediate medium shot.
+        assert sum(weights[f].values()) == pytest.approx(1)
+        if f <= boundary-4:
+            assert weights[f][0] == 1
+        elif f >= boundary+4:
+            assert weights[f][2] == 1
+        else:
+            assert 0 < weights[f][2] < 1
+        if f in (boundary-5, boundary+5):
+            # Weather still changes outside the shorter image dissolve.
+            assert PARAMS[0]["rain_density"] < state["rain_density"] < PARAMS[1]["rain_density"]
+    assert weights[boundary] == {0: .5, 2: .5}
+    assert np.array_equal(before, ctrl["scene_id"])
+    ref = rendering.make_reference_frame_fn(ctrl, W, H, SEED,
+        scene_params=PARAMS, layouts=layout())
+    assert ref.transition_window(boundary) == (boundary-24, boundary+24, .5)
+
+
+def test_short_scene_caps_shot_dissolve_without_moving_its_center():
+    ctrl = {"scene_id": np.repeat([0, 1], 4)}
+    assert dict(storm_recital._state(3, ctrl, PARAMS)[1]) == {0: 1, 2: 0}
+    assert dict(storm_recital._state(4, ctrl, PARAMS)[1]) == {0: .5, 2: .5}
+    assert dict(storm_recital._state(5, ctrl, PARAMS)[1]) == {0: 0, 2: 1}
+    # A one-frame scene retains its explicit shot without a fabricated join.
+    ctrl = {"scene_id": np.array([0, 1])}
+    assert storm_recital._state(0, ctrl, PARAMS)[1] == [(0, 1.)]
+    assert storm_recital._state(1, ctrl, PARAMS)[1] == [(2, 1.)]
+
+
 def _lightning_inputs():
     base = Image.new("RGB", (W, H), (20, 20, 20))
     pulses = np.zeros(120)
@@ -353,6 +391,42 @@ def test_real_encoded_timing_faults(encoded, name):
             timing = failing[target]["transition_timing"]
             assert not timing["ok"]
             assert timing["best_offset_frames"] == (-1 if name == "scene_early" else 1)
+
+
+def test_encoded_long_scene_join_keeps_full_qa_window_and_rejects_one_frame_shifts(tmp_path):
+    # The 3s fixture's short scenes cap the common half-window at seven
+    # frames. Exercise the full 24-frame join, with a different observed
+    # GOP from the 61-frame reference, to catch an unobservable slow fade.
+    boundary, start, n = 120, 60, 121
+    ctrl = {key: np.resize(value, 240) for key, value in controls(accent=None).items()}
+    ctrl["scene_id"] = np.repeat([0, 1], boundary)
+    canonical = rendering.make_reference_frame_fn(ctrl, W, H, SEED,
+        scene_palettes=PALS, scene_params=PARAMS, layouts=layout())
+
+    def ref(f):
+        return canonical(start+f)
+
+    ref.shifted_boundary_frame = lambda b, shift, f: canonical.shifted_boundary_frame(
+        boundary, shift, start+f)
+    ref.transition_window = lambda b: (boundary-24-start, boundary+24-start, .5)
+    ref.patch_mae_max = canonical.patch_mae_max
+    wav = tmp_path / "silence.wav"
+    sf.write(wav, np.zeros(SR*n//30), SR)
+    plan = {"clip": {"n_frames": n}, "accents": [], "scenes": [
+        {"start_frame": 0, "end_frame": boundary-start},
+        {"start_frame": boundary-start, "end_frame": n}]}
+    for shift in (0, -1, 1):
+        path = tmp_path / f"shift-{shift}.mp4"
+        frames = (canonical.shifted_boundary_frame(boundary, shift, start+f)
+                  for f in range(n))
+        render.render_video(frames, str(wav), str(path), W, H, 30, 1, n)
+        result = qa.check_rendered_frames(str(path), plan, Timebase(SR, 30, 1),
+            W, H, n, ref, require_transition_timing=True)
+        assert result["pass"] == (shift == 0), (shift, result)
+        timing, = result["transition_timing"]
+        assert timing["probe_frames"] == list(range(30, 91))
+        assert timing["best_offset_frames"] == shift, timing
+        assert timing["separation_ratio"] >= qa.TRANSITION_SEPARATION_RATIO_MIN, timing
 
 
 @pytest.mark.parametrize("shot_index", range(3))

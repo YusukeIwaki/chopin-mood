@@ -22,6 +22,7 @@ BASE_PALETTE = {"sky_top": (12, 20, 32), "sky_bot": (65, 76, 88),
                 "far": (40, 53, 68), "near": (24, 28, 35),
                 "moon": (225, 222, 210), "glow": (240, 190, 116)}
 SHOTS = ("wide.png", "medium.png", "overhead.png")
+SHOT_DISSOLVE_HALF_FRAMES = 4
 
 
 def make_layout(seed, w, h):
@@ -70,7 +71,7 @@ def make_layout(seed, w, h):
 
 
 def _state(f, ctrl, scene_params):
-    from .rendering import scene_transition
+    from .rendering import scene_transition, smoothstep01
 
     def at(frame):
         sid = int(ctrl["scene_id"][frame])
@@ -84,9 +85,16 @@ def _state(f, ctrl, scene_params):
     left, right, blend = trans
     a, b = at(left), at(right)
     state = {key: a[key] + (b[key]-a[key])*blend for key in DEFAULTS}
+    # A short shot dissolve keeps different piano scales from lingering as
+    # double images. Its 50% point remains the original DSP boundary;
+    # weather controls, palette and camera retain their slower easing.
+    boundary = (left + right) // 2
+    radius = min(SHOT_DISSOLVE_HALF_FRAMES, (right-left)//2)
+    shot_blend = smoothstep01((f-boundary+radius)/(2*radius))
     # Blend actual shots; rounding an interpolated shot index would cut at
     # an arbitrary intermediate index, especially for a wide/overhead pair.
-    return state, [(int(a["storm_shot"]), 1-blend), (int(b["storm_shot"]), blend)]
+    return state, [(int(a["storm_shot"]), 1-shot_blend),
+                   (int(b["storm_shot"]), shot_blend)]
 
 
 def _lightning(canvas, f, ctrl, state, sky, seed):

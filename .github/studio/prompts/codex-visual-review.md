@@ -75,14 +75,18 @@ reflections and flash tint, `light_bias`, and the executable camera.
 It adds `storm_shot` (integer 0-2, default 0),
 `rain_density` (0.2-1.0, default 0.7), `rain_wind` (-1.0-1.0, default 0),
 `storm_light` (0.0-1.0, default 0.5), and `reflection_strength` (0.0-1.0,
-default 0.6). It blends shot images and numeric controls across existing
-scene windows. Legacy `figure_scale`, `particle_multiplier` and
+default 0.6). Shot images and their spatial masks dissolve over at most
+four frames per side (eight frames total, about 0.27s at 30fps), with
+the unchanged DSP boundary at 50%. Weather controls retain the slower
+scene join described below; the shot dissolve is also capped by that
+join for short scenes. Legacy `figure_scale`, `particle_multiplier` and
 `glow_scale` do not alter this provider. Judge visible rain, composition
 and illumination, without treating prose as implemented artwork.
 Sparse retained DSP accents drive branched lightning in sky views and
 reflected flashes overhead; `storm_light` weights their intensity.
 
-The renderer joins palettes, the four non-camera controls and camera
+The renderer joins palettes, the legacy four non-camera controls,
+storm weather controls and camera
 trajectories with smoothstep around existing DSP boundaries: at most
 24 frames (0.8s) per side, capped to a quarter of each adjacent scene.
 Each unchanged boundary is the 50% blend point. Adjacent scene end/start
@@ -108,8 +112,8 @@ Always return `repair` with exactly `route` and `instructions`:
   carried verbatim into repair work.
 
 Choose `storyboard` only when every blocker can be fixed with the
-executable controls above: palette colours and/or the ten numeric
-params (including numeric camera zoom/pan), within their existing
+executable controls above: palette colours and/or the selected provider's
+bounded numeric params (including numeric camera zoom/pan), within their existing
 ranges at the existing scene IDs. Write instructions in those
 terms (scene ID, palette key or param, direction, verification in
 the re-rendered evidence).
