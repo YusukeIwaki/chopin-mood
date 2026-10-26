@@ -1,0 +1,308 @@
+{
+  "schema_version": "1.0",
+  "style_id": "salon-afternoon-encore",
+  "prototype_notice": "Fictional illustrated salon; original piano recording. Posture animation suggests performance without note-accurate fingering.",
+  "scenes": [
+    {
+      "id": "scene01",
+      "palette": {
+        "sky_top": [
+          224,
+          203,
+          167
+        ],
+        "sky_bot": [
+          246,
+          224,
+          182
+        ],
+        "far": [
+          174,
+          134,
+          108
+        ],
+        "near": [
+          123,
+          89,
+          61
+        ],
+        "moon": [
+          252,
+          238,
+          196
+        ],
+        "glow": [
+          240,
+          192,
+          116
+        ]
+      },
+      "motif": "The intimate room and audience establish an informal encore.",
+      "camera": "Registered room/recital/pianist framing, with a restrained numeric camera drift and short dissolves at the unchanged DSP boundaries.",
+      "params": {
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": 0,
+        "glow_scale": 1,
+        "camera_zoom_start": 1.01,
+        "camera_zoom_end": 1.06,
+        "camera_pan_x_start": -0.1,
+        "camera_pan_x_end": -0.1,
+        "camera_pan_y_start": 0.35,
+        "camera_pan_y_end": 0.35,
+        "salon_shot": 0
+      }
+    },
+    {
+      "id": "scene02",
+      "palette": {
+        "sky_top": [
+          224,
+          203,
+          167
+        ],
+        "sky_bot": [
+          246,
+          224,
+          182
+        ],
+        "far": [
+          174,
+          134,
+          108
+        ],
+        "near": [
+          123,
+          89,
+          61
+        ],
+        "moon": [
+          252,
+          238,
+          196
+        ],
+        "glow": [
+          240,
+          192,
+          116
+        ]
+      },
+      "motif": "A closer view brings attention to the pianist and keyboard.",
+      "camera": "Registered room/recital/pianist framing, with a restrained numeric camera drift and short dissolves at the unchanged DSP boundaries.",
+      "params": {
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": 0.015,
+        "glow_scale": 1,
+        "camera_zoom_start": 1.06,
+        "camera_zoom_end": 1.15,
+        "camera_pan_x_start": -0.1,
+        "camera_pan_x_end": -0.1,
+        "camera_pan_y_start": 0.35,
+        "camera_pan_y_end": 0.35,
+        "salon_shot": 1
+      }
+    },
+    {
+      "id": "scene03",
+      "palette": {
+        "sky_top": [
+          224,
+          203,
+          167
+        ],
+        "sky_bot": [
+          246,
+          224,
+          182
+        ],
+        "far": [
+          174,
+          134,
+          108
+        ],
+        "near": [
+          123,
+          89,
+          61
+        ],
+        "moon": [
+          252,
+          238,
+          196
+        ],
+        "glow": [
+          240,
+          192,
+          116
+        ]
+      },
+      "motif": "Warm daylight holds the playing gesture.",
+      "camera": "Registered room/recital/pianist framing, with a restrained numeric camera drift and short dissolves at the unchanged DSP boundaries.",
+      "params": {
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": 0.025,
+        "glow_scale": 1,
+        "camera_zoom_start": 1.15,
+        "camera_zoom_end": 1.17,
+        "camera_pan_x_start": -0.1,
+        "camera_pan_x_end": -0.1,
+        "camera_pan_y_start": 0.35,
+        "camera_pan_y_end": 0.35,
+        "salon_shot": 2
+      }
+    },
+    {
+      "id": "scene04",
+      "palette": {
+        "sky_top": [
+          224,
+          203,
+          167
+        ],
+        "sky_bot": [
+          246,
+          224,
+          182
+        ],
+        "far": [
+          174,
+          134,
+          108
+        ],
+        "near": [
+          123,
+          89,
+          61
+        ],
+        "moon": [
+          252,
+          238,
+          196
+        ],
+        "glow": [
+          240,
+          192,
+          116
+        ]
+      },
+      "motif": "The frame gently opens into the room.",
+      "camera": "Registered room/recital/pianist framing, with a restrained numeric camera drift and short dissolves at the unchanged DSP boundaries.",
+      "params": {
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": 0.015,
+        "glow_scale": 1,
+        "camera_zoom_start": 1.17,
+        "camera_zoom_end": 1.12,
+        "camera_pan_x_start": -0.1,
+        "camera_pan_x_end": -0.1,
+        "camera_pan_y_start": 0.35,
+        "camera_pan_y_end": 0.35,
+        "salon_shot": 1
+      }
+    },
+    {
+      "id": "scene05",
+      "palette": {
+        "sky_top": [
+          224,
+          203,
+          167
+        ],
+        "sky_bot": [
+          246,
+          224,
+          182
+        ],
+        "far": [
+          174,
+          134,
+          108
+        ],
+        "near": [
+          123,
+          89,
+          61
+        ],
+        "moon": [
+          252,
+          238,
+          196
+        ],
+        "glow": [
+          240,
+          192,
+          116
+        ]
+      },
+      "motif": "A small shared concert, with the audience still present.",
+      "camera": "Registered room/recital/pianist framing, with a restrained numeric camera drift and short dissolves at the unchanged DSP boundaries.",
+      "params": {
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": 0.005,
+        "glow_scale": 1,
+        "camera_zoom_start": 1.12,
+        "camera_zoom_end": 1.07,
+        "camera_pan_x_start": -0.1,
+        "camera_pan_x_end": -0.1,
+        "camera_pan_y_start": 0.35,
+        "camera_pan_y_end": 0.35,
+        "salon_shot": 2
+      }
+    },
+    {
+      "id": "scene06",
+      "palette": {
+        "sky_top": [
+          224,
+          203,
+          167
+        ],
+        "sky_bot": [
+          246,
+          224,
+          182
+        ],
+        "far": [
+          174,
+          134,
+          108
+        ],
+        "near": [
+          123,
+          89,
+          61
+        ],
+        "moon": [
+          252,
+          238,
+          196
+        ],
+        "glow": [
+          240,
+          192,
+          116
+        ]
+      },
+      "motif": "Return to the welcoming salon; no invented applause.",
+      "camera": "Registered room/recital/pianist framing, with a restrained numeric camera drift and short dissolves at the unchanged DSP boundaries.",
+      "params": {
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": -0.005,
+        "glow_scale": 1,
+        "camera_zoom_start": 1.07,
+        "camera_zoom_end": 1.01,
+        "camera_pan_x_start": -0.1,
+        "camera_pan_x_end": -0.1,
+        "camera_pan_y_start": 0.35,
+        "camera_pan_y_end": 0.35,
+        "salon_shot": 0
+      }
+    }
+  ],
+  "renderer": "salon-encore-v1"
+}
