@@ -1,0 +1,195 @@
+{
+  "schema_version": "2.0",
+  "parent_issue": 24,
+  "candidate_id": "cand-01",
+  "candidate": {
+    "id": "cand-01",
+    "start_sample": 3544585,
+    "end_sample": 6526985,
+    "n_frames": 1864,
+    "duration_sec": 62.1333,
+    "score": 2.6891,
+    "parts": {
+      "contrast": 0.271,
+      "n_struct_inside": 6,
+      "n_peaks_inside": 3,
+      "edge_dip": 1.9977,
+      "mean_activity": 0.2394,
+      "edge_slope": 0.0,
+      "attack_prox_pen": 0.0,
+      "edge_rms_pen": 0.059
+    },
+    "start_origin": "music-endpoint",
+    "end_origin": "music-endpoint",
+    "endpoint_evidence": {
+      "start": {
+        "nearest_dip_s": 0.0,
+        "nearest_struct_s": 0.65,
+        "nearest_accent_s": 0.813,
+        "edge_rms_ratio": 0.078
+      },
+      "end": {
+        "nearest_dip_s": 0.005,
+        "nearest_struct_s": 4.223,
+        "nearest_accent_s": 0.98,
+        "edge_rms_ratio": 0.0401
+      }
+    },
+    "endpoint_basis": "",
+    "sample_rate": 48000,
+    "fps": [
+      30,
+      1
+    ],
+    "scenes": [
+      {
+        "id": "scene01",
+        "start_sample": 3544585,
+        "end_sample": 4214985,
+        "start_frame": 0,
+        "end_frame": 419,
+        "duration_sec": 13.9667
+      },
+      {
+        "id": "scene02",
+        "start_sample": 4214985,
+        "end_sample": 4939785,
+        "start_frame": 419,
+        "end_frame": 872,
+        "duration_sec": 15.1
+      },
+      {
+        "id": "scene03",
+        "start_sample": 4939785,
+        "end_sample": 5352585,
+        "start_frame": 872,
+        "end_frame": 1130,
+        "duration_sec": 8.6
+      },
+      {
+        "id": "scene04",
+        "start_sample": 5352585,
+        "end_sample": 5835785,
+        "start_frame": 1130,
+        "end_frame": 1432,
+        "duration_sec": 10.0667
+      },
+      {
+        "id": "scene05",
+        "start_sample": 5835785,
+        "end_sample": 6224585,
+        "start_frame": 1432,
+        "end_frame": 1675,
+        "duration_sec": 8.1
+      },
+      {
+        "id": "scene06",
+        "start_sample": 6224585,
+        "end_sample": 6526985,
+        "start_frame": 1675,
+        "end_frame": 1864,
+        "duration_sec": 6.3
+      }
+    ],
+    "scene_reason": "DP chose 5 cut(s) from 7 candidate(s) (7 after frame snap); min scene 6s = 180 frames, max cuts 5",
+    "accents": [
+      {
+        "kind": "accent",
+        "source_sample": 3701800,
+        "time_sec": 77.12083333333334,
+        "strength": 0.6106,
+        "method": "flux_peak_v1",
+        "frame": 98
+      },
+      {
+        "kind": "accent",
+        "source_sample": 4046335,
+        "time_sec": 84.29864583333334,
+        "strength": 0.5859,
+        "method": "flux_peak_v1",
+        "frame": 313
+      },
+      {
+        "kind": "accent",
+        "source_sample": 4192400,
+        "time_sec": 87.34166666666667,
+        "strength": 0.5756,
+        "method": "flux_peak_v1",
+        "frame": 404
+      },
+      {
+        "kind": "accent",
+        "source_sample": 4988510,
+        "time_sec": 103.92729166666666,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 902
+      },
+      {
+        "kind": "accent",
+        "source_sample": 5096665,
+        "time_sec": 106.18052083333333,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 970
+      },
+      {
+        "kind": "accent",
+        "source_sample": 5227120,
+        "time_sec": 108.89833333333333,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 1051
+      },
+      {
+        "kind": "accent",
+        "source_sample": 5480225,
+        "time_sec": 114.17135416666666,
+        "strength": 0.525,
+        "method": "flux_peak_v1",
+        "frame": 1209
+      },
+      {
+        "kind": "accent",
+        "source_sample": 6074520,
+        "time_sec": 126.5525,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 1581
+      },
+      {
+        "kind": "accent",
+        "source_sample": 6188250,
+        "time_sec": 128.921875,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 1652
+      },
+      {
+        "kind": "accent",
+        "source_sample": 6318705,
+        "time_sec": 131.6396875,
+        "strength": 0.831,
+        "method": "flux_peak_v1",
+        "frame": 1733
+      }
+    ]
+  },
+  "source_hashes": {
+    "attachment_sha256": "1287bcc7aa91bd0ee866deba06acb5b781a57270a16fc241ad6b61e83721dfda",
+    "decoded_wav_sha256": "114b02a97ba73a7096422086aadb8ad6eedba43006fa8a375a28250079e624d3"
+  },
+  "fingerprint": "eb191a9a3e060d2db92e668a3fafe64586d8d9b4fcbb889272e1a4c958c66e0c",
+  "piece": "Chopin Waltz No. 14, Op. posth.",
+  "period": null,
+  "art_notes": "I would like a light, understated depiction of playing an encore at a salon concert.\n\nThere are quite a few wrong notes in this performance, so please take care when choosing the excerpt.",
+  "creative_brief": {
+    "title": "An Encore in the Afternoon",
+    "treatment": "A fictional pianist gives an informal encore in a small sunlit salon. Warm ivory, dusty rose and charcoal gouache layers keep the piano central; quiet guests at the lower corners frame a shared listening space. Room, recital and closer pianist framings alternate at the six original DSP scenes, with short dissolves and restrained camera movement. Upper-body and wrist motion suggests playing; piano legs, bench and floor remain anchored. Sparse native-audio accents add local warmth at the keys. No storm, moon, cuts on every note, applause or sound effects.",
+    "excerpt_selection": "DSP cand-01 retained exactly. Its two low-energy endpoints have stronger acoustic support than cand-03, and it avoids the initial quiet stretch in cand-02. Independent checks of interruption risk are recorded in editorial evidence; they do not certify an error-free take.",
+    "listening_limit": "Auditory listening is unavailable in this environment. Wrong notes and phrase-naturalness cannot be certified from acoustic ranking. The performance is neither repaired nor regenerated.",
+    "recent_work_comparison": "Available releases studio-pr-6 and studio-issue-20 use moonlit solitude and an outdoor storm recital. This work uses a bright interior, nearby listeners and one continuous layered composition. Release descriptions and storm contact sheet are compared; full prior videos have not been watched.",
+    "source_attribution": "Piano audio: original performance by YusukeIwaki. Illustrated character is fictional.",
+    "production_cost": "Two built-in image_gen calls; incremental cost is not exposed. No external audio upload or paid media API used."
+  }
+}
