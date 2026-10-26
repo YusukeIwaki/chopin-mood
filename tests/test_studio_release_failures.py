@@ -4,6 +4,7 @@ import json
 import zipfile
 
 import pytest
+from release_support import complete_release
 from studio import artifacts, config, controller, fingerprint
 from studio.github_client import GitHubError
 from test_studio_controller import (
@@ -39,7 +40,7 @@ def test_owner_merge_without_github_review_releases_existing_artifact(world):
     gh, pr = world["gh"], built["commit"]["pr_number"]
     gh.reviews.clear()
     gh.calls.clear()
-    result = controller.release_controller(gh, pr_number=pr)
+    result = complete_release(controller.release_controller, gh, pr_number=pr)
     assert result["ok"], result
     assert gh.reviews == {}  # No APPROVED review is required or manufactured.
     assert ("GET", f"/pulls/{pr}/reviews") not in gh.calls
@@ -55,7 +56,7 @@ def test_review_approval_cannot_replace_owner_merge(world, merger):
                            "commit_id": built["commit"]["head_sha"]})
     gh.pulls[pr]["merged_by"] = {"login": merger}
     gh.calls.clear()
-    result = controller.release_controller(gh, pr_number=pr)
+    result = complete_release(controller.release_controller, gh, pr_number=pr)
     assert not result["ok"] and "merged by the repository owner" in str(result)
     assert not gh.releases and gh.issues[built["child"]]["state"] == "open"
     assert not any(method in {"POST", "PATCH", "PUT", "DELETE"} for method, _ in gh.calls)
@@ -66,7 +67,7 @@ def test_rehashed_media_cannot_reuse_approval(world, field):
     built = ready(world)
     built["art_files"][field] = b"different rendered bytes"
     repack(world["gh"], built["art_files"])
-    result = controller.release_controller(world["gh"], pr_number=built["commit"]["pr_number"])
+    result = complete_release(controller.release_controller, world["gh"], pr_number=built["commit"]["pr_number"])
     assert not result["ok"] and "committed provenance" in str(result)
     assert not world["gh"].releases
 
@@ -81,7 +82,7 @@ def test_receipt_cannot_be_rebound_by_rehashing(world, field, value):
     receipt[field] = value
     built["art_files"]["receipt.json"] = json.dumps(receipt).encode()
     repack(world["gh"], built["art_files"])
-    assert not controller.release_controller(world["gh"], pr_number=built["commit"]["pr_number"])["ok"]
+    assert not complete_release(controller.release_controller, world["gh"], pr_number=built["commit"]["pr_number"])["ok"]
     assert not world["gh"].releases
 
 
@@ -90,7 +91,7 @@ def test_wrong_existing_tag_is_never_retargeted(world, annotated):
     built = ready(world)
     gh, pr = world["gh"], built["commit"]["pr_number"]
     gh.seed_tag(f"studio-pr-{pr}", "0" * 40, annotated=annotated)
-    result = controller.release_controller(gh, pr_number=pr)
+    result = complete_release(controller.release_controller, gh, pr_number=pr)
     assert not result["ok"] and "tag" in str(result)
     assert not gh.releases
 
@@ -107,7 +108,7 @@ def test_partial_upload_reuses_draft_by_id_then_published_is_immutable(world, mo
         return upload(release, name, data)
     monkeypatch.setattr(gh, "upload_release_asset", interrupted)
     with pytest.raises(GitHubError):
-        controller.release_controller(gh, pr_number=pr)
+        complete_release(controller.release_controller, gh, pr_number=pr)
     assert len(gh.releases) == 1
     release = next(iter(gh.releases.values()))
     assert release["draft"] and len(release["assets"]) == 1
@@ -115,12 +116,12 @@ def test_partial_upload_reuses_draft_by_id_then_published_is_immutable(world, mo
     assert gh.get_or_none(f"/releases/tags/studio-pr-{pr}") is None
     first_asset_id = release["assets"][0]["id"]
     monkeypatch.setattr(gh, "upload_release_asset", upload)
-    assert controller.release_controller(gh, pr_number=pr)["ok"]
+    assert complete_release(controller.release_controller, gh, pr_number=pr)["ok"]
     assert len(gh.releases) == 1 and not release["draft"]
     assert release["assets"][0]["id"] == first_asset_id
     release["assets"].pop()
     before = [a["id"] for a in release["assets"]]
-    result = controller.release_controller(gh, pr_number=pr)
+    result = complete_release(controller.release_controller, gh, pr_number=pr)
     assert not result["ok"] and "immutable" in str(result)
     assert [a["id"] for a in release["assets"]] == before
 
@@ -130,7 +131,7 @@ def test_missing_selected_sibling_cannot_close_parent(world):
     gh, parent = world["gh"], world["parent"]["number"]
     sibling = world["plan"]["matrix"][1]["child_issue"]
     gh.issues[parent]["sub_issues"].remove(sibling)
-    result = controller.release_controller(gh, pr_number=built["commit"]["pr_number"])
+    result = complete_release(controller.release_controller, gh, pr_number=built["commit"]["pr_number"])
     assert result["ok"] and not result["parent_closed"]
     assert gh.issues[parent]["state"] == "open"
 
@@ -138,7 +139,7 @@ def test_missing_selected_sibling_cannot_close_parent(world):
 def test_two_published_children_close_parent_with_real_list_pr_shape(world, monkeypatch):
     first = ready(world, 0)
     gh = world["gh"]
-    assert controller.release_controller(gh, pr_number=first["commit"]["pr_number"])["ok"]
+    assert complete_release(controller.release_controller, gh, pr_number=first["commit"]["pr_number"])["ok"]
     second = ready(world, 1)
     original = gh._dispatch
     def dispatch(method, seg, body, query):
@@ -147,7 +148,7 @@ def test_two_published_children_close_parent_with_real_list_pr_shape(world, monk
             return [{k: v for k, v in pr.items() if k not in {"merged", "merged_by"}} for pr in result]
         return result
     monkeypatch.setattr(gh, "_dispatch", dispatch)
-    result = controller.release_controller(gh, pr_number=second["commit"]["pr_number"])
+    result = complete_release(controller.release_controller, gh, pr_number=second["commit"]["pr_number"])
     assert result["ok"] and result["parent_closed"], result
 
 

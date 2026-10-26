@@ -139,7 +139,7 @@ def _selection_marker(issue: int, candidate: str, pr: int, head: str, merge: str
             f"pr={pr} head={head} merge={merge} -->")
 
 
-def _release_assets(gh, *, files, issue, candidate, pr_number, head, merge):
+def _release_assets(gh, *, files, issue, candidate, pr_number, head, merge, stage_only=False):
     """Idempotent draft upload/publish; never repair a published release."""
     tag = f"studio-issue-{issue}"
     marker = _selection_marker(issue, candidate, pr_number, head, merge)
@@ -182,6 +182,10 @@ def _release_assets(gh, *, files, issue, candidate, pr_number, head, merge):
     for name, data in files.items():
         if controller._asset_digest(final[name], gh, int(final[name]["id"])) != artifacts.sha256_bytes(data):
             return _fail(f"final release asset digest mismatch: {name}")
+    if stage_only:
+        return {"ok": True, "tag": tag, "release_id": release["id"], "staged": True}
+    from .publication import check_before_publish
+    check_before_publish(release)
     if release.get("draft") is True:
         gh.request("PATCH", f"/releases/{release['id']}", {"draft": False})
         release = gh.request("GET", f"/releases/{release['id']}")
@@ -254,7 +258,7 @@ def _close_competitors(gh, *, issue: int, selected_pr: int, source_url: str) -> 
 
 
 def release_controller(gh, *, pr_number: int, actor: str | None = None,
-                       via_dispatch: bool = False) -> dict:
+                       via_dispatch: bool = False, stage_only: bool = False) -> dict:
     """Validate all evidence, publish one winner, then close its source and rivals.
 
     The owner's merge is the human selection; a separate APPROVED review is
@@ -264,14 +268,14 @@ def release_controller(gh, *, pr_number: int, actor: str | None = None,
     if via_dispatch and actor != config.OWNER:
         return _fail("manual release dispatcher must be owner")
     try:
-        return _release_controller(gh, pr_number=pr_number)
+        return _release_controller(gh, pr_number=pr_number, stage_only=stage_only)
     except GitHubError as exc:
         return _fail(f"GitHub operation failed ({exc.status}); rerun safely after recovery")
     except (ValueError, TypeError, KeyError) as exc:
         return _fail(f"invalid candidate release evidence: {exc}")
 
 
-def _release_controller(gh, *, pr_number: int) -> dict:
+def _release_controller(gh, *, pr_number: int, stage_only: bool = False) -> dict:
     from .candidate_project import validate_candidate_documents
 
     pr = gh.request("GET", f"/pulls/{pr_number}")
@@ -359,8 +363,9 @@ def _release_controller(gh, *, pr_number: int) -> dict:
     if failures:
         return _fail(*failures)
     publication = _release_assets(gh, files=files, issue=issue, candidate=candidate,
-                                  pr_number=pr_number, head=head, merge=merge)
-    if not publication["ok"]:
+                                  pr_number=pr_number, head=head, merge=merge,
+                                  stage_only=stage_only)
+    if not publication["ok"] or stage_only:
         return publication
     closed = _close_competitors(gh, issue=issue, selected_pr=pr_number,
                                 source_url=validated["project"]["source_url"])

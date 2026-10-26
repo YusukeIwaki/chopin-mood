@@ -41,6 +41,7 @@
 - 固定素材は `assets/visual/` の登録bundleに生成方法・プロンプト・利用条件・ハッシュを保存する。新しい描画コード・素材は別のエンジニアリングPRで先にレビューする。内蔵画像生成に音源を渡さず、Actionsで画像生成を行わない。
 - ActionsはPRの4 JSONをAPI経由で取得し、信頼済みmainのコードだけで再現・独立レビューする。PRコードをSecret付きで実行せず、不合格を別制作エージェントへ自動委任しない。
 - モデル設定は `.github/studio/config.json` とコマンドを一致させ、既定は `gpt-6.1-sol / xhigh`。本人演奏の全音源やSecretをモデルへ渡さない。
+- Releaseの公開用文章は同設定の `publication` を使い、`gpt-6.1-sol / high` で生成する。英語の「正式名称に近い曲名・作品番号 / 数単語の映像テーマ」とdescriptionを下書きへ保存してから公開する。文章生成失敗時は公開・Issue終了を止める。既存Releaseの補完でも動画・採用marker・タグ・旧計画記録は変えない。
 - 旧 `studio/projects/issue-1/` と制作PRは互換経路で保持する。旧計画記録の `brief.creative_brief`・candidate・fingerprintを書き換えてRelease照合を迂回しない。
 
 ## Studio のゲート（迂回禁止）

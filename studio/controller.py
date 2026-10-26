@@ -1068,7 +1068,7 @@ def _verify_sibling_release(gh, *, sibling: int, owner_login: str) -> bool:
 
 
 def release_controller(gh, *, pr_number: int, actor: str | None = None,
-                       via_dispatch: bool = False) -> dict:
+                       via_dispatch: bool = False, stage_only: bool = False) -> dict:
     """Gate -> idempotent draft/publish -> close child, then parent only
     when every selected candidate has exactly one terminal linked child
     (verified published sibling release, or owner-dismissed not_planned
@@ -1304,6 +1304,13 @@ def release_controller(gh, *, pr_number: int, actor: str | None = None,
         if _asset_digest(final[name], gh, int(final[name]["id"])) != \
                 hashlib.sha256(blob_bytes).hexdigest():
             return {"ok": False, "failures": [f"final asset digest mismatch: {name}"]}
+    if stage_only:
+        return {"ok": True, "tag": tag, "release_id": rel["id"], "staged": True}
+    from .publication import check_before_publish
+    try:
+        check_before_publish(rel)
+    except ValueError as exc:
+        return {"ok": False, "failures": [str(exc)]}
     if rel.get("draft"):
         gh.request("PATCH", f"/releases/{rel['id']}", {"draft": False})
         rel = gh.request("GET", f"/releases/{rel['id']}")

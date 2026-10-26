@@ -9,6 +9,11 @@
     "node": "24",
     "timeout_minutes": 15
   },
+  "publication": {
+    "model": "gpt-6.1-sol",
+    "effort": "high",
+    "timeout_seconds": 300
+  },
   "excerpt": {
     "min_sec": 60,
     "max_sec": 120,

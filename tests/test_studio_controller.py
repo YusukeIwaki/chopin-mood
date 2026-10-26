@@ -10,6 +10,7 @@ import zipfile
 
 import numpy as np
 import pytest
+from release_support import complete_release
 import soundfile as sf
 
 from studio import (artifacts, candidates, config, controller, fingerprint,
@@ -232,7 +233,7 @@ def test_full_lifecycle_plan_children_commit_notify_merge_release_parent(world):
     assert len(pings) == 1 and pings[0]["commit_id"] == commit["head_sha"]
     assert {"login": OWNER} in gh.issues[pr]["assignees"]
     _merge_as_owner(gh, pr, commit["head_sha"])
-    rel = controller.release_controller(gh, pr_number=pr)
+    rel = complete_release(controller.release_controller, gh, pr_number=pr)
     assert rel["ok"], rel
     assert rel["parent_closed"] is False  # sibling still open
     assert gh.releases and not list(gh.releases.values())[0]["draft"]
@@ -241,7 +242,7 @@ def test_full_lifecycle_plan_children_commit_notify_merge_release_parent(world):
     sib = world["plan"]["matrix"][1]["child_issue"]
     gh.issues[sib].update({"state": "closed", "state_reason": "not_planned",
                            "closed_by": {"login": OWNER}})
-    rel2 = controller.release_controller(gh, pr_number=pr)
+    rel2 = complete_release(controller.release_controller, gh, pr_number=pr)
     assert rel2["ok"] and rel2["parent_closed"] is True, rel2
     assert gh.issues[world["parent"]["number"]]["state"] == "closed"
 
@@ -319,7 +320,7 @@ def test_release_rejects_tampered_artifact_after_owner_merge(world):
         for n in sorted(files):
             z.writestr(n, files[n])
     gh.artifact_bytes[42] = buf.getvalue()
-    rel = controller.release_controller(gh, pr_number=pr)
+    rel = complete_release(controller.release_controller, gh, pr_number=pr)
     assert not rel["ok"]
 
 
@@ -332,11 +333,11 @@ def test_release_existing_asset_mismatch_never_overwrites(world):
         run_id=11, run_attempt=1, artifact_id=42, artifact_url="",
         review=REVIEW_PASS(commit["head_sha"]), mechanical_pass=True)
     _merge_as_owner(gh, pr, commit["head_sha"])
-    assert controller.release_controller(gh, pr_number=pr)["ok"]
+    assert complete_release(controller.release_controller, gh, pr_number=pr)["ok"]
     # Corrupt the stored release asset; a rerun must fail, not overwrite.
     rel = list(gh.releases.values())[0]
     rel["assets"][0]["digest"] = "sha256:" + "0" * 64
-    again = controller.release_controller(gh, pr_number=pr)
+    again = complete_release(controller.release_controller, gh, pr_number=pr)
     assert not again["ok"] and "mismatch" in " ".join(again["failures"])
 
 

@@ -12,7 +12,7 @@
 3. **最大3案のPRを受け取る。** 1案につき1PRです。Codexは静止画、短い動き、本編をローカルで確認し、独立レビューを経た案を提出します。3案を埋めるために似た案や未合格案を増やしません。ActionsがそのPRの保存入力から再現し、同期QAと独立した映像レビューを通した動画をArtifactに保存します。確認可能になったPRには `@YusukeIwaki please check this` が付きます。
 4. **修正希望をPRに書く。** 「Pull Request #104 のコメントに対応してください」とCodexに依頼します。コメントだけで勝手に制作は再開しません。
 5. **同じPRで修正版を確認する。** Codexは要望と対応結果を整理し、変更した実映像を再検証します。古い動画の合格結果は流用せず、新しいコミットに対応するArtifactを提示します。
-6. **採用するPRを本人がMergeする。** Mergeを採用・公開の意思表示として扱います。Actionsが採用コミットと検証済みArtifactを照合してReleaseを作り、**公開成功後に**元Issueと他の候補PRを閉じます。既存PRを含め、別途Approve操作は不要です。エージェントは制作PRを自動Mergeしません。
+6. **採用するPRを本人がMergeする。** Mergeを採用・公開の意思表示として扱います。Actionsが採用コミットと検証済みArtifactを照合し、元Issueと採用案から英語のタイトル・descriptionを生成して、その文章付きでReleaseを公開します。**公開成功後に**元Issueと他の候補PRを閉じます。文章生成に失敗した場合は下書きで止まり、再実行で再開できます。既存PRを含め、別途Approve操作は不要です。エージェントは制作PRを自動Mergeしません。
 
 ```mermaid
 flowchart TD
@@ -24,13 +24,15 @@ flowchart TD
   F --> G["Actions：再現・独立検証・Artifact"]
   G --> H["本人が比較・コメント"]
   H -->|Codexへ修正依頼| C
-  H -->|1案をMerge| I["成果物照合 → Release公開"]
+  H -->|1案をMerge| I["成果物照合 → 英語タイトル・説明生成 → Release公開"]
   I --> J["元Issueと他候補PRを閉じる"]
 ```
 
 Artifactの `video.mp4` が作品、`timeline.html` が同期の可視化です。
 `qa.json` は機械検査、`editorial.json` はローカルの独立レビューと裁定、`review.json` はActionsの映像レビューです。
 Releaseには採用動画とこれらの検証記録を保存します。YouTubeへの自動投稿は行いません。
+
+公開用タイトルは `Chopin Waltz No. 9, Op. 69 No. 1 / Moonlit Recollection` のように、確認された曲名・作品番号と短い映像テーマを組み合わせます。descriptionも英語で、演奏と映像の内容を検索・把握しやすくします。
 
 ## 品質の決め方
 
