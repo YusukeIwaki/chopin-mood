@@ -6,6 +6,7 @@ from pathlib import Path
 import zipfile
 
 import pytest
+from release_support import complete_release
 
 from studio import artifacts, candidate_project as contract, candidate_release as release
 from studio import config, fingerprint, gating
@@ -141,7 +142,7 @@ def world():
 
 
 def run(world):
-    return release.release_controller(world[0], pr_number=world[2]["number"])
+    return complete_release(release.release_controller, world[0], pr_number=world[2]["number"])
 
 
 def rewrite_artifact(world, change):
@@ -251,7 +252,7 @@ def test_merge_input_change_rejected(world):
 
 def test_non_owner_manual_dispatch_rejected(world):
     world[0].calls.clear()
-    result = release.release_controller(world[0], pr_number=world[2]["number"], actor="someone", via_dispatch=True)
+    result = complete_release(release.release_controller, world[0], pr_number=world[2]["number"], actor="someone", via_dispatch=True)
     assert not result["ok"]
     assert_untouched(world)
 
@@ -280,7 +281,7 @@ def test_second_merged_candidate_cannot_replace_winner(world):
     add_artifact(gh, second, raw, run_id=12, artifact_id=43)
     assert run(world)["ok"]
     gh.calls.clear()
-    result = release.release_controller(gh, pr_number=second["number"])
+    result = complete_release(release.release_controller, gh, pr_number=second["number"])
     assert not result["ok"] and "another candidate" in str(result)
     assert len(gh.releases) == 1
     assert not any(m in ("POST", "PATCH") for m, _ in gh.calls)

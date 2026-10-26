@@ -32,7 +32,7 @@ gh workflow run studio-candidate.yml --ref main -f pr_number=104
 | Workflow | 起動と責務 |
 | --- | --- |
 | `Studio candidate` | ownerがmainからPR番号をdispatch。ローカル検証済みの保存入力を再現し、独立レビューとArtifact保存を行う |
-| `Studio release` | PRのMerge、またはownerのmainからの復旧dispatch。採用動画を照合して公開し、関連候補を閉じる |
+| `Studio release` | PRのMerge、またはownerのmainからの復旧dispatch。採用動画を下書きへ保存し、英語タイトル・description生成後に公開して関連候補を閉じる |
 | `Studio CI` | push／PR。Secret・モデル・本人録音なしのテストと合成信号レンダリング |
 | `Studio auth smoke` | ownerによるCodexの最小認証確認 |
 | `Studio production` | 旧v1保存プロジェクト専用。既存作品の互換経路として維持 |
@@ -73,15 +73,28 @@ gh workflow run studio-candidate.yml --ref main -f pr_number=104
 - ownerの信頼済みmain workflow実行、そのrun／attemptに属する未失効Artifact、botの該当headへのreceipt。
 - 全ファイルのハッシュ、原音源・メディアのprovenance、機械QA、ローカル裁定、Actionsの美的合格。
 
-`studio-issue-<番号>` を採用枠としてdraft Releaseを作り、14ファイルをアップロード・照合して公開する。公開確認後に同じ元Issueの他候補PRを閉じ、最後に元Issueを閉じる。PR本文の `Fixes` / `Closes` で先にIssueを閉じない。
+`studio-issue-<番号>` を採用枠としてdraft Releaseを作り、14ファイルをアップロード・照合する。次の文章生成ジョブがタイトル・descriptionを保存し、最終ジョブが採用・Artifact・資産・文章を再検証して公開する。公開確認後に同じ元Issueの他候補PRを閉じ、最後に元Issueを閉じる。PR本文の `Fixes` / `Closes` で先にIssueを閉じない。
 
 Releaseは直列実行とし、同じ元Issueで別の候補が先に選択枠を取得していれば上書きしない。二つのPRをMergeしても二作品の採用にはならない。採用は一つだけ。公開済みReleaseの異なる資産の差替えや、自動的な別案への切替は行わない。
+
+## Releaseの公開用文章
+
+`Studio release` は `stage` → `publication` → `release` の順に実行する。最初のジョブがmainを取得してそのSHAを固定し、後続ジョブも同じコードを使う。`stage` は従来の採用・メディア検証をすべて通してから下書きへ資産を保存する。この段階では公開もIssue終了もしない。
+
+`Write publication title and description` が元Issue、本人コメント、採用briefから英語の文章を1組生成する。モデル・推論設定は `.github/studio/config.json` の `publication`（`gpt-6.1-sol / high`）をコマンドへ渡す。タイトルは確認された曲名・作品番号と数単語の映像テーマを `Work / Visual Theme` 形式で組み合わせる。文章規則は[公開用プロンプト](../.github/studio/prompts/codex-publication.md)に集約する。
+
+保存先はReleaseの `name` と `body`。本文の `studio:description:start` / `studio:description:end` 間が公開用descriptionで、末尾に元Issueと既存の採用marker・制作記録を保持する。生成元テキストのハッシュ・モデル・effortもコメントに残す。モデルへ渡すのは文章のみで、動画・録音は渡さない。文章生成ジョブはowner実行に限り、GitHub tokenをモデルから除去する。
+
+生成結果の構造・長さ・日本語等の混入を検査し、書き込み直前に元IssueとReleaseの変更、本人Merge、receipt、タグを再確認する。文章生成・保存に失敗すると下書きのまま止まる。最後の `release` は全メディア検証と保存済み文章の検査を再度通してから公開する。英語の自然さやすべての事実の正しさを機械検査だけで保証するものではない。
+
+保存済み文章は再生成しない。人の編集は上書きせず、管理用の文章マーカーがない編集済み下書きは公開前チェックで停止する。旧実装による公開済みの仮タイトルも、同じPR番号の復旧dispatchで文章を補完できる。公開済み動画・タグ・資産一覧・旧計画記録は変更しない。
 
 ## 失敗と復旧
 
 - **美的・機械的な不合格**：同じCodex制作セッションでPRの指摘を修正する。閾値を広げたり、判定JSONを成功に書き換えたりしない。
 - **認証・モデル・実行環境の障害**：作品の判定と分け、原因を修正して同じ入力を再実行する。
 - **Releaseのアップロード／公開／クローズ途中の失敗**：採用したPR番号で `gh workflow run studio-release.yml --ref main -f pr_number=104` を実行する。同じdraft／公開済み資産を照合し、未完の処理を復旧する。
+- **公開用文章ジョブの失敗**：失敗ジョブを再実行するか、上記dispatchで再開する。新作は文章が保存されるまで下書きのまま。保存済みなら再生成せず、最終ジョブで公開とIssue終了を続行する。再実行でもArtifact失効や採用・ハッシュのゲートを免除しない。
 - **Release作成APIの403／404**：過去のマージコミットと現在のmainで `.github/workflows/` が異なる場合、GitHubは作成トークンにもworkflow権限を要求する（[公式API仕様](https://docs.github.com/en/rest/releases/releases#create-a-release)）。既存タグがあっても `target_commitish` を指定する本実装では失敗する場合があり、Actionsの `GITHUB_TOKEN` にはこの権限を付けられない。採用・Artifactの全検証が通った後に限り、本人がworkflow権限を持つ認証で、コントローラーと同じタグ・マージSHA・本文の**下書き**Releaseを準備し、Actionsを再実行する。GitHub CLIの権限追加は本人が `gh auth refresh -h github.com -s workflow` で承認する。公開・資産照合・Issue終了は引き続きActionsが担当し、回避のために対象を最新mainへ変更したり、既存タグを移動したりしない。
 - **Artifact失効、head変更、入力不一致**：古いreceiptでは公開しない。再現・独立検証が必要。マージ後の入力を勝手に別内容へ書き換えない。
 
@@ -89,7 +102,7 @@ Releaseは直列実行とし、同じ元Issueで別の候補が先に選択枠�
 
 Codexレビューは `CODEX_ENC_APP_ID`、`CODEX_ENC_APP_PRIVATE_KEY`、`CODEX_ENC_PASSPHRASE` を使用する。MuseはActionsに含めない。CLIは `@openai/codex@latest`、モデルは設定とコマンドを `gpt-6.1-sol / xhigh` に揃える。
 
-認証はRUNNER_TEMPへ復号し、GitHub／Artifact tokenをモデルから除去する。read tokenをモデル呼出し前に失効し、変更された認証だけ別のwrite tokenでforceなしに保存する。失敗時にも認証保存と削除を行う。モデルを使うworkflowは `studio-agent-auth` で直列化し、Releaseは認証を使わない別の直列キューで動かす。
+認証はRUNNER_TEMPへ復号し、GitHub／Artifact tokenをモデルから除去する。read tokenをモデル呼出し前に失効し、変更された認証だけ別のwrite tokenでforceなしに保存する。失敗時にも認証保存と削除を行う。モデルを使うworkflowとReleaseの文章生成ジョブは `studio-agent-auth` で直列化する。Release全体は別の直列キューで採用枠を保護する。
 
 ## 既存v1作品
 

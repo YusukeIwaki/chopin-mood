@@ -18,17 +18,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  release:
-    name: Publish owner-selected video
+  stage:
+    name: Verify selected video and prepare draft
     if: >-
       (github.event_name == 'workflow_dispatch' && github.actor == 'YusukeIwaki' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+      engine_sha: ${{ steps.engine.outputs.sha }}
     permissions:
       contents: write
-      pull-requests: write
-      issues: write
+      pull-requests: read
+      issues: read
       actions: read
     steps:
       # Trusted main only: never check out or execute PR-branch code.
@@ -37,10 +40,172 @@ jobs:
         with:
           ref: main
           persist-credentials: false
+      - name: Record trusted engine revision
+        id: engine
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - name: Release (verify, publish, close source and competing PRs)
+      - name: Verify assets and stage the selected Release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER_EVENT: ${{ github.event.pull_request.number }}
+          PR_NUMBER_INPUT: ${{ inputs.pr_number }}
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_ACTOR: ${{ github.actor }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then num="$PR_NUMBER_INPUT"; else num="$PR_NUMBER_EVENT"; fi
+          python3 scripts/studio_release.py --pr "$num" --stage
+          echo "Selected assets verified for PR $num; drafts stay private until publication copy is ready. Non-studio PRs are a no-op." >> "$GITHUB_STEP_SUMMARY"
+
+  publication:
+    name: Write publication title and description
+    needs: stage
+    if: needs.stage.outputs.tag != '' && github.triggering_actor == 'YusukeIwaki'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Share credential refresh with candidate/production/auth-smoke, while
+    # keeping the existing Release selection queue and asset gate unchanged.
+    concurrency:
+      group: studio-agent-auth
+      queue: max
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      pull-requests: read
+      issues: read
+    steps:
+      - name: Check out the trusted engine used for this Release
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.stage.outputs.engine_sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Prepare text from the owner Issue and selected Release
+        id: prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          RELEASE_TAG: ${{ needs.stage.outputs.tag }}
+        run: python3 scripts/studio_release_copy.py prepare --tag "$RELEASE_TAG" --work "$RUNNER_TEMP/release-copy"
+      - name: Set runtime paths
+        if: steps.prepare.outputs.needed == 'true'
+        run: |
+          {
+            echo "CODEX_RUNTIME_HOME=$RUNNER_TEMP/codex-home"
+            echo "CODEX_ENC_REPO_DIR=$RUNNER_TEMP/codex-enc-repository"
+            echo "CODEX_AUTH_BEFORE_HASH=$RUNNER_TEMP/codex-auth-before.sha256"
+          } >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v7
+        if: steps.prepare.outputs.needed == 'true'
+        with:
+          node-version: "24"
+      - name: Install Codex publication tools (latest)
+        if: steps.prepare.outputs.needed == 'true'
+        run: |
+          set -euo pipefail
+          npm install --global "@openai/codex@latest"
+          codex --version
+          bash .github/studio/scripts/setup-codex-sandbox.sh
+      - name: Create Codex read token
+        id: codex_read
+        if: steps.prepare.outputs.needed == 'true'
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
+          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
+          owner: YusukeIwaki
+          repositories: codex.enc
+          permission-contents: read
+          skip-token-revoke: true
+      - name: Clone encrypted Codex auth
+        if: steps.prepare.outputs.needed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.codex_read.outputs.token }}
+        run: |
+          gh auth setup-git
+          git clone --branch main --single-branch https://github.com/YusukeIwaki/codex.enc.git "$CODEX_ENC_REPO_DIR"
+          test -s "$CODEX_ENC_REPO_DIR/codex.enc"
+      - name: Revoke Codex read token
+        if: always() && steps.codex_read.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ steps.codex_read.outputs.token }}
+        run: gh api --method DELETE /installation/token
+      - name: Restore Codex auth
+        id: restore_codex
+        if: steps.prepare.outputs.needed == 'true'
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: restore-codex
+        env:
+          CODEX_ENC_PASSPHRASE: ${{ secrets.CODEX_ENC_PASSPHRASE }}
+      - name: Generate title and description (configured model and effort)
+        if: steps.prepare.outputs.needed == 'true'
+        timeout-minutes: 6
+        run: python3 scripts/studio_release_copy.py generate --work "$RUNNER_TEMP/release-copy"
+      - name: Save publication copy without changing assets or tags
+        if: steps.prepare.outputs.needed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python3 scripts/studio_release_copy.py publish --work "$RUNNER_TEMP/release-copy"
+      - name: Persist refreshed Codex auth
+        id: persist_codex
+        if: always() && steps.restore_codex.outcome == 'success'
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: persist-codex
+        env:
+          CODEX_ENC_PASSPHRASE: ${{ secrets.CODEX_ENC_PASSPHRASE }}
+      - name: Create Codex write token (only when changed)
+        id: codex_write
+        if: always() && steps.persist_codex.outcome == 'success' && steps.persist_codex.outputs.changed == 'true'
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.CODEX_ENC_APP_ID }}
+          private-key: ${{ secrets.CODEX_ENC_APP_PRIVATE_KEY }}
+          owner: YusukeIwaki
+          repositories: codex.enc
+          permission-contents: write
+      - name: Push refreshed Codex auth (only when changed)
+        if: always() && steps.persist_codex.outputs.changed == 'true' && steps.codex_write.outcome == 'success'
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: push-codex
+        env:
+          GH_TOKEN: ${{ steps.codex_write.outputs.token }}
+      - name: Cleanup credentials
+        if: always()
+        uses: ./.github/actions/studio-auth
+        with:
+          mode: cleanup
+
+  release:
+    name: Publish video with title and description
+    needs: [stage, publication]
+    if: needs.stage.outputs.tag != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: read
+    steps:
+      - name: Check out the trusted engine used for staging
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.stage.outputs.engine_sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Recheck assets and copy, publish, then close Issues
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -52,4 +217,4 @@ jobs:
           set -euo pipefail
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then num="$PR_NUMBER_INPUT"; else num="$PR_NUMBER_EVENT"; fi
           python3 scripts/studio_release.py --pr "$num"
-          echo "Release controller finished for PR $num (see JSON above; skipped non-studio PRs are a no-op)." >> "$GITHUB_STEP_SUMMARY"
+          echo "Release published with its title and description; verified closure finished for PR $num." >> "$GITHUB_STEP_SUMMARY"

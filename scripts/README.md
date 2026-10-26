@@ -23,6 +23,31 @@ uv pip install -r requirements-p0.txt
 `studio_smoke.py` は合成信号から候補・storyboard・描画・符号化 QA までを通す。
 個人の録音や Secret は使わない。
 
+## Releaseの公開用文章（Actions）
+
+`studio-release.yml` は下書き保存、文章生成、公開の3ジョブを直列に実行する。`studio_release.py --stage` は全採用・資産ゲートを検証して下書きを準備する。`--stage` なしの最終呼出しでは保存済みのタイトル・descriptionも必須になる。
+
+`studio_release_copy.py` は `prepare`（GitHub読取）、`generate`（Codex）、`publish`（Releaseのname/body保存）を分離する。`publish` 自体は下書きを公開しない。モデル設定は `.github/studio/config.json` の `publication`、文章規則は[プロンプト](../.github/studio/prompts/codex-publication.md)、出力形式は[スキーマ](../.github/studio/schemas/publication.schema.json)を使う。
+
+```bash
+python3 scripts/studio_release.py --help
+python3 scripts/studio_release_copy.py --help
+.venv/bin/python -m pytest tests/test_studio_publication.py tests/test_candidate_workflow.py -q
+```
+
+以下はActionsの実行形。`prepare` / `publish` にだけ `GH_TOKEN` と `GITHUB_REPOSITORY` を渡す。`generate` は既存の `studio-auth` で復号・隔離した `CODEX_RUNTIME_HOME` を使う。
+
+```bash
+python3 scripts/studio_release.py --pr "$PR_NUMBER" --stage
+python3 scripts/studio_release_copy.py prepare --tag "$RELEASE_TAG" --work "$RUNNER_TEMP/release-copy"
+# prepared.json の needed=true のときだけ生成・保存する。
+python3 scripts/studio_release_copy.py generate --work "$RUNNER_TEMP/release-copy"
+python3 scripts/studio_release_copy.py publish --work "$RUNNER_TEMP/release-copy"
+python3 scripts/studio_release.py --pr "$PR_NUMBER"
+```
+
+生成結果とログはRUNNER_TEMPに置く。文章生成は録音・動画を取得せず、Release資産を増減しない。途中失敗後も同じ下書き・保存済み文章を再利用する。既存の公開済み仮タイトルは、元の採用PR番号でworkflowをdispatchすると補完できる。
+
 ## P0 オフライン比較（30〜45秒）
 
 P0 は従来のオフライン比較用である。現在の Studio 制作（60〜120秒）とは尺が異なる。
