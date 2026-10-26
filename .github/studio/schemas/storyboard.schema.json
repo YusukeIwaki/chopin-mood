@@ -180,6 +180,13 @@
                 "maximum": 1.0,
                 "default": 0.6,
                 "description": "Strength of animated wet-ground reflections."
+              },
+              "salon_shot": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2,
+                "default": 0,
+                "description": "Registered salon-encore-v1 framing: 0 room, 1 recital, 2 pianist/keys. Eight-frame dissolves stay centered on existing DSP boundaries."
               }
             },
             "required": [
@@ -200,7 +207,8 @@
     },
     "renderer": {
       "enum": [
-        "storm-recital-v1"
+        "storm-recital-v1",
+        "salon-encore-v1"
       ],
       "description": "Optional trusted procedural renderer identifier; never a path or URL. Mutually exclusive with asset_bundle."
     }

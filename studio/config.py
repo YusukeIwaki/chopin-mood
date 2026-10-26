@@ -29,6 +29,7 @@ VISUAL_AGENT_TIMEOUT_SEC = REPAIR_AGENT_TIMEOUT_SEC
 ACTIONS_ARTIFACT_VERSION = "2.3.2"
 PAINTED_ASSET_BUNDLE_ID = "moonlit-recollection-v1"
 STORM_RECITAL_RENDERER_ID = "storm-recital-v1"
+SALON_ENCORE_RENDERER_ID = "salon-encore-v1"
 # Environment keys stripped from every MODEL child process (Codex
 # reviewer/planner, Muse runner). The trusted artifact uploader
 # keeps them; models never see runtime/GitHub tokens.

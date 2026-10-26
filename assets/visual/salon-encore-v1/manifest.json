@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "bundle_id": "salon-encore-v1",
+  "provider": "Codex built-in image_gen",
+  "model": "not exposed by built-in tool",
+  "created_on": "2026-10-26",
+  "prompts": "assets/visual/salon-encore-v1/PROMPTS.md",
+  "usage_terms": "assets/visual/salon-encore-v1/USAGE.md",
+  "files": {
+    "background.png": "366f7f0a8e05455ec3939dad7401bf21417ac5290f88d9a6687742bca750a38c",
+    "performance.png": "002e3ab099eaa879afa3d40a6a36e364794cc72c870773c6572d320aabc2107d"
+  }
+}

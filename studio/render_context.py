@@ -154,15 +154,20 @@ def prepare_context(wav, candidate_path, storyboard_path, brief_path, *,
                                       det_scenes, accents, feat, seed)
     layouts = cleanmod.make_layouts(seed, width, height)
     if storyboard.get("renderer") is not None:
-        from . import storm_recital
-        layouts["storm_recital"] = storm_recital.make_layout(seed, width, height)
+        from . import config, storm_recital
+        if storyboard["renderer"] == config.SALON_ENCORE_RENDERER_ID:
+            from . import salon_encore as provider
+            layout_key = "salon_encore"
+        else:
+            provider, layout_key = storm_recital, "storm_recital"
+        layouts[layout_key] = provider.make_layout(seed, width, height)
         # Public-plan binding invalidates old visual approval when the
         # trusted provider code changes, including uncommitted changes.
-        plan["visual_assets"] = layouts["storm_recital"]["provenance"]
+        plan["visual_assets"] = layouts[layout_key]["provenance"]
         plan["visual_renderer"] = {
             "renderer_id": storyboard["renderer"],
-            "source_path": "studio/storm_recital.py",
-            "sha256": _sha256_file(Path(storm_recital.__file__)),
+            "source_path": f"studio/{layout_key}.py",
+            "sha256": _sha256_file(Path(provider.__file__)),
         }
     if storyboard.get("asset_bundle") is not None:
         from .painted import load_bundle
