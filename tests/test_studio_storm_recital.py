@@ -83,7 +83,7 @@ def test_storm_param_contract_matches_schema_and_rejects_invalid_values(key, low
     assert (spec["minimum"], spec["maximum"]) == (low, high) == storyboard.PARAM_RANGES[key]
     assert spec["default"] == storm_recital.DEFAULTS[key]
     assert storm_recital.RENDERER_ID == STORM_RECITAL_RENDERER_ID
-    assert schema["properties"]["renderer"]["enum"] == [STORM_RECITAL_RENDERER_ID]
+    assert STORM_RECITAL_RENDERER_ID in schema["properties"]["renderer"]["enum"]
     assert schema["not"] == {"required": ["renderer", "asset_bundle"]}
     for value in (low, high, (low+high)/2):
         sb = copy.deepcopy(SB)

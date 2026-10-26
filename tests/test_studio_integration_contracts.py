@@ -62,7 +62,7 @@ def test_nested_schemas_are_closed_with_explicit_saved_data_options():
                 check(value, optional_by_path, path + (index,))
     for name in ("planner-output", "review", "visual-review", "storyboard"):
         # Saved storyboards permit two explicit root selectors and bounded
-        # optional camera/storm controls. All object properties stay closed;
+        # optional camera/provider controls. All object properties stay closed;
         # no model-output or other nested object gains arbitrary options.
         optional_by_path = {}
         if name == "storyboard":
@@ -74,6 +74,7 @@ def test_nested_schemas_are_closed_with_explicit_saved_data_options():
                     "camera_pan_y_start", "camera_pan_y_end",
                     "storm_shot", "rain_density", "rain_wind",
                     "storm_light", "reflection_strength",
+                    "salon_shot",
                 },
             }
         schema = json.loads((ROOT / f".github/studio/schemas/{name}.schema.json").read_text())

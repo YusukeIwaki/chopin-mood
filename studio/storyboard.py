@@ -10,6 +10,7 @@ import math
 
 PALETTE_KEYS = ("sky_top", "sky_bot", "far", "near", "moon", "glow")
 PARAM_RANGES = {
+    "salon_shot": (0, 2),
     "figure_scale": (0.5, 2.0),
     "particle_multiplier": (0.0, 2.0),
     "light_bias": (-0.3, 0.3),
@@ -55,8 +56,8 @@ def validate_storyboard(sb: dict, deterministic_scenes: list[dict]) -> dict:
         if sb["asset_bundle"] != PAINTED_ASSET_BUNDLE_ID:
             failures.append("unknown asset_bundle")
     if "renderer" in sb:
-        from .config import STORM_RECITAL_RENDERER_ID
-        if sb["renderer"] != STORM_RECITAL_RENDERER_ID:
+        from .config import STORM_RECITAL_RENDERER_ID, SALON_ENCORE_RENDERER_ID
+        if sb["renderer"] not in (STORM_RECITAL_RENDERER_ID, SALON_ENCORE_RENDERER_ID):
             failures.append("unknown renderer")
         if "asset_bundle" in sb:
             failures.append("renderer and asset_bundle are mutually exclusive")
@@ -96,8 +97,8 @@ def validate_storyboard(sb: dict, deterministic_scenes: list[dict]) -> dict:
                     failures.append(f"{sid}: param {k} must be a number")
                 elif not math.isfinite(float(v)):
                     failures.append(f"{sid}: param {k} must be finite")
-                elif k == "storm_shot" and not float(v).is_integer():
-                    failures.append(f"{sid}: param storm_shot must be an integer")
+                elif k in ("storm_shot", "salon_shot") and not float(v).is_integer():
+                    failures.append(f"{sid}: param {k} must be an integer")
                 else:
                     lo, hi = PARAM_RANGES[k]
                     if not (lo <= float(v) <= hi):
