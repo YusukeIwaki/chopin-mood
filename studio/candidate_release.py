@@ -184,8 +184,8 @@ def _release_assets(gh, *, files, issue, candidate, pr_number, head, merge, stag
             return _fail(f"final release asset digest mismatch: {name}")
     if stage_only:
         return {"ok": True, "tag": tag, "release_id": release["id"], "staged": True}
-    from .publication import require_copy
-    require_copy(release)
+    from .publication import check_before_publish
+    check_before_publish(release)
     if release.get("draft") is True:
         gh.request("PATCH", f"/releases/{release['id']}", {"draft": False})
         release = gh.request("GET", f"/releases/{release['id']}")

@@ -1306,9 +1306,9 @@ def release_controller(gh, *, pr_number: int, actor: str | None = None,
             return {"ok": False, "failures": [f"final asset digest mismatch: {name}"]}
     if stage_only:
         return {"ok": True, "tag": tag, "release_id": rel["id"], "staged": True}
-    from .publication import require_copy
+    from .publication import check_before_publish
     try:
-        require_copy(rel)
+        check_before_publish(rel)
     except ValueError as exc:
         return {"ok": False, "failures": [str(exc)]}
     if rel.get("draft"):

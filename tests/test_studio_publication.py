@@ -258,6 +258,28 @@ def test_saved_copy_is_not_generated_again_after_interrupted_publication(staged)
     assert run_release()["ok"]
 
 
+def test_published_human_copy_preserves_text_and_can_resume_issue_closure(staged):
+    gh, _, tag, run_release = staged
+    release = publication.find_release(gh, tag)
+    gh.request("PATCH", f"/releases/{release['id']}", {
+        "draft": False, "name": "Owner's concert title",
+        "body": "Owner's concert description.\n\n" + release["body"],
+    })
+    original = publication.release_snapshot(publication.find_release(gh, tag))
+    assert not publication.prepare(gh, tag)["needed"]
+    assert run_release()["ok"]
+    assert publication.release_snapshot(publication.find_release(gh, tag)) == original
+
+
+def test_human_edit_does_not_allow_a_new_draft_to_bypass_copy_gate(staged):
+    gh, _, tag, run_release = staged
+    release = publication.find_release(gh, tag)
+    gh.request("PATCH", f"/releases/{release['id']}", {"name": "Edited title"})
+    assert not publication.prepare(gh, tag)["needed"]
+    assert not run_release()["ok"]
+    assert publication.find_release(gh, tag)["draft"] is True
+
+
 def test_stage_does_not_close_competing_candidate(candidate_world):
     from test_candidate_release import add_candidate
     gh, issue, pr, *_ = candidate_world

@@ -65,6 +65,14 @@ def require_copy(release: dict) -> dict:
     return result
 
 
+def check_before_publish(release: dict) -> None:
+    # Old published Releases may contain manual copy without these markers.
+    # Preserve it and allow unfinished closure retries. Every new draft must
+    # have valid saved copy; generated copy still gets validated on retries.
+    if release.get("draft") is not False or COPY_MARKER in (release.get("body") or ""):
+        require_copy(release)
+
+
 def find_release(gh, tag: str) -> dict:
     # The by-tag endpoint excludes drafts. Listing with write access finds both.
     matches = [r for r in gh.paginated("/releases") if r.get("tag_name") == tag]
@@ -159,7 +167,7 @@ def prepare(gh, tag: str) -> dict:
         raise ValueError("source Issue must belong to the owner")
     if extract_copy(release) is not None:
         return {"needed": False, "reason": "publication copy already saved", "tag": tag}
-    # Preserve human-written copy; the upload skill can read it alongside the Issue.
+    # Preserve human-written copy. A draft still needs valid copy markers before publication.
     original_body = (f"Studio release for PR #{pr_number} at head {receipt['head_sha']}."
                      if tag.startswith("studio-pr-") else
                      f"Selected by the owner's merge of PR #{pr_number}.\n\n"
