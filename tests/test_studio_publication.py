@@ -56,6 +56,53 @@ def test_copy_changes_only_text_and_release_can_still_be_retried(staged):
     assert run_release()["ok"]  # The original adoption/media gates still work.
 
 
+def test_uncreated_draft_tag_survives_copy_and_publication(staged, monkeypatch):
+    gh, issue, tag, run_release = staged
+    original = publication.release_snapshot(publication.find_release(gh, tag))
+    receipt = publication._json_asset(gh, publication.find_release(gh, tag), "receipt.json")
+    assert tag not in gh.tag_refs
+    request = gh.request
+
+    def update_with_server_tag_default(method, path, body=None):
+        # Reproduce the observed draft retagging if a PATCH omits tag_name
+        # before the Git ref exists. Both metadata and publish must preserve it.
+        if method == "PATCH" and path == f"/releases/{original['id']}":
+            release = gh.releases[original["id"]]
+            if release["draft"] and tag not in gh.tag_refs and "tag_name" not in body:
+                release["tag_name"] = "untagged-server-default"
+        return request(method, path, body)
+
+    monkeypatch.setattr(gh, "request", update_with_server_tag_default)
+    assert publication.publish(gh, publication.prepare(gh, tag), COPY)["ok"]
+    saved = publication.find_release(gh, tag)
+    assert saved["draft"] is True and issue["state"] == "open"
+    assert tag not in gh.tag_refs
+    assert run_release()["ok"]
+    published = publication.release_snapshot(publication.find_release(gh, tag))
+    assert len(gh.releases) == 1
+    assert published == {**original, "draft": False, "name": COPY["title"], "body": saved["body"]}
+    assert gh.tag_refs[tag]["sha"] == original["target_commitish"]
+    assert gh.issues[receipt.get("child", issue["number"])]["state"] == "closed"
+
+
+def test_unexpected_tag_after_publish_prevents_issue_closure(staged, monkeypatch):
+    gh, issue, tag, run_release = staged
+    assert publication.publish(gh, publication.prepare(gh, tag), COPY)["ok"]
+    request = gh.request
+
+    def retag_after_publish(method, path, body=None):
+        result = request(method, path, body)
+        if method == "PATCH" and path.startswith("/releases/") and body.get("draft") is False:
+            gh.releases[result["id"]]["tag_name"] = "unexpected-tag"
+        return result
+
+    monkeypatch.setattr(gh, "request", retag_after_publish)
+    gh.calls.clear()
+    assert not run_release()["ok"]
+    assert issue["state"] == "open"
+    assert not any(method == "PATCH" and path.startswith("/issues/") for method, path in gh.calls)
+
+
 @pytest.mark.parametrize("changed", ["name", "body"])
 def test_manual_copy_is_preserved(staged, changed):
     gh, _, tag, _ = staged

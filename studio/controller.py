@@ -1312,7 +1312,8 @@ def release_controller(gh, *, pr_number: int, actor: str | None = None,
     except ValueError as exc:
         return {"ok": False, "failures": [str(exc)]}
     if rel.get("draft"):
-        gh.request("PATCH", f"/releases/{rel['id']}", {"draft": False})
+        gh.request("PATCH", f"/releases/{rel['id']}", {
+            "draft": False, "tag_name": tag, "target_commitish": merge_sha})
         rel = gh.request("GET", f"/releases/{rel['id']}")
         if rel.get("draft"):
             return {"ok": False, "failures": ["release still draft after publish"]}
@@ -1322,7 +1323,7 @@ def release_controller(gh, *, pr_number: int, actor: str | None = None,
         tag_exists, tag_sha = _resolve_tag(gh, tag)
     except GitHubError as e:
         return {"ok": False, "failures": [f"cannot resolve release tag {tag}: {e.status}"]}
-    if not tag_exists or tag_sha != merge_sha:
+    if not tag_exists or tag_sha != merge_sha or rel.get("tag_name") != tag:
         return {"ok": False, "failures": [
             "release tag does not resolve to merge commit after publish"]}
     if rel.get("target_commitish") not in (None, merge_sha):

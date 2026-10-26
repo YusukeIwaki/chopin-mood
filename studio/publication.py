@@ -224,7 +224,11 @@ def publish(gh, prepared: dict, copy_text: dict) -> dict:
             or refreshed["snapshot"] != prepared["snapshot"]):
         raise ValueError("source Issue or publication state changed; prepare again")
     gh.request("PATCH", f"/releases/{release_id}",
-               {"name": copy_text["title"], "body": expected_body})
+               {"name": copy_text["title"], "body": expected_body,
+                # An unpublished draft may not have a Git ref yet. Explicitly
+                # retain its identity rather than relying on PATCH defaults.
+                "tag_name": snapshot["tag_name"],
+                "target_commitish": snapshot["target_commitish"]})
     saved = gh.request("GET", f"/releases/{release_id}")
     if release_snapshot(saved) != expected:
         raise ValueError("publication update could not be confirmed; inspect before retrying")
