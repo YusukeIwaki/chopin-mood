@@ -95,6 +95,7 @@ Releaseは直列実行とし、同じ元Issueで別の候補が先に選択枠�
 - **認証・モデル・実行環境の障害**：作品の判定と分け、原因を修正して同じ入力を再実行する。
 - **Releaseのアップロード／公開／クローズ途中の失敗**：採用したPR番号で `gh workflow run studio-release.yml --ref main -f pr_number=104` を実行する。同じdraft／公開済み資産を照合し、未完の処理を復旧する。
 - **公開用文章ジョブの失敗**：失敗ジョブを再実行するか、上記dispatchで再開する。新作は文章が保存されるまで下書きのまま。保存済みなら再生成せず、最終ジョブで公開とIssue終了を続行する。再実行でもArtifact失効や採用・ハッシュのゲートを免除しない。
+- **下書きのタグが `untagged-*` に変わった場合**：そのまま再実行すると別の下書きを作る可能性があるため、先に同じRelease IDを復旧する。本人Merge、採用marker、マージSHA、receipt、全資産の集合・ハッシュを照合し、予定タグを使う別Release／異なるコミットのタグがないことを確認してから、下書きの `tag_name` のみを予定値へ戻す。公開済みReleaseを付け替えたり、動画や保存済み文章を再生成したりしない。復旧後は修正済みmainから採用PR番号でdispatchし、通常の全ゲートを通して公開する。通常の文章保存と公開PATCHには、検証済み `tag_name`・`target_commitish` を明示して保持する。
 - **Release作成APIの403／404**：過去のマージコミットと現在のmainで `.github/workflows/` が異なる場合、GitHubは作成トークンにもworkflow権限を要求する（[公式API仕様](https://docs.github.com/en/rest/releases/releases#create-a-release)）。既存タグがあっても `target_commitish` を指定する本実装では失敗する場合があり、Actionsの `GITHUB_TOKEN` にはこの権限を付けられない。採用・Artifactの全検証が通った後に限り、本人がworkflow権限を持つ認証で、コントローラーと同じタグ・マージSHA・本文の**下書き**Releaseを準備し、Actionsを再実行する。GitHub CLIの権限追加は本人が `gh auth refresh -h github.com -s workflow` で承認する。公開・資産照合・Issue終了は引き続きActionsが担当し、回避のために対象を最新mainへ変更したり、既存タグを移動したりしない。
 - **Artifact失効、head変更、入力不一致**：古いreceiptでは公開しない。再現・独立検証が必要。マージ後の入力を勝手に別内容へ書き換えない。
 

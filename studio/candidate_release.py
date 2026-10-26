@@ -187,10 +187,12 @@ def _release_assets(gh, *, files, issue, candidate, pr_number, head, merge, stag
     from .publication import check_before_publish
     check_before_publish(release)
     if release.get("draft") is True:
-        gh.request("PATCH", f"/releases/{release['id']}", {"draft": False})
+        gh.request("PATCH", f"/releases/{release['id']}", {
+            "draft": False, "tag_name": tag, "target_commitish": merge})
         release = gh.request("GET", f"/releases/{release['id']}")
     exists, target = controller._resolve_tag(gh, tag)
     if (release.get("draft") is not False or not exists or target != merge
+            or release.get("tag_name") != tag
             or release.get("target_commitish") != merge):
         return _fail("release publication/tag confirmation failed; no Issues or PRs closed")
     return {"ok": True, "tag": tag, "release_id": release["id"]}

@@ -588,7 +588,7 @@ class FakeTransport:
                 return rel
             if len(seg) == 2 and method == "PATCH":
                 was_draft = rel.get("draft")
-                rel.update({k: body[k] for k in ("draft", "name", "body", "target_commitish") if k in body})
+                rel.update({k: body[k] for k in ("draft", "name", "body", "tag_name", "target_commitish") if k in body})
                 if was_draft and body.get("draft") is False:
                     self._ensure_tag_for_release(rel)
                 return rel
