@@ -12,13 +12,15 @@ from p0.timebase import Timebase
 from studio import nocturne_chapel as chapel, rendering, storyboard
 from test_studio_painted import controls, PLAN, N, B, A, W, H, SEED
 
-PALS = [chapel.BASE_PALETTE, {**chapel.BASE_PALETTE, 'far': (48,40,29)}]
+# The known-positive scene must survive H.264 quantization across encoder
+# versions. A tiny grade delta is not a valid temporal calibration positive.
+PALS = [chapel.BASE_PALETTE, {**chapel.BASE_PALETTE, 'far': (120,135,160)}]
 PARAMS = [{'candle_strength': .1, 'chapel_warmth': 0}, {'candle_strength': .8, 'chapel_warmth': .7}]
 
-def reference(renderer, ctrl):
+def reference(renderer, ctrl, *, palettes=None, params=None):
     lay = rendering.make_layouts(SEED,W,H)
     lay['nocturne_chapel'] = chapel.make_layout(SEED,W,H,renderer)
-    return rendering.make_reference_frame_fn(ctrl,W,H,SEED,scene_palettes=PALS,scene_params=PARAMS,layouts=lay)
+    return rendering.make_reference_frame_fn(ctrl,W,H,SEED,scene_palettes=PALS if palettes is None else palettes,scene_params=PARAMS if params is None else params,layouts=lay)
 
 @pytest.mark.parametrize('renderer', chapel.RENDERERS)
 def test_random_access_does_not_change_source_or_controls(renderer):
@@ -54,7 +56,8 @@ def test_encoded_accents_and_scene_faults_are_detected(tmp_path,renderer):
         path=tmp_path/(name+'.mp4');fn=reference(renderer,c)
         render.render_video((fn(f) for f in range(N)),str(wav),str(path),W,H,30,1,N)
         result=qa.check_rendered_frames(str(path),PLAN,Timebase(22050,30,1),W,H,N,reference(renderer,controls()),require_transition_timing=True)
-        assert result['pass']==(name=='good'),result
+        print(json.dumps({'renderer':renderer,'case':name,'pass':result['pass'],'transitions':[{'ok':t['ok'],'offset':t.get('best_offset_frames'),'separation_ratio':t.get('separation_ratio'),'reason':t.get('reason')} for t in result['transition_timing']],'max_patch_mae':max(x['patch_mae_max'] for x in result['frames'])}))
+        assert result['pass']==(name=='good'),json.dumps({'renderer':renderer,'case':name,'result':result},indent=2)
 
 def test_terminal_candidate_keeps_recorded_ending_without_changing_ranked_ids():
     # Last 5 s are deliberately unlike the earlier material. Even if the
@@ -83,3 +86,17 @@ def test_terminal_boundary_retains_a_complete_rational_fps_frame():
     assert selected['end_sample']==n
     next_boundary=tb.clip_end_sample(0,1802)
     assert selected['end_sample'] <= n < next_boundary
+
+
+@pytest.mark.parametrize('renderer',chapel.RENDERERS)
+def test_invisible_scene_boundary_is_not_a_timing_positive(tmp_path,renderer):
+    import soundfile as sf
+    wav=tmp_path/'tone.wav';sf.write(wav,.1*np.sin(np.arange(22050*3)*2*np.pi*440/22050),22050)
+    ctrl=controls(accent=None)
+    identical_palettes=[chapel.BASE_PALETTE,chapel.BASE_PALETTE]
+    identical_params=[{'chapel_warmth':0.,'candle_strength':.2}]*2
+    fn=reference(renderer,ctrl,palettes=identical_palettes,params=identical_params)
+    path=tmp_path/'unobservable.mp4'
+    render.render_video((fn(f) for f in range(N)),str(wav),str(path),W,H,30,1,N)
+    result=qa.check_transition_timing(str(path),B,rendering.scene_transition(B,ctrl['scene_id']),W,H,N,fn)
+    assert not result['ok'],json.dumps(result,indent=2)
