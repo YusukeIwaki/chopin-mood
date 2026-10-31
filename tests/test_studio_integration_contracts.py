@@ -74,7 +74,7 @@ def test_nested_schemas_are_closed_with_explicit_saved_data_options():
                     "camera_pan_y_start", "camera_pan_y_end",
                     "storm_shot", "rain_density", "rain_wind",
                     "storm_light", "reflection_strength",
-                    "salon_shot",
+                    "salon_shot", "chapel_warmth", "candle_strength",
                 },
             }
         schema = json.loads((ROOT / f".github/studio/schemas/{name}.schema.json").read_text())

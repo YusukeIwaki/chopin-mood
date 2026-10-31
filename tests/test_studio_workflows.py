@@ -56,9 +56,9 @@ def test_schemas_strict_required_covers_properties():
     # in legacy procedural projects or permitting arbitrary optional keys.
     schema = json.loads((ROOT / ".github/studio/schemas/storyboard.schema.json").read_text())
     assert set(schema["properties"]) - set(schema["required"]) == {"asset_bundle", "renderer"}
-    from studio.config import PAINTED_ASSET_BUNDLE_ID, STORM_RECITAL_RENDERER_ID, SALON_ENCORE_RENDERER_ID
+    from studio.config import PAINTED_ASSET_BUNDLE_ID, STORM_RECITAL_RENDERER_ID, SALON_ENCORE_RENDERER_ID, CHAPEL_RENDERER_IDS
     assert schema["properties"]["asset_bundle"]["enum"] == [PAINTED_ASSET_BUNDLE_ID]
-    assert schema["properties"]["renderer"]["enum"] == [STORM_RECITAL_RENDERER_ID, SALON_ENCORE_RENDERER_ID]
+    assert schema["properties"]["renderer"]["enum"] == [STORM_RECITAL_RENDERER_ID, SALON_ENCORE_RENDERER_ID, *CHAPEL_RENDERER_IDS]
     assert schema["not"] == {"required": ["renderer", "asset_bundle"]}
 
 

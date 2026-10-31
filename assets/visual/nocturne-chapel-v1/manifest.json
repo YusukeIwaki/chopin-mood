@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "bundle_id": "nocturne-chapel-v1",
+  "provider": "Codex built-in image_gen",
+  "model": "not exposed by built-in tool",
+  "created_on": "2026-10-31",
+  "prompts": "assets/visual/nocturne-chapel-v1/PROMPTS.md",
+  "wick_anchor": [
+    0.503,
+    0.463
+  ],
+  "files": {
+    "church.png": "4c74b9806614d4f81e0aecc9718a8663b303ea04893251b33cfc4256dcbd1be0",
+    "candle.png": "4d4e76645d7f918a364e9395993b56ef3f3ce6f1985ba8a67b317dfb108d603d"
+  }
+}

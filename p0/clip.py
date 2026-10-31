@@ -109,6 +109,7 @@ def select_clip(
     seed: int = 0,
     min_sec: float = MIN_CLIP_SEC,
     max_sec: float = MAX_CLIP_SEC,
+    source_ending: bool = False,
 ) -> dict:
     """Rank clip candidates; return best + ranked table with reasons.
 
@@ -196,6 +197,13 @@ def select_clip(
                 s1 = tb.clip_end_sample(int(s0), nf)
                 if s1 <= n_src and all(p[1] != s1 for p in pairs):
                     pairs.append((int(s0), int(s1), "music-endpoint"))
+        if source_ending:
+            # A separately ranked terminal alternative, never a hand-set
+            # timestamp. Keep the entire recorded ending except a possible
+            # incomplete last video frame. Normal P0 rankings stay unchanged.
+            nf = tb.sample_to_frame(int(s0), n_src)
+            pairs = ([(int(s0), int(tb.clip_end_sample(int(s0), nf)), "source-ending")]
+                     if min_frames <= nf <= max_frames else [])
         for s0i, s1, e_origin in pairs:
             dur = (s1 - s0i) / sr
             mask = (centers >= s0i) & (centers < s1)
@@ -510,6 +518,16 @@ def rank_excerpt_candidates(
     sel = select_clip(feat, events, tb, n_src, seed=seed,
                       min_sec=min_sec, max_sec=max_sec)
     diverse = diversity_filter(sel["ranked"], max_n=max_candidates)
+    # Reserve an unused slot for a terminal alternative. Diversity filtering
+    # alone can discard a coda because its window overlaps a higher score.
+    # Existing ranked IDs are preserved; an overlapping ending is explicitly
+    # an alternative, not evidence of a different musical section.
+    if len(diverse) < max_candidates and not any(
+            tb.sample_to_frame(int(c["start_sample"]), n_src) == int(c["n_frames"])
+            for c in diverse):
+        terminal = select_clip(feat, events, tb, n_src, seed=seed,
+                               min_sec=min_sec, max_sec=max_sec, source_ending=True)
+        diverse.append(terminal["best"])
     out = []
     for i, c in enumerate(diverse):
         s0, s1 = int(c["start_sample"]), int(c["end_sample"])
