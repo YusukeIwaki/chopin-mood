@@ -177,9 +177,9 @@
   },
   "source_hashes": {
     "attachment_sha256": "069ad8674fdc72e0bc810139a4f4658de500a758f1eba39358d75c74dc8edba8",
-    "decoded_wav_sha256": "498964beb203eb1d7aeb815349c453d8c47800adc94ab6487d34bc89565547c8"
+    "decoded_wav_sha256": "f7e00856326353a443c704acef66e33c74e31868d9fc280bec31d0c376e38945"
   },
-  "fingerprint": "c49f9205894ec7455391b8006a26623acb170f9d522ba738591cbbbeef32d717",
+  "fingerprint": "8742f01b27eade5680926e079ee7c31005abd46d667d9f342c2bcba6746cd618",
   "piece": "ショパン スケルツォ第3番（本人申告）。前半録音 scherzo3_1.mp3。",
   "period": null,
   "art_notes": "夕暮れ後の夜の教会っぽいところで音が響いている感じ。\n\n静かな夜の教会を思わせる空間と、そこへ演奏の響きが広がる感覚を映像化する。これは本人の希望する創作上の情景であり、実際の録音場所を示すものではない。\n\n本人演奏の音源を保持し、音楽の時刻はDSPで自動計算する。後半録音とは別作品として制作する。",

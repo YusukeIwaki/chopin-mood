@@ -3,16 +3,16 @@
   "round": 1,
   "creator_id": "codex-scherzo3-20261031",
   "input_sha256": {
-    "project.json": "4d38a2a29c581a4783b785af5f97b075443ba7306352cf169254a3395bfa718c",
-    "brief.json": "fd8cff6b453856133fa40d105f0a66ae65d57b69ff4cf83730ee8bc181bf0504",
+    "project.json": "adae722ed309eaa7272978f188d644e2486a7e82ab14a9f87cf75ddb95fe1d39",
+    "brief.json": "09be5a688a2df577c22f5cbd11ef3906c282a8b737d5ffc18adf0c9e90031e16",
     "storyboard.json": "c5681c25de453e935e59143006850dc14312f14c120bfea9ec4821586b249afa"
   },
   "media_sha256": {
-    "video.mp4": "f878964bd1586763a5df9ea31eb33a3c1b4a9658da1f629b1a32e58e2e7e95c0",
-    "contact-sheet.jpg": "b78f66264ca6b9fe0870dc159e4e4ad9c2059b185e0c701f41f7210c05843acc",
+    "video.mp4": "d1ef5bd757a4ac5422462af21fa90d9970d84189834627cefeb6770ad306bb2b",
+    "contact-sheet.jpg": "c9509f26b0f84c3962a1e6d17fcb6543d4ff4351bc69735b574a94b13854cf18",
     "timeline.html": "1cf6f83ced5974f83dd0e11f2672d8597261e08fd5cc2a8e33a2edec3f3cf12c"
   },
-  "qa_sha256": "097570a2a8bdaf19aa43c0b6d27bcc76f78a29f9edc527e9fa792a313a12db50",
+  "qa_sha256": "6007dc03b78a9a2b2f3dd42dc8c07b8fcd6ac1776ecad590dbb48208fb6975b6",
   "qa": {
     "checks": [
       {
@@ -98,14 +98,14 @@
           3599
         ],
         "motion_diffs_blur_downscaled": [
-          9.2871,
-          17.5985,
+          9.282,
+          17.5891,
           10.1973
         ],
         "motion_floor": 0.4,
         "mean_abs_diffs_raw": [
-          12.684,
-          18.752,
+          12.687,
+          18.745,
           13.24
         ]
       },
@@ -120,7 +120,7 @@
       {
         "name": "studio:input_hash_unchanged",
         "pass": true,
-        "sha256": "498964beb203eb1d..."
+        "sha256": "f7e00856326353a4..."
       },
       {
         "name": "studio:rendered_frame_spotcheck",
@@ -497,9 +497,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.813,
-            "patch_mae_max": 2.552,
-            "patch_mae_mean": 1.815
+            "global_mae": 1.81,
+            "patch_mae_max": 2.491,
+            "patch_mae_mean": 1.812
           },
           {
             "frame": 1223,
@@ -507,9 +507,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.005,
-            "patch_mae_max": 3.266,
-            "patch_mae_mean": 2.007
+            "global_mae": 1.998,
+            "patch_mae_max": 3.264,
+            "patch_mae_mean": 2.0
           },
           {
             "frame": 1224,
@@ -517,9 +517,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.867,
-            "patch_mae_max": 2.727,
-            "patch_mae_mean": 1.869
+            "global_mae": 1.861,
+            "patch_mae_max": 2.702,
+            "patch_mae_mean": 1.862
           },
           {
             "frame": 1259,
@@ -697,9 +697,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.937,
+            "global_mae": 1.934,
             "patch_mae_max": 2.47,
-            "patch_mae_mean": 1.938
+            "patch_mae_mean": 1.934
           },
           {
             "frame": 2558,
@@ -707,9 +707,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.104,
-            "patch_mae_max": 3.382,
-            "patch_mae_mean": 2.105
+            "global_mae": 2.102,
+            "patch_mae_max": 3.444,
+            "patch_mae_mean": 2.103
           },
           {
             "frame": 2559,
@@ -717,9 +717,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.924,
-            "patch_mae_max": 2.624,
-            "patch_mae_mean": 1.924
+            "global_mae": 1.923,
+            "patch_mae_max": 2.648,
+            "patch_mae_mean": 1.923
           },
           {
             "frame": 2750,
@@ -807,16 +807,16 @@
                 2781
               ],
               "best_offset_frames": 0,
-              "relative_margin": 3.35487,
-              "hypothesis_separation_rms": 0.315311,
-              "fit_rms": 0.156725,
-              "separation_ratio": 2.01187,
+              "relative_margin": 3.33295,
+              "hypothesis_separation_rms": 0.315371,
+              "fit_rms": 0.156079,
+              "separation_ratio": 2.02059,
               "scores": {
-                "-2": 0.202475,
-                "-1": 0.106968,
-                "0": 0.024563,
-                "1": 0.11802,
-                "2": 0.208212
+                "-2": 0.200731,
+                "-1": 0.105553,
+                "0": 0.024361,
+                "1": 0.118729,
+                "2": 0.210322
               },
               "reason": "aligned"
             }
@@ -967,9 +967,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.995,
-            "patch_mae_max": 2.794,
-            "patch_mae_mean": 1.996
+            "global_mae": 1.994,
+            "patch_mae_max": 2.715,
+            "patch_mae_mean": 1.994
           },
           {
             "frame": 3146,
@@ -977,8 +977,8 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.176,
-            "patch_mae_max": 3.411,
+            "global_mae": 2.177,
+            "patch_mae_max": 3.334,
             "patch_mae_mean": 2.178
           },
           {
@@ -987,9 +987,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.023,
-            "patch_mae_max": 2.782,
-            "patch_mae_mean": 2.024
+            "global_mae": 2.019,
+            "patch_mae_max": 2.739,
+            "patch_mae_mean": 2.02
           },
           {
             "frame": 3231,
@@ -998,7 +998,7 @@
             ],
             "ok": true,
             "global_mae": 1.961,
-            "patch_mae_max": 2.622,
+            "patch_mae_max": 2.603,
             "patch_mae_mean": 1.961
           },
           {
@@ -1007,9 +1007,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.137,
-            "patch_mae_max": 3.367,
-            "patch_mae_mean": 2.138
+            "global_mae": 2.138,
+            "patch_mae_max": 3.45,
+            "patch_mae_mean": 2.14
           },
           {
             "frame": 3233,
@@ -1017,9 +1017,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.984,
-            "patch_mae_max": 2.74,
-            "patch_mae_mean": 1.985
+            "global_mae": 1.992,
+            "patch_mae_max": 2.787,
+            "patch_mae_mean": 1.992
           },
           {
             "frame": 3298,
@@ -1027,9 +1027,9 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 1.936,
-            "patch_mae_max": 2.4,
-            "patch_mae_mean": 1.937
+            "global_mae": 1.937,
+            "patch_mae_max": 2.399,
+            "patch_mae_mean": 1.938
           },
           {
             "frame": 3299,
@@ -1037,9 +1037,9 @@
               "scene_start"
             ],
             "ok": true,
-            "global_mae": 2.009,
-            "patch_mae_max": 2.45,
-            "patch_mae_mean": 2.009,
+            "global_mae": 1.996,
+            "patch_mae_max": 2.485,
+            "patch_mae_mean": 1.996,
             "transition_timing": {
               "ok": true,
               "boundary": 3299,
@@ -1107,16 +1107,16 @@
                 3329
               ],
               "best_offset_frames": 0,
-              "relative_margin": 7.39431,
-              "hypothesis_separation_rms": 0.205699,
-              "fit_rms": 0.073566,
-              "separation_ratio": 2.79611,
+              "relative_margin": 7.40272,
+              "hypothesis_separation_rms": 0.205636,
+              "fit_rms": 0.073745,
+              "separation_ratio": 2.78847,
               "scores": {
-                "-2": 0.114905,
-                "-1": 0.04543,
-                "0": 0.005412,
-                "1": 0.046637,
-                "2": 0.109686
+                "-2": 0.11516,
+                "-1": 0.045697,
+                "0": 0.005438,
+                "1": 0.046064,
+                "2": 0.10894
               },
               "reason": "aligned"
             }
@@ -1127,9 +1127,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.742,
-            "patch_mae_max": 2.192,
-            "patch_mae_mean": 1.743
+            "global_mae": 1.74,
+            "patch_mae_max": 2.194,
+            "patch_mae_mean": 1.741
           },
           {
             "frame": 3311,
@@ -1137,9 +1137,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.96,
+            "global_mae": 1.959,
             "patch_mae_max": 2.409,
-            "patch_mae_mean": 1.961
+            "patch_mae_mean": 1.959
           },
           {
             "frame": 3599,
@@ -1460,16 +1460,16 @@
               2781
             ],
             "best_offset_frames": 0,
-            "relative_margin": 3.35487,
-            "hypothesis_separation_rms": 0.315311,
-            "fit_rms": 0.156725,
-            "separation_ratio": 2.01187,
+            "relative_margin": 3.33295,
+            "hypothesis_separation_rms": 0.315371,
+            "fit_rms": 0.156079,
+            "separation_ratio": 2.02059,
             "scores": {
-              "-2": 0.202475,
-              "-1": 0.106968,
-              "0": 0.024563,
-              "1": 0.11802,
-              "2": 0.208212
+              "-2": 0.200731,
+              "-1": 0.105553,
+              "0": 0.024361,
+              "1": 0.118729,
+              "2": 0.210322
             },
             "reason": "aligned"
           },
@@ -1540,16 +1540,16 @@
               3329
             ],
             "best_offset_frames": 0,
-            "relative_margin": 7.39431,
-            "hypothesis_separation_rms": 0.205699,
-            "fit_rms": 0.073566,
-            "separation_ratio": 2.79611,
+            "relative_margin": 7.40272,
+            "hypothesis_separation_rms": 0.205636,
+            "fit_rms": 0.073745,
+            "separation_ratio": 2.78847,
             "scores": {
-              "-2": 0.114905,
-              "-1": 0.04543,
-              "0": 0.005412,
-              "1": 0.046637,
-              "2": 0.109686
+              "-2": 0.11516,
+              "-1": 0.045697,
+              "0": 0.005438,
+              "1": 0.046064,
+              "2": 0.10894
             },
             "reason": "aligned"
           }
@@ -1563,65 +1563,63 @@
   "reviews": {
     "music": {
       "reviewer_id": "/root/chapel_music_sync",
-      "evidence_sha256": "1f7df412c5a8c03c0c37fbebb4ce5b84a74acd0b992d74dca8819ad7a4cccc9e",
+      "evidence_sha256": "eb25162ceee46a42c2ae8485832f640d2db03cee1adb7bc20efeb08d4af09881",
       "verdict": "pass",
       "hard_blockers": [],
       "concerns": [],
       "evidence": [
-        "Mechanical synchronization review of studio/projects/issue-29/candidates/cand-01 and output/studio/issue-29/cand-01/round-1. The candidate exactly equals the fresh DSP output: source samples [7586460,13346460), 3600 frames at 30/1 fps. Every scene boundary is an exact integer boundary at 1600 samples per frame; every accent uses its exact containing frame and original sample-derived seconds.",
-        "source-meta.json, brief.json, analysis/plan-context.json and provenance.json agree on attachment SHA256 069ad8674fdc72e0bc810139a4f4658de500a758f1eba39358d75c74dc8edba8 and decoded source SHA256 498964beb203eb1d7aeb815349c453d8c47800adc94ab6487d34bc89565547c8. Native analysis is 48000 Hz, hop 1115 and FFT 4458 without overrides.",
-        "Recomputed video SHA256 f878964bd1586763a5df9ea31eb33a3c1b4a9658da1f629b1a32e58e2e7e95c0 and QA SHA256 097570a2a8bdaf19aa43c0b6d27bcc76f78a29f9edc527e9fa792a313a12db50. All 11 recorded QA checks pass. Full/head/mid/tail audio lag and segment drift are zero; crop comparison has max_abs_diff 0; encoded level difference is -0.012 dB.",
-        "Inspected all recorded decoded-frame probes, including the first/last frames, all ten accent neighborhoods and scene boundaries 441,744,1857,2751,3299. All transition offsets are zero and all patch comparisons pass; maximum patch MAE is 3.584. Minimum transition separation ratio is 2.01187 at frame 2751, above the unchanged 2.0 requirement without a waiver.",
-        "Round-0 temporal discrimination failures were inspected separately. Round-1 actual media resolves those failures while retaining identical DSP timing; QA thresholds remain unchanged. Independent ffprobe confirms 540x960 H264 at 30/1 fps, 3600 frames, mono 48000 Hz AAC, both streams starting at zero and lasting 120 seconds.",
-        "Viewed the round-1 contact sheet as still-image evidence. Renderer inspection shows restrained smoothed light and sparse DSP accents rather than fixed-BPM or per-note cuts. Strongest unresolved objection is excerpt phrase completeness: its grid-length ending and low endpoint energy do not establish a musical cadence.",
-        "Independently recomputed the final bound digest. Compared with my pre-binding snapshot, only project.engine_sha changed to 0eac2f781b97c2fcefb952b6f6e213248e94a230; brief, storyboard, media and QA hashes are unchanged. Git comparison from 8908dc888469e0c7369a6ac2962923e7a4e47f6c to that main commit is empty for engine, assets and dependency paths."
+        "Fresh review of studio/projects/issue-29/candidates/cand-01 and output/studio/issue-29/cand-01/linux-reproduction/round-1 in the chopin-mood-issue29 worktree. This is an environment reproduction of creative round 1, not another aesthetic repair. The complete candidate object equals both the preserved macOS candidate and fresh Linux analysis outputs; storyboard bytes and owner direction are unchanged.",
+        "source-meta-linux.json records Ubuntu 24.04 linux/amd64, ffmpeg 6.1.1-3ubuntu5 and canonical-riff-v1 decoding. Its decoded WAV SHA256 f7e00856326353a443c704acef66e33c74e31868d9fc280bec31d0c376e38945 is recorded as exactly matching the original candidate Actions decoding. I independently checked that current brief, fresh analysis, render analysis and provenance use this same new hash. Original attachment SHA256 remains 069ad8674fdc72e0bc810139a4f4658de500a758f1eba39358d75c74dc8edba8; sample count remains 13401088 at 48000 Hz.",
+        "Rechecked source samples [7586460,13346460), 3600 frames at 30/1 fps, all six scene ranges and all ten accents. Scene boundaries map exactly to integer 1600-sample frames; accents retain exact source samples, sample-derived seconds and correct containing-frame mapping. Native analysis remains hop 1115 and FFT 4458 without overrides. No manual timing changes or fixed BPM were introduced.",
+        "Recomputed new video SHA256 d1ef5bd757a4ac5422462af21fa90d9970d84189834627cefeb6770ad306bb2b and QA SHA256 6007dc03b78a9a2b2f3dd42dc8c07b8fcd6ac1776ecad590dbb48208fb6975b6. All 11 current QA checks pass. Full/head/mid/tail decoded-audio lag and segment drift are zero; crop max_abs_diff is 0; level difference is -0.012 dB. Independent ffprobe confirms 540x960 H264, 30/1 fps, 3600 frames, 48000 Hz mono AAC and both streams starting at zero with 120-second duration.",
+        "Inspected current QA's first/last, interior, scene-boundary and accent-neighborhood probes. Transition boundaries 441,744,1857,2751,3299 all have offset 0. Minimum separation ratio is 2.02059 at frame 2751 against the unchanged 2.0 requirement; maximum patch MAE is 3.584 against 5.0. No threshold waiver was used. Re-viewed the new contact sheet as still-image evidence. The strongest unresolved musical objection is phrase completeness at the grid-length ending; low endpoint energy does not establish a cadence.",
+        "Verified current input/media/QA hashes against editorial.bound.template.json and independently recomputed the exact final evidence digest. Relative to my inspected Linux snapshot, only project.engine_sha changed to 6395e94764a2a0e1d3aae9a0f8a4e68041b8071e; brief, storyboard, video, contact sheet, timeline and QA bytes are unchanged. Independently verified that runtime/assets/dependency paths have no differences from 0eac2f781b97c2fcefb952b6f6e213248e94a230. Rendered brief/storyboard, source metadata, planning fingerprint, provenance, renderer bytes and registered asset hashes all agree."
       ],
       "listening": "unavailable",
       "limitations": [
-        "No audio was auditioned. This pass establishes the inspected mechanical synchronization and provenance evidence, not musical naturalness, phrase completeness, appropriate accent selection or perceptual balance.",
-        "Full source recordings were not accessed or independently rehashed; source identity was checked through the supplied metadata, analysis, provenance and bound QA records.",
-        "Contact-sheet viewing does not verify continuous motion or full-length viewing experience. Calibration and negative-test source code were inspected but those tests were not executed by this reviewer.",
-        "CI was still running at review time; this review makes no claim that CI succeeded."
+        "No audio was auditioned. This pass covers the freshly inspected mechanical synchronization and provenance evidence; phrase completeness, musical naturalness, accent selection and perceptual balance remain unverified.",
+        "Full source recordings and source-linux.wav were not accessed or independently rehashed. Exact Actions-source byte agreement is documented by source-meta-linux.json; this review independently checked its agreement with current analysis, brief and provenance, without reading the original Actions recording bytes.",
+        "Contact sheets do not establish continuous motion or full-length viewing quality. I did not independently execute calibration/negative tests or audit the candidate Actions rerun; local encoded-media QA and its final evidence binding were inspected."
       ]
     },
     "visual": {
       "reviewer_id": "/root/chapel_visual_viewer",
-      "evidence_sha256": "1f7df412c5a8c03c0c37fbebb4ce5b84a74acd0b992d74dca8819ad7a4cccc9e",
+      "evidence_sha256": "eb25162ceee46a42c2ae8485832f640d2db03cee1adb7bc20efeb08d4af09881",
       "verdict": "pass",
       "hard_blockers": [],
       "concerns": [
         {
           "id": "V29-01",
-          "note": "Observation: the same frontal nave persists across the 120-second overview, including the long scene03 and scene04 holds. Round1 makes the alternating diffuse light states clearly more legible, but the action remains a slow approach/recession and light variation within one painting. Impact: a viewer seeking an unfolding visual story may experience the middle as a held illustration. This is an aesthetic concern, not an unreadable subject or an owner-direction violation. Minimum improvement if the editor chooses revision: make one existing aisle-light swell more spatially legible during the long middle while retaining the architecture, continuous camera and exact DSP timing; adding cuts or particles merely to increase activity is not warranted. Verification would require updated encoded middle sequences at native size and 270x480, plus boundary checks. Explicit acceptance of the contemplative held composition is also a reasonable editorial resolution."
+          "note": "Observation: the fresh Linux full-duration overview retains the same frontal nave throughout 120 seconds, including the long scene03 and scene04 holds. The diffuse light states are legible, but visual action remains a slow approach/recession and illumination within one painting. Impact: a viewer seeking an unfolding visual story may experience the middle as a held illustration. This is an aesthetic concern, not an unreadable subject or an owner-direction violation. Minimum improvement if the editor chooses revision: make one existing aisle-light swell more spatially legible during the long middle while retaining the architecture, continuous camera and exact DSP timing; adding cuts or particles merely to increase activity is not warranted. Verification would require updated encoded middle sequences at native size and 270x480, plus boundary checks. Explicit acceptance of the contemplative held composition is also a reasonable editorial resolution."
         }
       ],
       "evidence": [
-        "Independently read studio-review and docs/12_CREATIVE_REVIEW_PROTOCOL.md, the issue29 brief/storyboard and current project metadata. Treated the after-dusk church resonance as owner-directed imagery, not a claim about the recording venue or a DSP emotion classification.",
-        "Verified the raw project.json, brief.json and storyboard.json hashes, video.mp4/contact-sheet.jpg/timeline.html hashes and qa.json hash against output/studio/issue-29/cand-01/round-1/editorial.bound.template.json. Recomputed the supplied evidence digest exactly. The bound local QA record reports all 11 checks passing; this is not a claim about still-running CI.",
-        "Observed current round1 native 540x960 stills and the official round1 contact-sheet.jpg. Also decoded native-size frames 630,1170,2250,3599 directly from the final encoded round1 video.mp4. Receding stone ribs, a clear blue window and the reflective aisle remain readable in dark and brighter states; the grade does not erase focal detail or turn the night space into daylight.",
-        "From the final encoded round1 video.mp4, inspected every 90th frame from 0 through 3510 plus frame3599 as an ordered full-duration overview. Inspected all consecutive frames in [0,90), [411,472), [714,775), [1150,1240), [1827,1888), [2200,2290), [2721,2782), [3269,3330) and [3510,3600). These include every scene boundary, both long middle holds, opening and ending. Frames were viewed as ordered decoded images/sheets, with reduced views for small-screen readability.",
-        "Additionally inspected all 120 decoded consecutive frames of each current round1 engineering boundary clip for boundaries744 and3299. The light recedes and returns progressively while the nave stays registered; no one-frame exposure step, viewpoint reset, shape breakup or intrusive overlay was observed in the inspected ranges.",
-        "What changes is the strength of diffuse illumination and the restrained axial scale; what remains is the window/aisle vanishing point and architecture. Repeated ribs, stone detail and the floor reflection provide objects to scan while preserving the owner requested quiet space. The strongest counterargument is the limited visual development recorded as V29-01.",
-        "Compared actual adopted-release images: output/studio/prior/studio-pr-6/comparison.png, studio-issue-20/contact-sheet.jpg and studio-issue-24/contact-sheet.jpg. The nave composition does not reuse the moonlit mountain traveler, storm terrace pianist or sunlit salon pianist. Comparison was of the supplied still/contact-sheet evidence, not prior continuous playback."
+        "Reviewed the current Linux-reproduction brief/storyboard and final project metadata under the issue29 worktree. The imagined after-dusk chapel and resonant light are owner-directed artistic imagery, not claims about the actual recording venue or DSP emotion classification. This is the same creative round1 environment reproduction; the earlier Mac-media pass was not reused.",
+        "Verified raw project.json, brief.json and storyboard.json hashes, video.mp4/contact-sheet.jpg/timeline.html hashes and qa.json hash against output/studio/issue-29/cand-01/linux-reproduction/round-1/editorial.bound.template.json. Recomputed the supplied evidence digest exactly. The actual observed video hash is d1ef5bd757a4ac5422462af21fa90d9970d84189834627cefeb6770ad306bb2b. The bound local QA record reports all 11 checks passing; visual approval does not replace other Studio gates.",
+        "Freshly inspected the Linux contact-sheet.jpg and native 540x960 frames 630, 1170, 2250 and 3599 decoded directly from the new Linux video.mp4. Receding stone ribs, blue window and reflective aisle remain readable in dark and brighter states. The brighter diffuse grade preserves the architecture and night setting rather than washing out the focal forms.",
+        "From the new Linux video.mp4, inspected every 90th frame from 0 through 3510 plus frame 3599 as an ordered full-duration overview. Inspected all consecutive frames in [0,90), [411,472), [714,775), [1150,1240), [1827,1888), [2200,2290), [2721,2782), [3269,3330) and [3510,3600). These include every scene boundary, both long middle holds, opening and ending. Observation used ordered decoded images/sheets and reduced views for small-screen readability.",
+        "In these freshly decoded Linux ranges, diffuse illumination rises or recedes progressively while the nave stays registered. No single-frame exposure step, viewpoint reset, shape breakup, intrusive overlay or exit flash was observed. The final frame retains the same readable space.",
+        "What changes is the strength of diffuse light and restrained axial scale; what remains is the window/aisle vanishing point and architecture. Repeated ribs, stone detail and the floor reflection offer objects to scan while preserving the quiet space. The strongest counterargument remains the limited visual development recorded as V29-01.",
+        "Compared the newly observed chapel composition with previously inspected actual adopted-release images: the studio-pr-6 20-second comparison frame and the issue20/24 contact sheets under output/studio/prior in the common scherzo3 worktree. It does not reuse the moonlit mountain traveler, storm terrace pianist or sunlit salon pianist. Prior-work comparison was limited to those actual still/contact-sheet observations, not prior continuous playback."
       ],
       "listening": "not_applicable",
       "limitations": [
-        "No real-time or continuous video playback was available: native CUA reported the Mac locked, and IAB blocked the local file protocol. Review used decoded ordered frames and sheets; it does not establish real-time perceptual smoothness or sustained 120-second watchability.",
-        "Only the listed consecutive ranges and overview samples of the final MP4 were visually inspected; unobserved intermediate frames are not claimed as viewed. Contact sheets alone were not treated as continuous-motion evidence.",
-        "No audio was listened to in this visual-viewer role. Musical phrasing, the choice of emphasized sounds and audible naturalness are outside this verdict. Local QA and other mandatory gates remain separate from visual approval."
+        "No real-time or continuous playback was performed for this Linux review. Observation used decoded ordered frames and sheets; it does not establish real-time perceptual smoothness or sustained 120-second watchability. No current Mac-lock limitation is claimed.",
+        "Only the listed consecutive ranges, native frames and overview samples of the new Linux MP4 were visually inspected; unobserved intermediate frames are not claimed as viewed. Contact sheets alone were not treated as continuous-motion evidence.",
+        "No audio was listened to in this visual-viewer role, and neither the complete recordings nor source-linux.wav was accessed. Musical phrasing, emphasized sounds and audible naturalness are outside this verdict. Mechanical QA and other mandatory Studio gates remain separate."
       ]
     }
   },
   "decision": {
     "editor_id": "codex-scherzo3-20261031",
     "verdict": "ready",
-    "rationale": "Choose one contemplative nave treatment for the night-church request. Round1 actual lighting resolves all round0 temporal-QA failures at unchanged thresholds; independent mechanical and visual reviews pass. Accept the explicitly recorded sustained-viewing concern. No listening or musical phrase completeness is claimed.",
+    "rationale": "Choose the contemplative night nave and explicitly accept V29-01 after inspection of the new Linux-source media. The unchanged original MP3 was decoded in the same Linux/amd64 environment as Actions, yielding exactly matching canonical WAV bytes; fresh DSP still equals the original candidate. All11 local QA checks and both independent roles pass at unchanged thresholds. This is an environment reproduction of creative round1; no listening or phrase-completeness claim.",
     "resolutions": [
       {
         "role": "visual",
         "concern_id": "V29-01",
         "action": "accept",
-        "reason": "The owner asks for resonance in a night church. The detailed receding nave, now visibly differentiated light states and slow coherent camera sustain that contemplative setting. Accept the held-painting quality and disclose that real-time sustained viewing was unavailable; adding cuts or figures is not required by this direction."
+        "reason": "The owner asks for resonance in a night church. Accept the contemplative held nave, with legible changing diffuse light, detailed receding arches, floor reflection and a coherent slow camera. The remaining limited visual development is an explicit artistic choice; full-length real-time watchability and musical phrasing are not claimed."
       }
     ]
   }
