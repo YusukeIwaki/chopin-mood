@@ -11,7 +11,7 @@
     "score": 2.5575,
     "parts": {
       "contrast": 0.2764,
-      "n_struct_inside": 16,
+      "n_struct_inside": 15,
       "n_peaks_inside": 4,
       "edge_dip": 1.4416,
       "mean_activity": 0.3634,
@@ -61,18 +61,18 @@
       {
         "id": "scene03",
         "start_sample": 8776860,
-        "end_sample": 10557660,
+        "end_sample": 10354460,
         "start_frame": 744,
-        "end_frame": 1857,
-        "duration_sec": 37.1
+        "end_frame": 1730,
+        "duration_sec": 32.8667
       },
       {
         "id": "scene04",
-        "start_sample": 10557660,
+        "start_sample": 10354460,
         "end_sample": 11988060,
-        "start_frame": 1857,
+        "start_frame": 1730,
         "end_frame": 2751,
-        "duration_sec": 29.8
+        "duration_sec": 34.0333
       },
       {
         "id": "scene05",
@@ -91,7 +91,7 @@
         "duration_sec": 10.0333
       }
     ],
-    "scene_reason": "DP chose 5 cut(s) from 17 candidate(s) (17 after frame snap); min scene 6s = 180 frames, max cuts 5",
+    "scene_reason": "DP chose 5 cut(s) from 16 candidate(s) (16 after frame snap); min scene 6s = 180 frames, max cuts 5",
     "accents": [
       {
         "kind": "accent",
