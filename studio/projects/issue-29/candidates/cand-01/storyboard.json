@@ -1,0 +1,314 @@
+{
+  "schema_version": "1.0",
+  "style_id": "night-church-v1",
+  "prototype_notice": "AI-generated original chapel art; deterministic animation; original owner performance retained.",
+  "scenes": [
+    {
+      "id": "scene01",
+      "palette": {
+        "sky_top": [
+          12,
+          17,
+          29
+        ],
+        "sky_bot": [
+          35,
+          44,
+          66
+        ],
+        "far": [
+          25,
+          30,
+          44
+        ],
+        "near": [
+          15,
+          18,
+          25
+        ],
+        "moon": [
+          110,
+          139,
+          190
+        ],
+        "glow": [
+          236,
+          169,
+          79
+        ]
+      },
+      "motif": "Enter the nave: receding arches hold the quiet.",
+      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
+      "params": {
+        "chapel_warmth": 0,
+        "candle_strength": 0.25,
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": -0.08,
+        "glow_scale": 0.8,
+        "camera_zoom_start": 1,
+        "camera_zoom_end": 1.035,
+        "camera_pan_x_start": 0.08,
+        "camera_pan_x_end": 0.08,
+        "camera_pan_y_start": -0.15,
+        "camera_pan_y_end": -0.15
+      }
+    },
+    {
+      "id": "scene02",
+      "palette": {
+        "sky_top": [
+          12,
+          17,
+          29
+        ],
+        "sky_bot": [
+          35,
+          44,
+          66
+        ],
+        "far": [
+          34,
+          41,
+          57
+        ],
+        "near": [
+          15,
+          18,
+          25
+        ],
+        "moon": [
+          140,
+          165,
+          209
+        ],
+        "glow": [
+          236,
+          169,
+          79
+        ]
+      },
+      "motif": "Silvery reflections deepen the central aisle.",
+      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
+      "params": {
+        "chapel_warmth": 0,
+        "candle_strength": 0.25,
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": 0.02,
+        "glow_scale": 1.05,
+        "camera_zoom_start": 1.035,
+        "camera_zoom_end": 1.06,
+        "camera_pan_x_start": 0.08,
+        "camera_pan_x_end": 0.08,
+        "camera_pan_y_start": -0.15,
+        "camera_pan_y_end": -0.15
+      }
+    },
+    {
+      "id": "scene03",
+      "palette": {
+        "sky_top": [
+          12,
+          17,
+          29
+        ],
+        "sky_bot": [
+          35,
+          44,
+          66
+        ],
+        "far": [
+          23,
+          32,
+          49
+        ],
+        "near": [
+          15,
+          18,
+          25
+        ],
+        "moon": [
+          112,
+          144,
+          201
+        ],
+        "glow": [
+          236,
+          169,
+          79
+        ]
+      },
+      "motif": "Let darkness return between the stone ribs.",
+      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
+      "params": {
+        "chapel_warmth": 0,
+        "candle_strength": 0.25,
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": -0.04,
+        "glow_scale": 0.8,
+        "camera_zoom_start": 1.06,
+        "camera_zoom_end": 1.09,
+        "camera_pan_x_start": 0.08,
+        "camera_pan_x_end": 0.08,
+        "camera_pan_y_start": -0.15,
+        "camera_pan_y_end": -0.15
+      }
+    },
+    {
+      "id": "scene04",
+      "palette": {
+        "sky_top": [
+          12,
+          17,
+          29
+        ],
+        "sky_bot": [
+          35,
+          44,
+          66
+        ],
+        "far": [
+          40,
+          44,
+          56
+        ],
+        "near": [
+          15,
+          18,
+          25
+        ],
+        "moon": [
+          155,
+          177,
+          215
+        ],
+        "glow": [
+          236,
+          169,
+          79
+        ]
+      },
+      "motif": "Light reaches the foreground floor while the vault remains still.",
+      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
+      "params": {
+        "chapel_warmth": 0,
+        "candle_strength": 0.25,
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": 0.08,
+        "glow_scale": 1.2,
+        "camera_zoom_start": 1.09,
+        "camera_zoom_end": 1.075,
+        "camera_pan_x_start": 0.08,
+        "camera_pan_x_end": 0.08,
+        "camera_pan_y_start": -0.15,
+        "camera_pan_y_end": -0.15
+      }
+    },
+    {
+      "id": "scene05",
+      "palette": {
+        "sky_top": [
+          12,
+          17,
+          29
+        ],
+        "sky_bot": [
+          35,
+          44,
+          66
+        ],
+        "far": [
+          27,
+          34,
+          50
+        ],
+        "near": [
+          15,
+          18,
+          25
+        ],
+        "moon": [
+          120,
+          150,
+          200
+        ],
+        "glow": [
+          236,
+          169,
+          79
+        ]
+      },
+      "motif": "A quieter echo, with the distant window as anchor.",
+      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
+      "params": {
+        "chapel_warmth": 0,
+        "candle_strength": 0.25,
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": -0.03,
+        "glow_scale": 0.85,
+        "camera_zoom_start": 1.075,
+        "camera_zoom_end": 1.04,
+        "camera_pan_x_start": 0.08,
+        "camera_pan_x_end": 0.08,
+        "camera_pan_y_start": -0.15,
+        "camera_pan_y_end": -0.15
+      }
+    },
+    {
+      "id": "scene06",
+      "palette": {
+        "sky_top": [
+          12,
+          17,
+          29
+        ],
+        "sky_bot": [
+          35,
+          44,
+          66
+        ],
+        "far": [
+          34,
+          40,
+          56
+        ],
+        "near": [
+          15,
+          18,
+          25
+        ],
+        "moon": [
+          137,
+          159,
+          201
+        ],
+        "glow": [
+          236,
+          169,
+          79
+        ]
+      },
+      "motif": "Leave the resonance hanging in the same night space.",
+      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
+      "params": {
+        "chapel_warmth": 0,
+        "candle_strength": 0.25,
+        "figure_scale": 1,
+        "particle_multiplier": 0,
+        "light_bias": -0.04,
+        "glow_scale": 0.8,
+        "camera_zoom_start": 1.04,
+        "camera_zoom_end": 1.02,
+        "camera_pan_x_start": 0.08,
+        "camera_pan_x_end": 0.08,
+        "camera_pan_y_start": -0.15,
+        "camera_pan_y_end": -0.15
+      }
+    }
+  ],
+  "renderer": "night-church-v1"
+}
