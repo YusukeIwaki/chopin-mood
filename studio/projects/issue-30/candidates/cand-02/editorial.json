@@ -1,18 +1,18 @@
 {
   "schema_version": "2.0",
-  "round": 0,
+  "round": 1,
   "creator_id": "codex-scherzo3-20261031",
   "input_sha256": {
-    "project.json": "3102697222c607b9f48cb7c95af60860f4cecaf535612a260e8fd7d203611fdd",
+    "project.json": "5ffaefa8496637653cb8a7abd81b1e583e7361a107a4a6bb7ec79f675c302db8",
     "brief.json": "25e7b7e2dd7e4650e1d5a652e3aba93d2bd5331965ab05f0ebe0f983e247db2d",
-    "storyboard.json": "12bf0835e0ab6f225932d07b8b0af0a66ab6bae6db1ec6cd2dd9a8ba14a2f95c"
+    "storyboard.json": "05fd35292d6933da2ccf7250446866bce0c3c9687cea09fbf68153aa66f64b4f"
   },
   "media_sha256": {
-    "video.mp4": "d814b6218511be2e50a33f68acf851a9f669a8ef31622dfb376997bb5f698107",
-    "contact-sheet.jpg": "c5308ffc450ea3e79ef61b54f8d194f33f7f3d8ed2eb33717cecda972df3b5b8",
+    "video.mp4": "921f9cdb9f83bc207b0b1515fd346e10e136e22dd5cbeb8575f918388142030b",
+    "contact-sheet.jpg": "598861206733b877b48a4f27426ae1f6022d972300ef29c72820395ed12efd7b",
     "timeline.html": "5106b1b7be975fdb41e5c47bebaba6870849c4812efcd0d3422771e88aab7a7c"
   },
-  "qa_sha256": "593f417ecf5bc92cbcb3cc5235a69b835b89a667540ab46963c7740a1455e1ff",
+  "qa_sha256": "eb20ab2e5720043451672fc26bf30e9f38532493a0d12517e208d3101749127a",
   "qa": {
     "checks": [
       {
@@ -98,15 +98,15 @@
           3171
         ],
         "motion_diffs_blur_downscaled": [
-          4.4916,
-          5.9512,
-          16.4358
+          10.4032,
+          6.2396,
+          23.5273
         ],
         "motion_floor": 0.4,
         "mean_abs_diffs_raw": [
-          7.797,
-          8.348,
-          19.628
+          12.564,
+          8.471,
+          25.41
         ]
       },
       {
@@ -124,7 +124,7 @@
       },
       {
         "name": "studio:rendered_frame_spotcheck",
-        "pass": false,
+        "pass": true,
         "method": "decoded MP4 frames vs deterministic clean-renderer reference frames; per-frame whole-frame MAE and 8x12 patch MAE (0-255), plus encoded transition phase; all must pass",
         "thresholds": {
           "global_mae_max": 8.0,
@@ -207,9 +207,9 @@
               "scene_start"
             ],
             "ok": true,
-            "global_mae": 1.639,
-            "patch_mae_max": 2.214,
-            "patch_mae_mean": 1.639
+            "global_mae": 1.704,
+            "patch_mae_max": 2.298,
+            "patch_mae_mean": 1.704
           },
           {
             "frame": 1,
@@ -217,9 +217,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.631,
-            "patch_mae_max": 2.214,
-            "patch_mae_mean": 1.631
+            "global_mae": 1.696,
+            "patch_mae_max": 2.298,
+            "patch_mae_mean": 1.696
           },
           {
             "frame": 253,
@@ -227,9 +227,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.623,
-            "patch_mae_max": 2.229,
-            "patch_mae_mean": 1.623
+            "global_mae": 1.693,
+            "patch_mae_max": 2.264,
+            "patch_mae_mean": 1.693
           },
           {
             "frame": 634,
@@ -237,9 +237,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.669,
-            "patch_mae_max": 2.471,
-            "patch_mae_mean": 1.669
+            "global_mae": 1.729,
+            "patch_mae_max": 2.504,
+            "patch_mae_mean": 1.73
           },
           {
             "frame": 883,
@@ -247,21 +247,21 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 1.593,
-            "patch_mae_max": 2.304,
-            "patch_mae_mean": 1.592
+            "global_mae": 1.811,
+            "patch_mae_max": 2.508,
+            "patch_mae_mean": 1.812
           },
           {
             "frame": 884,
             "kinds": [
               "scene_start"
             ],
-            "ok": false,
-            "global_mae": 1.6,
-            "patch_mae_max": 2.312,
-            "patch_mae_mean": 1.6,
+            "ok": true,
+            "global_mae": 1.673,
+            "patch_mae_max": 2.37,
+            "patch_mae_mean": 1.673,
             "transition_timing": {
-              "ok": false,
+              "ok": true,
               "boundary": 884,
               "probe_frames": [
                 854,
@@ -327,18 +327,18 @@
                 914
               ],
               "best_offset_frames": 0,
-              "relative_margin": 0.69789,
-              "hypothesis_separation_rms": 0.029797,
-              "fit_rms": 0.031008,
-              "separation_ratio": 0.96096,
+              "relative_margin": 5.90565,
+              "hypothesis_separation_rms": 0.165423,
+              "fit_rms": 0.06385,
+              "separation_ratio": 2.5908,
               "scores": {
-                "-2": 0.00272,
-                "-1": 0.001659,
-                "0": 0.000961,
-                "1": 0.002059,
-                "2": 0.003156
+                "-2": 0.072965,
+                "-1": 0.029815,
+                "0": 0.004077,
+                "1": 0.028153,
+                "2": 0.069707
               },
-              "reason": "shifted or ambiguous transition"
+              "reason": "aligned"
             }
           },
           {
@@ -347,9 +347,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.603,
-            "patch_mae_max": 2.322,
-            "patch_mae_mean": 1.603
+            "global_mae": 1.773,
+            "patch_mae_max": 2.531,
+            "patch_mae_mean": 1.773
           },
           {
             "frame": 1109,
@@ -357,9 +357,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.692,
-            "patch_mae_max": 2.6,
-            "patch_mae_mean": 1.693
+            "global_mae": 1.627,
+            "patch_mae_max": 2.571,
+            "patch_mae_mean": 1.627
           },
           {
             "frame": 1359,
@@ -367,21 +367,21 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 1.714,
-            "patch_mae_max": 2.468,
-            "patch_mae_mean": 1.714
+            "global_mae": 1.582,
+            "patch_mae_max": 2.327,
+            "patch_mae_mean": 1.582
           },
           {
             "frame": 1360,
             "kinds": [
               "scene_start"
             ],
-            "ok": false,
-            "global_mae": 1.707,
-            "patch_mae_max": 2.468,
-            "patch_mae_mean": 1.708,
+            "ok": true,
+            "global_mae": 1.704,
+            "patch_mae_max": 2.429,
+            "patch_mae_mean": 1.705,
             "transition_timing": {
-              "ok": false,
+              "ok": true,
               "boundary": 1360,
               "probe_frames": [
                 1330,
@@ -447,18 +447,18 @@
                 1390
               ],
               "best_offset_frames": 0,
-              "relative_margin": 0.66602,
-              "hypothesis_separation_rms": 0.043069,
-              "fit_rms": 0.036376,
-              "separation_ratio": 1.18399,
+              "relative_margin": 11.69559,
+              "hypothesis_separation_rms": 0.225692,
+              "fit_rms": 0.061154,
+              "separation_ratio": 3.69054,
               "scores": {
-                "-2": 0.003979,
-                "-1": 0.002557,
-                "0": 0.001323,
-                "1": 0.002204,
-                "2": 0.004299
+                "-2": 0.129028,
+                "-1": 0.060297,
+                "0": 0.00374,
+                "1": 0.047479,
+                "2": 0.122567
               },
-              "reason": "shifted or ambiguous transition"
+              "reason": "aligned"
             }
           },
           {
@@ -467,9 +467,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.691,
-            "patch_mae_max": 2.449,
-            "patch_mae_mean": 1.691
+            "global_mae": 1.846,
+            "patch_mae_max": 2.534,
+            "patch_mae_mean": 1.846
           },
           {
             "frame": 1569,
@@ -477,9 +477,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.713,
-            "patch_mae_max": 2.519,
-            "patch_mae_mean": 1.713
+            "global_mae": 1.794,
+            "patch_mae_max": 2.594,
+            "patch_mae_mean": 1.794
           },
           {
             "frame": 1570,
@@ -487,9 +487,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.023,
-            "patch_mae_max": 2.975,
-            "patch_mae_mean": 2.023
+            "global_mae": 2.039,
+            "patch_mae_max": 2.723,
+            "patch_mae_mean": 2.039
           },
           {
             "frame": 1571,
@@ -497,9 +497,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.682,
-            "patch_mae_max": 2.519,
-            "patch_mae_mean": 1.681
+            "global_mae": 1.715,
+            "patch_mae_max": 2.399,
+            "patch_mae_mean": 1.715
           },
           {
             "frame": 1585,
@@ -507,9 +507,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.675,
-            "patch_mae_max": 2.513,
-            "patch_mae_mean": 1.675
+            "global_mae": 1.764,
+            "patch_mae_max": 2.593,
+            "patch_mae_mean": 1.764
           },
           {
             "frame": 1657,
@@ -517,9 +517,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.745,
-            "patch_mae_max": 2.648,
-            "patch_mae_mean": 1.745
+            "global_mae": 1.831,
+            "patch_mae_max": 2.653,
+            "patch_mae_mean": 1.832
           },
           {
             "frame": 1658,
@@ -527,9 +527,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.192,
-            "patch_mae_max": 3.839,
-            "patch_mae_mean": 2.193
+            "global_mae": 2.062,
+            "patch_mae_max": 2.872,
+            "patch_mae_mean": 2.063
           },
           {
             "frame": 1659,
@@ -537,9 +537,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.904,
-            "patch_mae_max": 2.685,
-            "patch_mae_mean": 1.904
+            "global_mae": 1.748,
+            "patch_mae_max": 2.5,
+            "patch_mae_mean": 1.748
           },
           {
             "frame": 1868,
@@ -547,9 +547,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.722,
-            "patch_mae_max": 2.628,
-            "patch_mae_mean": 1.722
+            "global_mae": 1.789,
+            "patch_mae_max": 2.582,
+            "patch_mae_mean": 1.79
           },
           {
             "frame": 1869,
@@ -557,9 +557,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.18,
-            "patch_mae_max": 3.864,
-            "patch_mae_mean": 2.181
+            "global_mae": 2.021,
+            "patch_mae_max": 2.699,
+            "patch_mae_mean": 2.022
           },
           {
             "frame": 1870,
@@ -567,9 +567,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.87,
-            "patch_mae_max": 2.604,
-            "patch_mae_mean": 1.87
+            "global_mae": 1.691,
+            "patch_mae_max": 2.405,
+            "patch_mae_mean": 1.691
           },
           {
             "frame": 1953,
@@ -577,9 +577,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.782,
-            "patch_mae_max": 2.596,
-            "patch_mae_mean": 1.782
+            "global_mae": 1.816,
+            "patch_mae_max": 2.525,
+            "patch_mae_mean": 1.816
           },
           {
             "frame": 1954,
@@ -587,9 +587,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.019,
-            "patch_mae_max": 3.0,
-            "patch_mae_mean": 2.018
+            "global_mae": 2.236,
+            "patch_mae_max": 3.226,
+            "patch_mae_mean": 2.237
           },
           {
             "frame": 1955,
@@ -597,9 +597,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.704,
-            "patch_mae_max": 2.519,
-            "patch_mae_mean": 1.704
+            "global_mae": 1.955,
+            "patch_mae_max": 2.663,
+            "patch_mae_mean": 1.956
           },
           {
             "frame": 1964,
@@ -607,21 +607,21 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 1.766,
-            "patch_mae_max": 2.523,
-            "patch_mae_mean": 1.766
+            "global_mae": 1.822,
+            "patch_mae_max": 2.577,
+            "patch_mae_mean": 1.823
           },
           {
             "frame": 1965,
             "kinds": [
               "scene_start"
             ],
-            "ok": false,
-            "global_mae": 1.759,
-            "patch_mae_max": 2.56,
-            "patch_mae_mean": 1.76,
+            "ok": true,
+            "global_mae": 1.859,
+            "patch_mae_max": 2.532,
+            "patch_mae_mean": 1.858,
             "transition_timing": {
-              "ok": false,
+              "ok": true,
               "boundary": 1965,
               "probe_frames": [
                 1935,
@@ -687,18 +687,18 @@
                 1995
               ],
               "best_offset_frames": 0,
-              "relative_margin": 0.34035,
-              "hypothesis_separation_rms": 0.047615,
-              "fit_rms": 0.048747,
-              "separation_ratio": 0.97678,
+              "relative_margin": 8.51291,
+              "hypothesis_separation_rms": 0.190806,
+              "fit_rms": 0.061767,
+              "separation_ratio": 3.08914,
               "scores": {
-                "-2": 0.018661,
-                "-1": 0.004359,
-                "0": 0.002376,
-                "1": 0.003185,
-                "2": 0.005576
+                "-2": 0.095706,
+                "-1": 0.048818,
+                "0": 0.003815,
+                "1": 0.036293,
+                "2": 0.097723
               },
-              "reason": "shifted or ambiguous transition"
+              "reason": "aligned"
             }
           },
           {
@@ -707,9 +707,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.738,
-            "patch_mae_max": 2.511,
-            "patch_mae_mean": 1.738
+            "global_mae": 1.785,
+            "patch_mae_max": 2.516,
+            "patch_mae_mean": 1.786
           },
           {
             "frame": 2020,
@@ -717,9 +717,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.737,
-            "patch_mae_max": 2.607,
-            "patch_mae_mean": 1.738
+            "global_mae": 1.712,
+            "patch_mae_max": 2.633,
+            "patch_mae_mean": 1.712
           },
           {
             "frame": 2021,
@@ -727,9 +727,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.039,
-            "patch_mae_max": 2.732,
-            "patch_mae_mean": 2.038
+            "global_mae": 1.999,
+            "patch_mae_max": 2.809,
+            "patch_mae_mean": 1.999
           },
           {
             "frame": 2022,
@@ -737,9 +737,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.69,
-            "patch_mae_max": 2.41,
-            "patch_mae_mean": 1.69
+            "global_mae": 1.668,
+            "patch_mae_max": 2.476,
+            "patch_mae_mean": 1.668
           },
           {
             "frame": 2061,
@@ -747,9 +747,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.771,
-            "patch_mae_max": 2.699,
-            "patch_mae_mean": 1.771
+            "global_mae": 1.75,
+            "patch_mae_max": 2.653,
+            "patch_mae_mean": 1.751
           },
           {
             "frame": 2114,
@@ -757,9 +757,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.791,
-            "patch_mae_max": 2.794,
-            "patch_mae_mean": 1.792
+            "global_mae": 1.78,
+            "patch_mae_max": 2.766,
+            "patch_mae_mean": 1.78
           },
           {
             "frame": 2115,
@@ -767,9 +767,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.101,
-            "patch_mae_max": 2.986,
-            "patch_mae_mean": 2.101
+            "global_mae": 2.067,
+            "patch_mae_max": 2.889,
+            "patch_mae_mean": 2.067
           },
           {
             "frame": 2116,
@@ -777,9 +777,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.767,
-            "patch_mae_max": 2.575,
-            "patch_mae_mean": 1.768
+            "global_mae": 1.75,
+            "patch_mae_max": 2.614,
+            "patch_mae_mean": 1.75
           },
           {
             "frame": 2211,
@@ -787,21 +787,21 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 1.957,
-            "patch_mae_max": 2.75,
-            "patch_mae_mean": 1.958
+            "global_mae": 1.826,
+            "patch_mae_max": 2.624,
+            "patch_mae_mean": 1.826
           },
           {
             "frame": 2212,
             "kinds": [
               "scene_start"
             ],
-            "ok": false,
-            "global_mae": 1.944,
-            "patch_mae_max": 2.671,
-            "patch_mae_mean": 1.945,
+            "ok": true,
+            "global_mae": 1.93,
+            "patch_mae_max": 2.66,
+            "patch_mae_mean": 1.931,
             "transition_timing": {
-              "ok": false,
+              "ok": true,
               "boundary": 2212,
               "probe_frames": [
                 2182,
@@ -867,18 +867,18 @@
                 2242
               ],
               "best_offset_frames": 0,
-              "relative_margin": 1.8688,
-              "hypothesis_separation_rms": 0.074223,
-              "fit_rms": 0.044785,
-              "separation_ratio": 1.65731,
+              "relative_margin": 9.91648,
+              "hypothesis_separation_rms": 0.212511,
+              "fit_rms": 0.063952,
+              "separation_ratio": 3.32297,
               "scores": {
-                "-2": 0.014353,
-                "-1": 0.006404,
-                "0": 0.002006,
-                "1": 0.005754,
-                "2": 0.013378
+                "-2": 0.102075,
+                "-1": 0.050394,
+                "0": 0.00409,
+                "1": 0.044647,
+                "2": 0.099359
               },
-              "reason": "shifted or ambiguous transition"
+              "reason": "aligned"
             }
           },
           {
@@ -887,9 +887,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.942,
-            "patch_mae_max": 2.7,
-            "patch_mae_mean": 1.943
+            "global_mae": 1.82,
+            "patch_mae_max": 2.577,
+            "patch_mae_mean": 1.82
           },
           {
             "frame": 2256,
@@ -897,9 +897,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.74,
-            "patch_mae_max": 2.542,
-            "patch_mae_mean": 1.74
+            "global_mae": 1.76,
+            "patch_mae_max": 2.52,
+            "patch_mae_mean": 1.762
           },
           {
             "frame": 2257,
@@ -907,9 +907,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.021,
-            "patch_mae_max": 2.746,
-            "patch_mae_mean": 2.022
+            "global_mae": 2.037,
+            "patch_mae_max": 2.742,
+            "patch_mae_mean": 2.036
           },
           {
             "frame": 2258,
@@ -917,9 +917,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.667,
-            "patch_mae_max": 2.348,
-            "patch_mae_mean": 1.668
+            "global_mae": 1.665,
+            "patch_mae_max": 2.342,
+            "patch_mae_mean": 1.665
           },
           {
             "frame": 2462,
@@ -927,9 +927,9 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 1.777,
-            "patch_mae_max": 2.659,
-            "patch_mae_mean": 1.778
+            "global_mae": 1.917,
+            "patch_mae_max": 2.754,
+            "patch_mae_mean": 1.919
           },
           {
             "frame": 2463,
@@ -937,9 +937,9 @@
               "scene_start"
             ],
             "ok": true,
-            "global_mae": 1.907,
-            "patch_mae_max": 2.744,
-            "patch_mae_mean": 1.908,
+            "global_mae": 1.87,
+            "patch_mae_max": 2.594,
+            "patch_mae_mean": 1.87,
             "transition_timing": {
               "ok": true,
               "boundary": 2463,
@@ -1007,16 +1007,16 @@
                 2493
               ],
               "best_offset_frames": 0,
-              "relative_margin": 19.18107,
-              "hypothesis_separation_rms": 0.283459,
-              "fit_rms": 0.06259,
-              "separation_ratio": 4.5288,
+              "relative_margin": 19.18384,
+              "hypothesis_separation_rms": 0.302214,
+              "fit_rms": 0.066878,
+              "separation_ratio": 4.51887,
               "scores": {
-                "-2": 0.24922,
-                "-1": 0.110547,
-                "0": 0.003918,
-                "1": 0.07906,
-                "2": 0.221966
+                "-2": 0.257605,
+                "-1": 0.110654,
+                "0": 0.004473,
+                "1": 0.090276,
+                "2": 0.241782
               },
               "reason": "aligned"
             }
@@ -1027,9 +1027,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.843,
-            "patch_mae_max": 2.619,
-            "patch_mae_mean": 1.844
+            "global_mae": 1.748,
+            "patch_mae_max": 2.606,
+            "patch_mae_mean": 1.749
           },
           {
             "frame": 2496,
@@ -1037,9 +1037,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.883,
-            "patch_mae_max": 2.73,
-            "patch_mae_mean": 1.884
+            "global_mae": 1.93,
+            "patch_mae_max": 2.82,
+            "patch_mae_mean": 1.931
           },
           {
             "frame": 2497,
@@ -1047,9 +1047,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.167,
-            "patch_mae_max": 3.359,
-            "patch_mae_mean": 2.168
+            "global_mae": 2.184,
+            "patch_mae_max": 3.123,
+            "patch_mae_mean": 2.185
           },
           {
             "frame": 2498,
@@ -1057,9 +1057,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.816,
-            "patch_mae_max": 2.994,
-            "patch_mae_mean": 1.817
+            "global_mae": 1.947,
+            "patch_mae_max": 2.847,
+            "patch_mae_mean": 1.948
           },
           {
             "frame": 2536,
@@ -1067,9 +1067,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.768,
-            "patch_mae_max": 2.622,
-            "patch_mae_mean": 1.769
+            "global_mae": 1.773,
+            "patch_mae_max": 2.535,
+            "patch_mae_mean": 1.774
           },
           {
             "frame": 2733,
@@ -1077,9 +1077,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.87,
-            "patch_mae_max": 2.965,
-            "patch_mae_mean": 1.871
+            "global_mae": 1.883,
+            "patch_mae_max": 2.892,
+            "patch_mae_mean": 1.884
           },
           {
             "frame": 2734,
@@ -1087,9 +1087,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.107,
-            "patch_mae_max": 3.084,
-            "patch_mae_mean": 2.107
+            "global_mae": 2.091,
+            "patch_mae_max": 3.15,
+            "patch_mae_mean": 2.092
           },
           {
             "frame": 2735,
@@ -1097,9 +1097,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.757,
-            "patch_mae_max": 2.675,
-            "patch_mae_mean": 1.757
+            "global_mae": 1.747,
+            "patch_mae_max": 2.684,
+            "patch_mae_mean": 1.748
           },
           {
             "frame": 2909,
@@ -1107,9 +1107,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.819,
-            "patch_mae_max": 2.956,
-            "patch_mae_mean": 1.821
+            "global_mae": 1.84,
+            "patch_mae_max": 2.921,
+            "patch_mae_mean": 1.841
           },
           {
             "frame": 2910,
@@ -1117,9 +1117,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.108,
-            "patch_mae_max": 2.983,
-            "patch_mae_mean": 2.108
+            "global_mae": 2.094,
+            "patch_mae_max": 3.035,
+            "patch_mae_mean": 2.095
           },
           {
             "frame": 2911,
@@ -1127,9 +1127,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.756,
-            "patch_mae_max": 2.641,
-            "patch_mae_mean": 1.756
+            "global_mae": 1.746,
+            "patch_mae_max": 2.63,
+            "patch_mae_mean": 1.747
           },
           {
             "frame": 2917,
@@ -1137,9 +1137,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.882,
-            "patch_mae_max": 2.757,
-            "patch_mae_mean": 1.883
+            "global_mae": 1.89,
+            "patch_mae_max": 2.719,
+            "patch_mae_mean": 1.892
           },
           {
             "frame": 3171,
@@ -1147,14 +1147,14 @@
               "last_frame"
             ],
             "ok": true,
-            "global_mae": 1.743,
-            "patch_mae_max": 2.653,
-            "patch_mae_mean": 1.745
+            "global_mae": 1.769,
+            "patch_mae_max": 2.724,
+            "patch_mae_mean": 1.77
           }
         ],
         "transition_timing": [
           {
-            "ok": false,
+            "ok": true,
             "boundary": 884,
             "probe_frames": [
               854,
@@ -1220,21 +1220,21 @@
               914
             ],
             "best_offset_frames": 0,
-            "relative_margin": 0.69789,
-            "hypothesis_separation_rms": 0.029797,
-            "fit_rms": 0.031008,
-            "separation_ratio": 0.96096,
+            "relative_margin": 5.90565,
+            "hypothesis_separation_rms": 0.165423,
+            "fit_rms": 0.06385,
+            "separation_ratio": 2.5908,
             "scores": {
-              "-2": 0.00272,
-              "-1": 0.001659,
-              "0": 0.000961,
-              "1": 0.002059,
-              "2": 0.003156
+              "-2": 0.072965,
+              "-1": 0.029815,
+              "0": 0.004077,
+              "1": 0.028153,
+              "2": 0.069707
             },
-            "reason": "shifted or ambiguous transition"
+            "reason": "aligned"
           },
           {
-            "ok": false,
+            "ok": true,
             "boundary": 1360,
             "probe_frames": [
               1330,
@@ -1300,21 +1300,21 @@
               1390
             ],
             "best_offset_frames": 0,
-            "relative_margin": 0.66602,
-            "hypothesis_separation_rms": 0.043069,
-            "fit_rms": 0.036376,
-            "separation_ratio": 1.18399,
+            "relative_margin": 11.69559,
+            "hypothesis_separation_rms": 0.225692,
+            "fit_rms": 0.061154,
+            "separation_ratio": 3.69054,
             "scores": {
-              "-2": 0.003979,
-              "-1": 0.002557,
-              "0": 0.001323,
-              "1": 0.002204,
-              "2": 0.004299
+              "-2": 0.129028,
+              "-1": 0.060297,
+              "0": 0.00374,
+              "1": 0.047479,
+              "2": 0.122567
             },
-            "reason": "shifted or ambiguous transition"
+            "reason": "aligned"
           },
           {
-            "ok": false,
+            "ok": true,
             "boundary": 1965,
             "probe_frames": [
               1935,
@@ -1380,21 +1380,21 @@
               1995
             ],
             "best_offset_frames": 0,
-            "relative_margin": 0.34035,
-            "hypothesis_separation_rms": 0.047615,
-            "fit_rms": 0.048747,
-            "separation_ratio": 0.97678,
+            "relative_margin": 8.51291,
+            "hypothesis_separation_rms": 0.190806,
+            "fit_rms": 0.061767,
+            "separation_ratio": 3.08914,
             "scores": {
-              "-2": 0.018661,
-              "-1": 0.004359,
-              "0": 0.002376,
-              "1": 0.003185,
-              "2": 0.005576
+              "-2": 0.095706,
+              "-1": 0.048818,
+              "0": 0.003815,
+              "1": 0.036293,
+              "2": 0.097723
             },
-            "reason": "shifted or ambiguous transition"
+            "reason": "aligned"
           },
           {
-            "ok": false,
+            "ok": true,
             "boundary": 2212,
             "probe_frames": [
               2182,
@@ -1460,18 +1460,18 @@
               2242
             ],
             "best_offset_frames": 0,
-            "relative_margin": 1.8688,
-            "hypothesis_separation_rms": 0.074223,
-            "fit_rms": 0.044785,
-            "separation_ratio": 1.65731,
+            "relative_margin": 9.91648,
+            "hypothesis_separation_rms": 0.212511,
+            "fit_rms": 0.063952,
+            "separation_ratio": 3.32297,
             "scores": {
-              "-2": 0.014353,
-              "-1": 0.006404,
-              "0": 0.002006,
-              "1": 0.005754,
-              "2": 0.013378
+              "-2": 0.102075,
+              "-1": 0.050394,
+              "0": 0.00409,
+              "1": 0.044647,
+              "2": 0.099359
             },
-            "reason": "shifted or ambiguous transition"
+            "reason": "aligned"
           },
           {
             "ok": true,
@@ -1540,16 +1540,16 @@
               2493
             ],
             "best_offset_frames": 0,
-            "relative_margin": 19.18107,
-            "hypothesis_separation_rms": 0.283459,
-            "fit_rms": 0.06259,
-            "separation_ratio": 4.5288,
+            "relative_margin": 19.18384,
+            "hypothesis_separation_rms": 0.302214,
+            "fit_rms": 0.066878,
+            "separation_ratio": 4.51887,
             "scores": {
-              "-2": 0.24922,
-              "-1": 0.110547,
-              "0": 0.003918,
-              "1": 0.07906,
-              "2": 0.221966
+              "-2": 0.257605,
+              "-1": 0.110654,
+              "0": 0.004473,
+              "1": 0.090276,
+              "2": 0.241782
             },
             "reason": "aligned"
           }
@@ -1557,43 +1557,60 @@
         "transition_timing_supported": true
       }
     ],
-    "pass": false,
+    "pass": true,
     "musical_naturalness": "NOT verified (no listening)"
   },
   "reviews": {
     "music": {
-      "reviewer_id": "",
-      "evidence_sha256": "614e4de56bd5105b5bef9eb58cf38ad96639fd57dccf960a262afa0ccaff31ce",
-      "verdict": "revise",
-      "hard_blockers": [
-        "Review not performed"
-      ],
+      "reviewer_id": "/root/chapel_music_sync",
+      "evidence_sha256": "6183f549026203af3efd11bf6e8d627904269235a01b3d37abab5cf943cc1694",
+      "verdict": "pass",
+      "hard_blockers": [],
       "concerns": [],
-      "evidence": [],
+      "evidence": [
+        "Mechanical synchronization review of studio/projects/issue-30/candidates/cand-02 and output/studio/issue-30/cand-02/round-1. The candidate exactly equals the fresh DSP output: source samples [3934835,9010035), 3172 frames at 30/1 fps. All scene sample/frame boundaries and accent containing-frame mappings are exact, with original sample-derived seconds retained.",
+        "source-meta.json, brief.json, analysis/plan-context.json and provenance.json agree on attachment SHA256 c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d and decoded source SHA256 5ac34e31cd550379bb463a7569ec283d35ee1435275cfe32fd344f1076512027. Native analysis is 48000 Hz, hop 1115 and FFT 4458 without overrides. The source-ending candidate leaves only 1165 source samples after its endpoint, less than one video frame.",
+        "Recomputed video SHA256 921f9cdb9f83bc207b0b1515fd346e10e136e22dd5cbeb8575f918388142030b and QA SHA256 eb20ab2e5720043451672fc26bf30e9f38532493a0d12517e208d3101749127a. All 11 recorded QA checks pass. Full/head/mid/tail audio lag and segment drift are zero; crop comparison has max_abs_diff 0; encoded level difference is -0.011 dB.",
+        "Inspected all recorded decoded-frame probes, including first/last frames, all ten accent neighborhoods and scene boundaries 884,1360,1965,2212,2463. Every transition offset is zero; minimum separation ratio is 2.5908 against the unchanged 2.0 requirement. Maximum patch MAE is 3.226 and all pixel comparisons pass.",
+        "Round-0 temporal ambiguity was inspected separately. Round-1 actual media resolves the four failed boundaries without changing DSP timing or relaxing QA. Independent ffprobe confirms 540x960 H264 at 30/1 fps, 3172 frames, mono 48000 Hz AAC and zero stream start times. Video duration is 105.733333 seconds; audio duration is 105.733000 seconds.",
+        "Viewed the round-1 contact sheet, including the progression from a small flame to broader warm illumination. Flame flicker is explicitly independent of note timing; sparse DSP accents illuminate the surrounding stone. Strongest unresolved objection is whether that visual resolution coincides with the actual musical coda: terminal recording coverage and acoustic energy cannot establish coda identity or its onset.",
+        "Independently recomputed the final bound digest. Only project.engine_sha changed from my inspected snapshot to 0eac2f781b97c2fcefb952b6f6e213248e94a230; brief, storyboard, media and QA hashes remain identical. The trusted-main merge has no engine, asset or dependency differences from the inspected engine commit."
+      ],
       "listening": "unavailable",
       "limitations": [
-        "Review not performed"
+        "No audio was auditioned. This pass establishes the inspected mechanical synchronization and provenance evidence, not phrase naturalness, the exact coda onset, victorious musical resolution or perceptual balance.",
+        "The funeral-march atmosphere and victorious coda are owner-supplied artistic direction; they were not inferred or verified from RMS, activity, chroma or candidate scores.",
+        "Full source recordings were not accessed or independently rehashed. Contact sheets do not establish continuous motion; calibration and negative tests were inspected as code rather than executed by this reviewer.",
+        "CI was still running at review time; this review makes no claim that CI succeeded."
       ]
     },
     "visual": {
-      "reviewer_id": "",
-      "evidence_sha256": "614e4de56bd5105b5bef9eb58cf38ad96639fd57dccf960a262afa0ccaff31ce",
-      "verdict": "revise",
-      "hard_blockers": [
-        "Review not performed"
-      ],
+      "reviewer_id": "/root/chapel_visual_viewer",
+      "evidence_sha256": "6183f549026203af3efd11bf6e8d627904269235a01b3d37abab5cf943cc1694",
+      "verdict": "pass",
+      "hard_blockers": [],
       "concerns": [],
-      "evidence": [],
+      "evidence": [
+        "Independently read studio-review and docs/12_CREATIVE_REVIEW_PROTOCOL.md, the issue30 brief/storyboard and current project metadata. Treated the near-extinguished candle, funeral-march-like solemnity and victorious conclusion as owner-directed artistic imagery; no emotional or coda identification was inferred from DSP activity.",
+        "Verified the raw project.json, brief.json and storyboard.json hashes, video.mp4/contact-sheet.jpg/timeline.html hashes and qa.json hash against output/studio/issue-30/cand-02/round-1/editorial.bound.template.json. Recomputed the supplied evidence digest exactly. The bound local QA record reports all 11 checks passing; this is not a claim about still-running CI.",
+        "Observed current round1 native 540x960 stills and the official round1 contact-sheet.jpg. Also decoded native-size frames1350,1530,2520,3171 directly from the final encoded round1 video.mp4. Wax folds, the wick, metal holder and stone base remain readable against the dark chapel. The early tiny flame and much larger upright final flame are visibly distinct; warm gold reaches the wax and surrounding stone without losing the candle silhouette.",
+        "From the final encoded round1 video.mp4, inspected every 90th frame from0 through3150 plus frame3171 as an ordered full-duration overview. Inspected all consecutive frames in [0,90), [854,915), [1330,1391), [1570,1660), [1935,1996), [2182,2243), [2433,2494) and [3082,3172). These include every scene boundary, a middle accent region, opening and ending. Frames were viewed as ordered decoded images/sheets, with reduced views for small-screen readability.",
+        "Additionally inspected all 120 decoded consecutive frames of each current round1 engineering boundary clip for boundaries884 and1965. The single flame stays on its wick, and changes in the surrounding grade remain progressive. No detached/doubled flame, viewpoint reset, lost base, single-frame grade jump or distracting overlay was observed in the inspected ranges.",
+        "What remains is one large, readable candle and the stable dark chapel; what changes is the small flame lean/size, restrained scale and the concluding golden illumination. The visual question of whether the fragile flame will persist gives the held composition an observable subject, and the final larger flame/light answers it. The strongest counterargument is that the long fragile phase has little action; here that restraint supports the requested solemn waiting and gives the ending a clear contrast, so I do not recommend extra cuts, camera motion or particles.",
+        "Compared actual adopted-release images: output/studio/prior/studio-pr-6/comparison.png, studio-issue-20/contact-sheet.jpg and studio-issue-24/contact-sheet.jpg. The foreground candle differs in focal subject and spatial scale from all three. Although both new works use chapel architecture, this close candle/base composition is distinguishable from issue29s deep window/aisle composition. Comparison was of supplied still/contact-sheet evidence, not prior continuous playback."
+      ],
       "listening": "not_applicable",
       "limitations": [
-        "Review not performed"
+        "No real-time or continuous video playback was available: native CUA reported the Mac locked, and IAB blocked the local file protocol. Review used decoded ordered frames and sheets; it does not establish real-time perceptual smoothness or sustained 105.733333-second watchability.",
+        "Only the listed consecutive ranges and overview samples of the final MP4 were visually inspected; unobserved intermediate frames are not claimed as viewed. Contact sheets alone were not treated as continuous-motion evidence.",
+        "No audio was listened to in this visual-viewer role. The exact musical start of the coda, phrasing and audible naturalness are outside this verdict. Local QA and other mandatory gates remain separate from visual approval."
       ]
     }
   },
   "decision": {
     "editor_id": "codex-scherzo3-20261031",
-    "verdict": "revise",
-    "rationale": "Initial rendered media fails encoded scene-transition discrimination at unchanged QA thresholds. This draft is not ready; preserve the evidence before the single planned lighting repair. Independent final reports are recorded on the passing revision.",
+    "verdict": "ready",
+    "rationale": "Choose one candle treatment: a small vulnerable flame persists through a solemn dark chapel and concludes in steady flame and broad golden illumination. Round1 actual lighting resolves the failed temporal discrimination without altering audio or DSP times; both independent roles pass within their stated limits. The exact musical coda onset remains unverified by ear.",
     "resolutions": []
   }
 }
