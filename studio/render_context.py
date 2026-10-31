@@ -155,12 +155,16 @@ def prepare_context(wav, candidate_path, storyboard_path, brief_path, *,
     layouts = cleanmod.make_layouts(seed, width, height)
     if storyboard.get("renderer") is not None:
         from . import config, storm_recital
-        if storyboard["renderer"] == config.SALON_ENCORE_RENDERER_ID:
+        if storyboard["renderer"] in config.CHAPEL_RENDERER_IDS:
+            from . import nocturne_chapel as provider
+            layout_key = "nocturne_chapel"
+        elif storyboard["renderer"] == config.SALON_ENCORE_RENDERER_ID:
             from . import salon_encore as provider
             layout_key = "salon_encore"
         else:
             provider, layout_key = storm_recital, "storm_recital"
-        layouts[layout_key] = provider.make_layout(seed, width, height)
+        layouts[layout_key] = (provider.make_layout(seed, width, height, storyboard["renderer"])
+                               if layout_key == "nocturne_chapel" else provider.make_layout(seed, width, height))
         # Public-plan binding invalidates old visual approval when the
         # trusted provider code changes, including uncommitted changes.
         plan["visual_assets"] = layouts[layout_key]["provenance"]

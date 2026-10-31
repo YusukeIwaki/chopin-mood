@@ -187,6 +187,16 @@
                 "maximum": 2,
                 "default": 0,
                 "description": "Registered salon-encore-v1 framing: 0 room, 1 recital, 2 pianist/keys. Eight-frame dissolves stay centered on existing DSP boundaries."
+              },
+              "chapel_warmth": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "candle_strength": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
               }
             },
             "required": [
@@ -208,7 +218,9 @@
     "renderer": {
       "enum": [
         "storm-recital-v1",
-        "salon-encore-v1"
+        "salon-encore-v1",
+        "night-church-v1",
+        "last-candle-v1"
       ],
       "description": "Optional trusted procedural renderer identifier; never a path or URL. Mutually exclusive with asset_bundle."
     }

@@ -130,3 +130,15 @@ gh workflow run studio-candidate.yml --ref main -f pr_number=104
 - `studio_visual_preflight.py --codex-led`：静止画と短い無音プレビューの独立レビュー。新方式は `--candidate-context` でPR・元Issue・headのguardを選び、旧方式は子Issueのguardを保つ。
 
 旧 `studio_prepare_project.py` はv1保存済み作品の互換用。`studio_repair.py` とMuse用アダプターは旧実装の回帰検証用に残るが、現行Actionsの制作には使用しない。
+
+## 夜の教会・ろうそくの登録描画
+
+`night-church-v1` と `last-candle-v1` は `studio/nocturne_chapel.py` を使う。
+登録素材は `assets/visual/nocturne-chapel-v1/` の未変更PNGで、生成記録・利用条件・SHA-256を同梱する。
+`chapel_warmth` と `candle_strength` は0〜1の場面パラメータであり、コーダや感情の検出値ではない。
+炎は実画像の芯位置に固定し、光・炎・背景に同じカメラ変換を適用する。
+
+Studio解析は、元の多様性フィルターで空きがある場合、録音終端を保持する自動候補も追加する。
+従来候補のID・時刻は維持し、終端候補だけは区間の重複を許す。
+末尾の不完全な映像1フレーム未満だけを除くため、長い録音後の無音も残り得る。
+音楽的な終止やコーダ開始を認識したとは扱わない。
