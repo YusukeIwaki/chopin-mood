@@ -61,26 +61,26 @@
       {
         "id": "scene03",
         "start_sample": 6110835,
-        "end_sample": 7078835,
+        "end_sample": 7109235,
         "start_frame": 1360,
-        "end_frame": 1965,
-        "duration_sec": 20.1667
+        "end_frame": 1984,
+        "duration_sec": 20.8
       },
       {
         "id": "scene04",
-        "start_sample": 7078835,
-        "end_sample": 7474035,
-        "start_frame": 1965,
-        "end_frame": 2212,
-        "duration_sec": 8.2333
+        "start_sample": 7109235,
+        "end_sample": 7472435,
+        "start_frame": 1984,
+        "end_frame": 2211,
+        "duration_sec": 7.5667
       },
       {
         "id": "scene05",
-        "start_sample": 7474035,
+        "start_sample": 7472435,
         "end_sample": 7875635,
-        "start_frame": 2212,
+        "start_frame": 2211,
         "end_frame": 2463,
-        "duration_sec": 8.3667
+        "duration_sec": 8.4
       },
       {
         "id": "scene06",
