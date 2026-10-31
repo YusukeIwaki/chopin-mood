@@ -1,0 +1,233 @@
+{
+  "schema_version": "2.0",
+  "parent_issue": 30,
+  "candidate_id": "cand-02",
+  "candidate": {
+    "id": "cand-02",
+    "start_sample": 3934835,
+    "end_sample": 9010035,
+    "n_frames": 3172,
+    "duration_sec": 105.7333,
+    "score": 2.8645,
+    "parts": {
+      "contrast": 0.3588,
+      "n_struct_inside": 14,
+      "n_peaks_inside": 4,
+      "edge_dip": 1.9971,
+      "mean_activity": 0.4611,
+      "edge_slope": 0.0,
+      "attack_prox_pen": 0.0,
+      "edge_rms_pen": 0.0157
+    },
+    "start_origin": "music-endpoint",
+    "end_origin": "source-ending",
+    "endpoint_evidence": {
+      "start": {
+        "nearest_dip_s": 0.0,
+        "nearest_struct_s": 2.741,
+        "nearest_accent_s": 3.345,
+        "edge_rms_ratio": 0.0312
+      },
+      "end": {
+        "nearest_dip_s": 0.006,
+        "nearest_struct_s": 5.604,
+        "nearest_accent_s": 5.058,
+        "edge_rms_ratio": 0.0001
+      }
+    },
+    "endpoint_basis": "music-endpoint/source-ending",
+    "sample_rate": 48000,
+    "fps": [
+      30,
+      1
+    ],
+    "scenes": [
+      {
+        "id": "scene01",
+        "start_sample": 3934835,
+        "end_sample": 5349235,
+        "start_frame": 0,
+        "end_frame": 884,
+        "duration_sec": 29.4667
+      },
+      {
+        "id": "scene02",
+        "start_sample": 5349235,
+        "end_sample": 6110835,
+        "start_frame": 884,
+        "end_frame": 1360,
+        "duration_sec": 15.8667
+      },
+      {
+        "id": "scene03",
+        "start_sample": 6110835,
+        "end_sample": 7109235,
+        "start_frame": 1360,
+        "end_frame": 1984,
+        "duration_sec": 20.8
+      },
+      {
+        "id": "scene04",
+        "start_sample": 7109235,
+        "end_sample": 7472435,
+        "start_frame": 1984,
+        "end_frame": 2211,
+        "duration_sec": 7.5667
+      },
+      {
+        "id": "scene05",
+        "start_sample": 7472435,
+        "end_sample": 7875635,
+        "start_frame": 2211,
+        "end_frame": 2463,
+        "duration_sec": 8.4
+      },
+      {
+        "id": "scene06",
+        "start_sample": 7875635,
+        "end_sample": 9010035,
+        "start_frame": 2463,
+        "end_frame": 3172,
+        "duration_sec": 23.6333
+      }
+    ],
+    "scene_reason": "DP chose 5 cut(s) from 13 candidate(s) (13 after frame snap); min scene 6s = 180 frames, max cuts 5",
+    "accents": [
+      {
+        "kind": "accent",
+        "source_sample": 6448045,
+        "time_sec": 134.33427083333333,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 1570
+      },
+      {
+        "kind": "accent",
+        "source_sample": 6588535,
+        "time_sec": 137.26114583333333,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 1658
+      },
+      {
+        "kind": "accent",
+        "source_sample": 6925265,
+        "time_sec": 144.27635416666666,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 1869
+      },
+      {
+        "kind": "accent",
+        "source_sample": 7061295,
+        "time_sec": 147.1103125,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 1954
+      },
+      {
+        "kind": "accent",
+        "source_sample": 7169450,
+        "time_sec": 149.36354166666666,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 2021
+      },
+      {
+        "kind": "accent",
+        "source_sample": 7318860,
+        "time_sec": 152.47625,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 2115
+      },
+      {
+        "kind": "accent",
+        "source_sample": 7547435,
+        "time_sec": 157.23822916666666,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 2257
+      },
+      {
+        "kind": "accent",
+        "source_sample": 7930995,
+        "time_sec": 165.2290625,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 2497
+      },
+      {
+        "kind": "accent",
+        "source_sample": 8310095,
+        "time_sec": 173.12697916666667,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 2734
+      },
+      {
+        "kind": "accent",
+        "source_sample": 8591075,
+        "time_sec": 178.98072916666666,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 2910
+      }
+    ]
+  },
+  "source_hashes": {
+    "attachment_sha256": "c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d",
+    "decoded_wav_sha256": "4239aa8cc50abb85c756ad34f254602f7c084559baf83357475ac72909f6f2cf"
+  },
+  "fingerprint": "441be032140fcd7ca8f612e2f944e2550b0affc7ad562689aab099acaa3a71cf",
+  "piece": "ショパン スケルツォ第3番（本人申告）。後半録音 scherzo3_2.mp3。",
+  "period": null,
+  "art_notes": "短調で火が今にも消えそうなろうそく。葬送行進曲を思わせる雰囲気。ただ最後には勝利のようなコーダ。\n\n消えかけの小さな炎の危うさと、葬送行進曲を思わせる厳かさから始め、最後は勝利を感じるコーダへ向かう映像にしたい。「葬送行進曲」は雰囲気の比喩であり、別の曲を指定するものではない。コーダを含む構成を重視する。\n\n本人演奏の音源を保持し、音楽の時刻はDSPで自動計算する。前半録音とは別作品として制作する。",
+  "creative_brief": {
+    "world": "An imagined dark chapel, not a claim about the actual recording venue.",
+    "character": "One short wax candle with a living flame; no people.",
+    "narrative_arc": "A fragile flame nearly goes out, persists through solemn darkness, and grows steady as golden light opens in the conclusion.",
+    "creative_interpretation": "Owner-directed near-extinguished candle, funeral-march-like solemnity and victorious ending. Musical meaning is supplied by the owner, not inferred from activity.",
+    "scene_guidance": [
+      {
+        "scene_id": "scene01",
+        "direction": "A small living flame, fragile in a vast dark room.",
+        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
+        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
+      },
+      {
+        "scene_id": "scene02",
+        "direction": "The flame bends low but holds its wick.",
+        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
+        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
+      },
+      {
+        "scene_id": "scene03",
+        "direction": "Solemn suspension; keep the candle readable.",
+        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
+        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
+      },
+      {
+        "scene_id": "scene04",
+        "direction": "Warmth returns cautiously around the wax.",
+        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
+        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
+      },
+      {
+        "scene_id": "scene05",
+        "direction": "The flame gathers strength without a cut.",
+        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
+        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
+      },
+      {
+        "scene_id": "scene06",
+        "direction": "A firm flame and broad golden light answer the darkness.",
+        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
+        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
+      }
+    ],
+    "renderer_constraints": "Registered AI paintings, deterministic flame or light and restrained camera. No generated or replaced audio, no fixed BPM, no per-note cuts. Preserve exact DSP scene IDs and samples.",
+    "evidence_notes": "Terminal alternative covers the source ending on its native frame grid; omitted fraction is less than one frame. Arc uses existing DSP scene boundaries, without asserting that a detected boundary identifies the coda.",
+    "uncertainty": "Listening unavailable; phrase boundaries and the exact musical start of the coda have not been confirmed by ear. Prior adopted works use a moonlit traveler, a storm recital and a sunlit salon; this chapel composition differs. Generation cost unmeasured."
+  }
+}
