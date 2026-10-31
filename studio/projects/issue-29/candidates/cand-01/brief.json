@@ -1,0 +1,233 @@
+{
+  "schema_version": "2.0",
+  "parent_issue": 29,
+  "candidate_id": "cand-01",
+  "candidate": {
+    "id": "cand-01",
+    "start_sample": 7586460,
+    "end_sample": 13346460,
+    "n_frames": 3600,
+    "duration_sec": 120.0,
+    "score": 2.5575,
+    "parts": {
+      "contrast": 0.2764,
+      "n_struct_inside": 15,
+      "n_peaks_inside": 4,
+      "edge_dip": 1.4416,
+      "mean_activity": 0.3634,
+      "edge_slope": 0.0,
+      "attack_prox_pen": 0.0,
+      "edge_rms_pen": 0.0116
+    },
+    "start_origin": "music-endpoint",
+    "end_origin": "grid-length",
+    "endpoint_evidence": {
+      "start": {
+        "nearest_dip_s": 0.0,
+        "nearest_struct_s": 2.811,
+        "nearest_accent_s": 5.25,
+        "edge_rms_ratio": 0.023
+      },
+      "end": {
+        "nearest_dip_s": 1.117,
+        "nearest_struct_s": 6.224,
+        "nearest_accent_s": 5.782,
+        "edge_rms_ratio": 0.0002
+      }
+    },
+    "endpoint_basis": "",
+    "sample_rate": 48000,
+    "fps": [
+      30,
+      1
+    ],
+    "scenes": [
+      {
+        "id": "scene01",
+        "start_sample": 7586460,
+        "end_sample": 8292060,
+        "start_frame": 0,
+        "end_frame": 441,
+        "duration_sec": 14.7
+      },
+      {
+        "id": "scene02",
+        "start_sample": 8292060,
+        "end_sample": 8776860,
+        "start_frame": 441,
+        "end_frame": 744,
+        "duration_sec": 10.1
+      },
+      {
+        "id": "scene03",
+        "start_sample": 8776860,
+        "end_sample": 10354460,
+        "start_frame": 744,
+        "end_frame": 1730,
+        "duration_sec": 32.8667
+      },
+      {
+        "id": "scene04",
+        "start_sample": 10354460,
+        "end_sample": 11988060,
+        "start_frame": 1730,
+        "end_frame": 2751,
+        "duration_sec": 34.0333
+      },
+      {
+        "id": "scene05",
+        "start_sample": 11988060,
+        "end_sample": 12864860,
+        "start_frame": 2751,
+        "end_frame": 3299,
+        "duration_sec": 18.2667
+      },
+      {
+        "id": "scene06",
+        "start_sample": 12864860,
+        "end_sample": 13346460,
+        "start_frame": 3299,
+        "end_frame": 3600,
+        "duration_sec": 10.0333
+      }
+    ],
+    "scene_reason": "DP chose 5 cut(s) from 16 candidate(s) (16 after frame snap); min scene 6s = 180 frames, max cuts 5",
+    "accents": [
+      {
+        "kind": "accent",
+        "source_sample": 8865365,
+        "time_sec": 184.69510416666665,
+        "strength": 0.6702,
+        "method": "flux_peak_v1",
+        "frame": 799
+      },
+      {
+        "kind": "accent",
+        "source_sample": 9544400,
+        "time_sec": 198.84166666666667,
+        "strength": 0.8112,
+        "method": "flux_peak_v1",
+        "frame": 1223
+      },
+      {
+        "kind": "accent",
+        "source_sample": 10251310,
+        "time_sec": 213.56895833333334,
+        "strength": 0.8079,
+        "method": "flux_peak_v1",
+        "frame": 1665
+      },
+      {
+        "kind": "accent",
+        "source_sample": 11680740,
+        "time_sec": 243.34875,
+        "strength": 0.6996,
+        "method": "flux_peak_v1",
+        "frame": 2558
+      },
+      {
+        "kind": "accent",
+        "source_sample": 11996285,
+        "time_sec": 249.92260416666667,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 2756
+      },
+      {
+        "kind": "accent",
+        "source_sample": 12143465,
+        "time_sec": 252.98885416666667,
+        "strength": 0.9786,
+        "method": "flux_peak_v1",
+        "frame": 2848
+      },
+      {
+        "kind": "accent",
+        "source_sample": 12249390,
+        "time_sec": 255.195625,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 2914
+      },
+      {
+        "kind": "accent",
+        "source_sample": 12366465,
+        "time_sec": 257.6346875,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 2987
+      },
+      {
+        "kind": "accent",
+        "source_sample": 12620685,
+        "time_sec": 262.9309375,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 3146
+      },
+      {
+        "kind": "accent",
+        "source_sample": 12758945,
+        "time_sec": 265.81135416666666,
+        "strength": 1.0,
+        "method": "flux_peak_v1",
+        "frame": 3232
+      }
+    ]
+  },
+  "source_hashes": {
+    "attachment_sha256": "069ad8674fdc72e0bc810139a4f4658de500a758f1eba39358d75c74dc8edba8",
+    "decoded_wav_sha256": "f7e00856326353a443c704acef66e33c74e31868d9fc280bec31d0c376e38945"
+  },
+  "fingerprint": "8742f01b27eade5680926e079ee7c31005abd46d667d9f342c2bcba6746cd618",
+  "piece": "ショパン スケルツォ第3番（本人申告）。前半録音 scherzo3_1.mp3。",
+  "period": null,
+  "art_notes": "夕暮れ後の夜の教会っぽいところで音が響いている感じ。\n\n静かな夜の教会を思わせる空間と、そこへ演奏の響きが広がる感覚を映像化する。これは本人の希望する創作上の情景であり、実際の録音場所を示すものではない。\n\n本人演奏の音源を保持し、音楽の時刻はDSPで自動計算する。後半録音とは別作品として制作する。",
+  "creative_brief": {
+    "world": "An imagined dark chapel, not a claim about the actual recording venue.",
+    "character": "No people; the architecture and resonant light carry attention.",
+    "narrative_arc": "Enter a quiet nave, let silvery light touch receding stone and the aisle, then leave a suspended nocturnal resonance.",
+    "creative_interpretation": "Owner-directed sense of piano resonance in a church after dusk. Light response is a visual metaphor, not a simulated recording reverb.",
+    "scene_guidance": [
+      {
+        "scene_id": "scene01",
+        "direction": "Enter the nave: receding arches hold the quiet.",
+        "composition": "Vertical stone nave; successive arches, distant window, reflective aisle.",
+        "palette_intent": "Deep indigo stone, restrained silver-blue window light and reflections."
+      },
+      {
+        "scene_id": "scene02",
+        "direction": "Silvery reflections deepen the central aisle.",
+        "composition": "Vertical stone nave; successive arches, distant window, reflective aisle.",
+        "palette_intent": "Deep indigo stone, restrained silver-blue window light and reflections."
+      },
+      {
+        "scene_id": "scene03",
+        "direction": "Let darkness return between the stone ribs.",
+        "composition": "Vertical stone nave; successive arches, distant window, reflective aisle.",
+        "palette_intent": "Deep indigo stone, restrained silver-blue window light and reflections."
+      },
+      {
+        "scene_id": "scene04",
+        "direction": "Light reaches the foreground floor while the vault remains still.",
+        "composition": "Vertical stone nave; successive arches, distant window, reflective aisle.",
+        "palette_intent": "Deep indigo stone, restrained silver-blue window light and reflections."
+      },
+      {
+        "scene_id": "scene05",
+        "direction": "A quieter echo, with the distant window as anchor.",
+        "composition": "Vertical stone nave; successive arches, distant window, reflective aisle.",
+        "palette_intent": "Deep indigo stone, restrained silver-blue window light and reflections."
+      },
+      {
+        "scene_id": "scene06",
+        "direction": "Leave the resonance hanging in the same night space.",
+        "composition": "Vertical stone nave; successive arches, distant window, reflective aisle.",
+        "palette_intent": "Deep indigo stone, restrained silver-blue window light and reflections."
+      }
+    ],
+    "renderer_constraints": "Registered AI paintings, deterministic flame or light and restrained camera. No generated or replaced audio, no fixed BPM, no per-note cuts. Preserve exact DSP scene IDs and samples.",
+    "evidence_notes": "Top-ranked acoustic excerpt; native 48 kHz samples and 30 fps frames copied exactly from DSP. Rankings do not prove phrase completeness.",
+    "uncertainty": "Listening unavailable; phrase boundaries and the exact musical start of the coda have not been confirmed by ear. Prior adopted works use a moonlit traveler, a storm recital and a sunlit salon; this chapel composition differs. Generation cost unmeasured."
+  }
+}

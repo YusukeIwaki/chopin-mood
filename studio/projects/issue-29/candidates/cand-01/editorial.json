@@ -1,0 +1,1624 @@
+{
+  "schema_version": "2.0",
+  "round": 2,
+  "creator_id": "codex-scherzo3-20261031",
+  "input_sha256": {
+    "project.json": "adae722ed309eaa7272978f188d644e2486a7e82ab14a9f87cf75ddb95fe1d39",
+    "brief.json": "5c7f4a4d0a51733fc3481634ef3b8242ad20edae9e411a9f0ee954a325857220",
+    "storyboard.json": "f1bf240ea0b71bb57fd959d9fc7f5f5f5915181c3d0e08643084e81cae37b5e1"
+  },
+  "media_sha256": {
+    "video.mp4": "ea29f74d6351580797759ddd9949ed12b4af35b5350fc2658112e9157c0e0f88",
+    "contact-sheet.jpg": "c97486d022c46ae8b13c27168571468497eaf38333e1d82f801facca88d11d3f",
+    "timeline.html": "fa0414dbea991b1d292f650dd230955ec74ce49bb84ff579dae6db54a5f268bb"
+  },
+  "qa_sha256": "660cd5c2fe0c22205a5aa6155c5dfc5480bfb1ca81d6320c04c6b334e57fdeb8",
+  "qa": {
+    "checks": [
+      {
+        "name": "studio:stream_kinds",
+        "pass": true,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "w": 540,
+        "h": 960
+      },
+      {
+        "name": "studio:frame_count",
+        "pass": true,
+        "nb_read_frames": 3600,
+        "expected": 3600
+      },
+      {
+        "name": "studio:video_stream",
+        "pass": true,
+        "start_time": 0.0,
+        "duration": 120.0,
+        "expected_duration": 120.0,
+        "start_tol_1_frame": 0.033333,
+        "dur_tol_frames": 1.5
+      },
+      {
+        "name": "studio:audio_stream",
+        "pass": true,
+        "start_time": 0.0,
+        "duration": 120.0,
+        "expected_duration": 120.0,
+        "start_tol_1_frame": 0.033333,
+        "dur_tol_frames": 1.5
+      },
+      {
+        "name": "studio:audio_sync",
+        "pass": true,
+        "verdict": "measured",
+        "lag_pass_samples": 1600,
+        "search_samples": 6400,
+        "full": {
+          "lag_samples": 0,
+          "peak_corr": 1.0,
+          "level_diff_db": -0.012,
+          "ref_rms": 0.016044,
+          "dec_rms": 0.016022
+        },
+        "segments": {
+          "head": {
+            "lag_samples": 0,
+            "peak_corr": 1.0
+          },
+          "mid": {
+            "lag_samples": 0,
+            "peak_corr": 1.0
+          },
+          "tail": {
+            "lag_samples": 0,
+            "peak_corr": 1.0
+          }
+        },
+        "segment_drift_samples": 0
+      },
+      {
+        "name": "studio:crop_pcm_exact",
+        "pass": true,
+        "mode": "float_tight",
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "studio:no_black_frames",
+        "pass": true,
+        "black_segments": [],
+        "black_sec_beyond_intro": 0
+      },
+      {
+        "name": "studio:content_changes",
+        "pass": true,
+        "probe_frames": [
+          0,
+          1200,
+          2400,
+          3599
+        ],
+        "motion_diffs_blur_downscaled": [
+          9.4929,
+          26.875,
+          16.6138
+        ],
+        "motion_floor": 0.4,
+        "mean_abs_diffs_raw": [
+          12.9,
+          27.244,
+          18.474
+        ]
+      },
+      {
+        "name": "studio:scene_invariants",
+        "pass": true,
+        "n_scenes": 6,
+        "coverage_ok": true,
+        "contiguous_ok": true,
+        "min_len_ok": true
+      },
+      {
+        "name": "studio:input_hash_unchanged",
+        "pass": true,
+        "sha256": "f7e00856326353a4..."
+      },
+      {
+        "name": "studio:rendered_frame_spotcheck",
+        "pass": true,
+        "method": "decoded MP4 frames vs deterministic clean-renderer reference frames; per-frame whole-frame MAE and 8x12 patch MAE (0-255), plus encoded transition phase; all must pass",
+        "thresholds": {
+          "global_mae_max": 8.0,
+          "patch_mae_max": 5.0,
+          "baseline_patch_mae_max": 16.0,
+          "patch_grid": [
+            8,
+            12
+          ],
+          "transition_min_relative_margin": 0.1,
+          "transition_feature_std_min": 0.25,
+          "transition_separation_ratio_min": 2.0,
+          "transition_gain_range": [
+            0.9,
+            1.1
+          ]
+        },
+        "probed_frames": [
+          0,
+          1,
+          287,
+          440,
+          441,
+          442,
+          719,
+          743,
+          744,
+          745,
+          798,
+          799,
+          800,
+          1222,
+          1223,
+          1224,
+          1259,
+          1664,
+          1665,
+          1666,
+          1729,
+          1730,
+          1731,
+          1799,
+          2339,
+          2557,
+          2558,
+          2559,
+          2750,
+          2751,
+          2752,
+          2755,
+          2756,
+          2757,
+          2847,
+          2848,
+          2849,
+          2879,
+          2913,
+          2914,
+          2915,
+          2986,
+          2987,
+          2988,
+          3145,
+          3146,
+          3147,
+          3231,
+          3232,
+          3233,
+          3298,
+          3299,
+          3300,
+          3311,
+          3599
+        ],
+        "frames": [
+          {
+            "frame": 0,
+            "kinds": [
+              "first_frame",
+              "scene_start"
+            ],
+            "ok": true,
+            "global_mae": 1.554,
+            "patch_mae_max": 2.109,
+            "patch_mae_mean": 1.555
+          },
+          {
+            "frame": 1,
+            "kinds": [
+              "scene_start_post"
+            ],
+            "ok": true,
+            "global_mae": 1.552,
+            "patch_mae_max": 2.109,
+            "patch_mae_mean": 1.553
+          },
+          {
+            "frame": 287,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 1.79,
+            "patch_mae_max": 2.304,
+            "patch_mae_mean": 1.791
+          },
+          {
+            "frame": 440,
+            "kinds": [
+              "scene_start_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.917,
+            "patch_mae_max": 2.276,
+            "patch_mae_mean": 1.918
+          },
+          {
+            "frame": 441,
+            "kinds": [
+              "scene_start"
+            ],
+            "ok": true,
+            "global_mae": 1.712,
+            "patch_mae_max": 2.225,
+            "patch_mae_mean": 1.712,
+            "transition_timing": {
+              "ok": true,
+              "boundary": 441,
+              "probe_frames": [
+                411,
+                412,
+                413,
+                414,
+                415,
+                416,
+                417,
+                418,
+                419,
+                420,
+                421,
+                422,
+                423,
+                424,
+                425,
+                426,
+                427,
+                428,
+                429,
+                430,
+                431,
+                432,
+                433,
+                434,
+                435,
+                436,
+                437,
+                438,
+                439,
+                440,
+                441,
+                442,
+                443,
+                444,
+                445,
+                446,
+                447,
+                448,
+                449,
+                450,
+                451,
+                452,
+                453,
+                454,
+                455,
+                456,
+                457,
+                458,
+                459,
+                460,
+                461,
+                462,
+                463,
+                464,
+                465,
+                466,
+                467,
+                468,
+                469,
+                470,
+                471
+              ],
+              "best_offset_frames": 0,
+              "relative_margin": 14.18882,
+              "hypothesis_separation_rms": 0.297319,
+              "fit_rms": 0.073612,
+              "separation_ratio": 4.03899,
+              "scores": {
+                "-2": 0.230129,
+                "-1": 0.099857,
+                "0": 0.005419,
+                "1": 0.082305,
+                "2": 0.191669
+              },
+              "reason": "aligned"
+            }
+          },
+          {
+            "frame": 442,
+            "kinds": [
+              "scene_start_post"
+            ],
+            "ok": true,
+            "global_mae": 1.861,
+            "patch_mae_max": 2.435,
+            "patch_mae_mean": 1.862
+          },
+          {
+            "frame": 719,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 1.821,
+            "patch_mae_max": 2.313,
+            "patch_mae_mean": 1.821
+          },
+          {
+            "frame": 743,
+            "kinds": [
+              "scene_start_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.934,
+            "patch_mae_max": 2.359,
+            "patch_mae_mean": 1.935
+          },
+          {
+            "frame": 744,
+            "kinds": [
+              "scene_start"
+            ],
+            "ok": true,
+            "global_mae": 1.857,
+            "patch_mae_max": 2.305,
+            "patch_mae_mean": 1.858,
+            "transition_timing": {
+              "ok": true,
+              "boundary": 744,
+              "probe_frames": [
+                714,
+                715,
+                716,
+                717,
+                718,
+                719,
+                720,
+                721,
+                722,
+                723,
+                724,
+                725,
+                726,
+                727,
+                728,
+                729,
+                730,
+                731,
+                732,
+                733,
+                734,
+                735,
+                736,
+                737,
+                738,
+                739,
+                740,
+                741,
+                742,
+                743,
+                744,
+                745,
+                746,
+                747,
+                748,
+                749,
+                750,
+                751,
+                752,
+                753,
+                754,
+                755,
+                756,
+                757,
+                758,
+                759,
+                760,
+                761,
+                762,
+                763,
+                764,
+                765,
+                766,
+                767,
+                768,
+                769,
+                770,
+                771,
+                772,
+                773,
+                774
+              ],
+              "best_offset_frames": 0,
+              "relative_margin": 6.44429,
+              "hypothesis_separation_rms": 0.301162,
+              "fit_rms": 0.112559,
+              "separation_ratio": 2.6756,
+              "scores": {
+                "-2": 0.24421,
+                "-1": 0.094315,
+                "0": 0.012669,
+                "1": 0.104551,
+                "2": 0.27634
+              },
+              "reason": "aligned"
+            }
+          },
+          {
+            "frame": 745,
+            "kinds": [
+              "scene_start_post"
+            ],
+            "ok": true,
+            "global_mae": 1.869,
+            "patch_mae_max": 2.271,
+            "patch_mae_mean": 1.87
+          },
+          {
+            "frame": 798,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.562,
+            "patch_mae_max": 2.132,
+            "patch_mae_mean": 1.564
+          },
+          {
+            "frame": 799,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 1.758,
+            "patch_mae_max": 2.928,
+            "patch_mae_mean": 1.761
+          },
+          {
+            "frame": 800,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 1.646,
+            "patch_mae_max": 2.307,
+            "patch_mae_mean": 1.648
+          },
+          {
+            "frame": 1222,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.722,
+            "patch_mae_max": 2.297,
+            "patch_mae_mean": 1.723
+          },
+          {
+            "frame": 1223,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 1.873,
+            "patch_mae_max": 2.976,
+            "patch_mae_mean": 1.875
+          },
+          {
+            "frame": 1224,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 1.776,
+            "patch_mae_max": 2.517,
+            "patch_mae_mean": 1.777
+          },
+          {
+            "frame": 1259,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 1.557,
+            "patch_mae_max": 2.053,
+            "patch_mae_mean": 1.558
+          },
+          {
+            "frame": 1664,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.593,
+            "patch_mae_max": 2.136,
+            "patch_mae_mean": 1.594
+          },
+          {
+            "frame": 1665,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 1.792,
+            "patch_mae_max": 3.051,
+            "patch_mae_mean": 1.794
+          },
+          {
+            "frame": 1666,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 1.674,
+            "patch_mae_max": 2.512,
+            "patch_mae_mean": 1.675
+          },
+          {
+            "frame": 1729,
+            "kinds": [
+              "scene_start_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.62,
+            "patch_mae_max": 2.161,
+            "patch_mae_mean": 1.62
+          },
+          {
+            "frame": 1730,
+            "kinds": [
+              "scene_start"
+            ],
+            "ok": true,
+            "global_mae": 1.539,
+            "patch_mae_max": 2.096,
+            "patch_mae_mean": 1.54,
+            "transition_timing": {
+              "ok": true,
+              "boundary": 1730,
+              "probe_frames": [
+                1700,
+                1701,
+                1702,
+                1703,
+                1704,
+                1705,
+                1706,
+                1707,
+                1708,
+                1709,
+                1710,
+                1711,
+                1712,
+                1713,
+                1714,
+                1715,
+                1716,
+                1717,
+                1718,
+                1719,
+                1720,
+                1721,
+                1722,
+                1723,
+                1724,
+                1725,
+                1726,
+                1727,
+                1728,
+                1729,
+                1730,
+                1731,
+                1732,
+                1733,
+                1734,
+                1735,
+                1736,
+                1737,
+                1738,
+                1739,
+                1740,
+                1741,
+                1742,
+                1743,
+                1744,
+                1745,
+                1746,
+                1747,
+                1748,
+                1749,
+                1750,
+                1751,
+                1752,
+                1753,
+                1754,
+                1755,
+                1756,
+                1757,
+                1758,
+                1759,
+                1760
+              ],
+              "best_offset_frames": 0,
+              "relative_margin": 10.60044,
+              "hypothesis_separation_rms": 0.419363,
+              "fit_rms": 0.115006,
+              "separation_ratio": 3.64644,
+              "scores": {
+                "-2": 0.460056,
+                "-1": 0.153433,
+                "0": 0.013226,
+                "1": 0.225309,
+                "2": 0.600454
+              },
+              "reason": "aligned"
+            }
+          },
+          {
+            "frame": 1731,
+            "kinds": [
+              "scene_start_post"
+            ],
+            "ok": true,
+            "global_mae": 1.798,
+            "patch_mae_max": 2.4,
+            "patch_mae_mean": 1.798
+          },
+          {
+            "frame": 1799,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 1.543,
+            "patch_mae_max": 2.064,
+            "patch_mae_mean": 1.544
+          },
+          {
+            "frame": 2339,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 1.64,
+            "patch_mae_max": 2.026,
+            "patch_mae_mean": 1.641
+          },
+          {
+            "frame": 2557,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.707,
+            "patch_mae_max": 2.28,
+            "patch_mae_mean": 1.708
+          },
+          {
+            "frame": 2558,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 1.865,
+            "patch_mae_max": 3.218,
+            "patch_mae_mean": 1.866
+          },
+          {
+            "frame": 2559,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 1.738,
+            "patch_mae_max": 2.525,
+            "patch_mae_mean": 1.739
+          },
+          {
+            "frame": 2750,
+            "kinds": [
+              "scene_start_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.612,
+            "patch_mae_max": 2.108,
+            "patch_mae_mean": 1.612
+          },
+          {
+            "frame": 2751,
+            "kinds": [
+              "scene_start"
+            ],
+            "ok": true,
+            "global_mae": 1.804,
+            "patch_mae_max": 2.316,
+            "patch_mae_mean": 1.805,
+            "transition_timing": {
+              "ok": true,
+              "boundary": 2751,
+              "probe_frames": [
+                2721,
+                2722,
+                2723,
+                2724,
+                2725,
+                2726,
+                2727,
+                2728,
+                2729,
+                2730,
+                2731,
+                2732,
+                2733,
+                2734,
+                2735,
+                2736,
+                2737,
+                2738,
+                2739,
+                2740,
+                2741,
+                2742,
+                2743,
+                2744,
+                2745,
+                2746,
+                2747,
+                2748,
+                2749,
+                2750,
+                2751,
+                2752,
+                2753,
+                2754,
+                2755,
+                2756,
+                2757,
+                2758,
+                2759,
+                2760,
+                2761,
+                2762,
+                2763,
+                2764,
+                2765,
+                2766,
+                2767,
+                2768,
+                2769,
+                2770,
+                2771,
+                2772,
+                2773,
+                2774,
+                2775,
+                2776,
+                2777,
+                2778,
+                2779,
+                2780,
+                2781
+              ],
+              "best_offset_frames": 0,
+              "relative_margin": 10.70798,
+              "hypothesis_separation_rms": 0.392624,
+              "fit_rms": 0.118354,
+              "separation_ratio": 3.31738,
+              "scores": {
+                "-2": 0.415438,
+                "-1": 0.164,
+                "0": 0.014008,
+                "1": 0.16833,
+                "2": 0.464593
+              },
+              "reason": "aligned"
+            }
+          },
+          {
+            "frame": 2752,
+            "kinds": [
+              "scene_start_post"
+            ],
+            "ok": true,
+            "global_mae": 1.625,
+            "patch_mae_max": 2.086,
+            "patch_mae_mean": 1.625
+          },
+          {
+            "frame": 2755,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.783,
+            "patch_mae_max": 2.229,
+            "patch_mae_mean": 1.783
+          },
+          {
+            "frame": 2756,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 1.896,
+            "patch_mae_max": 3.37,
+            "patch_mae_mean": 1.898
+          },
+          {
+            "frame": 2757,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 1.754,
+            "patch_mae_max": 2.382,
+            "patch_mae_mean": 1.755
+          },
+          {
+            "frame": 2847,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.787,
+            "patch_mae_max": 2.419,
+            "patch_mae_mean": 1.788
+          },
+          {
+            "frame": 2848,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 1.934,
+            "patch_mae_max": 3.217,
+            "patch_mae_mean": 1.936
+          },
+          {
+            "frame": 2849,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 1.838,
+            "patch_mae_max": 2.576,
+            "patch_mae_mean": 1.839
+          },
+          {
+            "frame": 2879,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 1.827,
+            "patch_mae_max": 2.335,
+            "patch_mae_mean": 1.828
+          },
+          {
+            "frame": 2913,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.85,
+            "patch_mae_max": 2.515,
+            "patch_mae_mean": 1.851
+          },
+          {
+            "frame": 2914,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 1.998,
+            "patch_mae_max": 3.357,
+            "patch_mae_mean": 1.999
+          },
+          {
+            "frame": 2915,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 1.89,
+            "patch_mae_max": 2.692,
+            "patch_mae_mean": 1.891
+          },
+          {
+            "frame": 2986,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.88,
+            "patch_mae_max": 2.678,
+            "patch_mae_mean": 1.881
+          },
+          {
+            "frame": 2987,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 2.024,
+            "patch_mae_max": 3.492,
+            "patch_mae_mean": 2.026
+          },
+          {
+            "frame": 2988,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 1.92,
+            "patch_mae_max": 2.782,
+            "patch_mae_mean": 1.921
+          },
+          {
+            "frame": 3145,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.862,
+            "patch_mae_max": 2.588,
+            "patch_mae_mean": 1.863
+          },
+          {
+            "frame": 3146,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 1.995,
+            "patch_mae_max": 3.155,
+            "patch_mae_mean": 1.996
+          },
+          {
+            "frame": 3147,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 1.894,
+            "patch_mae_max": 2.598,
+            "patch_mae_mean": 1.894
+          },
+          {
+            "frame": 3231,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.824,
+            "patch_mae_max": 2.408,
+            "patch_mae_mean": 1.824
+          },
+          {
+            "frame": 3232,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 1.976,
+            "patch_mae_max": 3.368,
+            "patch_mae_mean": 1.978
+          },
+          {
+            "frame": 3233,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 1.875,
+            "patch_mae_max": 2.733,
+            "patch_mae_mean": 1.876
+          },
+          {
+            "frame": 3298,
+            "kinds": [
+              "scene_start_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.757,
+            "patch_mae_max": 2.267,
+            "patch_mae_mean": 1.758
+          },
+          {
+            "frame": 3299,
+            "kinds": [
+              "scene_start"
+            ],
+            "ok": true,
+            "global_mae": 1.833,
+            "patch_mae_max": 2.31,
+            "patch_mae_mean": 1.834,
+            "transition_timing": {
+              "ok": true,
+              "boundary": 3299,
+              "probe_frames": [
+                3269,
+                3270,
+                3271,
+                3272,
+                3273,
+                3274,
+                3275,
+                3276,
+                3277,
+                3278,
+                3279,
+                3280,
+                3281,
+                3282,
+                3283,
+                3284,
+                3285,
+                3286,
+                3287,
+                3288,
+                3289,
+                3290,
+                3291,
+                3292,
+                3293,
+                3294,
+                3295,
+                3296,
+                3297,
+                3298,
+                3299,
+                3300,
+                3301,
+                3302,
+                3303,
+                3304,
+                3305,
+                3306,
+                3307,
+                3308,
+                3309,
+                3310,
+                3311,
+                3312,
+                3313,
+                3314,
+                3315,
+                3316,
+                3317,
+                3318,
+                3319,
+                3320,
+                3321,
+                3322,
+                3323,
+                3324,
+                3325,
+                3326,
+                3327,
+                3328,
+                3329
+              ],
+              "best_offset_frames": 0,
+              "relative_margin": 8.06342,
+              "hypothesis_separation_rms": 0.206739,
+              "fit_rms": 0.070411,
+              "separation_ratio": 2.93619,
+              "scores": {
+                "-2": 0.114754,
+                "-1": 0.046803,
+                "0": 0.004958,
+                "1": 0.044933,
+                "2": 0.110164
+              },
+              "reason": "aligned"
+            }
+          },
+          {
+            "frame": 3300,
+            "kinds": [
+              "scene_start_post"
+            ],
+            "ok": true,
+            "global_mae": 1.638,
+            "patch_mae_max": 2.132,
+            "patch_mae_mean": 1.638
+          },
+          {
+            "frame": 3311,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 1.803,
+            "patch_mae_max": 2.276,
+            "patch_mae_mean": 1.803
+          },
+          {
+            "frame": 3599,
+            "kinds": [
+              "last_frame"
+            ],
+            "ok": true,
+            "global_mae": 1.771,
+            "patch_mae_max": 2.422,
+            "patch_mae_mean": 1.773
+          }
+        ],
+        "transition_timing": [
+          {
+            "ok": true,
+            "boundary": 441,
+            "probe_frames": [
+              411,
+              412,
+              413,
+              414,
+              415,
+              416,
+              417,
+              418,
+              419,
+              420,
+              421,
+              422,
+              423,
+              424,
+              425,
+              426,
+              427,
+              428,
+              429,
+              430,
+              431,
+              432,
+              433,
+              434,
+              435,
+              436,
+              437,
+              438,
+              439,
+              440,
+              441,
+              442,
+              443,
+              444,
+              445,
+              446,
+              447,
+              448,
+              449,
+              450,
+              451,
+              452,
+              453,
+              454,
+              455,
+              456,
+              457,
+              458,
+              459,
+              460,
+              461,
+              462,
+              463,
+              464,
+              465,
+              466,
+              467,
+              468,
+              469,
+              470,
+              471
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 14.18882,
+            "hypothesis_separation_rms": 0.297319,
+            "fit_rms": 0.073612,
+            "separation_ratio": 4.03899,
+            "scores": {
+              "-2": 0.230129,
+              "-1": 0.099857,
+              "0": 0.005419,
+              "1": 0.082305,
+              "2": 0.191669
+            },
+            "reason": "aligned"
+          },
+          {
+            "ok": true,
+            "boundary": 744,
+            "probe_frames": [
+              714,
+              715,
+              716,
+              717,
+              718,
+              719,
+              720,
+              721,
+              722,
+              723,
+              724,
+              725,
+              726,
+              727,
+              728,
+              729,
+              730,
+              731,
+              732,
+              733,
+              734,
+              735,
+              736,
+              737,
+              738,
+              739,
+              740,
+              741,
+              742,
+              743,
+              744,
+              745,
+              746,
+              747,
+              748,
+              749,
+              750,
+              751,
+              752,
+              753,
+              754,
+              755,
+              756,
+              757,
+              758,
+              759,
+              760,
+              761,
+              762,
+              763,
+              764,
+              765,
+              766,
+              767,
+              768,
+              769,
+              770,
+              771,
+              772,
+              773,
+              774
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 6.44429,
+            "hypothesis_separation_rms": 0.301162,
+            "fit_rms": 0.112559,
+            "separation_ratio": 2.6756,
+            "scores": {
+              "-2": 0.24421,
+              "-1": 0.094315,
+              "0": 0.012669,
+              "1": 0.104551,
+              "2": 0.27634
+            },
+            "reason": "aligned"
+          },
+          {
+            "ok": true,
+            "boundary": 1730,
+            "probe_frames": [
+              1700,
+              1701,
+              1702,
+              1703,
+              1704,
+              1705,
+              1706,
+              1707,
+              1708,
+              1709,
+              1710,
+              1711,
+              1712,
+              1713,
+              1714,
+              1715,
+              1716,
+              1717,
+              1718,
+              1719,
+              1720,
+              1721,
+              1722,
+              1723,
+              1724,
+              1725,
+              1726,
+              1727,
+              1728,
+              1729,
+              1730,
+              1731,
+              1732,
+              1733,
+              1734,
+              1735,
+              1736,
+              1737,
+              1738,
+              1739,
+              1740,
+              1741,
+              1742,
+              1743,
+              1744,
+              1745,
+              1746,
+              1747,
+              1748,
+              1749,
+              1750,
+              1751,
+              1752,
+              1753,
+              1754,
+              1755,
+              1756,
+              1757,
+              1758,
+              1759,
+              1760
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 10.60044,
+            "hypothesis_separation_rms": 0.419363,
+            "fit_rms": 0.115006,
+            "separation_ratio": 3.64644,
+            "scores": {
+              "-2": 0.460056,
+              "-1": 0.153433,
+              "0": 0.013226,
+              "1": 0.225309,
+              "2": 0.600454
+            },
+            "reason": "aligned"
+          },
+          {
+            "ok": true,
+            "boundary": 2751,
+            "probe_frames": [
+              2721,
+              2722,
+              2723,
+              2724,
+              2725,
+              2726,
+              2727,
+              2728,
+              2729,
+              2730,
+              2731,
+              2732,
+              2733,
+              2734,
+              2735,
+              2736,
+              2737,
+              2738,
+              2739,
+              2740,
+              2741,
+              2742,
+              2743,
+              2744,
+              2745,
+              2746,
+              2747,
+              2748,
+              2749,
+              2750,
+              2751,
+              2752,
+              2753,
+              2754,
+              2755,
+              2756,
+              2757,
+              2758,
+              2759,
+              2760,
+              2761,
+              2762,
+              2763,
+              2764,
+              2765,
+              2766,
+              2767,
+              2768,
+              2769,
+              2770,
+              2771,
+              2772,
+              2773,
+              2774,
+              2775,
+              2776,
+              2777,
+              2778,
+              2779,
+              2780,
+              2781
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 10.70798,
+            "hypothesis_separation_rms": 0.392624,
+            "fit_rms": 0.118354,
+            "separation_ratio": 3.31738,
+            "scores": {
+              "-2": 0.415438,
+              "-1": 0.164,
+              "0": 0.014008,
+              "1": 0.16833,
+              "2": 0.464593
+            },
+            "reason": "aligned"
+          },
+          {
+            "ok": true,
+            "boundary": 3299,
+            "probe_frames": [
+              3269,
+              3270,
+              3271,
+              3272,
+              3273,
+              3274,
+              3275,
+              3276,
+              3277,
+              3278,
+              3279,
+              3280,
+              3281,
+              3282,
+              3283,
+              3284,
+              3285,
+              3286,
+              3287,
+              3288,
+              3289,
+              3290,
+              3291,
+              3292,
+              3293,
+              3294,
+              3295,
+              3296,
+              3297,
+              3298,
+              3299,
+              3300,
+              3301,
+              3302,
+              3303,
+              3304,
+              3305,
+              3306,
+              3307,
+              3308,
+              3309,
+              3310,
+              3311,
+              3312,
+              3313,
+              3314,
+              3315,
+              3316,
+              3317,
+              3318,
+              3319,
+              3320,
+              3321,
+              3322,
+              3323,
+              3324,
+              3325,
+              3326,
+              3327,
+              3328,
+              3329
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 8.06342,
+            "hypothesis_separation_rms": 0.206739,
+            "fit_rms": 0.070411,
+            "separation_ratio": 2.93619,
+            "scores": {
+              "-2": 0.114754,
+              "-1": 0.046803,
+              "0": 0.004958,
+              "1": 0.044933,
+              "2": 0.110164
+            },
+            "reason": "aligned"
+          }
+        ],
+        "transition_timing_supported": true
+      }
+    ],
+    "pass": true,
+    "musical_naturalness": "NOT verified (no listening)"
+  },
+  "reviews": {
+    "music": {
+      "reviewer_id": "/root/chapel_music_sync",
+      "evidence_sha256": "51b79704970d81f8a388cda849af04fa914f6e8300090f487d3cc21537a5bb26",
+      "verdict": "pass",
+      "hard_blockers": [],
+      "concerns": [],
+      "evidence": [
+        "Fresh independent review of output/studio/linux-runtime/issue-29/full-round-2 and current studio/projects/issue-29/candidates/cand-01 in the chopin-mood-issue29 worktree. This evaluates actual final-round encoded media, not an earlier native or Linux-decoded-source render. Independently recomputed the exact bound digest and checked the embedded QA against the actual QA file. Video SHA256 ea29f74d6351580797759ddd9949ed12b4af35b5350fc2658112e9157c0e0f88; QA SHA256 660cd5c2fe0c22205a5aa6155c5dfc5480bfb1ca81d6320c04c6b334e57fdeb8.",
+        "The full current candidate exactly equals the fresh Linux-runtime analyzer candidate. Brief content, excerpt samples [7586460,13346460), 3600 frames, scene boundaries [441,744,1730,2751,3299] and all ten accents are unchanged from failed full-runtime round 1. Independently rechecked every integer scene endpoint and accent mapping at 48000 Hz/30 fps, retaining sample-derived seconds. The only storyboard change is scene04 far palette [100,110,120] to [150,160,175]; no timing or additional creative changes were found.",
+        "Current brief, fresh analysis and provenance agree on attachment SHA256 069ad8674fdc72e0bc810139a4f4658de500a758f1eba39358d75c74dc8edba8 and decoded source SHA256 f7e00856326353a443c704acef66e33c74e31868d9fc280bec31d0c376e38945. Planning and brief fingerprints agree. Native analysis remains 48000 Hz with hop 1115 and FFT 4458, without overrides. Rendered brief/storyboard equal current candidate inputs; renderer, manifest and registered asset bytes match provenance hashes.",
+        "All eleven current QA categories pass. Full/head/mid/tail decoded-audio lag and segment drift are zero; crop max_abs_diff is 0; encoded level difference is -0.012 dB. Independent ffprobe confirms 540x960 H264, 30/1 fps, 3600 frames, 48000 Hz mono AAC, zero stream start times and 120-second durations.",
+        "Inspected current decoded-frame QA covering endpoints, interiors, every accent neighborhood and all five scene transitions. All spatial comparisons pass with maximum patch MAE 3.492 against 5.0. Transition offsets are all 0, with separation ratios [4.03899,2.6756,3.64644,3.31738,2.93619] against the unchanged minimum 2.0. The former M29-RUNTIME-2751 blocker is closed by actual new encoded evidence: frame 2751 now has separation ratio 3.31738 rather than 1.99457. No threshold waiver or old pass was used.",
+        "Viewed the new round-2 contact sheet as still-image evidence of the revised chapel lighting. The strongest unresolved musical objection is whether the selected endpoints and lighting transitions coincide naturally with performed phrases; low endpoint energy and exact DSP timing do not establish a cadence or musical naturalness. The successful mechanical repair remains within the original request's final round 2."
+      ],
+      "listening": "unavailable",
+      "limitations": [
+        "No audio was auditioned. This pass covers current mechanical synchronization and provenance evidence, not phrase completeness, musical naturalness, accent selection or perceptual balance.",
+        "Full recordings and /input WAV files were not accessed or independently rehashed. Source identity was checked through current brief, analysis, provenance and the previously inspected Linux source metadata.",
+        "Contact sheets do not establish continuous motion or full-length viewing quality. This review does not claim success of a future candidate Actions rerun or broader runtime portability."
+      ]
+    },
+    "visual": {
+      "reviewer_id": "/root/chapel_visual_viewer",
+      "evidence_sha256": "51b79704970d81f8a388cda849af04fa914f6e8300090f487d3cc21537a5bb26",
+      "verdict": "pass",
+      "hard_blockers": [],
+      "concerns": [
+        {
+          "id": "V29-01",
+          "note": "Observation: this new round2 MP4 retains one frontal nave throughout 120 seconds, including holds [744,1730) and [1730,2751). Stronger diffuse illumination makes the states legible, but development remains light and a restrained axial scale change within one painting. Impact: viewers seeking an unfolding visual story may experience the middle as a held illustration; the broad illumination can read as a grade change more than spatial travel. This is an aesthetic concern, not an unreadable subject or an owner-direction violation. The earlier minimal optional improvement was a more spatially legible existing aisle-light swell, checked in encoded middle/boundary sequences. This final round already preserves a coherent contemplative space, so I do not request another repair or extra cuts/particles. The editor should explicitly accept the held composition or withhold this candidate; the concern must not be relabeled mechanically fixed."
+        }
+      ],
+      "evidence": [
+        "Freshly inspected output/studio/linux-runtime/issue-29/full-round-2/video.mp4 and contact-sheet.jpg. Video SHA256 ea29f74d6351580797759ddd9949ed12b4af35b5350fc2658112e9157c0e0f88, 540x960 at 30fps, 3600 frames. Earlier passes were not reused.",
+        "Verified raw current project/brief/storyboard hashes, actual video/contact-sheet/timeline hashes and qa.json hash against full-round-2/editorial.bound.template.json; recomputed the supplied evidence digest exactly. The bound local QA record passes all 11 checks. Mechanical QA remains separate from this aesthetic assessment.",
+        "Inspected native decoded frames 630, 1170, 2250, 3599; every 90th frame from 0 through 3510 plus 3599; and every consecutive frame in [0,90), [411,472), [714,775), [1150,1240), [1700,1761), [2200,2290), [2721,2782), [3269,3330), [3510,3600). These cover all boundaries, the changed scene04 entry/exit, long middle holds, opening and ending. The official contact sheet was used as still evidence only.",
+        "The stronger scene04 illumination is visible in native frame 2250 and the new middle/boundary sequences. Stone ribs, window tracery and floor retain readable shape and detail; cool blue exterior, dark vault and pews preserve the after-dusk setting. Entry at 1730 and return at 2751 change progressively across the inspected consecutive frames, with no one-frame exposure step, viewpoint reset or focal shape breakup observed. The final frame remains coherent.",
+        "Stable window/aisle depth and repeated ribs provide an anchor and objects to scan while light reaches more of the foreground. This supports the owner-directed quiet resonant chapel image without claiming the actual recording venue. The strongest counterargument is the limited visual development, retained as V29-01. Previously inspected adopted-work images used a mountain traveler, storm terrace pianist and sunlit salon pianist; this newly observed nave does not reuse those focal compositions."
+      ],
+      "listening": "not_applicable",
+      "limitations": [
+        "Observation used ordered decoded frames and sheets; no real-time or continuous playback was performed. Real-time perceptual smoothness and sustained 120-second watchability are not established.",
+        "Only the listed native frames, overview samples and consecutive ranges were viewed. Unobserved intermediate frames are not claimed as inspected; contact sheets alone were not treated as continuous-motion evidence.",
+        "No audio was listened to and no complete source recording or WAV was accessed. Musical phrasing and audible naturalness are outside this visual role. This verdict covers only the bound round2 media; other mandatory Studio gates remain separate."
+      ]
+    }
+  },
+  "decision": {
+    "editor_id": "codex-scherzo3-20261031",
+    "verdict": "ready",
+    "rationale": "Present the nocturnal nave after final substantive round2. The original MP3 is unchanged; Linux decoding matches Actions source bytes, and the complete candidate is copied exactly from fresh full Linux-runtime DSP. Environment-dependent scene changes were not hand-adjusted. Only scene04 diffuse palette contrast changed in the final creative repair. The actual newly encoded full MP4 passes all11 QA categories at unchanged thresholds, with prior boundary2751 now separation3.31738 and measured audio lag/drift0 plus exact PCM crop. Both independent roles reviewed this new bound media; accept V29-01 explicitly as the requested contemplative composition. Earlier failures remain in Git/local evidence. Listening and real-time continuous viewing were not performed; no musical-naturalness claim. Actual Actions reproduction remains a separate required gate.",
+    "resolutions": [
+      {
+        "role": "visual",
+        "concern_id": "V29-01",
+        "action": "accept",
+        "reason": "Choose the sustained frontal nave as an intentional contemplative response to the owner's night-church resonance. Stronger diffuse light remains subordinate to receding arches, window and floor reflection. The limited narrative development is acknowledged; extra cuts or particles would not serve the request. Full-duration real-time watchability and audible phrasing are unverified."
+      }
+    ]
+  }
+}
