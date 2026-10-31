@@ -1,18 +1,18 @@
 {
   "schema_version": "2.0",
-  "round": 1,
+  "round": 2,
   "creator_id": "codex-scherzo3-20261031",
   "input_sha256": {
     "project.json": "d5994998aaf1af6155e6c718cb7b45a2b86ffca607cad5c0525990e4646aca5f",
     "brief.json": "9c8dd4a7f7ee75054680c6889bef38fb3944f183542509b6faa10fe4a14fc4f1",
-    "storyboard.json": "05fd35292d6933da2ccf7250446866bce0c3c9687cea09fbf68153aa66f64b4f"
+    "storyboard.json": "9c8b4f5061a05a16d09d3a8cad3050ed91ebe82403b539baaca72efeee9228c0"
   },
   "media_sha256": {
-    "video.mp4": "489cd179d5bfc81a899f9085e79b396446282320f8da7d0828107f430ad0c9d1",
-    "contact-sheet.jpg": "31e6d5f8c4a7a28f7c24567c90952d47590f41aae7fe0aa4a662507636b90e49",
+    "video.mp4": "4c0d0febcfe60f6c5a1792cde16c6f9160e154699b5023deb56383ff2a9c086e",
+    "contact-sheet.jpg": "471809670dbfb4bc7eaa73cece5eed34d40be97a5d37ed2d940fc97fac133644",
     "timeline.html": "2974b3135d7833c936335ecd2ecfa38bb9e2da032809abeca622e281752eafe9"
   },
-  "qa_sha256": "d1d8be74bf172bfd55d0a8bea55f184fff540509e81a3ae8c72040387906102a",
+  "qa_sha256": "c844308be9d3866f02bb738028a63f083fc2bf25e70e2125c7473c27abd26806",
   "qa": {
     "checks": [
       {
@@ -99,14 +99,14 @@
         ],
         "motion_diffs_blur_downscaled": [
           10.6034,
-          6.4395,
-          23.2993
+          6.4437,
+          23.3011
         ],
         "motion_floor": 0.4,
         "mean_abs_diffs_raw": [
           12.746,
-          8.699,
-          25.262
+          8.701,
+          25.259
         ]
       },
       {
@@ -367,21 +367,21 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 1.423,
-            "patch_mae_max": 2.249,
-            "patch_mae_mean": 1.423
+            "global_mae": 1.627,
+            "patch_mae_max": 2.461,
+            "patch_mae_mean": 1.627
           },
           {
             "frame": 1360,
             "kinds": [
               "scene_start"
             ],
-            "ok": true,
-            "global_mae": 1.502,
-            "patch_mae_max": 2.3,
-            "patch_mae_mean": 1.502,
+            "ok": false,
+            "global_mae": 1.464,
+            "patch_mae_max": 2.298,
+            "patch_mae_mean": 1.464,
             "transition_timing": {
-              "ok": true,
+              "ok": false,
               "boundary": 1360,
               "probe_frames": [
                 1330,
@@ -447,18 +447,18 @@
                 1390
               ],
               "best_offset_frames": 0,
-              "relative_margin": 9.42233,
-              "hypothesis_separation_rms": 0.225751,
-              "fit_rms": 0.067415,
-              "separation_ratio": 3.34868,
+              "relative_margin": 2.51777,
+              "hypothesis_separation_rms": 0.322763,
+              "fit_rms": 0.185847,
+              "separation_ratio": 1.73671,
               "scores": {
-                "-2": 0.13484,
-                "-1": 0.058437,
-                "0": 0.004545,
-                "1": 0.047367,
-                "2": 0.126007
+                "-2": 0.319459,
+                "-1": 0.121501,
+                "0": 0.034539,
+                "1": 0.124206,
+                "2": 0.319167
               },
-              "reason": "aligned"
+              "reason": "shifted or ambiguous transition"
             }
           },
           {
@@ -467,9 +467,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.595,
-            "patch_mae_max": 2.412,
-            "patch_mae_mean": 1.595
+            "global_mae": 1.518,
+            "patch_mae_max": 2.378,
+            "patch_mae_mean": 1.518
           },
           {
             "frame": 1569,
@@ -477,9 +477,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.489,
-            "patch_mae_max": 2.435,
-            "patch_mae_mean": 1.489
+            "global_mae": 1.49,
+            "patch_mae_max": 2.444,
+            "patch_mae_mean": 1.49
           },
           {
             "frame": 1570,
@@ -487,9 +487,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 1.857,
-            "patch_mae_max": 2.725,
-            "patch_mae_mean": 1.857
+            "global_mae": 1.832,
+            "patch_mae_max": 2.774,
+            "patch_mae_mean": 1.831
           },
           {
             "frame": 1571,
@@ -497,9 +497,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.584,
-            "patch_mae_max": 2.4,
-            "patch_mae_mean": 1.584
+            "global_mae": 1.551,
+            "patch_mae_max": 2.35,
+            "patch_mae_mean": 1.55
           },
           {
             "frame": 1585,
@@ -507,9 +507,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.468,
-            "patch_mae_max": 2.408,
-            "patch_mae_mean": 1.468
+            "global_mae": 1.475,
+            "patch_mae_max": 2.449,
+            "patch_mae_mean": 1.475
           },
           {
             "frame": 1657,
@@ -517,9 +517,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.529,
-            "patch_mae_max": 2.609,
-            "patch_mae_mean": 1.529
+            "global_mae": 1.534,
+            "patch_mae_max": 2.624,
+            "patch_mae_mean": 1.534
           },
           {
             "frame": 1658,
@@ -527,9 +527,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 1.893,
-            "patch_mae_max": 2.909,
-            "patch_mae_mean": 1.894
+            "global_mae": 1.886,
+            "patch_mae_max": 2.962,
+            "patch_mae_mean": 1.887
           },
           {
             "frame": 1659,
@@ -537,9 +537,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.622,
-            "patch_mae_max": 2.472,
-            "patch_mae_mean": 1.622
+            "global_mae": 1.607,
+            "patch_mae_max": 2.511,
+            "patch_mae_mean": 1.607
           },
           {
             "frame": 1868,
@@ -547,9 +547,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.496,
-            "patch_mae_max": 2.538,
-            "patch_mae_mean": 1.495
+            "global_mae": 1.49,
+            "patch_mae_max": 2.447,
+            "patch_mae_mean": 1.49
           },
           {
             "frame": 1869,
@@ -557,9 +557,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 1.733,
-            "patch_mae_max": 2.562,
-            "patch_mae_mean": 1.734
+            "global_mae": 1.842,
+            "patch_mae_max": 2.926,
+            "patch_mae_mean": 1.841
           },
           {
             "frame": 1870,
@@ -567,9 +567,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.635,
-            "patch_mae_max": 2.727,
-            "patch_mae_mean": 1.636
+            "global_mae": 1.572,
+            "patch_mae_max": 2.439,
+            "patch_mae_mean": 1.572
           },
           {
             "frame": 1953,
@@ -577,9 +577,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.548,
-            "patch_mae_max": 2.611,
-            "patch_mae_mean": 1.548
+            "global_mae": 1.541,
+            "patch_mae_max": 2.53,
+            "patch_mae_mean": 1.54
           },
           {
             "frame": 1954,
@@ -587,9 +587,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.003,
-            "patch_mae_max": 3.541,
-            "patch_mae_mean": 2.003
+            "global_mae": 1.86,
+            "patch_mae_max": 3.01,
+            "patch_mae_mean": 1.86
           },
           {
             "frame": 1955,
@@ -597,9 +597,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.733,
-            "patch_mae_max": 2.648,
-            "patch_mae_mean": 1.733
+            "global_mae": 1.585,
+            "patch_mae_max": 2.473,
+            "patch_mae_mean": 1.584
           },
           {
             "frame": 1983,
@@ -607,9 +607,9 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 1.563,
-            "patch_mae_max": 2.515,
-            "patch_mae_mean": 1.563
+            "global_mae": 1.564,
+            "patch_mae_max": 2.427,
+            "patch_mae_mean": 1.564
           },
           {
             "frame": 1984,
@@ -617,9 +617,9 @@
               "scene_start"
             ],
             "ok": false,
-            "global_mae": 1.613,
-            "patch_mae_max": 2.511,
-            "patch_mae_mean": 1.613,
+            "global_mae": 1.609,
+            "patch_mae_max": 2.507,
+            "patch_mae_mean": 1.609,
             "transition_timing": {
               "ok": false,
               "boundary": 1984,
@@ -687,16 +687,16 @@
                 2014
               ],
               "best_offset_frames": 0,
-              "relative_margin": 2.77754,
-              "hypothesis_separation_rms": 0.204573,
-              "fit_rms": 0.117176,
-              "separation_ratio": 1.74585,
+              "relative_margin": 2.40371,
+              "hypothesis_separation_rms": 0.294931,
+              "fit_rms": 0.172486,
+              "separation_ratio": 1.70988,
               "scores": {
-                "-2": 0.086787,
-                "-1": 0.056717,
-                "0": 0.01373,
-                "1": 0.051867,
-                "2": 0.086217
+                "-2": 0.261779,
+                "-1": 0.101265,
+                "0": 0.029751,
+                "1": 0.106434,
+                "2": 0.280128
               },
               "reason": "shifted or ambiguous transition"
             }
@@ -707,9 +707,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.558,
-            "patch_mae_max": 2.494,
-            "patch_mae_mean": 1.558
+            "global_mae": 1.601,
+            "patch_mae_max": 2.495,
+            "patch_mae_mean": 1.601
           },
           {
             "frame": 2020,
@@ -717,9 +717,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.447,
-            "patch_mae_max": 2.349,
-            "patch_mae_mean": 1.447
+            "global_mae": 1.448,
+            "patch_mae_max": 2.395,
+            "patch_mae_mean": 1.448
           },
           {
             "frame": 2021,
@@ -727,9 +727,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 1.842,
-            "patch_mae_max": 2.689,
-            "patch_mae_mean": 1.842
+            "global_mae": 1.844,
+            "patch_mae_max": 2.701,
+            "patch_mae_mean": 1.843
           },
           {
             "frame": 2022,
@@ -737,9 +737,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.555,
-            "patch_mae_max": 2.319,
-            "patch_mae_mean": 1.555
+            "global_mae": 1.551,
+            "patch_mae_max": 2.391,
+            "patch_mae_mean": 1.55
           },
           {
             "frame": 2061,
@@ -748,7 +748,7 @@
             ],
             "ok": true,
             "global_mae": 1.516,
-            "patch_mae_max": 2.557,
+            "patch_mae_max": 2.541,
             "patch_mae_mean": 1.516
           },
           {
@@ -757,9 +757,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.557,
-            "patch_mae_max": 2.729,
-            "patch_mae_mean": 1.557
+            "global_mae": 1.551,
+            "patch_mae_max": 2.697,
+            "patch_mae_mean": 1.552
           },
           {
             "frame": 2115,
@@ -767,9 +767,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 1.924,
-            "patch_mae_max": 2.964,
-            "patch_mae_mean": 1.924
+            "global_mae": 1.911,
+            "patch_mae_max": 2.883,
+            "patch_mae_mean": 1.911
           },
           {
             "frame": 2116,
@@ -777,9 +777,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.64,
-            "patch_mae_max": 2.654,
-            "patch_mae_mean": 1.64
+            "global_mae": 1.641,
+            "patch_mae_max": 2.582,
+            "patch_mae_mean": 1.642
           },
           {
             "frame": 2210,
@@ -787,9 +787,9 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 1.688,
-            "patch_mae_max": 2.664,
-            "patch_mae_mean": 1.687
+            "global_mae": 1.677,
+            "patch_mae_max": 2.475,
+            "patch_mae_mean": 1.677
           },
           {
             "frame": 2211,
@@ -797,9 +797,9 @@
               "scene_start"
             ],
             "ok": true,
-            "global_mae": 1.594,
-            "patch_mae_max": 2.471,
-            "patch_mae_mean": 1.595,
+            "global_mae": 1.585,
+            "patch_mae_max": 2.428,
+            "patch_mae_mean": 1.585,
             "transition_timing": {
               "ok": true,
               "boundary": 2211,
@@ -867,16 +867,16 @@
                 2241
               ],
               "best_offset_frames": 0,
-              "relative_margin": 8.86268,
-              "hypothesis_separation_rms": 0.210949,
-              "fit_rms": 0.064885,
-              "separation_ratio": 3.2511,
+              "relative_margin": 8.4298,
+              "hypothesis_separation_rms": 0.210711,
+              "fit_rms": 0.066425,
+              "separation_ratio": 3.17218,
               "scores": {
-                "-2": 0.139023,
-                "-1": 0.054902,
-                "0": 0.00421,
-                "1": 0.041523,
-                "2": 0.115163
+                "-2": 0.137915,
+                "-1": 0.054798,
+                "0": 0.004412,
+                "1": 0.041606,
+                "2": 0.114674
               },
               "reason": "aligned"
             }
@@ -887,9 +887,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.647,
-            "patch_mae_max": 2.54,
-            "patch_mae_mean": 1.648
+            "global_mae": 1.64,
+            "patch_mae_max": 2.464,
+            "patch_mae_mean": 1.64
           },
           {
             "frame": 2256,
@@ -1234,7 +1234,7 @@
             "reason": "aligned"
           },
           {
-            "ok": true,
+            "ok": false,
             "boundary": 1360,
             "probe_frames": [
               1330,
@@ -1300,18 +1300,18 @@
               1390
             ],
             "best_offset_frames": 0,
-            "relative_margin": 9.42233,
-            "hypothesis_separation_rms": 0.225751,
-            "fit_rms": 0.067415,
-            "separation_ratio": 3.34868,
+            "relative_margin": 2.51777,
+            "hypothesis_separation_rms": 0.322763,
+            "fit_rms": 0.185847,
+            "separation_ratio": 1.73671,
             "scores": {
-              "-2": 0.13484,
-              "-1": 0.058437,
-              "0": 0.004545,
-              "1": 0.047367,
-              "2": 0.126007
+              "-2": 0.319459,
+              "-1": 0.121501,
+              "0": 0.034539,
+              "1": 0.124206,
+              "2": 0.319167
             },
-            "reason": "aligned"
+            "reason": "shifted or ambiguous transition"
           },
           {
             "ok": false,
@@ -1380,16 +1380,16 @@
               2014
             ],
             "best_offset_frames": 0,
-            "relative_margin": 2.77754,
-            "hypothesis_separation_rms": 0.204573,
-            "fit_rms": 0.117176,
-            "separation_ratio": 1.74585,
+            "relative_margin": 2.40371,
+            "hypothesis_separation_rms": 0.294931,
+            "fit_rms": 0.172486,
+            "separation_ratio": 1.70988,
             "scores": {
-              "-2": 0.086787,
-              "-1": 0.056717,
-              "0": 0.01373,
-              "1": 0.051867,
-              "2": 0.086217
+              "-2": 0.261779,
+              "-1": 0.101265,
+              "0": 0.029751,
+              "1": 0.106434,
+              "2": 0.280128
             },
             "reason": "shifted or ambiguous transition"
           },
@@ -1460,16 +1460,16 @@
               2241
             ],
             "best_offset_frames": 0,
-            "relative_margin": 8.86268,
-            "hypothesis_separation_rms": 0.210949,
-            "fit_rms": 0.064885,
-            "separation_ratio": 3.2511,
+            "relative_margin": 8.4298,
+            "hypothesis_separation_rms": 0.210711,
+            "fit_rms": 0.066425,
+            "separation_ratio": 3.17218,
             "scores": {
-              "-2": 0.139023,
-              "-1": 0.054902,
-              "0": 0.00421,
-              "1": 0.041523,
-              "2": 0.115163
+              "-2": 0.137915,
+              "-1": 0.054798,
+              "0": 0.004412,
+              "1": 0.041606,
+              "2": 0.114674
             },
             "reason": "aligned"
           },
@@ -1563,54 +1563,55 @@
   "reviews": {
     "music": {
       "reviewer_id": "/root/chapel_music_sync",
-      "evidence_sha256": "5ab93be67b0c7f27292a86de7c5f01c76632177fc2346daa85c2fca7fd5d0ee8",
+      "evidence_sha256": "3249013869fec9947baac224f309c79b6f3c3ab912541b9ef8769558f39393ea",
       "verdict": "revise",
       "hard_blockers": [
-        "M30-RUNTIME-1984: Current full Linux-runtime round-1 QA fails rendered_frame_spotcheck at scene boundary frame 1984: separation_ratio 1.74585 is below the unchanged minimum 2.0 (fit_rms 0.117176, hypothesis_separation_rms 0.204573). Best offset is 0, so an actual displacement is not established, but temporal discrimination is insufficient and the mandatory mechanical gate fails. Revise the actual lighting/grade transition while preserving fresh DSP sample/frame timing and QA thresholds; close this blocker only with a new encoded MP4 and complete passing QA at this boundary and the other required probes."
+        "M30-R2-1360: Actual final round-2 rendered_frame_spotcheck fails temporal separation at frame 1360: separation_ratio 1.73671 is below unchanged minimum 2.0, with fit_rms 0.185847 and hypothesis_separation_rms 0.322763. Best offset is 0; this establishes insufficient temporal discrimination, not a measured scene displacement. The mandatory mechanical gate remains failed. Required resolution would be independently verified actual encoded media meeting the existing phase criterion at unchanged DSP times; this final repair does not achieve it.",
+        "M30-RUNTIME-1984: The prior frame-1984 blocker remains open in actual final round-2 media: separation_ratio 1.70988 is below 2.0, with fit_rms 0.172486 and hypothesis_separation_rms 0.294931, despite best offset 0. The current repair cannot be recorded as fixed or ready. Round 2 is the final permitted substantive repair for this request; this report does not request another creative attempt or a threshold exemption."
       ],
       "concerns": [],
       "evidence": [
-        "Fresh independent review of output/studio/linux-runtime/issue-30/full-round-1, not the earlier native rendering of a Linux-decoded WAV. Independently recomputed the exact bound digest from current candidate input bytes, video/contact-sheet/timeline bytes and qa.json. Video SHA256 489cd179d5bfc81a899f9085e79b396446282320f8da7d0828107f430ad0c9d1; QA SHA256 d1d8be74bf172bfd55d0a8bea55f184fff540509e81a3ae8c72040387906102a. The bound template embeds exactly this QA record.",
-        "The full current brief.candidate exactly equals the fresh Linux-runtime analysis candidate. Compared with the preserved prior candidate, only scene ranges changed: frame boundary 1965 to 1984, source sample 7109235; frame boundary 2212 to 2211, source sample 7472435. Excerpt [3934835,9010035), 3172 frames, all accent samples, strengths and containing-frame positions are unchanged. Every scene endpoint and accent was checked against the integer 48000 Hz/30 fps timebase.",
-        "Fresh analysis and provenance agree with brief source hashes: attachment c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d and decoded WAV 4239aa8cc50abb85c756ad34f254602f7c084559baf83357475ac72909f6f2cf. Planning and brief fingerprints agree. Native analysis remains hop 1115 and FFT 4458 with no overrides.",
-        "Ten of eleven current QA checks pass. Full/head/mid/tail decoded-audio lag and segment drift are zero; crop max_abs_diff is 0 and level difference is -0.011 dB. Independent ffprobe confirms 540x960 H264, 30/1 fps, 3172 frames, native 48000 Hz mono AAC and zero stream start times. Video duration is 105.733333 seconds and audio duration is 105.733000 seconds.",
-        "All spatial frame comparisons pass with maximum patch MAE 3.541 against 5.0. Scene transition offsets are 0 at frames 884,1360,1984,2211,2463. The four boundaries other than 1984 pass temporal checks; frame 1984 fails separation despite relative_margin 2.77754. This is mandatory QA evidence insufficiency, not a proven late scene or a musical objection.",
-        "Viewed the new full-runtime contact sheet as still-image evidence. Owner-supplied funeral-march atmosphere and victorious coda remain artistic direction. The strongest unresolved musical objection is whether the graded resolution and excerpt endpoints coincide naturally with the performed phrases; energy and terminal coverage cannot establish coda identity. No earlier pass was reused for this new media."
+        "Fresh independent review of output/studio/linux-runtime/issue-30/full-round-2 and current studio/projects/issue-30/candidates/cand-02. Recomputed the exact current bound digest from actual input/media/QA bytes and verified embedded QA equals qa.json. Video SHA256 4c0d0febcfe60f6c5a1792cde16c6f9160e154699b5023deb56383ff2a9c086e; QA SHA256 c844308be9d3866f02bb738028a63f083fc2bf25e70e2125c7473c27abd26806. No earlier media pass was reused.",
+        "The entire current candidate exactly equals fresh Linux-runtime analysis and is unchanged from failed full-runtime round 1. Excerpt [3934835,9010035), 3172 frames, scene boundaries [884,1360,1984,2211,2463] and all accent positions remain exact. Rechecked every scene sample/frame boundary and accent containing-frame mapping at 48000 Hz/30 fps. The only storyboard change is scene03 far palette [77,77,88] to [130,130,142].",
+        "Brief, fresh analysis and provenance agree on attachment SHA256 c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d and decoded source SHA256 4239aa8cc50abb85c756ad34f254602f7c084559baf83357475ac72909f6f2cf. Planning and brief fingerprints agree. Native hop 1115 and FFT 4458 remain unchanged without overrides.",
+        "Ten of eleven current QA categories pass. Full/head/mid/tail decoded-audio lag and segment drift are zero; crop max_abs_diff is 0; encoded level difference is -0.011 dB. Independent ffprobe confirms 540x960 H264, 30/1 fps, 3172 frames, native 48000 Hz mono AAC and zero stream start times. Video duration is 105.733333 seconds and audio duration is 105.733000 seconds.",
+        "All spatial frame comparisons pass, with maximum patch MAE 3.023 against 5.0. Every scene transition's best offset is 0. Frames 884,2211,2463 pass phase discrimination; frames 1360 and 1984 fail. The repair therefore leaves the original temporal blocker unresolved and produces another failing boundary. Current QA thresholds match the preceding round; neither the positive audio evidence nor the visual repair can waive these mandatory failures.",
+        "Viewed the current round-2 contact sheet as still-image evidence of candle and chapel grading. The funeral-march atmosphere and victorious coda remain owner-supplied artistic direction. The strongest unresolved musical objection is exact coincidence of the visual resolution with the performed coda; acoustic energy and terminal coverage cannot establish coda identity or onset. This finding is separate from the proven mechanical QA failures."
       ],
       "listening": "unavailable",
       "limitations": [
         "No audio was auditioned. Phrase completeness, musical naturalness, exact coda onset, accent suitability and perceptual balance remain unverified.",
-        "Full source recordings and /input WAV files were not accessed or independently rehashed. Source identity was checked through current brief, analysis, provenance and supplied source metadata.",
-        "Contact-sheet viewing is not continuous-motion or full-length viewing verification. This report covers the inspected local full-runtime media and bound QA, not success of a future render or Actions rerun."
+        "Full recordings and /input WAV files were not accessed or independently rehashed; source identity was checked through metadata, current brief, analysis and provenance.",
+        "Contact-sheet viewing is not continuous-motion or full-length viewing verification. This report concerns actual final-round local media and its mandatory failures, not any future render or Actions rerun."
       ]
     },
     "visual": {
       "reviewer_id": "/root/chapel_visual_viewer",
-      "evidence_sha256": "5ab93be67b0c7f27292a86de7c5f01c76632177fc2346daa85c2fca7fd5d0ee8",
+      "evidence_sha256": "3249013869fec9947baac224f309c79b6f3c3ab912541b9ef8769558f39393ea",
       "verdict": "revise",
       "hard_blockers": [
-        "Mandatory mechanical gate failure in the bound qa.json: studio:rendered_frame_spotcheck fails encoded transition phase at frame 1984. The best offset is 0 frames, but separation_ratio 1.74585 is below the unchanged minimum 2.0. This is inadequate phase separation, not a visually observed flame or viewpoint jump. It prevents candidate acceptance despite the readable candle arc. Revised actual encoded media must pass the unchanged gate; subjective visual approval cannot waive it."
+        "The bound round2 qa.json fails mandatory studio:rendered_frame_spotcheck encoded transition phase at frame 1360 (separation_ratio 1.73671) and frame 1984 (1.70988), both best_offset_frames 0 and both below the unchanged minimum 2.0. This is inadequate phase separation rather than a visibly observed flame or viewpoint jump. Candidate acceptance is prohibited despite the readable image. The repair budget is exhausted; this report does not request another automatic iteration or waive the gate."
       ],
       "concerns": [],
       "evidence": [
-        "Freshly examined actual Linux-runtime media at output/studio/linux-runtime/issue-30/full-round-1/video.mp4 and contact-sheet.jpg in the common scherzo3 worktree. Video SHA256 489cd179d5bfc81a899f9085e79b396446282320f8da7d0828107f430ad0c9d1, 540x960, 30fps, 3172 frames. Earlier native-rendering passes were not reused.",
-        "Verified raw current project.json, brief.json and storyboard.json hashes from the issue30 candidate worktree, actual video/contact-sheet/timeline hashes and qa.json hash against full-round-1/editorial.bound.template.json. Recomputed the supplied evidence digest exactly. Current brief scene boundaries are 884, 1360, 1984, 2211 and 2463.",
-        "Inspected native decoded frames 1350, 1530, 2520, 3171 and every 90th frame from 0 through 3150 plus 3171 as an ordered full-duration overview. Inspected every consecutive frame in [0,90), [854,915), [1330,1391), [1570,1660), [1954,2015), [2181,2242), [2433,2494) and[3082,3172). These include every boundary, the changed 1984/2211 transitions, middle, opening and ending. Viewed the actual new contact sheet as still evidence only.",
-        "Visible aesthetic judgment: no additional visual blocker was observed in those ranges. Wick, wax, holder and stone base remain readable; the single flame stays on its wick. Grade changes are progressive, including the newly positioned 1984/2211 transitions. No doubled/detached flame, lost base, viewpoint reset, one-frame exposure step or exit flash was observed. These observations do not overturn the mechanical failure at 1984.",
-        "The small fragile flame and stable dark chapel give a visible question of persistence; the larger upright final flame and gold on surrounding stone answer it. The strongest aesthetic counterargument is the long fragile phase with little action; its restraint supports solemn waiting and makes the ending contrast legible, so no extra cuts, particles or camera motion are requested. Funeral-march-like solemnity and a victorious conclusion are owner-directed imagery, not inferred musical facts or an identification of the audible coda."
+        "Freshly inspected output/studio/linux-runtime/issue-30/full-round-2/video.mp4 and contact-sheet.jpg. Video SHA256 4c0d0febcfe60f6c5a1792cde16c6f9160e154699b5023deb56383ff2a9c086e, 540x960 at 30fps, 3172 frames. Earlier passes were not reused.",
+        "Verified raw current project/brief/storyboard hashes, actual video/contact-sheet/timeline hashes and qa.json hash against full-round-2/editorial.bound.template.json; recomputed the supplied evidence digest exactly. The bound local QA record fails only rendered_frame_spotcheck; the other 10 checks pass. The known mandatory failure determines revise.",
+        "Inspected native decoded frames 1350, 1530, 2520, 3171; every 90th frame from 0 through 3150 plus 3171; and every consecutive frame in [0,90), [854,915), [1330,1391), [1570,1660), [1954,2015), [2181,2242), [2433,2494), [3082,3172). These cover all boundaries, both edges of the changed scene03, middle, opening and ending. The official contact sheet was used as still evidence only.",
+        "Separate visible aesthetic judgment: no additional visual blocker was observed in these new bytes. Stronger scene03 diffuse light reveals more chapel stone but keeps the wick, wax, holder and base readable; the tiny flame stays on its wick. The room remains dark and cool before the golden conclusion. Grade changes at 1360/1984 are progressive in the inspected frames, with no doubled/detached flame, viewpoint reset, lost base, one-frame exposure step or exit flash observed. These observations do not overturn the mechanical failure.",
+        "The fragile flame provides a subject to watch while the stable composition waits; the larger final flame and golden surrounding stone provide a visible answer. The strongest aesthetic counterargument remains low action during the long fragile phase, but that restraint supports the owner requested solemnity and makes the final contrast legible. Extra cuts, camera motion or particles are not warranted. This describes owner-directed imagery, not a DSP emotion claim or an audible coda identification."
       ],
       "listening": "not_applicable",
       "limitations": [
         "Observation used ordered decoded frames and sheets; no real-time or continuous playback was performed. Real-time perceptual smoothness and sustained 105.733333-second watchability are not established.",
-        "Only the listed native frames, overview samples and consecutive ranges were visually inspected. Unobserved intermediate frames are not claimed as viewed; contact sheets alone were not treated as continuous-motion evidence.",
-        "No audio was listened to and no complete source recording or WAV was accessed. Exact musical coda entry, phrasing and audible naturalness are outside this visual role. This report covers only the bound failed round1 media and does not approve future round2 bytes."
+        "Only the listed native frames, overview samples and consecutive ranges were viewed. Unobserved intermediate frames are not claimed as inspected; contact sheets alone were not treated as continuous-motion evidence.",
+        "No audio was listened to and no complete source recording or WAV was accessed. Exact musical coda entry, phrasing and audible naturalness are outside this visual role. This report records the failed final round2 media and grants no approval for further bytes."
       ]
     }
   },
   "decision": {
     "editor_id": "codex-scherzo3-20261031",
-    "verdict": "revise",
-    "rationale": "Full Linux-runtime reproduction uses the entire fresh analyzer candidate. Excerpt endpoints and accents are unchanged; scene differences are automatic environment-dependent outputs, not manual edits. Both independent reviewers record the actual encoded QA failure: offset0 but insufficient temporal separation at 1984. Do not waive or round the failure. Use the one remaining substantive round2 repair to strengthen the actual diffuse grade contrast, preserving exact DSP timings, source, renderer and QA thresholds. Listening unavailable.",
+    "verdict": "stop",
+    "rationale": "Stop unmet after initial creation plus two substantive creative repairs. Full Linux-runtime round2 changes only scene03 diffuse palette contrast, preserving source, complete fresh DSP candidate, flame/camera and QA thresholds. Audio synchronization and10/11 categories pass, but actual encoded transition discrimination fails at1360(separation1.73671) and1984(1.70988), below2.0 despite best offset0. Both independent reviewers bind this failure to the new media. Do not waive the mandatory gate, weaken thresholds, replace source, dispatch unready inputs, or reset the repair budget in another session/candidate. Preserve the Draft PR and local diagnostic video; no completed candidate, adoption or publication. Listening unavailable.",
     "resolutions": []
   }
 }
