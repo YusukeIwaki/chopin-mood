@@ -3,16 +3,16 @@
   "round": 1,
   "creator_id": "codex-scherzo3-20261031",
   "input_sha256": {
-    "project.json": "5ffaefa8496637653cb8a7abd81b1e583e7361a107a4a6bb7ec79f675c302db8",
-    "brief.json": "25e7b7e2dd7e4650e1d5a652e3aba93d2bd5331965ab05f0ebe0f983e247db2d",
+    "project.json": "d5994998aaf1af6155e6c718cb7b45a2b86ffca607cad5c0525990e4646aca5f",
+    "brief.json": "31bdc667f658a2fb38bf863bed8fc9e6d4e26329ccdcd74d4606d1011ed048d7",
     "storyboard.json": "05fd35292d6933da2ccf7250446866bce0c3c9687cea09fbf68153aa66f64b4f"
   },
   "media_sha256": {
-    "video.mp4": "921f9cdb9f83bc207b0b1515fd346e10e136e22dd5cbeb8575f918388142030b",
-    "contact-sheet.jpg": "598861206733b877b48a4f27426ae1f6022d972300ef29c72820395ed12efd7b",
+    "video.mp4": "db3c2192281ae6aae19e53fa5729c298020177d8016c395631b15a3a9bed4d5e",
+    "contact-sheet.jpg": "a511b629b4b2bc7359cb0170e152acb376ecfb3553115155549563a91c0d700a",
     "timeline.html": "5106b1b7be975fdb41e5c47bebaba6870849c4812efcd0d3422771e88aab7a7c"
   },
-  "qa_sha256": "eb20ab2e5720043451672fc26bf30e9f38532493a0d12517e208d3101749127a",
+  "qa_sha256": "cea6ec42cb616c89320d62cb2f9869d7d3c1111b54d7fc00db7be689a65a9953",
   "qa": {
     "checks": [
       {
@@ -120,7 +120,7 @@
       {
         "name": "studio:input_hash_unchanged",
         "pass": true,
-        "sha256": "5ac34e31cd550379..."
+        "sha256": "4239aa8cc50abb85..."
       },
       {
         "name": "studio:rendered_frame_spotcheck",
@@ -547,9 +547,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.789,
-            "patch_mae_max": 2.582,
-            "patch_mae_mean": 1.79
+            "global_mae": 1.786,
+            "patch_mae_max": 2.609,
+            "patch_mae_mean": 1.787
           },
           {
             "frame": 1869,
@@ -557,9 +557,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.021,
-            "patch_mae_max": 2.699,
-            "patch_mae_mean": 2.022
+            "global_mae": 2.027,
+            "patch_mae_max": 3.137,
+            "patch_mae_mean": 2.027
           },
           {
             "frame": 1870,
@@ -567,9 +567,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.691,
-            "patch_mae_max": 2.405,
-            "patch_mae_mean": 1.691
+            "global_mae": 1.701,
+            "patch_mae_max": 2.569,
+            "patch_mae_mean": 1.701
           },
           {
             "frame": 1953,
@@ -577,9 +577,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.816,
-            "patch_mae_max": 2.525,
-            "patch_mae_mean": 1.816
+            "global_mae": 1.815,
+            "patch_mae_max": 2.578,
+            "patch_mae_mean": 1.815
           },
           {
             "frame": 1954,
@@ -587,9 +587,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.236,
-            "patch_mae_max": 3.226,
-            "patch_mae_mean": 2.237
+            "global_mae": 2.242,
+            "patch_mae_max": 3.428,
+            "patch_mae_mean": 2.243
           },
           {
             "frame": 1955,
@@ -597,9 +597,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.955,
-            "patch_mae_max": 2.663,
-            "patch_mae_mean": 1.956
+            "global_mae": 1.97,
+            "patch_mae_max": 2.716,
+            "patch_mae_mean": 1.971
           },
           {
             "frame": 1964,
@@ -607,9 +607,9 @@
               "scene_start_pre"
             ],
             "ok": true,
-            "global_mae": 1.822,
-            "patch_mae_max": 2.577,
-            "patch_mae_mean": 1.823
+            "global_mae": 1.828,
+            "patch_mae_max": 2.674,
+            "patch_mae_mean": 1.829
           },
           {
             "frame": 1965,
@@ -617,9 +617,9 @@
               "scene_start"
             ],
             "ok": true,
-            "global_mae": 1.859,
-            "patch_mae_max": 2.532,
-            "patch_mae_mean": 1.858,
+            "global_mae": 1.854,
+            "patch_mae_max": 2.55,
+            "patch_mae_mean": 1.853,
             "transition_timing": {
               "ok": true,
               "boundary": 1965,
@@ -687,16 +687,16 @@
                 1995
               ],
               "best_offset_frames": 0,
-              "relative_margin": 8.51291,
-              "hypothesis_separation_rms": 0.190806,
-              "fit_rms": 0.061767,
-              "separation_ratio": 3.08914,
+              "relative_margin": 9.07834,
+              "hypothesis_separation_rms": 0.190558,
+              "fit_rms": 0.059417,
+              "separation_ratio": 3.20715,
               "scores": {
-                "-2": 0.095706,
-                "-1": 0.048818,
-                "0": 0.003815,
-                "1": 0.036293,
-                "2": 0.097723
+                "-2": 0.095993,
+                "-1": 0.048958,
+                "0": 0.00353,
+                "1": 0.03558,
+                "2": 0.09618
               },
               "reason": "aligned"
             }
@@ -707,9 +707,9 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.785,
-            "patch_mae_max": 2.516,
-            "patch_mae_mean": 1.786
+            "global_mae": 1.788,
+            "patch_mae_max": 2.546,
+            "patch_mae_mean": 1.789
           },
           {
             "frame": 2020,
@@ -867,16 +867,16 @@
                 2242
               ],
               "best_offset_frames": 0,
-              "relative_margin": 9.91648,
-              "hypothesis_separation_rms": 0.212511,
-              "fit_rms": 0.063952,
-              "separation_ratio": 3.32297,
+              "relative_margin": 9.97927,
+              "hypothesis_separation_rms": 0.212304,
+              "fit_rms": 0.063706,
+              "separation_ratio": 3.33254,
               "scores": {
-                "-2": 0.102075,
-                "-1": 0.050394,
-                "0": 0.00409,
-                "1": 0.044647,
-                "2": 0.099359
+                "-2": 0.102282,
+                "-1": 0.050786,
+                "0": 0.004059,
+                "1": 0.04456,
+                "2": 0.099012
               },
               "reason": "aligned"
             }
@@ -1077,9 +1077,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.883,
-            "patch_mae_max": 2.892,
-            "patch_mae_mean": 1.884
+            "global_mae": 1.878,
+            "patch_mae_max": 2.925,
+            "patch_mae_mean": 1.878
           },
           {
             "frame": 2734,
@@ -1087,9 +1087,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.091,
-            "patch_mae_max": 3.15,
-            "patch_mae_mean": 2.092
+            "global_mae": 2.096,
+            "patch_mae_max": 3.112,
+            "patch_mae_mean": 2.097
           },
           {
             "frame": 2735,
@@ -1097,9 +1097,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.747,
-            "patch_mae_max": 2.684,
-            "patch_mae_mean": 1.748
+            "global_mae": 1.749,
+            "patch_mae_max": 2.639,
+            "patch_mae_mean": 1.749
           },
           {
             "frame": 2909,
@@ -1380,16 +1380,16 @@
               1995
             ],
             "best_offset_frames": 0,
-            "relative_margin": 8.51291,
-            "hypothesis_separation_rms": 0.190806,
-            "fit_rms": 0.061767,
-            "separation_ratio": 3.08914,
+            "relative_margin": 9.07834,
+            "hypothesis_separation_rms": 0.190558,
+            "fit_rms": 0.059417,
+            "separation_ratio": 3.20715,
             "scores": {
-              "-2": 0.095706,
-              "-1": 0.048818,
-              "0": 0.003815,
-              "1": 0.036293,
-              "2": 0.097723
+              "-2": 0.095993,
+              "-1": 0.048958,
+              "0": 0.00353,
+              "1": 0.03558,
+              "2": 0.09618
             },
             "reason": "aligned"
           },
@@ -1460,16 +1460,16 @@
               2242
             ],
             "best_offset_frames": 0,
-            "relative_margin": 9.91648,
-            "hypothesis_separation_rms": 0.212511,
-            "fit_rms": 0.063952,
-            "separation_ratio": 3.32297,
+            "relative_margin": 9.97927,
+            "hypothesis_separation_rms": 0.212304,
+            "fit_rms": 0.063706,
+            "separation_ratio": 3.33254,
             "scores": {
-              "-2": 0.102075,
-              "-1": 0.050394,
-              "0": 0.00409,
-              "1": 0.044647,
-              "2": 0.099359
+              "-2": 0.102282,
+              "-1": 0.050786,
+              "0": 0.004059,
+              "1": 0.04456,
+              "2": 0.099012
             },
             "reason": "aligned"
           },
@@ -1563,54 +1563,52 @@
   "reviews": {
     "music": {
       "reviewer_id": "/root/chapel_music_sync",
-      "evidence_sha256": "6183f549026203af3efd11bf6e8d627904269235a01b3d37abab5cf943cc1694",
+      "evidence_sha256": "4d0bde0b441e63fc96b19fc27181ab0ad37a1a20be2f611516cb875555b15758",
       "verdict": "pass",
       "hard_blockers": [],
       "concerns": [],
       "evidence": [
-        "Mechanical synchronization review of studio/projects/issue-30/candidates/cand-02 and output/studio/issue-30/cand-02/round-1. The candidate exactly equals the fresh DSP output: source samples [3934835,9010035), 3172 frames at 30/1 fps. All scene sample/frame boundaries and accent containing-frame mappings are exact, with original sample-derived seconds retained.",
-        "source-meta.json, brief.json, analysis/plan-context.json and provenance.json agree on attachment SHA256 c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d and decoded source SHA256 5ac34e31cd550379bb463a7569ec283d35ee1435275cfe32fd344f1076512027. Native analysis is 48000 Hz, hop 1115 and FFT 4458 without overrides. The source-ending candidate leaves only 1165 source samples after its endpoint, less than one video frame.",
-        "Recomputed video SHA256 921f9cdb9f83bc207b0b1515fd346e10e136e22dd5cbeb8575f918388142030b and QA SHA256 eb20ab2e5720043451672fc26bf30e9f38532493a0d12517e208d3101749127a. All 11 recorded QA checks pass. Full/head/mid/tail audio lag and segment drift are zero; crop comparison has max_abs_diff 0; encoded level difference is -0.011 dB.",
-        "Inspected all recorded decoded-frame probes, including first/last frames, all ten accent neighborhoods and scene boundaries 884,1360,1965,2212,2463. Every transition offset is zero; minimum separation ratio is 2.5908 against the unchanged 2.0 requirement. Maximum patch MAE is 3.226 and all pixel comparisons pass.",
-        "Round-0 temporal ambiguity was inspected separately. Round-1 actual media resolves the four failed boundaries without changing DSP timing or relaxing QA. Independent ffprobe confirms 540x960 H264 at 30/1 fps, 3172 frames, mono 48000 Hz AAC and zero stream start times. Video duration is 105.733333 seconds; audio duration is 105.733000 seconds.",
-        "Viewed the round-1 contact sheet, including the progression from a small flame to broader warm illumination. Flame flicker is explicitly independent of note timing; sparse DSP accents illuminate the surrounding stone. Strongest unresolved objection is whether that visual resolution coincides with the actual musical coda: terminal recording coverage and acoustic energy cannot establish coda identity or its onset.",
-        "Independently recomputed the final bound digest. Only project.engine_sha changed from my inspected snapshot to 0eac2f781b97c2fcefb952b6f6e213248e94a230; brief, storyboard, media and QA hashes remain identical. The trusted-main merge has no engine, asset or dependency differences from the inspected engine commit."
+        "Fresh review of studio/projects/issue-30/candidates/cand-02 and output/studio/issue-30/cand-02/linux-reproduction/round-1 in the chopin-mood-scherzo3 worktree. This is the same creative round 1 reproduced for the Linux decoding environment. The entire candidate object exactly equals the preserved macOS candidate and both fresh Linux analysis outputs; storyboard bytes and owner direction are unchanged.",
+        "source-meta-linux.json records Ubuntu 24.04 linux/amd64, ffmpeg 6.1.1-3ubuntu5 and canonical-riff-v1 decoding. Its decoded WAV SHA256 4239aa8cc50abb85c756ad34f254602f7c084559baf83357475ac72909f6f2cf is recorded as exactly matching the original candidate Actions decoding. I independently checked that current brief, fresh analysis, render analysis and provenance use this same new hash. Original attachment SHA256 remains c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d; sample count remains 9011200 at 48000 Hz.",
+        "Rechecked source samples [3934835,9010035), 3172 frames at 30/1 fps, every scene endpoint and all ten accent positions. Integer sample/frame mapping and exact sample-derived seconds are preserved. The source-ending endpoint leaves 1165 source samples, less than one frame. Native hop 1115 and FFT 4458 remain unchanged without overrides; no manual timing changes or fixed BPM were introduced.",
+        "Recomputed new video SHA256 db3c2192281ae6aae19e53fa5729c298020177d8016c395631b15a3a9bed4d5e and QA SHA256 cea6ec42cb616c89320d62cb2f9869d7d3c1111b54d7fc00db7be689a65a9953. All 11 current QA checks pass. Whole/head/mid/tail audio lag and segment drift are zero; crop max_abs_diff is 0; level difference is -0.011 dB. Independent ffprobe confirms 540x960 H264 at 30/1 fps, 3172 frames, 48000 Hz mono AAC and zero stream start times. Video duration is 105.733333 seconds; audio duration is 105.733000 seconds.",
+        "Inspected current encoded-frame QA at first/last frames, interiors, all accent neighborhoods and scene boundaries 884,1360,1965,2212,2463. Every transition has offset 0; minimum separation ratio is 2.5908 against the unchanged 2.0 requirement. Maximum patch MAE is 3.428 against 5.0. Re-viewed the new contact sheet, including small-flame and broad-warm-light states. The strongest unresolved musical objection is exact correspondence of the visual resolution to the coda: terminal coverage and acoustic energy cannot establish coda identity or onset.",
+        "Independently recomputed the final evidence digest and verified actual input/media/QA bytes against editorial.bound.template.json. Only project.engine_sha changed from my inspected Linux snapshot to 6395e94764a2a0e1d3aae9a0f8a4e68041b8071e; the new source-bound brief, storyboard, media and QA remain unchanged. Runtime/assets/dependency paths are identical to the inspected engine commit. Rendered inputs, source metadata, planning/brief fingerprints, provenance, renderer bytes and registered asset hashes all agree."
       ],
       "listening": "unavailable",
       "limitations": [
-        "No audio was auditioned. This pass establishes the inspected mechanical synchronization and provenance evidence, not phrase naturalness, the exact coda onset, victorious musical resolution or perceptual balance.",
-        "The funeral-march atmosphere and victorious coda are owner-supplied artistic direction; they were not inferred or verified from RMS, activity, chroma or candidate scores.",
-        "Full source recordings were not accessed or independently rehashed. Contact sheets do not establish continuous motion; calibration and negative tests were inspected as code rather than executed by this reviewer.",
-        "CI was still running at review time; this review makes no claim that CI succeeded."
+        "No audio was auditioned. This mechanical pass does not establish musical naturalness, phrase endpoints, exact coda onset, victorious resolution or perceptual balance.",
+        "The funeral-march atmosphere and victorious coda are owner-supplied artistic direction, not conclusions drawn from RMS, chroma, activity or candidate scores. Source-ending coverage alone does not verify those musical meanings.",
+        "Full source recordings and source-linux.wav were not accessed or independently rehashed. Exact Actions-source byte agreement is documented by source-meta-linux.json and checked against the current metadata/analysis/provenance chain. Contact sheets do not prove continuous motion; calibration tests and candidate Actions rerun success were not independently audited by this reviewer."
       ]
     },
     "visual": {
       "reviewer_id": "/root/chapel_visual_viewer",
-      "evidence_sha256": "6183f549026203af3efd11bf6e8d627904269235a01b3d37abab5cf943cc1694",
+      "evidence_sha256": "4d0bde0b441e63fc96b19fc27181ab0ad37a1a20be2f611516cb875555b15758",
       "verdict": "pass",
       "hard_blockers": [],
       "concerns": [],
       "evidence": [
-        "Independently read studio-review and docs/12_CREATIVE_REVIEW_PROTOCOL.md, the issue30 brief/storyboard and current project metadata. Treated the near-extinguished candle, funeral-march-like solemnity and victorious conclusion as owner-directed artistic imagery; no emotional or coda identification was inferred from DSP activity.",
-        "Verified the raw project.json, brief.json and storyboard.json hashes, video.mp4/contact-sheet.jpg/timeline.html hashes and qa.json hash against output/studio/issue-30/cand-02/round-1/editorial.bound.template.json. Recomputed the supplied evidence digest exactly. The bound local QA record reports all 11 checks passing; this is not a claim about still-running CI.",
-        "Observed current round1 native 540x960 stills and the official round1 contact-sheet.jpg. Also decoded native-size frames1350,1530,2520,3171 directly from the final encoded round1 video.mp4. Wax folds, the wick, metal holder and stone base remain readable against the dark chapel. The early tiny flame and much larger upright final flame are visibly distinct; warm gold reaches the wax and surrounding stone without losing the candle silhouette.",
-        "From the final encoded round1 video.mp4, inspected every 90th frame from0 through3150 plus frame3171 as an ordered full-duration overview. Inspected all consecutive frames in [0,90), [854,915), [1330,1391), [1570,1660), [1935,1996), [2182,2243), [2433,2494) and [3082,3172). These include every scene boundary, a middle accent region, opening and ending. Frames were viewed as ordered decoded images/sheets, with reduced views for small-screen readability.",
-        "Additionally inspected all 120 decoded consecutive frames of each current round1 engineering boundary clip for boundaries884 and1965. The single flame stays on its wick, and changes in the surrounding grade remain progressive. No detached/doubled flame, viewpoint reset, lost base, single-frame grade jump or distracting overlay was observed in the inspected ranges.",
-        "What remains is one large, readable candle and the stable dark chapel; what changes is the small flame lean/size, restrained scale and the concluding golden illumination. The visual question of whether the fragile flame will persist gives the held composition an observable subject, and the final larger flame/light answers it. The strongest counterargument is that the long fragile phase has little action; here that restraint supports the requested solemn waiting and gives the ending a clear contrast, so I do not recommend extra cuts, camera motion or particles.",
-        "Compared actual adopted-release images: output/studio/prior/studio-pr-6/comparison.png, studio-issue-20/contact-sheet.jpg and studio-issue-24/contact-sheet.jpg. The foreground candle differs in focal subject and spatial scale from all three. Although both new works use chapel architecture, this close candle/base composition is distinguishable from issue29s deep window/aisle composition. Comparison was of supplied still/contact-sheet evidence, not prior continuous playback."
+        "Reviewed the current Linux-reproduction brief/storyboard and final project metadata under the issue30 worktree. The near-extinguished candle, funeral-march-like solemnity and victorious conclusion are owner-directed artistic imagery; no emotion or coda identification was inferred from DSP activity. This is the same creative round1 environment reproduction; the earlier Mac-media pass was not reused.",
+        "Verified raw project.json, brief.json and storyboard.json hashes, video.mp4/contact-sheet.jpg/timeline.html hashes and qa.json hash against output/studio/issue-30/cand-02/linux-reproduction/round-1/editorial.bound.template.json. Recomputed the supplied evidence digest exactly. The actual observed video hash is db3c2192281ae6aae19e53fa5729c298020177d8016c395631b15a3a9bed4d5e. The bound local QA record reports all 11 checks passing; visual approval does not replace other Studio gates.",
+        "Freshly inspected the Linux contact-sheet.jpg and native 540x960 frames 1350, 1530, 2520 and 3171 decoded directly from the new Linux video.mp4. Wax folds, wick, metal holder and stone base remain readable. The early tiny flame and larger upright final flame are visibly distinct; warm gold reaches wax and surrounding stone while preserving the candle silhouette.",
+        "From the new Linux video.mp4, inspected every 90th frame from 0 through 3150 plus frame 3171 as an ordered full-duration overview. Inspected all consecutive frames in [0,90), [854,915), [1330,1391), [1570,1660), [1935,1996), [2182,2243), [2433,2494) and [3082,3172). These include every scene boundary, a middle accent region, opening and ending. Observation used ordered decoded images/sheets and reduced views for small-screen readability.",
+        "In these freshly decoded Linux ranges, the single flame stays on its wick, and surrounding grade changes remain progressive. No detached/doubled flame, viewpoint reset, lost base, single-frame grade jump, distracting overlay or exit flash was observed. The final larger flame and warm space remain readable through frame 3171.",
+        "What remains is one large readable candle and the stable chapel; what changes is flame lean/size, restrained scale and concluding golden illumination. Whether the fragile flame persists supplies a visible question, and the stronger final flame/light answers it. The strongest counterargument is the long fragile phase with little action; its restraint supports the requested solemn waiting and gives the ending a clear contrast, so I do not recommend extra cuts, camera motion or particles.",
+        "Compared the newly observed candle composition with previously inspected actual adopted-release images: the studio-pr-6 20-second comparison frame and issue20/24 contact sheets under output/studio/prior in the common scherzo3 worktree. Its foreground candle differs in focal subject and spatial scale. Although both new works use chapel architecture, this close candle/base composition remains distinguishable from issue29’s deep window/aisle composition. Prior-work comparison was limited to those actual still/contact-sheet observations, not prior continuous playback."
       ],
       "listening": "not_applicable",
       "limitations": [
-        "No real-time or continuous video playback was available: native CUA reported the Mac locked, and IAB blocked the local file protocol. Review used decoded ordered frames and sheets; it does not establish real-time perceptual smoothness or sustained 105.733333-second watchability.",
-        "Only the listed consecutive ranges and overview samples of the final MP4 were visually inspected; unobserved intermediate frames are not claimed as viewed. Contact sheets alone were not treated as continuous-motion evidence.",
-        "No audio was listened to in this visual-viewer role. The exact musical start of the coda, phrasing and audible naturalness are outside this verdict. Local QA and other mandatory gates remain separate from visual approval."
+        "No real-time or continuous playback was performed for this Linux review. Observation used decoded ordered frames and sheets; it does not establish real-time perceptual smoothness or sustained 105.733333-second watchability. No current Mac-lock limitation is claimed.",
+        "Only the listed consecutive ranges, native frames and overview samples of the new Linux MP4 were visually inspected; unobserved intermediate frames are not claimed as viewed. Contact sheets alone were not treated as continuous-motion evidence.",
+        "No audio was listened to in this visual-viewer role, and neither the complete recordings nor source-linux.wav was accessed. The exact musical start of the coda, phrasing and audible naturalness are outside this verdict. Mechanical QA and other mandatory Studio gates remain separate."
       ]
     }
   },
   "decision": {
     "editor_id": "codex-scherzo3-20261031",
     "verdict": "ready",
-    "rationale": "Choose one candle treatment: a small vulnerable flame persists through a solemn dark chapel and concludes in steady flame and broad golden illumination. Round1 actual lighting resolves the failed temporal discrimination without altering audio or DSP times; both independent roles pass within their stated limits. The exact musical coda onset remains unverified by ear.",
+    "rationale": "Choose the fragile-to-gold candle arc after new Linux-source media review. The unchanged original MP3 now yields the exact canonical WAV bytes seen in Actions using Linux/amd64 decoding. Fresh DSP candidate/timing is unchanged, and all11 local QA checks plus both independent roles pass. This remains creative round1; the environment retry does not reset the repair budget. Coda onset and musical naturalness have not been confirmed by ear.",
     "resolutions": []
   }
 }

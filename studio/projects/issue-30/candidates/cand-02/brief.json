@@ -177,9 +177,9 @@
   },
   "source_hashes": {
     "attachment_sha256": "c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d",
-    "decoded_wav_sha256": "5ac34e31cd550379bb463a7569ec283d35ee1435275cfe32fd344f1076512027"
+    "decoded_wav_sha256": "4239aa8cc50abb85c756ad34f254602f7c084559baf83357475ac72909f6f2cf"
   },
-  "fingerprint": "186b18383671913ef274c0d40190bc649bf300c9303a22568d47ab6d8241ddcd",
+  "fingerprint": "441be032140fcd7ca8f612e2f944e2550b0affc7ad562689aab099acaa3a71cf",
   "piece": "ショパン スケルツォ第3番（本人申告）。後半録音 scherzo3_2.mp3。",
   "period": null,
   "art_notes": "短調で火が今にも消えそうなろうそく。葬送行進曲を思わせる雰囲気。ただ最後には勝利のようなコーダ。\n\n消えかけの小さな炎の危うさと、葬送行進曲を思わせる厳かさから始め、最後は勝利を感じるコーダへ向かう映像にしたい。「葬送行進曲」は雰囲気の比喩であり、別の曲を指定するものではない。コーダを含む構成を重視する。\n\n本人演奏の音源を保持し、音楽の時刻はDSPで自動計算する。前半録音とは別作品として制作する。",
