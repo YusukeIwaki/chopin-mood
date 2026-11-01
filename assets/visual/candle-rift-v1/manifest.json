@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "bundle_id": "candle-rift-v1",
+  "provider": "Codex built-in image_gen",
+  "model": "not exposed",
+  "created_on": "2026-11-01",
+  "prompts": "assets/visual/candle-rift-v1/PROMPTS.md",
+  "files": {
+    "world.png": "beb545fb91a260c69d18e6d17d49bda3aa510fcd446adba5720e4099832a7756"
+  },
+  "candle_reference": {
+    "path": "assets/visual/nocturne-chapel-v1/candle.png",
+    "sha256": "4d4e76645d7f918a364e9395993b56ef3f3ce6f1985ba8a67b317dfb108d603d",
+    "wick_anchor": [
+      0.503,
+      0.463
+    ]
+  }
+}

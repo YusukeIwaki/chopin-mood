@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "profile_id": "chopin-scherzo3-coda-v1",
+  "reference_id": "chopin-op39-v1",
+  "primary": "039-1-TR.krn.notes.json",
+  "corroborating": "039-1-BH.krn.notes.json",
+  "source": {
+    "repository": "pl-wnifc/humdrum-chopin-first-editions",
+    "commit": "95dfb105c1669c72d10b04088566154f12d3dc1c",
+    "url": "https://github.com/pl-wnifc/humdrum-chopin-first-editions/tree/95dfb105c1669c72d10b04088566154f12d3dc1c",
+    "path": "kern/039-1-TR.krn"
+  },
+  "license": {
+    "id": "CC-BY-4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution_path": "ATTRIBUTION.md",
+    "commercial_adaptation": true
+  },
+  "derivation": {
+    "script": "scripts/build_score_reference.py",
+    "parser_version": 1,
+    "repeat_policy": "not unrolled; explicit written score order",
+    "grace_policy": "zero duration; not in chroma occupancy",
+    "tie_policy": "segments sustain occupancy; continuation is not an attack",
+    "chord_rhythm_policy": "first subtoken advances spine; explicit per-note durations preserved",
+    "pitch_policy": "explicit kern sounding-pitch spelling, including naturals; octave lines are display only; no key inference"
+  },
+  "landmarks": [
+    {
+      "id": "major_arrival",
+      "score_quarter": [
+        1623,
+        1
+      ],
+      "measure": 542,
+      "beat": [
+        1,
+        1
+      ],
+      "meaning": "C-sharp major arrival; does not label the entire coda as major"
+    },
+    {
+      "id": "both_hands_octaves",
+      "score_quarter": [
+        1699,
+        1
+      ],
+      "measure": 567,
+      "beat": [
+        2,
+        1
+      ],
+      "meaning": "first strict both-hands octave attack; preceding beat has RH octaves and LH single B-sharp"
+    },
+    {
+      "id": "fast_coda",
+      "score_quarter": [
+        1716,
+        1
+      ],
+      "measure": 573,
+      "beat": [
+        1,
+        1
+      ],
+      "meaning": "fast coda; new LH C-sharp2 while RH G-sharp3 continues a tie"
+    }
+  ],
+  "files": {
+    "039-1-TR.krn": "96c34477a6ccb3ca6e39b18c00d6671d94c0180f7c5e7567b84323d523242204",
+    "039-1-TR.krn.notes.json": "fe055a05b414e079bed92f933d0c61cb13e19d3dd4b98f2b0e44068802376bd2",
+    "039-1-BH.krn": "6952facf47dab370962099f4ddceb48b0ff024138847b554e6fd688aa995f3f0",
+    "039-1-BH.krn.notes.json": "105abd0c253834f21a145991a535fba14f50435bf0ce3c5d3d76a21593734954",
+    "LICENSE.txt": "430533a2646f16c8c7b58d919b13e0f8dfc5afb334c1915eceea2bf8c19551f9",
+    "ATTRIBUTION.md": "19a488af8218173dbcb78608c45110ad08ac8850e38ced8b32a958bffab837c1"
+  }
+}

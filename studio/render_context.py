@@ -155,7 +155,46 @@ def prepare_context(wav, candidate_path, storyboard_path, brief_path, *,
     layouts = cleanmod.make_layouts(seed, width, height)
     if storyboard.get("renderer") is not None:
         from . import config, storm_recital
-        if storyboard["renderer"] in config.CHAPEL_RENDERER_IDS:
+        if storyboard["renderer"] == config.CANDLE_RIFT_RENDERER_ID:
+            from . import candle_rift as provider
+            layout_key = "candle_rift"
+            if cand.get("analysis_profile") != "chopin-scherzo3-coda-v1":
+                raise ValueError("candle rift requires its trusted score analysis profile")
+            landmarks = cand.get("score_landmarks", [])
+            expected_ids = ["major_arrival", "both_hands_octaves", "fast_coda"]
+            if [e.get("id") for e in landmarks] != expected_ids:
+                raise ValueError("candle rift requires all ordered score landmarks")
+            for event in landmarks:
+                sample, frame = event["source_sample"], event["frame"]
+                if (type(sample) is not int or type(frame) is not int
+                        or not clip["start_sample"] <= sample < clip["end_sample"]
+                        or tb.sample_to_frame(clip["start_sample"], sample) != frame):
+                    raise ValueError("score landmark sample/frame mismatch")
+            major, octave, fast = [e["frame"] for e in landmarks]
+            if not 0 < major < octave < fast < clip["n_frames"]:
+                raise ValueError("score landmarks must be ordered inside clip")
+            if [s["start_frame"] for s in det_scenes] != [0, major, octave]:
+                raise ValueError("rift scene boundaries must equal score landmarks")
+            controls["score_fast_frame"] = fast
+            positions = np.array([tb.frame_boundary_sample(clip["start_sample"], f)
+                                  for f in range(clip["n_frames"])])
+            rms = np.interp(positions, feat["centers"], feat["rms"])
+            db = 20*np.log10(np.maximum(rms, 1e-8))
+            lo, hi = np.percentile(db[major:octave], [5, 95])
+            target = np.clip((db-lo)/max(6., hi-lo), 0, 1)
+            envelope = np.empty_like(target)
+            envelope[0] = target[0]
+            for f in range(1, len(target)):
+                tau = .10 if target[f] > envelope[f-1] else .65
+                a = 1-np.exp(-1/(30*tau))
+                envelope[f] = envelope[f-1]+a*(target[f]-envelope[f-1])
+            controls["flame_envelope"] = envelope
+            plan["semantic_landmarks"] = landmarks
+            plan["score_alignment"] = cand["score_alignment"]
+            plan["flame_envelope"] = {"source": "native RMS; no audio change",
+                "normalization": "major-to-octave 5th/95th dB percentiles; minimum 6 dB span",
+                "attack_seconds": .10, "release_seconds": .65}
+        elif storyboard["renderer"] in config.CHAPEL_RENDERER_IDS:
             from . import nocturne_chapel as provider
             layout_key = "nocturne_chapel"
         elif storyboard["renderer"] == config.SALON_ENCORE_RENDERER_ID:

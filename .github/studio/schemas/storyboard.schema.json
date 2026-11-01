@@ -220,7 +220,8 @@
         "storm-recital-v1",
         "salon-encore-v1",
         "night-church-v1",
-        "last-candle-v1"
+        "last-candle-v1",
+        "candle-rift-v1"
       ],
       "description": "Optional trusted procedural renderer identifier; never a path or URL. Mutually exclusive with asset_bundle."
     }

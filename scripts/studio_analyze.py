@@ -13,6 +13,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import argparse
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -24,6 +25,7 @@ from p0 import events as eventsmod
 from p0 import features as featmod
 from p0 import plan as planmod
 from p0.timebase import Timebase
+from studio import config
 
 #: Scalar feature-meta keys copied into plan-context.json (bounded, no arrays).
 _ANALYSIS_META_KEYS = (
@@ -44,6 +46,51 @@ def bounded_analysis_meta(feat: dict) -> dict:
     return out
 
 
+def apply_score_profile(candidates: list[dict], alignment: dict, tb: Timebase) -> list[dict]:
+    """Filter existing IDs and derive three scenes from native score samples.
+
+    The fast-coda event stays inside scene03; it drives passage/camera motion,
+    while the major arrival and strict octave entry change the scene. Accents,
+    ranked excerpt endpoints and IDs are retained without retiming.
+    """
+    profile = alignment.get("profile_id")
+    if profile not in config.SCORE_PROFILE_IDS or alignment.get("sample_rate") != tb.sr:
+        raise ValueError("score analysis profile/source grid mismatch")
+    landmarks = alignment.get("landmarks")
+    want = ["major_arrival", "both_hands_octaves", "fast_coda"]
+    if (not isinstance(landmarks, list) or len(landmarks) != 3 or
+            any(not isinstance(e, dict) for e in landmarks) or [e.get("id") for e in landmarks] != want):
+        raise ValueError("score analysis requires all three landmarks in order")
+    samples = [e.get("source_sample") for e in landmarks]
+    if any(type(s) is not int for s in samples) or samples != sorted(set(samples)):
+        raise ValueError("score landmark samples must be strictly increasing integers")
+    eligible = []
+    minimum = config.MIN_SCENE_SEC * tb.fps
+    for original in candidates:
+        start, end, count = (original[k] for k in ("start_sample", "end_sample", "n_frames"))
+        if not all(start <= s < end for s in samples):
+            continue
+        frames = [tb.sample_to_frame(start, sample) for sample in samples]
+        bounds = [0, frames[0], frames[1], count]
+        if any(b - a < minimum for a, b in zip(bounds[:-1], bounds[1:])):
+            continue
+        candidate = copy.deepcopy(original)
+        scenes = []
+        for i, (a, b) in enumerate(zip(bounds[:-1], bounds[1:]), 1):
+            first, last = tb.frame_boundary_sample(start, a), tb.frame_boundary_sample(start, b)
+            scenes.append({"id": f"scene{i:02d}", "start_frame": a, "end_frame": b,
+                           "start_sample": first, "end_sample": last,
+                           "duration_sec": round((last - first) / tb.sr, 4)})
+        candidate.update(analysis_profile=profile, score_alignment=copy.deepcopy(alignment),
+                         score_landmarks=[{**copy.deepcopy(e), "frame": frame}
+                                          for e, frame in zip(landmarks, frames)], scenes=scenes,
+                         scene_reason="score-aligned major arrival and strict both-hands octave entry; fast coda drives scene03 motion")
+        eligible.append(candidate)
+    if not eligible:
+        raise ValueError("no ranked candidate covers all score landmarks with six-second scenes")
+    return eligible
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--wav", required=True)
@@ -51,6 +98,8 @@ def main() -> int:
     ap.add_argument("--creative", default="",
                     help="creative.json (piece/period/art_notes) for the planner")
     ap.add_argument("--seed", type=int, default=20261019)
+    ap.add_argument("--profile", choices=config.SCORE_PROFILE_IDS,
+                    help="optional trusted symbolic score alignment profile")
     a = ap.parse_args()
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -72,6 +121,11 @@ def main() -> int:
             {**e, "frame": int(tb.sample_to_frame(cand["start_sample"],
                                                   int(e["source_sample"])))}
             for e in planmod.pick_accents(events, clip, int(sr))]
+    score_alignment = None
+    if a.profile is not None:
+        from studio.score_alignment import analyze
+        score_alignment = analyze(y_mono, int(sr), profile_id=a.profile)
+        ranked["candidates"] = apply_score_profile(ranked["candidates"], score_alignment, tb)
     digest = hashlib.sha256(Path(a.wav).read_bytes()).hexdigest()
     creative = {}
     if a.creative and Path(a.creative).exists():
@@ -87,6 +141,8 @@ def main() -> int:
         "uncertainty": ranked["selection_caveat"],
         "musical_quality": "not demonstrated; DSP ranking only, no listening",
     }
+    if a.profile is not None:
+        context.update(analysis_profile=a.profile, score_alignment=score_alignment)
     (out / "candidates.json").write_text(json.dumps(
         {"candidates": ranked["candidates"]}, indent=2))
     (out / "plan-context.json").write_text(json.dumps(context, indent=2))

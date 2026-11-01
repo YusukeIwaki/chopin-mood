@@ -123,6 +123,61 @@ def validate_timing(candidate):
         _require(_integer(frame) and frame == tb.sample_to_frame(start, sample),
                  "accent sample/frame mismatch")
         previous = sample
+    validate_profile_binding(candidate.get("analysis_profile"), candidate)
+
+
+def validate_profile_binding(profile, candidate):
+    """Check optional score metadata with stdlib only, before media imports.
+
+    Exact reference/provenance and signal evidence are reproduced later by
+    validate_dsp_candidate. This intake gate rejects profile substitution,
+    invented frame conversions, missing landmarks and alternate scene cuts.
+    """
+    if profile is None:
+        _require("analysis_profile" not in candidate and "score_alignment" not in candidate
+                 and "score_landmarks" not in candidate,
+                 "score metadata requires a project analysis_profile")
+        return
+    _require(isinstance(profile, str) and profile in config.SCORE_PROFILE_IDS,
+             "unsupported analysis profile")
+    _require(candidate.get("analysis_profile") == profile, "candidate analysis profile mismatch")
+    alignment = candidate.get("score_alignment")
+    _require(isinstance(alignment, dict) and alignment.get("profile_id") == profile,
+             "candidate score alignment profile mismatch")
+    _require(_integer(alignment.get("sample_rate"), 1)
+             and alignment.get("sample_rate") == candidate["sample_rate"]
+             and _integer(alignment.get("source_sample_count"), candidate["end_sample"]),
+             "score alignment source grid mismatch")
+    raw = alignment.get("landmarks")
+    framed = candidate.get("score_landmarks")
+    expected = [("major_arrival", [1623, 1], 542, [1, 1]),
+                ("both_hands_octaves", [1699, 1], 567, [2, 1]),
+                ("fast_coda", [1716, 1], 573, [1, 1])]
+    _require(isinstance(raw, list) and len(raw) == 3 and isinstance(framed, list) and len(framed) == 3,
+             "score profile requires all three landmarks")
+    tb = Timebase(candidate["sample_rate"], *candidate["fps"])
+    start, end = candidate["start_sample"], candidate["end_sample"]
+    previous, frames = -1, []
+    for landmark, (event_id, quarter, measure, beat) in zip(raw, expected):
+        _require(isinstance(landmark, dict), "invalid score landmark")
+        _require(all(isinstance(landmark.get(key), list) and len(landmark[key]) == 2 and
+                     all(type(v) is int for v in landmark[key]) for key in ("score_quarter", "beat"))
+                 and _integer(landmark.get("measure"), 1), "invalid score landmark rational/measure")
+        _require((landmark.get("id"), landmark.get("score_quarter"), landmark.get("measure"),
+                  landmark.get("beat")) == (event_id, quarter, measure, beat),
+                 "score landmark identity mismatch")
+        sample = landmark.get("source_sample")
+        _require(_integer(sample) and start <= sample < end and sample > previous,
+                 "score landmark coverage/order mismatch")
+        frames.append(tb.sample_to_frame(start, sample))
+        previous = sample
+    _require(all(isinstance(e, dict) and _integer(e.get("frame")) for e in framed)
+             and framed == [{**raw_event, "frame": frame} for raw_event, frame in zip(raw, frames)],
+             "score landmark sample/frame mismatch")
+    bounds = [0, frames[0], frames[1], candidate["n_frames"]]
+    _require(len(candidate["scenes"]) == 3 and
+             [(s["start_frame"], s["end_frame"]) for s in candidate["scenes"]] ==
+             list(zip(bounds[:-1], bounds[1:])), "score profile scene boundaries mismatch")
 
 
 def evidence_digest(editorial):
@@ -151,7 +206,7 @@ def editorial_template(input_sha256, media_dir, *, creator_id, round_number=0):
     return record
 
 
-def validate_dsp_candidate(brief, analysis):
+def validate_dsp_candidate(brief, analysis, *, project=None):
     """Compare with a fresh trusted DSP run; never accept hand-edited timings."""
     _require(isinstance(analysis, dict), "invalid DSP analysis")
     matches = [c for c in analysis.get("candidates", [])
@@ -160,6 +215,10 @@ def validate_dsp_candidate(brief, analysis):
              "candidate differs from fresh DSP analysis; manual timing edits are not allowed")
     _require(analysis.get("source_sha256") == brief["source_hashes"]["decoded_wav_sha256"],
              "DSP analysis source hash mismatch")
+    profile = analysis.get("analysis_profile")
+    validate_profile_binding(profile, brief["candidate"])
+    if project is not None:
+        _require(project.get("analysis_profile") == profile, "project/DSP analysis profile mismatch")
 
 
 def validate_editorial(editorial, input_sha256, *, require_ready=True, media_dir=None):
@@ -263,9 +322,13 @@ def validate_candidate_documents(documents, *, input_sha256=None, issue=None,
     _require(input_sha256 is not None, "raw input hashes are required")
     _hash_map(input_sha256, INPUT_NAMES, "input")
     project, brief, sb, editorial = [documents[n] for n in INPUT_NAMES]
-    _require(isinstance(project, dict) and set(project) == {
-        "schema_version", "source_issue", "candidate_id", "source_url", "engine_sha"},
+    project_keys = {"schema_version", "source_issue", "candidate_id", "source_url", "engine_sha"}
+    _require(isinstance(project, dict) and
+             (set(project) == project_keys or set(project) == project_keys | {"analysis_profile"}),
         "unexpected project metadata")
+    if "analysis_profile" in project:
+        _require(isinstance(project["analysis_profile"], str) and
+                 project["analysis_profile"] in config.SCORE_PROFILE_IDS, "unsupported analysis profile")
     _require(project["schema_version"] == "2.0", "invalid project schema")
     candidate_dir(project["source_issue"], project["candidate_id"])
     _require(issue is None or project["source_issue"] == issue, "source issue identity mismatch")
@@ -279,6 +342,7 @@ def validate_candidate_documents(documents, *, input_sha256=None, issue=None,
              "brief issue/candidate binding mismatch")
     candidate = brief.get("candidate")
     validate_timing(candidate)
+    validate_profile_binding(project.get("analysis_profile"), candidate)
     _require(candidate.get("id") == project["candidate_id"], "DSP candidate identity mismatch")
     hashes = brief.get("source_hashes")
     _require(isinstance(hashes, dict) and all(_digest(hashes.get(k)) for k in

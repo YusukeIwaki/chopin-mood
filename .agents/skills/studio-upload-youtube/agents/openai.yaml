@@ -1,0 +1,4 @@
+interface:
+  display_name: "Studio YouTube投稿"
+  short_description: "Release動画を指定チャネルへ子ども向けで公開するブラウザ投稿"
+  default_prompt: "$studio-upload-youtube を使って、このReleaseの動画をYouTubeに公開してください。"

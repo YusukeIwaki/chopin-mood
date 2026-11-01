@@ -47,6 +47,7 @@ def main() -> int:
     ap.add_argument("--width", type=int, default=540)
     ap.add_argument("--height", type=int, default=960)
     ap.add_argument("--seed", type=int, default=20261019)
+    ap.add_argument("--profile", default="", help="optional trusted analysis profile; must equal candidate")
     ap.add_argument("--visual-approval", default=None,
                     help="optional visual approval file (see "
                          "studio.visual_preflight.validate_approval_file); "
@@ -59,6 +60,8 @@ def main() -> int:
     try:
         ctx = prepare_context(a.wav, a.candidate, a.storyboard, a.brief,
                               width=a.width, height=a.height, seed=a.seed)
+        if a.profile != ctx.candidate.get("analysis_profile", ""):
+            raise ValueError("render profile does not match candidate")
     except ValueError as e:
         failures = getattr(e, "failures", None) or [str(e)]
         print(json.dumps({"ok": False, "failures": failures}))
@@ -184,6 +187,11 @@ def main() -> int:
         prov["prototype"] = "AI-painted imaginary chapel with deterministic light, flame and camera animation; original performance audio"
         prov["visual_renderer"] = plan["visual_renderer"]
         prov["visual_assets"] = plan["visual_assets"]
+    if "candle_rift" in ctx.layouts:
+        prov["prototype"] = "AI-painted chapel fractures into fire, rock and storm; score-aligned deterministic animation; original performance audio"
+        prov["visual_renderer"] = plan["visual_renderer"]
+        prov["visual_assets"] = plan["visual_assets"]
+        prov["score_alignment"] = plan["score_alignment"]
     # Approving a commit must approve these exact media bytes, even if a
     # later rerender uses identical plans but a different encoder version.
     prov["media_sha256"] = {

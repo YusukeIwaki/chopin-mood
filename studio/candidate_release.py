@@ -206,8 +206,12 @@ def _associated_candidate(raw, *, issue: int, candidate: str, source_url: str) -
     leave its otherwise authenticated competing PR open after a winner exists.
     """
     project, brief = json.loads(raw["project.json"]), json.loads(raw["brief.json"])
-    if (not isinstance(project, dict) or set(project) != {
-            "schema_version", "source_issue", "candidate_id", "source_url", "engine_sha"}
+    project_keys = {"schema_version", "source_issue", "candidate_id", "source_url", "engine_sha"}
+    if (not isinstance(project, dict) or
+            (set(project) != project_keys and set(project) != project_keys | {"analysis_profile"})
+            or ("analysis_profile" in project and
+                (not isinstance(project["analysis_profile"], str) or
+                 project["analysis_profile"] not in config.SCORE_PROFILE_IDS))
             or project.get("schema_version") != "2.0" or type(project.get("source_issue")) is not int
             or project.get("source_issue") != issue or project.get("candidate_id") != candidate
             or project.get("source_url") != source_url or not _sha(project.get("engine_sha"))

@@ -134,6 +134,10 @@ gh workflow run studio-candidate.yml --ref main -f pr_number=104
 ## 夜の教会・ろうそくの登録描画
 
 `night-church-v1` と `last-candle-v1` は `studio/nocturne_chapel.py` を使う。
+`candle-rift-v1` は、元録音のRMSに追従する炎と、教会の断片が落下して炎・岩・嵐の世界へ進む描画を行う。対応する `project.analysis_profile: "chopin-scherzo3-coda-v1"` が必須で、`init --profile chopin-scherzo3-coda-v1` または `studio_analyze.py --profile chopin-scherzo3-coda-v1` で自動解析する。登録楽譜とのDTW照合と新しい低音の立ち上がりから、長調への到達・両手オクターブ・高速コーダを原音源の整数サンプル位置に求める。先頭2点が場面境界、最後の点が場面内の突入開始となり、時刻を手入力しない。照合に失敗すれば拒否し、従来のDSP場面へ黙って戻さない。全音源をモデルに渡さず、登録楽譜・帰属・ライセンスは `assets/score/chopin-op39-v1/` に保持する。診断の不確かさは窓幅等の支持区間であり、実演に対する精度保証ではない。
+
+同描画の `plan.json` は `semantic_landmarks` と `score_alignment` を保持する。符号化後QAは場面境界に加え、高速コーダの内部cueも実際の描画時刻を前後に動かした反実仮想と比較する。空間誤差・同期の閾値は従来と同じで、専用の合成信号テストで正常動画・1フレーム遅延・欠落アクセントを分けて検証する。固定素材は `assets/visual/candle-rift-v1/` と既存のろうそく画像をハッシュで検証する。
+
 登録素材は `assets/visual/nocturne-chapel-v1/` の未変更PNGで、生成記録・利用条件・SHA-256を同梱する。
 `chapel_warmth` と `candle_strength` は0〜1の場面パラメータであり、コーダや感情の検出値ではない。
 炎は実画像の芯位置に固定し、光・炎・背景に同じカメラ変換を適用する。
