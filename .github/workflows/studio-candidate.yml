@@ -79,10 +79,16 @@ jobs:
               assert actual[key] == expected[key], f"source mismatch: {key}; reproduce local decode before continuing"
           PYCODE
       - name: Recompute DSP candidate (no manual timing edits)
+        env:
+          ANALYSIS_PROFILE: ${{ steps.prepare.outputs.analysis_profile }}
         run: |
           set -euo pipefail
-          python3 scripts/studio_analyze.py --wav output/studio/source/source.wav --out output/studio/analysis
-          python3 scripts/studio_candidate.py verify-dsp --brief output/studio/work/brief.json --analysis output/studio/analysis/plan-context.json
+          profile_args=()
+          if [[ -n "$ANALYSIS_PROFILE" ]]; then
+            profile_args+=(--profile "$ANALYSIS_PROFILE")
+          fi
+          python3 scripts/studio_analyze.py --wav output/studio/source/source.wav --out output/studio/analysis ${profile_args[@]+"${profile_args[@]}"}
+          python3 scripts/studio_candidate.py verify-dsp --brief output/studio/work/brief.json --analysis output/studio/analysis/plan-context.json --project output/studio/work/project.json
       - name: Create Codex read token (review)
         id: codex_read
         uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
@@ -132,10 +138,16 @@ jobs:
             await exec.exec('python3', ['scripts/studio_visual_preflight.py', '--work', process.env.VISUAL_WORK, '--codex-led', '--candidate-context', 'output/studio/work/context.json', '--wav', process.env.VISUAL_WAV, '--parent', process.env.PARENT_ISSUE, '--child', process.env.CHILD_ISSUE, '--engine-sha', process.env.ENGINE_SHA, '--run-id', process.env.RUN_ID, '--run-attempt', process.env.RUN_ATTEMPT]);
       - name: Validate storyboard and render (trusted renderer + encoded QA)
         if: steps.visual.outputs.proceed == 'true'
+        env:
+          ANALYSIS_PROFILE: ${{ steps.prepare.outputs.analysis_profile }}
         run: |
           set -euo pipefail
+          profile_args=()
+          if [[ -n "$ANALYSIS_PROFILE" ]]; then
+            profile_args+=(--profile "$ANALYSIS_PROFILE")
+          fi
           python3 -m studio validate-storyboard --storyboard output/studio/work/storyboard.json --scenes output/studio/work/scenes.json
-          python3 scripts/studio_render.py --wav output/studio/source/source.wav --candidate output/studio/work/candidate.json --storyboard output/studio/work/storyboard.json --brief output/studio/work/brief.json --out output/studio/work/bundle --visual-approval output/studio/work/visual-approval.json --engine-sha ${{ github.sha }}
+          python3 scripts/studio_render.py --wav output/studio/source/source.wav --candidate output/studio/work/candidate.json --storyboard output/studio/work/storyboard.json --brief output/studio/work/brief.json --out output/studio/work/bundle --visual-approval output/studio/work/visual-approval.json --engine-sha ${{ github.sha }} ${profile_args[@]+"${profile_args[@]}"}
       - name: Bind the reproduced output to the exact candidate head
         if: steps.visual.outputs.proceed == 'true'
         run: python3 scripts/studio_candidate_actions.py seal --work output/studio/work

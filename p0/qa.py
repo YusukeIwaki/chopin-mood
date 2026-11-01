@@ -334,6 +334,11 @@ def rendered_probe_frames(plan: dict, n_frames: int) -> dict:
         add(f, "accent")
         add(f - 1, "accent_pre")
         add(f + 1, "accent_post")
+    for event in plan.get("semantic_landmarks", []):
+        f = int(event["frame"])
+        add(f, "semantic_landmark")
+        add(f - 1, "semantic_landmark_pre")
+        add(f + 1, "semantic_landmark_post")
     for frac in (0.08, 0.2, 0.35, 0.5, 0.65, 0.8, 0.92):
         add(int(frac * (n_frames - 1)), "interior")
     return probes
@@ -481,10 +486,18 @@ def check_rendered_frames(mp4: str, plan: dict, tb, w: int, h: int,
                         and callable(getattr(reference_frame_fn, "shifted_boundary_frame", None)))
     if timing_supported:
         by_frame = {item["frame"]: item for item in results}
-        for scene in plan.get("scenes", [])[1:]:
-            boundary = int(scene["start_frame"])
+        boundaries = {int(s["start_frame"]) for s in plan.get("scenes", [])[1:]}
+        semantic_boundaries = {int(e["frame"]) for e in plan.get("semantic_landmarks", [])}
+        boundaries.update(semantic_boundaries)
+        for boundary in sorted(boundaries):
             window = reference_frame_fn.transition_window(boundary)
             if window is None:
+                if boundary in semantic_boundaries:
+                    timing = {"ok": False, "boundary": boundary,
+                              "reason": "mandatory semantic landmark has no timing window"}
+                    transitions.append(timing)
+                    by_frame[boundary]["transition_timing"] = timing
+                    by_frame[boundary]["ok"] = False
                 continue
             timing = check_transition_timing(mp4, boundary, window, w, h,
                                              n_frames, reference_frame_fn, fps=str(tb.fps))
