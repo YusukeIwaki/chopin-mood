@@ -12,7 +12,9 @@ jobs:
   test:
     name: Offline tests and synthetic render smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # The measured offline suite takes about 25 minutes on the hosted
+    # runner; allow its separate 60s+ synthetic smoke to finish as well.
+    timeout-minutes: 40
     steps:
       # No ref: check out the event revision (PR head / pushed commit),
       # never the old default branch. CI uses no secrets.
