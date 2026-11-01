@@ -267,6 +267,47 @@ def test_codex_visual_reviewer_sets_codex_home_and_strips_tokens(tmp_path, monke
         assert secret not in env
 
 
+def test_review_prompt_keeps_owner_ending_and_semantic_mapping_before_large_diagnostics(tmp_path):
+    ending="CLEAR_ONLY_AFTER_THE_TERMINAL_ASCENDING_SCALE"
+    brief={"candidate":{"id":"cand-02","score_alignment":{"diagnostic":"x"*80000}},
+           "piece":"Scherzo No. 3","period":None,
+           "art_notes":"owner direction "*1400+ending,
+           "creative_brief":{"ending":"blue sky keeps the lava world"},
+           "parent_issue":30,"candidate_id":"cand-02"}
+    samples=[{"scene_id":"scene03:final_scale_arrival","role":role,"source_frame":f,
+              "preview_frame":i,"file":f"frame-{f:06d}.png"}
+             for i,(role,f) in enumerate((("start",394),("mid",423),("end",453)))]
+    window={"scene_id":"scene03:final_scale_arrival","source_start_frame":394,
+            "source_end_frame":454,"preview_start_frame":180,"preview_end_frame":240,"frame_count":60}
+    evidence={"plan":{"large_diagnostic":"z"*80000,"semantic_landmarks":[
+        {"id":"final_scale_arrival","frame":400,"containing_frame":399,
+         "source_sample":293400,"frame_policy":"first_frame_boundary_at_or_after_native_source_sample"}]},
+        "motion_qa":{"windows":[window]},"samples":samples}
+    raw=json.dumps(evidence).encode();(tmp_path/"evidence.json").write_bytes(raw)
+    prompt=vpipe.build_visual_review_prompt("BASE",brief=brief,storyboard={},evidence=evidence,
+                                            evidence_dir=tmp_path,stage="motion")
+    owner=prompt.split("## Owner intent and compact brief (complete bounded data; intent first)\n",1)[1].split("\n\n## storyboard.json",1)[0]
+    owner=json.loads(owner)
+    assert list(owner)==["piece","period","art_notes","creative_brief","parent_issue","candidate_id","candidate"]
+    assert owner["art_notes"]==brief["art_notes"] and owner["art_notes"].endswith(ending)
+    assert owner["creative_brief"]==brief["creative_brief"]
+    assert "score_alignment" not in owner["candidate"]
+    mapping=prompt.split("## Complete native window/sample mapping (before bounded evidence details)\n",1)[1].split("\n\n## evidence.json",1)[0]
+    mapping=json.loads(mapping)
+    assert mapping["windows"]==[window] and mapping["samples"]==samples
+    assert mapping["semantic_landmarks"][0]["frame"]==400
+    assert str(tmp_path/"frame-000453.png") in prompt
+    assert hashlib.sha256(raw).hexdigest() in prompt
+    assert prompt.index(ending)<prompt.index('"candidate": {')
+
+
+def test_review_prompt_refuses_to_silently_truncate_oversized_owner_intent(tmp_path):
+    (tmp_path/"evidence.json").write_text('{}')
+    with pytest.raises(vpipe.VisualInfrastructureError,match="refusing silent truncation"):
+        vpipe.build_visual_review_prompt("BASE",brief={"art_notes":"a"*(config.MAX_PRODUCTION_FILE_BYTES+1)},
+                                         storyboard={},evidence={},evidence_dir=tmp_path,stage="still")
+
+
 @pytest.mark.parametrize('stderr, expected', [
     ('invalid_refresh_token', 'expired_authentication'),
     ('HTTP 413 payload too large', 'input_limit'),

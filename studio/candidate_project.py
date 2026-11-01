@@ -153,8 +153,19 @@ def validate_profile_binding(profile, candidate):
     expected = [("major_arrival", [1623, 1], 542, [1, 1]),
                 ("both_hands_octaves", [1699, 1], 567, [2, 1]),
                 ("fast_coda", [1716, 1], 573, [1, 1])]
-    _require(isinstance(raw, list) and len(raw) == 3 and isinstance(framed, list) and len(framed) == 3,
-             "score profile requires all three landmarks")
+    clearing = profile == "chopin-scherzo3-coda-clearing-v1"
+    if clearing:
+        expected.append(("final_scale_arrival", [1860, 1], 621, [1, 1]))
+        reference = alignment.get("reference")
+        _require(isinstance(reference, dict) and reference.get("reference_id") == "chopin-op39-clearing-v1"
+                 and isinstance(reference.get("base_reference"), dict)
+                 and reference["base_reference"].get("reference_id") == "chopin-op39-v1"
+                 and reference["base_reference"].get("manifest_sha256") ==
+                 "d87df6f1d0d10aa206006e8d700e8c71fd0cf6f6ce07adb86dc7c4ed14fee960",
+                 "clearing profile reference identity mismatch")
+    _require(isinstance(raw, list) and len(raw) == len(expected) and
+             isinstance(framed, list) and len(framed) == len(expected),
+             "score profile requires all four landmarks" if clearing else "score profile requires all three landmarks")
     tb = Timebase(candidate["sample_rate"], *candidate["fps"])
     start, end = candidate["start_sample"], candidate["end_sample"]
     previous, frames = -1, []
@@ -174,6 +185,10 @@ def validate_profile_binding(profile, candidate):
     _require(all(isinstance(e, dict) and _integer(e.get("frame")) for e in framed)
              and framed == [{**raw_event, "frame": frame} for raw_event, frame in zip(raw, frames)],
              "score landmark sample/frame mismatch")
+    if clearing:
+        activation = frames[3] + int(tb.frame_boundary_sample(start, frames[3]) < raw[3]["source_sample"])
+        _require(candidate["n_frames"] - activation >= 60,
+                 "clearing cue requires at least sixty frames before candidate end")
     bounds = [0, frames[0], frames[1], candidate["n_frames"]]
     _require(len(candidate["scenes"]) == 3 and
              [(s["start_frame"], s["end_frame"]) for s in candidate["scenes"]] ==

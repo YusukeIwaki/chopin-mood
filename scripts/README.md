@@ -138,6 +138,14 @@ gh workflow run studio-candidate.yml --ref main -f pr_number=104
 
 同描画の `plan.json` は `semantic_landmarks` と `score_alignment` を保持する。符号化後QAは場面境界に加え、高速コーダの内部cueも実際の描画時刻を前後に動かした反実仮想と比較する。空間誤差・同期の閾値は従来と同じで、専用の合成信号テストで正常動画・1フレーム遅延・欠落アクセントを分けて検証する。固定素材は `assets/visual/candle-rift-v1/` と既存のろうそく画像をハッシュで検証する。
 
+`candle-clearing-v1` は任意の別モードで、`project.analysis_profile: "chopin-scherzo3-coda-clearing-v1"` を使う。4番目の `final_scale_arrival` は最終上行のRH E7到達（第621小節第1拍）であり、音の消失を表さない。元の整数サンプルを含むフレームはcandidateに保持し、実際の晴れ始めはそのサンプル以上となる最初のフレーム境界へ切り上げる。公開planの当該semantic recordは `frame` を発動フレーム、`containing_frame` を元の包含フレームとし、`frame_policy` を記録する。発動後に最低60フレームを確保し、場面は従来と同じ3つのままとする。
+
+この別モードの炎は背景を透過する連続した光として描く。晴れ間は地平線付近の中心から約180フレームで広がり、残尺が短い場合は終端までに完了する。空だけの登録素材 `assets/visual/candle-clearing-v1/cleared-world.png` を、元画像と同寸法の登録2D空マスク `sky-mask.png` で合成する。マスクは同bundleの `build_mask.py`・`mask-guide.json` から再生成でき、元画像のハッシュと輪郭・前景の凹部を保持する。岩・溶岩を含む画像を空へ複製移動しない。溶岩と奥行きの移動を保ち、稲妻と灰は晴れに従って減らす。元の `candle-rift-v1` の既定描画は変えない。
+
+事前確認は場面ごとの静止画・動きに加え、通常の場面中点windowが晴れ始めとその後30フレーム以上を示さない場合に最大60フレームのsemantic motion windowを1つ追加する。既存の場面windowを保持し、追加windowと重複させず、終幕の静止画で晴れた状態も確認する。追加windowのIDは `scene03:final_scale_arrival`、schema・合計フレーム上限・contact sheetの再検証も同じ選定を使う。符号化後QAのpatch誤差上限は5のまま、実際の晴れ間を動かす反実仮想で正常・1フレーム遅延・欠落を検査する。
+
+新モードの符号化回帰試験は本番と同じ540×960・CRF18・yuv420pで行う。工程用の小さな確認画像へ合格を一般化しない。旧モードの180×320回帰試験は維持する。事前レビューのpromptでは本人の希望・creative briefを解析診断より先に省略せず渡し、追加windowを含む完全なnative sample対応表も渡す。
+
 登録素材は `assets/visual/nocturne-chapel-v1/` の未変更PNGで、生成記録・利用条件・SHA-256を同梱する。
 `chapel_warmth` と `candle_strength` は0〜1の場面パラメータであり、コーダや感情の検出値ではない。
 炎は実画像の芯位置に固定し、光・炎・背景に同じカメラ変換を適用する。

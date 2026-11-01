@@ -20,6 +20,7 @@ from test_candidate_project import make_candidate
 
 ROOT = Path(__file__).resolve().parents[1]
 PROFILE = "chopin-scherzo3-coda-v1"
+CLEARING_PROFILE = "chopin-scherzo3-coda-clearing-v1"
 
 
 def base_candidate(candidate_id="cand-02", *, start=13, sr=44100):
@@ -50,6 +51,75 @@ def profiled(candidate=None):
     candidate = base_candidate() if candidate is None else candidate
     alignment = alignment_for(candidate)
     return cli.apply_score_profile([candidate], alignment, Timebase(candidate["sample_rate"], 30))[0]
+
+
+def clearing_alignment_for(candidate):
+    from studio.score_alignment import load_reference, _thaw
+    alignment = alignment_for(candidate)
+    alignment["profile_id"] = CLEARING_PROFILE
+    alignment["reference"] = _thaw(load_reference(CLEARING_PROFILE).provenance)
+    alignment["landmarks"].append({"id": "final_scale_arrival", "score_quarter": [1860, 1],
+        "measure": 621, "beat": [1, 1],
+        "source_sample": candidate["start_sample"] + 90 * candidate["sample_rate"] + 333,
+        "method": "synthetic terminal E7 known-sample fixture", "target_new_midi": [100]})
+    return alignment
+
+
+def test_clearing_profile_adds_internal_fourth_cue_without_changing_scenes_or_accents():
+    base = base_candidate()
+    old = profiled(base)
+    alignment = clearing_alignment_for(base)
+    result = cli.apply_score_profile([base], alignment, Timebase(44100, 30))[0]
+    cp.validate_timing(result)
+    assert result["id"] == old["id"]
+    assert result["scenes"] == old["scenes"]
+    assert result["accents"] == old["accents"]
+    assert [x["id"] for x in result["score_landmarks"]] == [
+        "major_arrival", "both_hands_octaves", "fast_coda", "final_scale_arrival"]
+    assert result["score_landmarks"][:3] == old["score_landmarks"]
+    assert result["score_landmarks"][3]["frame"] > result["scenes"][2]["start_frame"]
+    cp.validate_profile_binding(CLEARING_PROFILE, result)
+    with pytest.raises(ValueError, match="profile mismatch"):
+        cp.validate_profile_binding(PROFILE, result)
+
+
+@pytest.mark.parametrize("remaining,offset,accepted", [(60, 0, True), (60, 1, False), (61, 1, True), (59, 0, False), (0, 0, False)])
+def test_clearing_candidate_requires_sixty_frames_after_first_nonanticipating_frame(remaining, offset, accepted):
+    candidate = base_candidate()
+    tb = Timebase(44100, 30)
+    alignment = clearing_alignment_for(candidate)
+    source_sample = tb.frame_boundary_sample(candidate["start_sample"], candidate["n_frames"] - remaining) + offset
+    alignment["landmarks"][3]["source_sample"] = source_sample
+    if accepted:
+        result = cli.apply_score_profile([candidate], alignment, tb)[0]
+        cp.validate_profile_binding(CLEARING_PROFILE, result)
+    else:
+        with pytest.raises(ValueError, match="no ranked candidate"):
+            cli.apply_score_profile([candidate], alignment, tb)
+        # An edited saved candidate faces the same strict intake gate.
+        valid = cli.apply_score_profile([candidate], clearing_alignment_for(candidate), tb)[0]
+        valid["score_alignment"]["landmarks"][3]["source_sample"] = source_sample
+        valid["score_landmarks"][3] = {**valid["score_alignment"]["landmarks"][3],
+                                      "frame": tb.sample_to_frame(candidate["start_sample"], source_sample)}
+        with pytest.raises(ValueError, match="sixty frames|coverage"):
+            cp.validate_profile_binding(CLEARING_PROFILE, valid)
+
+
+@pytest.mark.parametrize("change", ["missing", "old_reference", "base_hash", "later_resolution", "old_profile"])
+def test_extended_profile_requires_fourth_event_and_matching_reference_identity(change):
+    candidate = base_candidate()
+    value = cli.apply_score_profile([candidate], clearing_alignment_for(candidate), Timebase(44100, 30))[0]
+    if change == "missing":
+        value["score_alignment"]["landmarks"].pop()
+        value["score_landmarks"].pop()
+    if change == "old_reference": value["score_alignment"]["reference"]["reference_id"] = "chopin-op39-v1"
+    if change == "base_hash": value["score_alignment"]["reference"]["base_reference"]["manifest_sha256"] = "0" * 64
+    if change == "later_resolution":
+        for event in (value["score_alignment"]["landmarks"][3], value["score_landmarks"][3]):
+            event.update(score_quarter=[1929, 1], measure=644)
+    if change == "old_profile": value["score_alignment"]["profile_id"] = PROFILE
+    with pytest.raises(ValueError):
+        cp.validate_profile_binding(CLEARING_PROFILE, value)
 
 
 def test_profile_filters_without_renumbering_or_changing_accents_and_uses_native_grid():
@@ -317,7 +387,7 @@ def test_local_render_forwards_saved_profile_to_analysis_and_renderer(monkeypatc
     assert (output / "editorial.template.json").is_file()
 
 
-@pytest.mark.parametrize("profile", [None, PROFILE, PROFILE + "\nunsafe=1"])
+@pytest.mark.parametrize("profile", [None, PROFILE, CLEARING_PROFILE, PROFILE + "\nunsafe=1"])
 def test_actions_prepare_outputs_only_allowlisted_profile(monkeypatch, tmp_path, profile):
     helper = _load_script("studio_candidate_actions")
     for key, value in {"GITHUB_REF": "refs/heads/main", "GITHUB_EVENT_NAME": "workflow_dispatch",
@@ -335,7 +405,7 @@ def test_actions_prepare_outputs_only_allowlisted_profile(monkeypatch, tmp_path,
         (tmp_path / "project.json").write_text(json.dumps(project))
         return {"pr": 33, "head_sha": "a" * 40, "source_issue": 30, "candidate_id": "cand-02"}
     monkeypatch.setattr(helper.pipeline, "write_prepared", prepared)
-    if profile not in (None, PROFILE):
+    if profile not in (None, *config.SCORE_PROFILE_IDS):
         with pytest.raises(ValueError, match="unsupported analysis profile"):
             helper.main()
         assert not (tmp_path / "output.txt").exists()
@@ -344,7 +414,7 @@ def test_actions_prepare_outputs_only_allowlisted_profile(monkeypatch, tmp_path,
         assert f"analysis_profile={profile or ''}\n" in (tmp_path / "output.txt").read_text()
 
 
-@pytest.mark.parametrize("profile", ["", PROFILE])
+@pytest.mark.parametrize("profile", ["", PROFILE, CLEARING_PROFILE])
 def test_workflow_recompute_and_final_render_receive_the_same_optional_profile(tmp_path, profile):
     workflow = yaml.safe_load((ROOT / ".github/workflows/studio-candidate.yml").read_text())
     steps = workflow["jobs"]["reproduce"]["steps"]
