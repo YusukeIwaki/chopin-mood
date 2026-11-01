@@ -32,6 +32,8 @@ STORM_RECITAL_RENDERER_ID = "storm-recital-v1"
 SALON_ENCORE_RENDERER_ID = "salon-encore-v1"
 CHAPEL_RENDERER_IDS = ("night-church-v1", "last-candle-v1")
 CANDLE_RIFT_RENDERER_ID = "candle-rift-v1"
+CANDLE_CLEARING_RENDERER_ID = "candle-clearing-v1"
+CANDLE_RIFT_RENDERER_IDS = (CANDLE_RIFT_RENDERER_ID, CANDLE_CLEARING_RENDERER_ID)
 # Environment keys stripped from every MODEL child process (Codex
 # reviewer/planner, Muse runner). The trusted artifact uploader
 # keeps them; models never see runtime/GitHub tokens.
@@ -47,7 +49,7 @@ MIN_SCENE_SEC = 6.0
 FPS_NUM, FPS_DEN = 30, 1
 # Optional trusted symbolic-analysis profiles. Keep this allowlist stdlib-only
 # so Actions intake never imports DSP or notation dependencies.
-SCORE_PROFILE_IDS = ("chopin-scherzo3-coda-v1",)
+SCORE_PROFILE_IDS = ("chopin-scherzo3-coda-v1", "chopin-scherzo3-coda-clearing-v1")
 
 MAX_SOURCE_BYTES = 512 * 1024 * 1024
 MAX_DURATION_SEC = 900.0

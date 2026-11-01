@@ -9,13 +9,56 @@ import numpy as np
 import pytest
 
 from scripts.build_score_reference import build, duration, parse_kern, pitch
-from studio.score_alignment import (PROFILE_ID, ScoreAlignmentError, ScoreLandmark,
+from studio.score_alignment import (PROFILE_ID, CLEARING_PROFILE_ID, ScoreAlignmentError, ScoreLandmark,
                                     ScoreNote, ScoreReference, _new_pitches,
                                     _refine, _score_chroma, _windows, analyze,
                                     load_reference)
 
 ROOT = Path(__file__).resolve().parents[1]
 BUNDLE = ROOT / "assets/score/chopin-op39-v1"
+
+
+def test_base_bundle_and_original_profile_provenance_remain_unchanged():
+    from studio.score_alignment import _thaw
+    assert hashlib.sha256((BUNDLE / "manifest.json").read_bytes()).hexdigest() == "d87df6f1d0d10aa206006e8d700e8c71fd0cf6f6ce07adb86dc7c4ed14fee960"
+    assert hashlib.sha256((BUNDLE / "README.md").read_bytes()).hexdigest() == "7fc145a3b18393fa21f357446122e1033b439460285c1ba5e5daaccd6869c2a6"
+    provenance = _thaw(load_reference().provenance)
+    canonical = json.dumps(provenance, sort_keys=True, separators=(",", ":")).encode()
+    assert hashlib.sha256(canonical).hexdigest() == "ed8baced5d8ebe0aeaf7d1e9f5cd0e5227341b631954dce973fc386b663680c1"
+    assert len(load_reference().landmarks) == 3
+    assert "base_reference" not in provenance
+
+
+def test_clearing_extension_reuses_pinned_score_and_targets_terminal_rh_only():
+    from studio.score_alignment import _thaw
+    base, extended = load_reference(), load_reference(CLEARING_PROFILE_ID)
+    assert extended.notes == base.notes
+    assert extended.landmarks[:3] == base.landmarks
+    assert _thaw(extended.provenance["base_reference"]) == _thaw(base.provenance)
+    event = extended.landmarks[-1]
+    assert (event.id, event.quarter, event.measure, event.beat) == ("final_scale_arrival", 1860, 621, 1)
+    assert event.refinement_midi == (100,)
+    assert _new_pitches(extended, event)[0] == [100]
+    assert any(n.midi == 32 and n.quarter == event.quarter for n in extended.notes)
+    # Later E7 in broken figuration is a different written event.
+    assert any(n.midi == 100 and n.quarter == F(3769, 2) for n in extended.notes)
+
+
+@pytest.mark.parametrize("mutation", ["profile", "base", "quarter", "target", "ascent", "document"])
+def test_clearing_extension_rejects_source_or_profile_substitution(tmp_path, mutation):
+    extension = ROOT / "assets/score/chopin-op39-clearing-v1"
+    shutil.copytree(extension, tmp_path / "extension")
+    manifest_path = tmp_path / "extension/manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    if mutation == "profile": manifest["profile_id"] = PROFILE_ID
+    if mutation == "base": manifest["base_reference"]["manifest_sha256"] = "0" * 64
+    if mutation == "quarter": manifest["appended_landmarks"][0]["score_quarter"] = [1929, 1]
+    if mutation == "target": manifest["appended_landmarks"][0]["refinement_midi"] = [32]
+    if mutation == "ascent": manifest["ascent_evidence"]["midi_sequence"][-1] = 99
+    if mutation == "document": (tmp_path / "extension/README.md").write_text("altered")
+    manifest_path.write_text(json.dumps(manifest))
+    with pytest.raises(ScoreAlignmentError):
+        load_reference(CLEARING_PROFILE_ID, bundle_root=tmp_path / "extension")
 
 
 def test_registered_reference_bytes_rebuild_and_landmark_pitches(tmp_path):
@@ -314,3 +357,369 @@ def test_public_alignment_rejects_missing_bass_in_changing_context(bass_present)
     else:
         with pytest.raises(ScoreAlignmentError, match="fundamental"):
             analyze(y, sr, profile_id="synthetic", reference=ref)
+
+
+def _terminal_scale_synthetic(sr, *, terminal_present=True, top_cents=0., fold=0,
+                              terminal_amplitude=.07, simultaneous_bass_amplitude=.07,
+                              decoy_amplitude=.07, duplicate_shift=None, scramble=False,
+                              occluded=(), weak=(), legato_overlap=1.):
+    """Known native-time ascent, simultaneous bass and later identical E7."""
+    _, old, _ = _synthetic(sr)
+    notes = [n for n in old.notes if n.quarter < 36]
+    rng = np.random.default_rng(9017)
+    for q in range(49, 56):
+        notes += [ScoreNote(F(q), F(1), int(m), 1 if k else 2, q // 3 + 1, F(q % 3 + 1), True)
+                  for k, m in enumerate(sorted(rng.choice(np.arange(48, 73), size=3, replace=False)))]
+    sequence = [62, 63, 65, 67, 68, 70, 72, 73, 75, 77, 79, 80, 82,
+                84, 85, 87, 89, 91, 92, 94, 95, 96, 97, 99, 100]
+    for i, midi in enumerate(sequence):
+        q = F(36) + F(i, 2)
+        notes.append(ScoreNote(q, F(1) if i == 24 else F(1, 2), midi, 1,
+                               int(q) // 3 + 1, q % 3 + 1, True))
+    for q in range(36, 48):
+        notes.append(ScoreNote(F(q), F(1), 40, 2, q // 3 + 1, F(q % 3 + 1), True))
+    notes.append(ScoreNote(F(48), F(1, 2), 32, 2, 17, F(1), True))
+    notes.append(ScoreNote(F(97, 2), F(1, 2), 37, 2, 17, F(3, 2), True))
+    # A later E7 must not rescue a missing terminal note at q48.
+    notes.append(ScoreNote(F(105, 2), F(1, 2), 100, 1, 18, F(5, 2), True))
+    event = ScoreLandmark("final_scale_arrival", F(48), 17, F(1),
+                          "terminal ascent arrival; held tone may ring", (100,))
+    ref = ScoreReference("synthetic", F(56), tuple(sorted(notes, key=lambda n: n.quarter)),
+                         old.landmarks + (event,), {"reference_id": "synthetic-terminal-scale"})
+    times = [round(.35 * sr)]
+    for q in range(56):
+        times.append(times[-1] + round((.31 + .08 * (1 + np.sin(q * .43)) / 2) * sr))
+    def at(q):
+        index = int(q)
+        return times[index] + round(float(q - index) * (times[index + 1] - times[index])) if index < 56 else times[-1]
+    y = np.zeros(times[-1] + round(.20 * sr))
+    for n in ref.notes:
+        if not terminal_present and n.quarter == event.quarter and n.midi == 100:
+            continue
+        first, last = at(n.quarter), at(n.quarter + n.duration)
+        in_ascent = n.staff == 1 and F(36) <= n.quarter <= F(48)
+        midi, amplitude = n.midi, .07
+        if in_ascent:
+            note_index = int((n.quarter-36)*2)
+            if note_index in occluded:
+                continue
+            if note_index in weak:
+                amplitude *= .08
+            midi += fold + top_cents*(n.midi-62)/38/100
+            if scramble:
+                index = int((n.quarter-36)*2)
+                midi = sequence[23-index] if index < 24 else 100
+            if n.quarter == event.quarter:
+                amplitude = terminal_amplitude
+        elif n.quarter == event.quarter and n.midi == 32:
+            amplitude = simultaneous_bass_amplitude
+        elif n.quarter == F(105, 2) and n.midi == 100:
+            amplitude = decoy_amplitude
+        length = round(.94*(last-first)*(legato_overlap if in_ascent and n.quarter < 48 else 1.))
+        _tone(y,sr,first,length,midi,amplitude)
+        if in_ascent and duplicate_shift is not None:
+            _tone(y,sr,first+round(duplicate_shift*sr),length,midi,amplitude)
+    return y, ref, times[48]
+
+
+@pytest.mark.parametrize("sr", [16000, 48000])
+def test_four_landmark_terminal_ascent_recovers_actual_rh_attack(sr):
+    y, ref, expected = _terminal_scale_synthetic(sr)
+    result = analyze(y, sr, profile_id="synthetic", reference=ref)
+    assert len(result["landmarks"]) == 4
+    final = result["landmarks"][-1]
+    assert final["id"] == "final_scale_arrival"
+    assert final["target_new_midi"] == [100]
+    assert abs(final["source_sample"] - expected) <= round(.030 * sr)
+    assert result["analysis"]["acceptance_limits"] == {
+        "maximum_mean_cosine_cost": .42, "maximum_landmark_local_cost": .60,
+        "maximum_refined_cosine_cost": .50, "minimum_direct_fundamental_spectral_peak_ratio": .001,
+        "maximum_coarse_interval_seconds": 2.0}
+
+
+def test_missing_terminal_e7_is_not_replaced_by_concurrent_bass_or_later_e7():
+    y, ref, _ = _terminal_scale_synthetic(48000, terminal_present=False)
+    assert any(n.quarter == 48 and n.midi == 32 for n in ref.notes)
+    assert any(n.quarter > 48 and n.midi == 100 for n in ref.notes)
+    with pytest.raises(ScoreAlignmentError, match="fundamental|pitch|coarse|ascent"):
+        analyze(y, 48000, profile_id="synthetic", reference=ref)
+
+
+@pytest.mark.parametrize("sr", [16000, 48000])
+@pytest.mark.parametrize("gain", [.1, 1.])
+def test_prefix_registered_stretch_with_rubato_and_stronger_simultaneous_bass(sr, gain):
+    y, ref, expected = _terminal_scale_synthetic(sr, top_cents=20.,
+        terminal_amplitude=.03, simultaneous_bass_amplitude=.5, decoy_amplitude=.5)
+    y *= gain
+    before = hashlib.sha256(y.tobytes()).hexdigest()
+    result = analyze(y, sr, profile_id="synthetic", reference=ref)
+    final = result["landmarks"][-1]
+    assert abs(final["source_sample"]-expected) <= round(.030*sr)
+    trace = final["register_sequence"]
+    assert len(trace["ordered_trajectory"]["onset_samples"]) == 25
+    assert np.all(np.diff(trace["ordered_trajectory"]["onset_samples"]) > 0)
+    assert abs(trace["tuning"]["terminal_cents"]-20.) < 6.
+    assert trace["tuning"]["inlier_prefix_notes"] >= 18
+    assert result == analyze(y, sr, profile_id="synthetic", reference=ref)
+    assert hashlib.sha256(y.tobytes()).hexdigest() == before
+    assert "terminal_register_alignment" in result["analysis"]
+
+
+@pytest.mark.parametrize("variant", ["missing", "folded", "scrambled", "partials", "neighbor", "broadband"])
+def test_terminal_register_path_rejects_missing_scrambled_and_folded_ascent(variant):
+    kwargs = {"top_cents": 20., "simultaneous_bass_amplitude": .5, "decoy_amplitude": .6}
+    if variant == "missing": kwargs["terminal_present"] = False
+    if variant == "folded": kwargs["fold"] = -12
+    if variant in ("partials", "neighbor", "broadband"): kwargs["terminal_present"] = False
+    if variant == "scrambled": kwargs["scramble"] = True
+    y, ref, expected = _terminal_scale_synthetic(48000, **kwargs)
+    if variant == "partials":
+        # An E6 fundamental with a second partial at the expected E7 is not
+        # the required high-register attack, even after a correct prefix.
+        _tone(y, 48000, expected, 48000//3, 88+.20, .3)
+    if variant == "neighbor":
+        _tone(y, 48000, expected, 48000//3, 99+.20, .3)
+    if variant == "broadband":
+        rng = np.random.default_rng(20261102)
+        y[expected:expected+1200] += rng.normal(0, .1, 1200)
+    # Keep the spectral/register test independent of the old three cues.
+    ref = replace(ref, landmarks=(ref.landmarks[-1],))
+    with pytest.raises(ScoreAlignmentError, match="ascent|register|fundamental|coarse|pitch"):
+        analyze(y, 48000, profile_id="synthetic", reference=ref)
+
+
+@pytest.mark.parametrize("shift", [.15, .20, .25, .30])
+def test_competing_complete_ascent_paths_abstain(shift):
+    y, ref, _ = _terminal_scale_synthetic(48000, duplicate_shift=shift)
+    ref = replace(ref, landmarks=(ref.landmarks[-1],))
+    with pytest.raises(ScoreAlignmentError, match="ambiguous|ascent|registration|coarse|register"):
+        analyze(y, 48000, profile_id="synthetic", reference=ref)
+
+
+def test_earlier_and_later_stronger_identical_pitch_do_not_replace_the_terminal():
+    sr = 48000
+    y, ref, expected = _terminal_scale_synthetic(sr, top_cents=20.,
+        terminal_amplitude=.03, decoy_amplitude=.6)
+    _tone(y, sr, expected-2*sr, sr//5, 100+.20, .6)
+    ref = replace(ref, landmarks=(ref.landmarks[-1],))
+    final = analyze(y, sr, profile_id="synthetic", reference=ref)["landmarks"][0]
+    assert abs(final["source_sample"]-expected) <= round(.030*sr)
+
+
+def test_ascent_history_search_retains_paths_that_pass_later_rhythm_gate():
+    from studio.score_alignment import _ordered_ascent_paths
+    # Cheaper recent histories converge on the same penultimate candidate,
+    # then fail the final local-rhythm gate. Two routes per last node loses
+    # every valid full path; last-seven history is necessary for this gate.
+    samples = np.arange(2501, dtype=np.int64)
+    candidates = [[(100*j,1.)] for j in range(17)]
+    for regular, late in zip(range(1700,2300,100),[1800,2000,2200,2240,2260,2280]):
+        candidates.append([(regular,.6),(late,1.)])
+    candidates += [[(2300,1.)],[(2400,1.)]]
+    paths = _ordered_ascent_paths(candidates,samples,100.,1)
+    assert paths
+    assert paths[0][1] == list(enumerate(list(range(0,1700,100))+
+                                        [1700,1800,1900,2240,2260,2280,2300,2400]))
+    assert paths[0][0] == pytest.approx(-3*np.log(.6))
+
+
+def _shifted_ascent_path(sr, *, terminal_offset=.2):
+    from studio.score_alignment import _windows
+    times = [round(.35*sr)]
+    for q in range(56):
+        times.append(times[-1]+round((.31+.08*(1+np.sin(q*.43))/2)*sr))
+    _,coarse_hop,_ = _windows(sr)
+    path = []
+    for j in range(25):
+        q = F(36)+F(j,2)
+        first = times[int(q)]+round(float(q-int(q))*(times[int(q)+1]-times[int(q)]))
+        offset = {21:.45,22:.35,23:.25,24:terminal_offset}.get(j,.1)
+        path.append((round((first+offset*sr)/coarse_hop),int(q*2)))
+    return np.asarray(path,dtype=np.int64)
+
+
+@pytest.mark.parametrize("sr",[16000,48000])
+def test_local_absolute_register_sequence_recovers_late_prefix_chroma_anchors(sr):
+    from studio.score_alignment import _ascent_refine
+    y,ref,expected = _terminal_scale_synthetic(sr,top_cents=20.,
+        terminal_amplitude=.03,simultaneous_bass_amplitude=.5,decoy_amplitude=.6)
+    n_fft,coarse_hop,fine_hop = _windows(sr)
+    path = _shifted_ascent_path(sr)
+    event = _ascent_refine(y,sr,ref,ref.landmarks[-1],path,coarse_hop,.2,n_fft,fine_hop)
+    trace = event["register_sequence"]
+    assert abs(event["source_sample"]-expected) <= round(.030*sr)
+    # Prefix96 is beyond its misleading chroma cell's original fine window.
+    # It is recovered by full ordered register context, not a larger terminal
+    # window. The terminal itself remains inside its original native bound.
+    assert trace["dtw_intervals_samples"][21][0]-trace["ordered_trajectory"]["onset_samples"][21] > round(.35*sr)
+    low,high = event["coarse_interval_samples"]
+    assert low-round(.35*sr) <= event["source_sample"] <= high+round(.35*sr)
+
+
+def test_terminal_refinement_bound_is_not_expanded_by_local_sequence_search():
+    from studio.score_alignment import _ascent_refine
+    sr = 48000
+    y,ref,_ = _terminal_scale_synthetic(sr,decoy_amplitude=.6)
+    n_fft,coarse_hop,fine_hop = _windows(sr)
+    with pytest.raises(ScoreAlignmentError,match="ascent|fundamental"):
+        _ascent_refine(y,sr,ref,ref.landmarks[-1],_shifted_ascent_path(sr,terminal_offset=.9),
+                       coarse_hop,.2,n_fft,fine_hop)
+
+
+@pytest.mark.parametrize("sr",[16000,48000])
+@pytest.mark.parametrize("occluded",[(1,),(5,14),(23,),(2,19)])
+def test_bounded_isolated_prefix_occlusions_preserve_known_terminal(sr,occluded):
+    y,ref,expected = _terminal_scale_synthetic(sr,top_cents=20.,occluded=occluded,
+        terminal_amplitude=.03,simultaneous_bass_amplitude=.5,decoy_amplitude=.6)
+    final = analyze(y,sr,profile_id="synthetic",reference=ref)["landmarks"][-1]
+    assert abs(final["source_sample"]-expected) <= round(.030*sr)
+    trace = final["register_sequence"]
+    assert trace["tuning"]["inlier_prefix_notes"] >= 18
+    assert trace["ordered_trajectory"]["scope"].startswith("diagnostic_only")
+
+
+@pytest.mark.parametrize("sr,weak",[(16000,(1,8)),(48000,(1,8,17)),(16000,(1,8,17))])
+def test_overlapped_weak_prefix_does_not_certify_individual_keystrikes(sr,weak):
+    y,ref,expected = _terminal_scale_synthetic(sr,top_cents=20.,weak=weak,legato_overlap=2.4,
+        terminal_amplitude=.03,simultaneous_bass_amplitude=.5,decoy_amplitude=.6)
+    ref = replace(ref,landmarks=(ref.landmarks[-1],))
+    final = analyze(y,sr,profile_id="synthetic",reference=ref)["landmarks"][0]
+    assert abs(final["source_sample"]-expected) <= round(.030*sr)
+    assert final["register_sequence"]["ordered_trajectory"]["scope"].startswith("diagnostic_only")
+
+
+@pytest.mark.parametrize("occluded",[(1,5,14),(1,2),(19,21)])
+def test_missing_prefix_strikes_do_not_imply_missing_terminal(occluded):
+    y,ref,expected = _terminal_scale_synthetic(48000,occluded=occluded,decoy_amplitude=.6)
+    ref = replace(ref,landmarks=(ref.landmarks[-1],))
+    final = analyze(y,48000,profile_id="synthetic",reference=ref)["landmarks"][0]
+    assert abs(final["source_sample"]-expected) <= round(.030*48000)
+    assert final["register_sequence"]["tuning"]["inlier_prefix_notes"] >= 18
+
+
+def test_prefix_occlusion_never_makes_terminal_optional_or_resolves_duplicate_paths():
+    for kwargs in ({"terminal_present":False,"decoy_amplitude":.6}, {"duplicate_shift":.2}):
+        y,ref,_ = _terminal_scale_synthetic(48000,occluded=(5,14),**kwargs)
+        ref = replace(ref,landmarks=(ref.landmarks[-1],))
+        with pytest.raises(ScoreAlignmentError,match="ascent|register|fundamental|ambiguous|coarse"):
+            analyze(y,48000,profile_id="synthetic",reference=ref)
+
+
+@pytest.mark.parametrize("sr",[16000,48000])
+@pytest.mark.parametrize("terminal_present",[False,True])
+def test_new_high_attack_is_separated_from_strong_continuing_lower_note(sr,terminal_present):
+    y,ref,expected = _terminal_scale_synthetic(sr,top_cents=20.,terminal_present=terminal_present,
+        terminal_amplitude=.03,simultaneous_bass_amplitude=.5,decoy_amplitude=.6)
+    # E6 and its E7 partial are already ringing and decaying when a separate
+    # weaker E7 attacks. Static fundamental energy dominance rejects this
+    # genuine attack; coincident *new* lower-note growth must be distinguished.
+    t = np.arange(2*sr)/sr
+    hz = 440*2**((88.2-69)/12)
+    phase = 2*np.pi*hz*(t-1.)
+    envelope = np.exp(-t)
+    envelope[:round(.01*sr)] *= np.linspace(0.,1.,round(.01*sr))
+    y[expected-sr:expected+sr] += .5*envelope*(np.sin(phase)+.3*np.sin(2*phase)+.15*np.sin(3*phase))
+    ref = replace(ref,landmarks=(ref.landmarks[-1],))
+    if terminal_present:
+        if sr == 16000:
+            # Public chroma localization of this heavy-interference fixture
+            # does not provide enough prefix tuning observations. It must
+            # abstain; a known-coarse-path helper isolates the temporal gate.
+            with pytest.raises(ScoreAlignmentError,match="insufficient preceding") as failure:
+                analyze(y,sr,profile_id="synthetic",reference=ref)
+            assert len(failure.value.diagnostics["prefix_tuning_observations"]) < 18
+            from studio.score_alignment import _ascent_refine
+            n_fft,coarse_hop,fine_hop = _windows(sr)
+            final = _ascent_refine(y,sr,ref,ref.landmarks[-1],_shifted_ascent_path(sr),
+                                   coarse_hop,.2,n_fft,fine_hop)
+        else:
+            final = analyze(y,sr,profile_id="synthetic",reference=ref)["landmarks"][0]
+        assert abs(final["source_sample"]-expected) <= round(.030*sr)
+        assert final["quality"]["terminal_written_register_share"] < .5
+        assert final["quality"]["terminal_written_register_growth_share"] >= .5
+    else:
+        with pytest.raises(ScoreAlignmentError,match="ascent|register|fundamental|coarse"):
+            analyze(y,sr,profile_id="synthetic",reference=ref)
+
+
+def test_terminal_public_result_and_rejection_diagnostics_are_strict_json():
+    y,ref,_ = _terminal_scale_synthetic(48000,top_cents=20.)
+    result = analyze(y,48000,profile_id="synthetic",reference=ref)
+    json.dumps(result,allow_nan=False)
+    y,ref,_ = _terminal_scale_synthetic(48000,terminal_present=False)
+    ref = replace(ref,landmarks=(ref.landmarks[-1],))
+    with pytest.raises(ScoreAlignmentError) as failure:
+        analyze(y,48000,profile_id="synthetic",reference=ref)
+    json.dumps(failure.value.diagnostics,allow_nan=False)
+
+
+@pytest.mark.parametrize("offset",[-.20,.15,.25])
+def test_sole_inside_window_e7_growth_does_not_certify_written_identity(offset):
+    sr = 48000
+    y,ref,nominal = _terminal_scale_synthetic(sr,terminal_present=False,top_cents=20.)
+    actual = nominal+round(offset*sr)
+    _tone(y,sr,actual,sr//5,100.2,.07)
+    ref = replace(ref,landmarks=(ref.landmarks[-1],))
+    event = analyze(y,sr,profile_id="synthetic",reference=ref)["landmarks"][0]
+    # This is an observed identity limit, not a passed wrong-note negative:
+    # the only local tuned E7 is detected even if its intended score identity
+    # was labelled differently by the synthetic fixture's author.
+    assert abs(event["source_sample"]-actual) <= round(.030*sr)
+    assert abs(event["source_sample"]-nominal) > round(.1*sr)
+
+
+@pytest.mark.parametrize("sr",[16000,48000])
+@pytest.mark.parametrize("ramp,amplitude",[(.006,.005),(.08,.02)])
+def test_weak_or_slow_second_terminal_attack_cannot_be_pruned_into_uniqueness(sr,ramp,amplitude):
+    y,ref,expected = _terminal_scale_synthetic(sr,top_cents=20.)
+    start,n = expected+round(.2*sr),sr//4
+    t = (np.arange(n)+start-expected)/sr
+    hz = 440*2**((100.2-69)/12)
+    env = np.minimum(1.,np.arange(n)/max(1,round(ramp*sr)))
+    env[-round(.018*sr):] *= np.linspace(1.,0.,round(.018*sr))
+    y[start:start+n] += amplitude*env*(np.sin(2*np.pi*hz*t)+
+                                      .3*np.sin(4*np.pi*hz*t)+.15*np.sin(6*np.pi*hz*t))
+    ref = replace(ref,landmarks=(ref.landmarks[-1],))
+    with pytest.raises(ScoreAlignmentError,match="ambiguous competing terminal"):
+        analyze(y,sr,profile_id="synthetic",reference=ref)
+
+
+@pytest.mark.parametrize("modulated",[False,True])
+def test_ringing_e7_growth_limit_is_distinct_from_a_certified_new_keystrike(modulated):
+    sr = 48000
+    y,ref,expected = _terminal_scale_synthetic(sr,terminal_present=False,top_cents=20.)
+    start,n = expected-sr,round(1.5*sr)
+    t = np.arange(n)/sr
+    phase = 2*np.pi*440*2**((100.2-69)/12)*(t-1.)
+    envelope = .05*(1+np.sin(np.pi*(t-1.))) if modulated else .08*np.exp(-.2*t)
+    envelope[:480] *= np.linspace(0.,1.,480)
+    y[start:start+n] += envelope*np.sin(phase)
+    ref = replace(ref,landmarks=(ref.landmarks[-1],))
+    if modulated:
+        # Smooth amplitude modulation can supply the same bounded spectral
+        # growth evidence without a fresh physical strike. Document this
+        # limitation explicitly; do not label it a rejected negative.
+        event = analyze(y,sr,profile_id="synthetic",reference=ref)["landmarks"][0]
+        assert expected-round(.35*sr) <= event["source_sample"] <= expected+round(.35*sr)
+    else:
+        with pytest.raises(ScoreAlignmentError,match="missing terminal"):
+            analyze(y,sr,profile_id="synthetic",reference=ref)
+
+
+def test_wrong_global_score_context_cannot_be_rescued_by_injected_e7():
+    sr = 48000
+    y,ref,expected = _terminal_scale_synthetic(sr)
+    y[:] = 0.
+    times = [round(.35*sr)]
+    for q in range(56):
+        times.append(times[-1]+round((.31+.08*(1+np.sin(q*.43))/2)*sr))
+    def at(q):
+        i = int(q)
+        return times[i]+round(float(q-i)*(times[i+1]-times[i])) if i < 56 else times[-1]
+    for note in ref.notes:
+        first,last = at(note.quarter),at(note.quarter+note.duration)
+        _tone(y,sr,first,round(.94*(last-first)),note.midi+1,.07)
+    _tone(y,sr,expected,sr//4,100,.07)
+    ref = replace(ref,landmarks=(ref.landmarks[-1],))
+    with pytest.raises(ScoreAlignmentError,match="score mismatch|coarse|registration"):
+        analyze(y,sr,profile_id="synthetic",reference=ref)
