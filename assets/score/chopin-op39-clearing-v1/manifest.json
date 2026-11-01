@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "profile_id": "chopin-scherzo3-coda-clearing-v1",
+  "reference_id": "chopin-op39-clearing-v1",
+  "base_reference": {
+    "profile_id": "chopin-scherzo3-coda-v1",
+    "bundle_path": "assets/score/chopin-op39-v1",
+    "manifest_sha256": "d87df6f1d0d10aa206006e8d700e8c71fd0cf6f6ce07adb86dc7c4ed14fee960"
+  },
+  "appended_landmarks": [
+    {
+      "id": "final_scale_arrival",
+      "score_quarter": [
+        1860,
+        1
+      ],
+      "measure": 621,
+      "beat": [
+        1,
+        1
+      ],
+      "refinement_midi": [
+        100
+      ],
+      "boundary_kind": "terminal_ascent_note_attack",
+      "meaning": "Terminal RH E7 arrival completing the final long ascent; visual clearing begins after the attack while the held note may ring; not an acoustic release or settling chord"
+    }
+  ],
+  "ascent_evidence": {
+    "staff": 1,
+    "first_quarter": [
+      1848,
+      1
+    ],
+    "step_quarters": [
+      1,
+      2
+    ],
+    "midi_sequence": [
+      62,
+      63,
+      65,
+      67,
+      68,
+      70,
+      72,
+      73,
+      75,
+      77,
+      79,
+      80,
+      82,
+      84,
+      85,
+      87,
+      89,
+      91,
+      92,
+      94,
+      95,
+      96,
+      97,
+      99,
+      100
+    ],
+    "terminal_duration_quarters": [
+      1,
+      1
+    ],
+    "editions": [
+      "039-1-TR.krn.notes.json",
+      "039-1-BH.krn.notes.json"
+    ]
+  },
+  "limits": [
+    "arrival is score-defined intent; acoustic detector returns sole local tuned E7 growth consistent with context, not certified written identity, physical keystrike or hand provenance",
+    "later left-hand/broken figuration continues; m633/634 and m644 are distinct events",
+    "independent music review is required; unavailable listening must be disclosed and is not a demonstrated musical-quality pass; diagnostics are not calibrated confidence probabilities",
+    "held-out prefix registration requires18 coherent frequency observations; ordered trajectory is diagnostic only and does not certify performed strikes",
+    "prefix registration is bounded to40cents and1cent per semitone; terminal-only retuning is forbidden",
+    "original terminal DTW interval plus350ms and original global context limits remain; no existing timing or QA threshold is widened",
+    "a different sole E7 inside the search window and smoothly modulated already-ringing E7 can qualify; explicit identity limitations are calibrated and documented",
+    "new terminal uses declared fundamental support, tonality and unique new-growth gates; old3cue bass refinement and chroma gates remain unchanged"
+  ],
+  "files": {
+    "README.md": "4d6bc10ec29f3b442aa1dc34737ce1257b8c4ff8fc30a934fc382e260e0d0875"
+  }
+}

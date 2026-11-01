@@ -17,6 +17,9 @@ from .nocturne_chapel import _flame, _state
 ROOT = Path(__file__).resolve().parents[1]
 DIRECTORY = Path("assets/visual/candle-rift-v1")
 RENDERER_ID = "candle-rift-v1"
+CLEARING_RENDERER_ID = "candle-clearing-v1"
+CLEARING_DIRECTORY = Path("assets/visual/candle-clearing-v1")
+CLEARING_FRAMES = 180
 
 
 def _smooth(x):
@@ -32,12 +35,17 @@ def _boundary(ctrl, stage):
 
 def event_frames(ctrl):
     """Scene counterfactuals move the real flame/collapse, not a QA marker."""
-    return {"major_arrival": _boundary(ctrl, 1),
+    events = {"major_arrival": _boundary(ctrl, 1),
             "both_hands_octaves": _boundary(ctrl, 2),
             "fast_coda": int(ctrl["score_fast_frame"])}
+    if "score_clearing_frame" in ctrl:
+        events["final_scale_arrival"] = int(ctrl["score_clearing_frame"])
+    return events
 
 
-def make_layout(seed, w, h):
+def make_layout(seed, w, h, renderer_id=RENDERER_ID):
+    if renderer_id not in (RENDERER_ID, CLEARING_RENDERER_ID):
+        raise ValueError("unknown candle renderer")
     directory = ROOT / DIRECTORY
     raw = (directory / "manifest.json").read_bytes()
     manifest = json.loads(raw)
@@ -77,7 +85,7 @@ def make_layout(seed, w, h):
                            "yaw":float(rng.choice([-1,1])*rng.uniform(1.5,2.7)),
                            "thickness":float(rng.uniform(.012,.024)*w),
                            "depth":float(rng.uniform(.7,1.2))})
-    return {"candle":load(Path(candle["path"])),"world":load(DIRECTORY/"world.png"),
+    layout = {"candle":load(Path(candle["path"])),"world":load(DIRECTORY/"world.png"),
             "wick":tuple(candle["wick_anchor"]),"shards":shards,
             "phase":float(rng.uniform(0,6.28)),
             "x":(np.arange(w,dtype=np.float32)[None,:]+.5)/w,
@@ -87,12 +95,87 @@ def make_layout(seed, w, h):
                 "manifest_path":(DIRECTORY/"manifest.json").as_posix(),
                 "manifest_sha256":hashlib.sha256(raw).hexdigest(),
                 "files":{p.as_posix():digest for p,digest in sources.items()}}}
+    if renderer_id == CLEARING_RENDERER_ID:
+        extension_raw = (ROOT / CLEARING_DIRECTORY / "manifest.json").read_bytes()
+        extension = json.loads(extension_raw)
+        if (extension["bundle_id"] != CLEARING_RENDERER_ID or
+                extension.get("content_role") != "sky-only" or
+                set(extension["files"]) != {"cleared-world.png","sky-mask.png","mask-guide.json","build_mask.py"} or
+                extension["parent_manifest"] != {"path": (DIRECTORY/"manifest.json").as_posix(),
+                                                "sha256": hashlib.sha256(raw).hexdigest()} or
+                extension["world_reference"] != {"path": (DIRECTORY/"world.png").as_posix(),
+                                                "sha256": manifest["files"]["world.png"]} or
+                extension["candle_reference"] != candle):
+            raise ValueError("clearing asset/base reference mismatch")
+        for name,digest in extension["files"].items():
+            source=ROOT/CLEARING_DIRECTORY/name
+            if source.is_symlink() or hashlib.sha256(source.read_bytes()).hexdigest() != digest:
+                raise ValueError(f"clearing asset hash mismatch: {name}")
+        path = CLEARING_DIRECTORY/"cleared-world.png"
+        mask_path = CLEARING_DIRECTORY/"sky-mask.png"
+        mask_fact = extension["sky_mask"]
+        if (mask_fact["path"] != mask_path.as_posix() or
+                mask_fact["sha256"] != extension["files"][mask_path.name] or
+                mask_fact["source_world"] != extension["world_reference"]):
+            raise ValueError("sky mask source binding mismatch")
+        with Image.open(ROOT/mask_path) as mask:
+            if mask.mode != "L" or list(mask.size) != [940,1672] or list(mask.size) != mask_fact["native_size"]:
+                raise ValueError("sky mask must be the registered native alpha")
+            sky = np.asarray(mask.resize((w,h),Image.Resampling.LANCZOS),np.float32)/255
+        layout.update(mode=CLEARING_RENDERER_ID, cleared_world=load(path),
+                      sky_mask=sky)
+        layout["provenance"] = {"bundle_id": CLEARING_RENDERER_ID,
+            "manifest_path": (CLEARING_DIRECTORY/"manifest.json").as_posix(),
+            "manifest_sha256": hashlib.sha256(extension_raw).hexdigest(),
+            "base_bundle": layout["provenance"],
+            "files": {(CLEARING_DIRECTORY/name).as_posix():digest for name,digest in extension["files"].items()},
+            "content_role": "sky-only",
+            "sky_mask": mask_fact}
+    return layout
+
+
+def _soft_flame(canvas, wx, wy, height, lean):
+    """Add a continuous luminous density field; no opaque nested polygons."""
+    base = np.asarray(canvas.convert("RGB"), np.float32).copy()
+    h, w = base.shape[:2]
+    top, bottom = max(0,int(wy-1.20*height)), min(h,int(wy+.18*height)+2)
+    left, right = max(0,int(wx-.65*height-abs(lean))), min(w,int(wx+.65*height+abs(lean))+2)
+    yy, xx = np.mgrid[top:bottom,left:right]
+    up = (wy-yy)/max(height,1)
+    center = wx+lean*np.clip(up,0,1)**1.5
+    width = max(1.,height*.17)*(1-.73*np.clip(up,0,1))
+    radial = ((xx-center)/width)**2
+    lower = np.clip((up+.11)/.17,0,1); lower=lower*lower*(3-2*lower)
+    tip = np.clip((1.1-up)/.22,0,1);tip=tip*tip*(3-2*tip)
+    density = np.exp(-radial*.8)*lower*tip
+    core = np.exp(-radial*2.2)*lower*tip*np.clip(1.2-up*.5,0,1)
+    glow = np.exp(-radial*.18-((up-.35)/.75)**2)*.24
+    light = density[...,None]*np.array([115,55,5])+core[...,None]*np.array([110,110,60])+glow[...,None]*np.array([55,23,3])
+    base[top:bottom,left:right] += light
+    return Image.fromarray(np.clip(base,0,255).astype(np.uint8))
+
+
+def clearing_state(f, ctrl, asset):
+    """Spatial sky reveal and storm fade, strictly gated by activation."""
+    if asset.get("mode") != CLEARING_RENDERER_ID:
+        return None, 0.
+    cue = int(ctrl["score_clearing_frame"])
+    if f < cue:
+        return np.zeros_like(asset["sky_mask"]), 0.
+    duration = min(CLEARING_FRAMES,max(1,len(ctrl["scene_id"])-cue-1))
+    u = float(np.clip((f-cue)/duration,0,1))
+    radius = .14+1.02*u**.85
+    distance = np.sqrt(((asset["x"]-.5)/.72)**2+((asset["y"]-.34)/.52)**2)
+    edge = np.clip((radius-distance)/.075,0,1)
+    return edge*edge*(3-2*edge)*asset["sky_mask"], _smooth(u)
 
 
 def _candle(f, ctrl, w, h, asset, major, octave, params):
     env = float(ctrl["flame_envelope"][min(f,len(ctrl["flame_envelope"])-1)])
     entered = _smooth((f-major)/18) if f >= major else 0.
     strength = .025 + entered*(.16+.84*env)*float(params.get("candle_strength",1))
+    if asset.get("mode") == CLEARING_RENDERER_ID:
+        strength = .025 + entered*(.22+.78*env)*float(params.get("candle_strength",1))
     flutter = .92+.045*np.sin(f*.19+asset["phase"])+.035*np.sin(f*.317)
     height = h*(.011+.125*strength)*flutter
     wx,wy = asset["wick"]
@@ -104,6 +187,8 @@ def _candle(f, ctrl, w, h, asset, major, octave, params):
     img += halo[...,None]*np.array([80,42,8])*(.45+strength)
     img += cast[...,None]*np.array([39,20,5])*(strength+.1*pulse)
     canvas = Image.fromarray(np.clip(img,0,255).astype(np.uint8))
+    if asset.get("mode") == CLEARING_RENDERER_ID:
+        return _soft_flame(canvas,wx*w,wy*h,height,w*.006*np.sin(f*.09)*(1-.5*strength))
     return _flame(canvas,wx*w,wy*h,height,w*.006*np.sin(f*.09)*(1-.5*strength),w)
 
 
@@ -113,7 +198,11 @@ def _world(f, ctrl, w, h, asset, fast):
     travel = .65*u+.35*_smooth(u)
     launch = _smooth(elapsed/18)
     # Depth-varying mesh: near cliffs pass faster than the distant route.
-    source = Image.fromarray(np.clip(asset["world"],0,255).astype(np.uint8))
+    reveal, cleared = clearing_state(f, ctrl, asset)
+    source_array = asset["world"]
+    if reveal is not None:
+        source_array = source_array*(1-reveal[...,None])+asset["cleared_world"]*reveal[...,None]
+    source = Image.fromarray(np.clip(source_array,0,255).astype(np.uint8))
     ax,ay = w*.5,h*.385
     def point(x,y):
         depth = _smooth((y/h-.40)/.60)
@@ -132,16 +221,27 @@ def _world(f, ctrl, w, h, asset, fast):
     # Overscan grows with the translation. Its source margins exceed the
     # .06*w*drift shift, so no unfilled pixels enter the visible sky.
     inverse = 1/(1+.16*drift)
-    cloud = world.transform((w,h),Image.Transform.AFFINE,
-        (inverse,0,w*(1-inverse)/2+cloud_shift,0,inverse,h*(1-inverse)/2),
-        Image.Resampling.BICUBIC)
-    alpha = np.clip((.56-asset["y"])/.12,0,1)
-    img = np.asarray(world,np.float32)*(1-alpha[...,None])+np.asarray(cloud,np.float32)*alpha[...,None]
+    world_sky = None
+    if reveal is None:
+        cloud = world.transform((w,h),Image.Transform.AFFINE,
+            (inverse,0,w*(1-inverse)/2+cloud_shift,0,inverse,h*(1-inverse)/2),
+            Image.Resampling.BICUBIC)
+        alpha = np.clip((.56-asset["y"])/.12,0,1)
+        img = np.asarray(world,np.float32)*(1-alpha[...,None])+np.asarray(cloud,np.float32)*alpha[...,None]
+    else:
+        # Never affine-copy a rock-bearing frame into the sky. The clearing
+        # asset is sky only; rocks/lava take exactly the original mesh once.
+        mask = Image.fromarray(np.round(asset["sky_mask"]*255).astype(np.uint8))
+        world_sky_image = mask.transform((w,h),Image.Transform.MESH,mesh,Image.Resampling.BICUBIC)
+        world_sky = np.asarray(world_sky_image,np.float32)/255
+        img = np.asarray(world,np.float32).copy()
     energy = float(ctrl["flame_envelope"][f])
     molten = np.clip((asset["y"]-.38)/.5,0,1)
     img += molten[...,None]*np.array([9,3,0])*(.3+.7*energy)
-    acc = float(ctrl["accent_pulse"][f])
+    acc = float(ctrl["accent_pulse"][f])*(1-cleared)
     sky = np.clip((.58-asset["y"])/.18,0,1)
+    if world_sky is not None:
+        sky = world_sky
     img += sky[...,None]*np.array([57,66,79])*.65*acc
     canvas = Image.fromarray(np.clip(img,0,255).astype(np.uint8)).convert("RGBA")
     overlay = Image.new("RGBA",(w,h),(0,0,0,0));draw=ImageDraw.Draw(overlay)
@@ -161,7 +261,7 @@ def _world(f, ctrl, w, h, asset, fast):
     for x,y,s,v in asset["embers"]:
         ex=((x+elapsed*(.00035+.0003*v))%1.15-.075)*w
         ey=((y-elapsed*(.0005+.0003*s))%1.15-.075)*h
-        draw.line([(ex,ey),(ex-3*w/540,ey+5*h/960)],fill=(238,122,30,45+int(35*s)),width=1)
+        draw.line([(ex,ey),(ex-3*w/540,ey+5*h/960)],fill=(238,122,30,int((45+int(35*s))*(1-cleared))),width=1)
     return Image.alpha_composite(canvas,overlay).convert("RGB")
 
 
@@ -197,6 +297,12 @@ def draw_frame(f, ctrl, w, h, seed, lay, scene_palettes, scene_params):
     times=event_frames(ctrl);major=times["major_arrival"];octave=times["both_hands_octaves"];fast=times["fast_coda"]
     if not 0 < major < octave < fast < len(ctrl["scene_id"]):
         raise ValueError("rift requires ordered score landmarks inside the clip")
+    if asset.get("mode") == CLEARING_RENDERER_ID:
+        # Candidate/context intake enforces the real sixty-frame visual span.
+        # Counterfactual QA must also render +/-2-frame hypotheses at that
+        # eligibility edge without changing the actual candidate contract.
+        if "final_scale_arrival" not in times or not fast < times["final_scale_arrival"] < len(ctrl["scene_id"]):
+            raise ValueError("clearing requires its ordered final-scale cue inside the clip")
     params = _state(f, ctrl, [{"candle_strength": 1., **p}
                              for p in (scene_params or [{}])])
     if f < octave:

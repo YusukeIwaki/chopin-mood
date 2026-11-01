@@ -1024,6 +1024,10 @@ def make_reference_frame_fn(ctrl: dict, w: int, h: int, seed: int,
         # fixed, so an accent near a transition cannot mask its lag.
         ids = np.asarray(ctrl["scene_id"]).copy()
         b, delta = int(boundary), int(shift)
+        if "candle_rift" in lay and "score_clearing_frame" in ctrl and b == int(ctrl["score_clearing_frame"]):
+            shifted = dict(ctrl, score_clearing_frame=b+delta)
+            return draw_clean_frame(int(frame), shifted, w, h, seed, lay,
+                                    scene_palettes=scene_palettes, scene_params=scene_params)
         if "candle_rift" in lay and b == int(ctrl["score_fast_frame"]):
             shifted = dict(ctrl, score_fast_frame=b + delta)
             return draw_clean_frame(int(frame), shifted, w, h, seed, lay,
@@ -1047,6 +1051,11 @@ def make_reference_frame_fn(ctrl: dict, w: int, h: int, seed: int,
     fn.cache = cache  # type: ignore[attr-defined]
     def transition_window(boundary):
         b = int(boundary)
+        if "candle_rift" in lay and "score_clearing_frame" in ctrl and b == int(ctrl["score_clearing_frame"]):
+            radius = min(SCENE_TRANSITION_HALF_FRAMES,
+                         (b-int(ctrl["score_fast_frame"]))//4,
+                         (len(ctrl["scene_id"])-b)//4)
+            return (b-radius,b+radius,.5) if radius else None
         if "candle_rift" in lay and b == int(ctrl["score_fast_frame"]):
             from .candle_rift import event_frames
             times = event_frames(ctrl)

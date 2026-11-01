@@ -58,8 +58,8 @@ def validate_storyboard(sb: dict, deterministic_scenes: list[dict]) -> dict:
         if sb["asset_bundle"] != PAINTED_ASSET_BUNDLE_ID:
             failures.append("unknown asset_bundle")
     if "renderer" in sb:
-        from .config import STORM_RECITAL_RENDERER_ID, SALON_ENCORE_RENDERER_ID, CHAPEL_RENDERER_IDS, CANDLE_RIFT_RENDERER_ID
-        if sb["renderer"] not in (STORM_RECITAL_RENDERER_ID, SALON_ENCORE_RENDERER_ID, *CHAPEL_RENDERER_IDS, CANDLE_RIFT_RENDERER_ID):
+        from .config import STORM_RECITAL_RENDERER_ID, SALON_ENCORE_RENDERER_ID, CHAPEL_RENDERER_IDS, CANDLE_RIFT_RENDERER_IDS
+        if sb["renderer"] not in (STORM_RECITAL_RENDERER_ID, SALON_ENCORE_RENDERER_ID, *CHAPEL_RENDERER_IDS, *CANDLE_RIFT_RENDERER_IDS):
             failures.append("unknown renderer")
         if "asset_bundle" in sb:
             failures.append("renderer and asset_bundle are mutually exclusive")

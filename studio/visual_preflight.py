@@ -6,7 +6,8 @@ the full renderer in ``scripts/studio_render.py``:
 
 * :func:`generate_evidence` renders only bounded evidence (native
   still frames for every scene, or short silent motion windows
-  centred on each scene midpoint) -- never a whole video;
+  centred on each scene midpoint, with one optional clearing-onset window)
+  -- never a whole video;
 * :func:`validate_evidence` strictly re-validates an evidence
   directory (schema, identity, binding, samples, exact media hashes,
   decoded-pixel correspondence) and fails closed on any tampering;
@@ -67,14 +68,15 @@ MAX_MOTION_WINDOW_FRAMES = 60
 MOTION_FPS = 30
 
 # Bounds (fail closed above these; legitimate preflight evidence is
-# far smaller: at most 60 preview frames per scene).
+# far smaller: at most 60 preview frames per scene and one semantic window).
 MAX_EVIDENCE_BYTES = 10 * 1024 * 1024
 MAX_REVIEW_BYTES = 256 * 1024
 MAX_MEDIA_FILE_BYTES = 64 * 1024 * 1024
 MAX_MEDIA_TOTAL_BYTES = 256 * 1024 * 1024
 MAX_SCENES = 64
-MAX_SAMPLES = 3 * MAX_SCENES
-MAX_PREVIEW_FRAMES = MAX_MOTION_WINDOW_FRAMES * MAX_SCENES
+MAX_SEMANTIC_WINDOWS = 1
+MAX_SAMPLES = 3 * (MAX_SCENES + MAX_SEMANTIC_WINDOWS)
+MAX_PREVIEW_FRAMES = MAX_MOTION_WINDOW_FRAMES * (MAX_SCENES + MAX_SEMANTIC_WINDOWS)
 
 _EVIDENCE_KEYS = {
     "version", "stage", "identity", "binding", "plan", "samples",
@@ -253,7 +255,7 @@ def _scene_triples(scenes: list[dict]):
     return out
 
 
-def _motion_windows(scenes: list[dict]) -> list[dict]:
+def _motion_windows(scenes: list[dict], plan=None) -> list[dict]:
     """Up-to-60-frame windows centred on each scene midpoint."""
     windows: list[dict] = []
     preview = 0
@@ -273,6 +275,37 @@ def _motion_windows(scenes: list[dict]) -> list[dict]:
             "frame_count": count,
         })
         preview += count
+    if isinstance(plan, dict) and plan.get("visual_renderer", {}).get("renderer_id") == "candle-clearing-v1":
+        events = [e for e in plan.get("semantic_landmarks", []) if e.get("id") == "final_scale_arrival"]
+        if len(events) != 1 or type(events[0].get("frame")) is not int:
+            raise ValueError("clearing preflight requires its semantic activation frame")
+        cue = events[0]["frame"]
+        scene = next((s for s in scenes if s["start_frame"] <= cue < s["end_frame"]), None)
+        if scene is None or scene["end_frame"]-cue < MAX_MOTION_WINDOW_FRAMES:
+            raise ValueError("clearing preflight requires sixty remaining frames")
+        existing = next(w for w in windows if w["scene_id"] == scene["id"])
+        ws, we = existing["source_start_frame"], existing["source_end_frame"]
+        if not ws <= cue < we or we-cue < 30:
+            # Retain every original scene window. Append one disjoint source
+            # window showing opening/progression when the late cue was missed.
+            if ws <= cue < we:
+                first = we
+            elif cue >= we:
+                first = max(we,cue-6)
+            else:
+                first = min(ws,cue+54)-MAX_MOTION_WINDOW_FRAMES
+            first = max(scene["start_frame"],first)
+            count = min(MAX_MOTION_WINDOW_FRAMES,scene["end_frame"]-first)
+            last = first+count
+            if first < we and last > ws:
+                raise ValueError("clearing semantic motion window overlaps scene evidence")
+            post_frames = max(0,we-max(ws,cue))+max(0,last-max(first,cue))
+            if post_frames < 30:
+                raise ValueError("clearing motion evidence requires thirty post-cue frames")
+            windows.append({"scene_id": scene["id"]+":final_scale_arrival",
+                "source_start_frame": first, "source_end_frame": last,
+                "preview_start_frame": preview, "preview_end_frame": preview+count,
+                "frame_count": count})
     return windows
 
 
@@ -454,7 +487,7 @@ def generate_evidence(context, out_dir, *, stage, engine_sha, run_id,
         _save_contact_sheet(rows, context.width, context.height,
                             out / "contact-sheet.jpg")
     else:
-        windows = _motion_windows(scenes)
+        windows = _motion_windows(scenes, plan)
         preview_path = out / "preview.mp4"
         total = _encode_preview(context, windows, preview_path)
         facts, probe_failures = _probe_preview(preview_path)
@@ -536,7 +569,7 @@ def generate_evidence(context, out_dir, *, stage, engine_sha, run_id,
     return evidence
 
 
-def _expected_samples(scenes: list[dict], stage: str):
+def _expected_samples(scenes: list[dict], stage: str, plan=None):
     """Expected (samples, windows) derived deterministically."""
     if stage == "still":
         samples = []
@@ -546,7 +579,7 @@ def _expected_samples(scenes: list[dict], stage: str):
                                 "source_frame": int(src),
                                 "file": f"frame-{src:06d}.png"})
         return samples, None
-    windows = _motion_windows(scenes)
+    windows = _motion_windows(scenes, plan)
     samples = []
     for win in windows:
         ws, we, ps = (win["source_start_frame"], win["source_end_frame"],
@@ -790,7 +823,10 @@ def validate_evidence(out_dir, context=None, expected_engine_sha=None,
         if n_frames is not None and scenes \
                 and scenes[-1]["end_frame"] > n_frames:
             failures.append("scenes exceed clip frame count")
-        expected_samples, windows = _expected_samples(scenes, stage)
+        try:
+            expected_samples, windows = _expected_samples(scenes, stage, plan)
+        except (ValueError, KeyError, TypeError) as exc:
+            failures.append(f"invalid semantic evidence windows: {exc}")
 
     samples = parsed.get("samples")
     if not isinstance(samples, list) or not samples:
@@ -995,8 +1031,10 @@ def validate_evidence(out_dir, context=None, expected_engine_sha=None,
         complete = True
         ordered = samples
         idx = 0
-        # Samples are stored scene-by-scene, 3 roles per scene.
-        for _sc in scenes:
+        # Samples are grouped by three roles, including the optional semantic
+        # motion window after the original per-scene evidence.
+        row_count = len(windows) if stage == "motion" and windows is not None else len(scenes)
+        for _ in range(row_count):
             row = []
             for _ in range(3):
                 if idx >= len(ordered):
@@ -1009,7 +1047,7 @@ def validate_evidence(out_dir, context=None, expected_engine_sha=None,
                 row.append(arr)
                 idx += 1
             rows.append(row)
-        if complete and len(rows) == len(scenes):
+        if complete and len(rows) == row_count:
             try:
                 buf = io.BytesIO()
                 _contact_sheet(rows, width, height).save(

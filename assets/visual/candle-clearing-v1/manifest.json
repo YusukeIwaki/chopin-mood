@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "bundle_id": "candle-clearing-v1",
+  "provider": "Codex built-in image_gen",
+  "model": "not exposed",
+  "created_on": "2026-11-01",
+  "prompts": "assets/visual/candle-clearing-v1/PROMPTS.md",
+  "files": {
+    "cleared-world.png": "fcca4b71ea28146fb8c310c63d1509b8762fd860ad230b172d3bb5d1583a4d89",
+    "sky-mask.png": "8150b799e4c3bf53530bbec4027f47ff949ee3a5d1f019b16e84c238a29c4282",
+    "mask-guide.json": "39c0b437302adc449a9a3f30db352253565cf8a89578882f9595134206aee7ff",
+    "build_mask.py": "047935100ef1f991f7e16564156271e7672a1ca6d7d5967304050f2c5339945c"
+  },
+  "parent_manifest": {
+    "path": "assets/visual/candle-rift-v1/manifest.json",
+    "sha256": "40f8247add13424402b2fb7e38d00edf58a8d804f5759368c0a8e791b5b9cf76"
+  },
+  "world_reference": {
+    "path": "assets/visual/candle-rift-v1/world.png",
+    "sha256": "beb545fb91a260c69d18e6d17d49bda3aa510fcd446adba5720e4099832a7756"
+  },
+  "candle_reference": {
+    "path": "assets/visual/nocturne-chapel-v1/candle.png",
+    "sha256": "4d4e76645d7f918a364e9395993b56ef3f3ce6f1985ba8a67b317dfb108d603d",
+    "wick_anchor": [
+      0.503,
+      0.463
+    ]
+  },
+  "content_role": "sky-only",
+  "edit_history": [
+    {
+      "kind": "matching landscape end-state",
+      "sha256": "d50b8a2a0719b28df07bd7d4d8406872737fa315a66c121ae1671aec7c68459c",
+      "status": "superseded after independent initial still review found ghost mountain silhouettes"
+    },
+    {
+      "kind": "sky-only texture edit",
+      "sha256": "fcca4b71ea28146fb8c310c63d1509b8762fd860ad230b172d3bb5d1583a4d89",
+      "status": "visual repair1; renderer retains the original world geometry and never affinely shifts rock-bearing imagery"
+    }
+  ],
+  "sky_mask": {
+    "path": "assets/visual/candle-clearing-v1/sky-mask.png",
+    "sha256": "8150b799e4c3bf53530bbec4027f47ff949ee3a5d1f019b16e84c238a29c4282",
+    "native_size": [
+      940,
+      1672
+    ],
+    "source_world": {
+      "path": "assets/visual/candle-rift-v1/world.png",
+      "sha256": "beb545fb91a260c69d18e6d17d49bda3aa510fcd446adba5720e4099832a7756"
+    },
+    "recipe": "assets/visual/candle-clearing-v1/build_mask.py",
+    "guide": "assets/visual/candle-clearing-v1/mask-guide.json",
+    "feather_sigma_native_pixels": 0.6,
+    "content": "two-dimensional source sky alpha; concave gaps retained; no terrain image copied"
+  }
+}

@@ -9,9 +9,14 @@ You receive, in order:
    bytes) that you must bind in your review.
 4. The actual attached images: native frames
    (`frame-NNNNNN.png`, indexed by the original source frame local
-   to the clip) and the 3-column contact sheet (one row per scene:
-   start / middle / end). For motion evidence you also receive the
-   decoded start/mid/end frames of each short preview window.
+   to the clip) and the 3-column contact sheet (start / middle / end).
+   Stills have one row per scene. Motion retains those scene windows
+   and may append one semantic window row, such as
+   `scene03:final_scale_arrival`, to show a late clearing event.
+   Read every window and sample in the complete mapping, including
+   appended rows; rows are not necessarily only scene midpoints.
+   For motion evidence you receive the decoded start/mid/end frames
+   of each short preview window.
 
 Inspect the ACTUAL attached images against the provided brief.
 Judge composition, shape, readability and style consistency, and
@@ -84,6 +89,16 @@ join for short scenes. Legacy `figure_scale`, `particle_multiplier` and
 and illumination, without treating prose as implemented artwork.
 Sparse retained DSP accents drive branched lightning in sky views and
 reflected flashes overhead; `storm_light` weights their intensity.
+
+`candle-rift-v1` and `candle-clearing-v1` use registered candle and
+rock/lava paintings with deterministic flame, falling masonry and depth
+travel. The clearing mode also reveals a registered sky-only painting
+through a native source-coordinate alpha after its semantic scale-arrival
+cue. The candle modes execute `candle_strength` and numeric camera params;
+palette edits and other providers' parameters do not recolour those fixed
+paintings. New artwork, masking or drawing changes require the engine route.
+Scene and internal semantic cue times remain trusted analysis outputs, not
+storyboard-editable timing. Judge the attached pixels and mapped samples.
 
 The renderer joins palettes, the legacy four non-camera controls,
 storm weather controls and camera

@@ -345,6 +345,29 @@ def build_visual_review_prompt(base_prompt: str, *, brief, storyboard,
     directory the reviewer must inspect.
     """
     evidence = evidence if isinstance(evidence, dict) else {}
+    brief = brief if isinstance(brief, dict) else {}
+    # Owner intent comes before all generated numeric evidence and is never
+    # silently cut by a large score-alignment diagnostic or candidate object.
+    compact_brief = {key: brief.get(key) for key in
+        ("piece", "period", "art_notes", "creative_brief", "parent_issue", "candidate_id")}
+    candidate = brief.get("candidate")
+    if isinstance(candidate, dict):
+        compact_brief["candidate"] = {key: candidate[key] for key in
+            ("id", "start_sample", "end_sample", "n_frames", "sample_rate", "fps",
+             "analysis_profile", "scenes", "accents") if key in candidate}
+    def complete_json(value, label):
+        text = json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False)
+        if len(text.encode("utf-8")) > config.MAX_PRODUCTION_FILE_BYTES:
+            raise VisualInfrastructureError(f"{label} exceeds bounded review input; refusing silent truncation")
+        return text
+    owner_json = complete_json(compact_brief, "owner intent")
+    mapping = {"contact_sheet_rows": "scene rows, then optional semantic motion-window row; read all windows",
+        "windows": (evidence.get("motion_qa") or {}).get("windows", []),
+        "samples": evidence.get("samples", []),
+        "semantic_landmarks": [{key: event[key] for key in
+            ("id", "frame", "containing_frame", "source_sample", "frame_policy") if key in event}
+            for event in (evidence.get("plan") or {}).get("semantic_landmarks", [])]}
+    mapping_json = complete_json(mapping, "evidence window/sample mapping")
     base_dir = Path(evidence_dir)
     digest = hashlib.sha256((base_dir / "evidence.json").read_bytes()).hexdigest()
     native = [str(base_dir / s.get("file", ""))
@@ -359,10 +382,12 @@ def build_visual_review_prompt(base_prompt: str, *, brief, storyboard,
         "Native frames (open these exact PNG paths at full resolution):",
         *[f"- {p}" for p in native],
         "",
-        "## brief.json (bounded data)",
-        json.dumps(brief, indent=2)[:20000], "",
+        "## Owner intent and compact brief (complete bounded data; intent first)",
+        owner_json, "",
         "## storyboard.json (bounded data)",
         json.dumps(storyboard, indent=2)[:20000], "",
+        "## Complete native window/sample mapping (before bounded evidence details)",
+        mapping_json, "",
         "## evidence.json (bounded data)",
         json.dumps(evidence, indent=2)[:20000], "",
         "Bind stage and the exact Evidence SHA-256 supplied above in the "

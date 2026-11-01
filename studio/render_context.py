@@ -155,13 +155,17 @@ def prepare_context(wav, candidate_path, storyboard_path, brief_path, *,
     layouts = cleanmod.make_layouts(seed, width, height)
     if storyboard.get("renderer") is not None:
         from . import config, storm_recital
-        if storyboard["renderer"] == config.CANDLE_RIFT_RENDERER_ID:
+        if storyboard["renderer"] in config.CANDLE_RIFT_RENDERER_IDS:
             from . import candle_rift as provider
             layout_key = "candle_rift"
-            if cand.get("analysis_profile") != "chopin-scherzo3-coda-v1":
+            clearing = storyboard["renderer"] == config.CANDLE_CLEARING_RENDERER_ID
+            profile = "chopin-scherzo3-coda-clearing-v1" if clearing else "chopin-scherzo3-coda-v1"
+            if cand.get("analysis_profile") != profile:
                 raise ValueError("candle rift requires its trusted score analysis profile")
             landmarks = cand.get("score_landmarks", [])
             expected_ids = ["major_arrival", "both_hands_octaves", "fast_coda"]
+            if clearing:
+                expected_ids.append("final_scale_arrival")
             if [e.get("id") for e in landmarks] != expected_ids:
                 raise ValueError("candle rift requires all ordered score landmarks")
             for event in landmarks:
@@ -170,12 +174,22 @@ def prepare_context(wav, candidate_path, storyboard_path, brief_path, *,
                         or not clip["start_sample"] <= sample < clip["end_sample"]
                         or tb.sample_to_frame(clip["start_sample"], sample) != frame):
                     raise ValueError("score landmark sample/frame mismatch")
-            major, octave, fast = [e["frame"] for e in landmarks]
+            major, octave, fast = [e["frame"] for e in landmarks[:3]]
             if not 0 < major < octave < fast < clip["n_frames"]:
                 raise ValueError("score landmarks must be ordered inside clip")
             if [s["start_frame"] for s in det_scenes] != [0, major, octave]:
                 raise ValueError("rift scene boundaries must equal score landmarks")
             controls["score_fast_frame"] = fast
+            semantic_landmarks = landmarks
+            if clearing:
+                last = landmarks[3]
+                activation = last["frame"] + int(tb.frame_boundary_sample(clip["start_sample"], last["frame"]) < last["source_sample"])
+                if not fast < activation <= clip["n_frames"]-60:
+                    raise ValueError("clearing requires an ordered cue with sixty remaining frames")
+                controls["score_clearing_frame"] = activation
+                semantic_landmarks = [dict(e) for e in landmarks]
+                semantic_landmarks[3].update(frame=activation, containing_frame=last["frame"],
+                    frame_policy="first_frame_boundary_at_or_after_native_source_sample")
             positions = np.array([tb.frame_boundary_sample(clip["start_sample"], f)
                                   for f in range(clip["n_frames"])])
             rms = np.interp(positions, feat["centers"], feat["rms"])
@@ -189,7 +203,7 @@ def prepare_context(wav, candidate_path, storyboard_path, brief_path, *,
                 a = 1-np.exp(-1/(30*tau))
                 envelope[f] = envelope[f-1]+a*(target[f]-envelope[f-1])
             controls["flame_envelope"] = envelope
-            plan["semantic_landmarks"] = landmarks
+            plan["semantic_landmarks"] = semantic_landmarks
             plan["score_alignment"] = cand["score_alignment"]
             plan["flame_envelope"] = {"source": "native RMS; no audio change",
                 "normalization": "major-to-octave 5th/95th dB percentiles; minimum 6 dB span",
@@ -203,7 +217,7 @@ def prepare_context(wav, candidate_path, storyboard_path, brief_path, *,
         else:
             provider, layout_key = storm_recital, "storm_recital"
         layouts[layout_key] = (provider.make_layout(seed, width, height, storyboard["renderer"])
-                               if layout_key == "nocturne_chapel" else provider.make_layout(seed, width, height))
+                               if layout_key in ("nocturne_chapel", "candle_rift") else provider.make_layout(seed, width, height))
         # Public-plan binding invalidates old visual approval when the
         # trusted provider code changes, including uncommitted changes.
         plan["visual_assets"] = layouts[layout_key]["provenance"]

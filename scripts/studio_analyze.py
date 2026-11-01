@@ -58,9 +58,13 @@ def apply_score_profile(candidates: list[dict], alignment: dict, tb: Timebase) -
         raise ValueError("score analysis profile/source grid mismatch")
     landmarks = alignment.get("landmarks")
     want = ["major_arrival", "both_hands_octaves", "fast_coda"]
-    if (not isinstance(landmarks, list) or len(landmarks) != 3 or
+    clearing = profile == "chopin-scherzo3-coda-clearing-v1"
+    if clearing:
+        want.append("final_scale_arrival")
+    if (not isinstance(landmarks, list) or len(landmarks) != len(want) or
             any(not isinstance(e, dict) for e in landmarks) or [e.get("id") for e in landmarks] != want):
-        raise ValueError("score analysis requires all three landmarks in order")
+        raise ValueError("score analysis requires all four landmarks in order" if clearing else
+                         "score analysis requires all three landmarks in order")
     samples = [e.get("source_sample") for e in landmarks]
     if any(type(s) is not int for s in samples) or samples != sorted(set(samples)):
         raise ValueError("score landmark samples must be strictly increasing integers")
@@ -71,6 +75,10 @@ def apply_score_profile(candidates: list[dict], alignment: dict, tb: Timebase) -
         if not all(start <= s < end for s in samples):
             continue
         frames = [tb.sample_to_frame(start, sample) for sample in samples]
+        if clearing:
+            activation = frames[3] + int(tb.frame_boundary_sample(start, frames[3]) < samples[3])
+            if count - activation < 60:
+                continue
         bounds = [0, frames[0], frames[1], count]
         if any(b - a < minimum for a, b in zip(bounds[:-1], bounds[1:])):
             continue
@@ -85,6 +93,8 @@ def apply_score_profile(candidates: list[dict], alignment: dict, tb: Timebase) -
                          score_landmarks=[{**copy.deepcopy(e), "frame": frame}
                                           for e, frame in zip(landmarks, frames)], scenes=scenes,
                          scene_reason="score-aligned major arrival and strict both-hands octave entry; fast coda drives scene03 motion")
+        if clearing:
+            candidate["scene_reason"] += "; clearing follows the terminal ascending E7 arrival inside scene03"
         eligible.append(candidate)
     if not eligible:
         raise ValueError("no ranked candidate covers all score landmarks with six-second scenes")
