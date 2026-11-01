@@ -724,6 +724,9 @@ def draw_clean_frame(f: int, ctrl: dict, w: int, h: int, seed: int,
                      lay: dict, scene_palettes=None,
                      scene_params=None) -> np.ndarray:
     """Render one clean RGB frame. Pure function of (f, ctrl, seed)."""
+    if "candle_rift" in lay:
+        from .candle_rift import draw_frame
+        return draw_frame(f, ctrl, w, h, seed, lay, scene_palettes, scene_params)
     if "nocturne_chapel" in lay:
         from .nocturne_chapel import draw_frame
         return draw_frame(f, ctrl, w, h, seed, lay, scene_palettes, scene_params)
@@ -1021,6 +1024,11 @@ def make_reference_frame_fn(ctrl: dict, w: int, h: int, seed: int,
         # fixed, so an accent near a transition cannot mask its lag.
         ids = np.asarray(ctrl["scene_id"]).copy()
         b, delta = int(boundary), int(shift)
+        if "candle_rift" in lay and b == int(ctrl["score_fast_frame"]):
+            shifted = dict(ctrl, score_fast_frame=b + delta)
+            return draw_clean_frame(int(frame), shifted, w, h, seed, lay,
+                                    scene_palettes=scene_palettes,
+                                    scene_params=scene_params)
         if not 0 < b < len(ids) or ids[b - 1] == ids[b]:
             raise ValueError("not a scene boundary")
         if delta > 0:
@@ -1037,9 +1045,19 @@ def make_reference_frame_fn(ctrl: dict, w: int, h: int, seed: int,
                                 scene_params=scene_params)
 
     fn.cache = cache  # type: ignore[attr-defined]
-    fn.transition_window = lambda b: scene_transition(b, ctrl["scene_id"])
+    def transition_window(boundary):
+        b = int(boundary)
+        if "candle_rift" in lay and b == int(ctrl["score_fast_frame"]):
+            from .candle_rift import event_frames
+            times = event_frames(ctrl)
+            radius = min(SCENE_TRANSITION_HALF_FRAMES,
+                         (b-times["both_hands_octaves"])//4,
+                         (len(ctrl["scene_id"])-b)//4)
+            return (b-radius, b+radius, .5) if radius else None
+        return scene_transition(b, ctrl["scene_id"])
+    fn.transition_window = transition_window
     fn.shifted_boundary_frame = shifted_boundary_frame
-    if "painted_assets" in lay or "storm_recital" in lay or "salon_encore" in lay or "nocturne_chapel" in lay:
+    if "painted_assets" in lay or "storm_recital" in lay or "salon_encore" in lay or "nocturne_chapel" in lay or "candle_rift" in lay:
         # Calibrated with real CRF18 encoded positives and missing/late
         # accents: these providers have subtle light, so use a stricter bound.
         fn.patch_mae_max = 5.0

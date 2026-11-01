@@ -31,10 +31,14 @@ def main():
         prepared = pipeline.prepare_candidate(gh, pr_number=a.pr, actor=os.environ["GITHUB_ACTOR"], engine_sha=os.environ["GITHUB_SHA"])
         ctx = pipeline.write_prepared(prepared, work)
         project = json.loads((work / "project.json").read_text())
+        profile = project.get("analysis_profile")
+        if profile is not None and (not isinstance(profile, str) or profile not in config.SCORE_PROFILE_IDS):
+            raise ValueError("unsupported analysis profile")
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             for key in ("pr", "head_sha", "source_issue", "candidate_id"):
                 f.write(f"{key}={ctx[key]}\n")
             f.write(f"source_url={project['source_url']}\n")
+            f.write(f"analysis_profile={profile or ''}\n")
         print(json.dumps({"ok": True, **ctx}))
     elif a.command == "seal":
         pipeline.seal_candidate(work, run_id=int(os.environ["GITHUB_RUN_ID"]), run_attempt=int(os.environ["GITHUB_RUN_ATTEMPT"]))

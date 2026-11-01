@@ -61,7 +61,7 @@ def output_directory(value):
 
 def require_engine(engine_sha):
     """Candidate branches may add data; renderer/dependency bytes must match."""
-    paths = ["studio", "p0", "scripts", "assets/visual", "requirements-p0.txt", ".github/studio"]
+    paths = ["studio", "p0", "scripts", "assets/visual", "assets/score", "requirements-p0.txt", ".github/studio"]
     changed = subprocess.check_output(["git", "diff", "--name-only", engine_sha, "--", *paths],
                                       cwd=ROOT, text=True).splitlines()
     changed = [name for name in changed if not name.startswith("studio/projects/")]
@@ -72,7 +72,17 @@ def require_engine(engine_sha):
         raise ValueError("renderer/assets/dependencies differ from engine_sha; merge an engineering PR first")
 
 
+def profile_args(profile):
+    if profile is None:
+        return []
+    if not isinstance(profile, str) or profile not in config.SCORE_PROFILE_IDS:
+        raise ValueError("unsupported analysis profile")
+    return ["--profile", profile]
+
+
 def init(a):
+    profile = getattr(a, "profile", None)
+    optional_profile = profile_args(profile)
     gh = github(a.repo)
     issue = gh.get_issue(a.issue)
     urls = [u for u in validate.extract_attachment_urls(issue.get("body") or "")
@@ -89,7 +99,7 @@ def init(a):
     run_script("studio_download.py", "--url", urls[0], "--out", work / "source-attachment",
                "--meta-out", work / "source-meta.json", "--decode-out", work / "source.wav", "--canonical-wav")
     run_script("studio_analyze.py", "--wav", work / "source.wav", "--out", work / "analysis",
-               "--creative", work / "creative.json")
+               "--creative", work / "creative.json", *optional_profile)
     source = json.loads((work / "source-meta.json").read_text())
     analysis = json.loads((work / "analysis/plan-context.json").read_text())
     hashes = {k: source[k] for k in ("attachment_sha256", "decoded_wav_sha256")}
@@ -102,6 +112,9 @@ def init(a):
         cp.validate_timing(candidate)
         project = dict(schema_version="2.0", source_issue=a.issue, candidate_id=candidate["id"],
                        source_url=urls[0], engine_sha=engine)
+        if profile is not None:
+            project["analysis_profile"] = profile
+        cp.validate_profile_binding(profile, candidate)
         brief = dict(schema_version="2.0", parent_issue=a.issue, candidate_id=candidate["id"],
                      candidate=candidate, source_hashes=hashes, fingerprint=fp, **fields,
                      creative_brief={"status": "draft; Codex must author the creative treatment",
@@ -137,6 +150,7 @@ def render(a):
     # reports via the evidence snapshot emitted below.
     documents = {n: json.loads((directory / n).read_text()) for n in cp.INPUT_NAMES}
     project = documents["project.json"]
+    optional_profile = profile_args(project.get("analysis_profile"))
     require_engine(project["engine_sha"])
     hashes = {n: cp.sha256_bytes((directory / n).read_bytes()) for n in cp.INPUT_NAMES}
     draft = documents["editorial.json"]
@@ -149,12 +163,13 @@ def render(a):
     out = output_directory(a.out or f"output/studio/issue-{a.issue}/{a.candidate}/round-{a.round}")
     if (out / "video.mp4").exists() or (out / "editorial.template.json").exists():
         raise ValueError("render output already exists; preserve evidence and use a new output directory")
-    run_script("studio_analyze.py", "--wav", a.wav, "--out", out / "analysis")
-    cp.validate_dsp_candidate(documents["brief.json"], json.loads((out / "analysis/plan-context.json").read_text()))
+    run_script("studio_analyze.py", "--wav", a.wav, "--out", out / "analysis", *optional_profile)
+    cp.validate_dsp_candidate(documents["brief.json"], json.loads((out / "analysis/plan-context.json").read_text()),
+                              project=project)
     rendered = subprocess.run([sys.executable, str(ROOT / "scripts/studio_render.py"),
                "--wav", str(a.wav), "--candidate", str(directory / "brief.json"),
                "--brief", str(directory / "brief.json"), "--storyboard", str(directory / "storyboard.json"),
-               "--out", str(out)], cwd=ROOT)
+               "--out", str(out), *optional_profile], cwd=ROOT)
     if not (out / "qa.json").is_file():
         raise ValueError("renderer failed before producing QA evidence")
     record = cp.editorial_template(hashes, out, creator_id=a.creator_id, round_number=a.round)
@@ -190,6 +205,8 @@ def main():
     ip.add_argument("--max-candidates", type=int, choices=(1, 2, 3), default=3)
     ip.add_argument("--creator-id", required=True)
     ip.add_argument("--work")
+    ip.add_argument("--profile", choices=config.SCORE_PROFILE_IDS,
+                    help="optional trusted score alignment; saved in project metadata")
     rp = sub.add_parser("render", help="local full render and QA; reviews stay pending")
     rp.add_argument("--issue", type=int, required=True)
     rp.add_argument("--candidate", required=True)
@@ -206,6 +223,7 @@ def main():
     dp = sub.add_parser("verify-dsp")
     dp.add_argument("--brief", required=True)
     dp.add_argument("--analysis", required=True)
+    dp.add_argument("--project", help="optional project metadata for exact analysis profile binding")
     fp = sub.add_parser("feedback", help="read-only snapshot of PR comments/reviews")
     fp.add_argument("--pr", type=int, required=True)
     fp.add_argument("--repo", default="YusukeIwaki/chopin-mood")
@@ -219,7 +237,9 @@ def main():
         elif a.command == "feedback":
             feedback(a)
         elif a.command == "verify-dsp":
-            cp.validate_dsp_candidate(json.loads(Path(a.brief).read_text()), json.loads(Path(a.analysis).read_text()))
+            project = json.loads(Path(a.project).read_text()) if a.project else None
+            cp.validate_dsp_candidate(json.loads(Path(a.brief).read_text()), json.loads(Path(a.analysis).read_text()),
+                                      project=project)
             print(json.dumps({"ok": True, "timing": "matches fresh DSP"}))
         else:
             result = cp.load_candidate(ROOT / cp.candidate_dir(a.issue, a.candidate), issue=a.issue,
