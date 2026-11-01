@@ -21,12 +21,12 @@ PLAN = {"clip": {"n_frames": N}, "scenes": [
         (("major_arrival", MAJOR), ("both_hands_octaves", OCTAVE), ("fast_coda", FAST))]}
 
 
-def controls(major=MAJOR, octave=OCTAVE, fast=FAST, accent=ACCENT):
-    c = {"scene_id": np.array([0]*major+[1]*(octave-major)+[2]*(N-octave)),
-         "score_fast_frame": fast, "flame_envelope": np.linspace(.05, 1, N),
-         "accent_pulse": np.zeros(N), "light": np.full(N, .5),
-         "zoom": np.ones(N), "camx": np.full(N, .5), "camy": np.full(N, .5),
-         "particle": np.zeros(N)}
+def controls(major=MAJOR, octave=OCTAVE, fast=FAST, accent=ACCENT, n=N):
+    c = {"scene_id": np.array([0]*major+[1]*(octave-major)+[2]*(n-octave)),
+         "score_fast_frame": fast, "flame_envelope": np.linspace(.05, 1, n),
+         "accent_pulse": np.zeros(n), "light": np.full(n, .5),
+         "zoom": np.ones(n), "camx": np.full(n, .5), "camy": np.full(n, .5),
+         "particle": np.zeros(n)}
     if accent is not None:
         c["accent_pulse"][accent:accent+15] = np.exp(-np.arange(15)/4)
     return c
@@ -80,6 +80,18 @@ def test_candle_strength_is_an_executable_control():
         return rendering.draw_clean_frame(MAJOR+35,c,W,H,SEED,lay,
             [nocturne_chapel.BASE_PALETTE]*3,[{"candle_strength":gain}]*3)
     assert np.mean(np.abs(draw(1).astype(float)-draw(0))) > .2
+
+
+def test_late_cloud_layer_keeps_the_full_native_frame_covered():
+    c=controls(major=944,octave=1637,fast=1729,accent=None,n=3172)
+    lay=rendering.make_layouts(SEED,W,H)
+    lay["candle_rift"]=candle_rift.make_layout(SEED,W,H)
+    params=[{"camera_zoom_start":1.07,"camera_zoom_end":1.07}]*3
+    frame=rendering.draw_clean_frame(3171,c,W,H,SEED,lay,
+        [nocturne_chapel.BASE_PALETTE]*3,params)
+    # This actual painted sky is lit at its right edge. An unfilled affine
+    # region previously produced a ruler-straight black strip here.
+    assert frame[:int(H*.36),-2:].mean() > 8
 
 
 @pytest.mark.parametrize("case,boundary", [

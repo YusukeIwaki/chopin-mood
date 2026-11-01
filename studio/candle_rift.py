@@ -127,8 +127,14 @@ def _world(f, ctrl, w, h, asset, fast):
         mesh.append(((0,int(top),w,int(bottom)),quad))
     world = source.transform((w,h),Image.Transform.MESH,mesh,Image.Resampling.BICUBIC)
     # Clouds move independently of the rock. A feathered mask avoids a seam.
-    cloud_shift = w*.06*np.tanh(elapsed/450)
-    cloud = world.transform((w,h),Image.Transform.AFFINE,(1,0,cloud_shift,0,1,0),Image.Resampling.BICUBIC)
+    drift = float(np.tanh(elapsed/450))
+    cloud_shift = w*.06*drift
+    # Overscan grows with the translation. Its source margins exceed the
+    # .06*w*drift shift, so no unfilled pixels enter the visible sky.
+    inverse = 1/(1+.16*drift)
+    cloud = world.transform((w,h),Image.Transform.AFFINE,
+        (inverse,0,w*(1-inverse)/2+cloud_shift,0,inverse,h*(1-inverse)/2),
+        Image.Resampling.BICUBIC)
     alpha = np.clip((.56-asset["y"])/.12,0,1)
     img = np.asarray(world,np.float32)*(1-alpha[...,None])+np.asarray(cloud,np.float32)*alpha[...,None]
     energy = float(ctrl["flame_envelope"][f])
