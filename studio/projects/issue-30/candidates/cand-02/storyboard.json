@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "style_id": "flame-and-world-beyond-v1",
+  "style_id": "candle-clearing-ending",
   "prototype_notice": "AI-painted imaginary setting with deterministic 2.5D animation and original performance audio.",
   "scenes": [
     {
@@ -135,8 +135,8 @@
           220
         ]
       },
-      "motif": "At both-hands octaves, turn and drop stone fragments to expose fire, basalt and storm; enter at the fast coda.",
-      "camera": "Clear the central lava route and move nearby cliffs more than the distant horizon.",
+      "motif": "Turn and drop stone fragments at both-hands octaves; traverse fire, basalt and storm during the fast coda; after the final long ascending scale, part the storm clouds into blue and golden light.",
+      "camera": "Maintain the central lava route and depth-varying travel while the sky opens above the existing rocks.",
       "params": {
         "figure_scale": 1.0,
         "particle_multiplier": 1.0,
@@ -151,5 +151,5 @@
       }
     }
   ],
-  "renderer": "candle-rift-v1"
+  "renderer": "candle-clearing-v1"
 }

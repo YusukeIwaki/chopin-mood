@@ -1,18 +1,18 @@
 {
   "schema_version": "2.0",
   "round": 2,
-  "creator_id": "codex-studio-issue30-world-20261101",
+  "creator_id": "codex-studio-issue30-clearing-20261101",
   "input_sha256": {
-    "project.json": "0b7aa0b468c18d8bb92bbda4fc3cf3a665acb01fdf5aeb732b58a7aaee8dd64d",
-    "brief.json": "16ed5ffa2019df0f488214cc463a3ed4fdaeb89cf76e49625fa333e8dbd5b3ed",
-    "storyboard.json": "e81676833d993442f1971878a4cc9cabd921ae9d03b047e338d307dd37d83af4"
+    "project.json": "cfe04d7e3b5a4d9f18bed9597b31c0645cdb49c01391aac5d46e639d776a85ac",
+    "brief.json": "b44fe7d0701e02ce30ddb4986be3e4b29da9f20fc9f1d41ceaadc2cc1f34a279",
+    "storyboard.json": "c8176db1fdf328e4ebe469e176f4461eda03ee4631e8925c79f6cd386b197846"
   },
   "media_sha256": {
-    "video.mp4": "f6e3d5122dc9e607acba8e77b6a19f107c54b320aa7e436e39c23643a77d97fa",
-    "contact-sheet.jpg": "8b929b1e7702085692ac9034c3176fd4bd116cbbce10bfc2e1154e7a4032f8cf",
+    "video.mp4": "0888f16c74070df567ea7d4ae955a20c6f922567c22ff865a72209b2f54a731b",
+    "contact-sheet.jpg": "3ccc7d7f89f40eea5dda80ccf21b377ad2467144334d7aebcf4450e984f87efc",
     "timeline.html": "a54d412f00390dc1303001a6d940aeb84fcdbe5b8c859d6c26170fd720259b96"
   },
-  "qa_sha256": "9b98d32f707912d533a9a2e986e8c0d7d1ddf25f589543440be88acf93997a3a",
+  "qa_sha256": "6e7ef3432884998a60e420aeb75414fa584fcb832e081985fe93935b0e352bec",
   "qa": {
     "checks": [
       {
@@ -98,15 +98,15 @@
           3171
         ],
         "motion_diffs_blur_downscaled": [
-          9.061,
-          48.8097,
-          20.8341
+          9.6872,
+          46.9675,
+          45.3593
         ],
         "motion_floor": 0.4,
         "mean_abs_diffs_raw": [
-          11.006,
-          49.584,
-          28.608
+          11.526,
+          47.502,
+          52.681
         ]
       },
       {
@@ -183,6 +183,9 @@
           2496,
           2497,
           2498,
+          2524,
+          2525,
+          2526,
           2536,
           2733,
           2734,
@@ -202,8 +205,8 @@
             ],
             "ok": true,
             "global_mae": 1.364,
-            "patch_mae_max": 1.903,
-            "patch_mae_mean": 1.363
+            "patch_mae_max": 1.908,
+            "patch_mae_mean": 1.364
           },
           {
             "frame": 1,
@@ -211,8 +214,8 @@
               "scene_start_post"
             ],
             "ok": true,
-            "global_mae": 1.359,
-            "patch_mae_max": 1.904,
+            "global_mae": 1.358,
+            "patch_mae_max": 1.91,
             "patch_mae_mean": 1.358
           },
           {
@@ -221,9 +224,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.375,
-            "patch_mae_max": 1.994,
-            "patch_mae_mean": 1.375
+            "global_mae": 1.376,
+            "patch_mae_max": 1.983,
+            "patch_mae_mean": 1.376
           },
           {
             "frame": 634,
@@ -232,8 +235,8 @@
             ],
             "ok": true,
             "global_mae": 1.44,
-            "patch_mae_max": 2.251,
-            "patch_mae_mean": 1.44
+            "patch_mae_max": 2.296,
+            "patch_mae_mean": 1.441
           },
           {
             "frame": 943,
@@ -242,9 +245,9 @@
               "semantic_landmark_pre"
             ],
             "ok": true,
-            "global_mae": 1.391,
-            "patch_mae_max": 2.102,
-            "patch_mae_mean": 1.391
+            "global_mae": 1.387,
+            "patch_mae_max": 2.113,
+            "patch_mae_mean": 1.387
           },
           {
             "frame": 944,
@@ -253,9 +256,9 @@
               "semantic_landmark"
             ],
             "ok": true,
-            "global_mae": 1.384,
-            "patch_mae_max": 2.051,
-            "patch_mae_mean": 1.384,
+            "global_mae": 1.382,
+            "patch_mae_max": 2.073,
+            "patch_mae_mean": 1.382,
             "transition_timing": {
               "ok": true,
               "boundary": 944,
@@ -323,16 +326,16 @@
                 974
               ],
               "best_offset_frames": 0,
-              "relative_margin": 25.8376,
-              "hypothesis_separation_rms": 0.22042,
-              "fit_rms": 0.042675,
-              "separation_ratio": 5.16504,
+              "relative_margin": 29.97927,
+              "hypothesis_separation_rms": 0.263791,
+              "fit_rms": 0.047759,
+              "separation_ratio": 5.52337,
               "scores": {
-                "-2": 0.174164,
-                "-1": 0.048876,
-                "0": 0.001821,
-                "1": 0.062819,
-                "2": 0.205855
+                "-2": 0.236426,
+                "-1": 0.074534,
+                "0": 0.002281,
+                "1": 0.070661,
+                "2": 0.258112
               },
               "reason": "aligned"
             }
@@ -344,9 +347,9 @@
               "semantic_landmark_post"
             ],
             "ok": true,
-            "global_mae": 1.399,
-            "patch_mae_max": 2.067,
-            "patch_mae_mean": 1.4
+            "global_mae": 1.401,
+            "patch_mae_max": 2.103,
+            "patch_mae_mean": 1.401
           },
           {
             "frame": 1109,
@@ -354,9 +357,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.495,
-            "patch_mae_max": 2.341,
-            "patch_mae_mean": 1.496
+            "global_mae": 1.531,
+            "patch_mae_max": 2.368,
+            "patch_mae_mean": 1.532
           },
           {
             "frame": 1569,
@@ -364,9 +367,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 1.612,
-            "patch_mae_max": 2.249,
-            "patch_mae_mean": 1.613
+            "global_mae": 1.639,
+            "patch_mae_max": 2.274,
+            "patch_mae_mean": 1.64
           },
           {
             "frame": 1570,
@@ -374,9 +377,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 1.702,
-            "patch_mae_max": 2.37,
-            "patch_mae_mean": 1.704
+            "global_mae": 1.735,
+            "patch_mae_max": 2.484,
+            "patch_mae_mean": 1.736
           },
           {
             "frame": 1571,
@@ -384,9 +387,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 1.641,
-            "patch_mae_max": 2.325,
-            "patch_mae_mean": 1.642
+            "global_mae": 1.622,
+            "patch_mae_max": 2.399,
+            "patch_mae_mean": 1.623
           },
           {
             "frame": 1585,
@@ -394,9 +397,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 1.679,
-            "patch_mae_max": 2.331,
-            "patch_mae_mean": 1.68
+            "global_mae": 1.639,
+            "patch_mae_max": 2.256,
+            "patch_mae_mean": 1.639
           },
           {
             "frame": 1636,
@@ -405,9 +408,9 @@
               "semantic_landmark_pre"
             ],
             "ok": true,
-            "global_mae": 1.746,
-            "patch_mae_max": 2.473,
-            "patch_mae_mean": 1.747
+            "global_mae": 1.744,
+            "patch_mae_max": 2.479,
+            "patch_mae_mean": 1.745
           },
           {
             "frame": 1637,
@@ -416,9 +419,9 @@
               "semantic_landmark"
             ],
             "ok": true,
-            "global_mae": 1.727,
-            "patch_mae_max": 2.455,
-            "patch_mae_mean": 1.728,
+            "global_mae": 1.718,
+            "patch_mae_max": 2.451,
+            "patch_mae_mean": 1.719,
             "transition_timing": {
               "ok": true,
               "boundary": 1637,
@@ -486,16 +489,16 @@
                 1667
               ],
               "best_offset_frames": 0,
-              "relative_margin": 103.23146,
-              "hypothesis_separation_rms": 0.707989,
-              "fit_rms": 0.069464,
-              "separation_ratio": 10.19211,
+              "relative_margin": 85.40144,
+              "hypothesis_separation_rms": 0.684002,
+              "fit_rms": 0.073746,
+              "separation_ratio": 9.27505,
               "scores": {
-                "-2": 0.933771,
-                "-1": 0.502949,
-                "0": 0.004825,
-                "1": 0.595145,
-                "2": 1.253531
+                "-2": 0.900585,
+                "-1": 0.469897,
+                "0": 0.005439,
+                "1": 0.565395,
+                "2": 1.210396
               },
               "reason": "aligned"
             }
@@ -507,9 +510,9 @@
               "semantic_landmark_post"
             ],
             "ok": true,
-            "global_mae": 1.727,
-            "patch_mae_max": 2.455,
-            "patch_mae_mean": 1.728
+            "global_mae": 1.719,
+            "patch_mae_max": 2.454,
+            "patch_mae_mean": 1.72
           },
           {
             "frame": 1657,
@@ -517,9 +520,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.312,
-            "patch_mae_max": 4.027,
-            "patch_mae_mean": 2.317
+            "global_mae": 2.303,
+            "patch_mae_max": 4.049,
+            "patch_mae_mean": 2.308
           },
           {
             "frame": 1658,
@@ -527,9 +530,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.369,
-            "patch_mae_max": 3.93,
-            "patch_mae_mean": 2.373
+            "global_mae": 2.348,
+            "patch_mae_max": 3.938,
+            "patch_mae_mean": 2.353
           },
           {
             "frame": 1659,
@@ -537,9 +540,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.42,
-            "patch_mae_max": 4.144,
-            "patch_mae_mean": 2.426
+            "global_mae": 2.395,
+            "patch_mae_max": 4.188,
+            "patch_mae_mean": 2.4
           },
           {
             "frame": 1728,
@@ -547,9 +550,9 @@
               "semantic_landmark_pre"
             ],
             "ok": true,
-            "global_mae": 2.148,
-            "patch_mae_max": 3.055,
-            "patch_mae_mean": 2.149
+            "global_mae": 2.145,
+            "patch_mae_max": 3.025,
+            "patch_mae_mean": 2.146
           },
           {
             "frame": 1729,
@@ -557,9 +560,9 @@
               "semantic_landmark"
             ],
             "ok": true,
-            "global_mae": 2.148,
-            "patch_mae_max": 3.049,
-            "patch_mae_mean": 2.15,
+            "global_mae": 2.146,
+            "patch_mae_max": 3.019,
+            "patch_mae_mean": 2.147,
             "transition_timing": {
               "ok": true,
               "boundary": 1729,
@@ -625,16 +628,16 @@
                 1758
               ],
               "best_offset_frames": 0,
-              "relative_margin": 18.74005,
-              "hypothesis_separation_rms": 0.223145,
-              "fit_rms": 0.049605,
-              "separation_ratio": 4.49845,
+              "relative_margin": 18.52035,
+              "hypothesis_separation_rms": 0.210554,
+              "fit_rms": 0.047414,
+              "separation_ratio": 4.44077,
               "scores": {
-                "-2": 0.162951,
-                "-1": 0.048573,
-                "0": 0.002461,
-                "1": 0.073714,
-                "2": 0.226821
+                "-2": 0.152504,
+                "-1": 0.043883,
+                "0": 0.002248,
+                "1": 0.069609,
+                "2": 0.204248
               },
               "reason": "aligned"
             }
@@ -645,9 +648,9 @@
               "semantic_landmark_post"
             ],
             "ok": true,
-            "global_mae": 2.235,
-            "patch_mae_max": 3.055,
-            "patch_mae_mean": 2.237
+            "global_mae": 2.179,
+            "patch_mae_max": 3.042,
+            "patch_mae_mean": 2.18
           },
           {
             "frame": 1868,
@@ -655,9 +658,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.58,
-            "patch_mae_max": 3.589,
-            "patch_mae_mean": 2.582
+            "global_mae": 2.336,
+            "patch_mae_max": 3.104,
+            "patch_mae_mean": 2.338
           },
           {
             "frame": 1869,
@@ -665,9 +668,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.517,
-            "patch_mae_max": 3.237,
-            "patch_mae_mean": 2.519
+            "global_mae": 2.379,
+            "patch_mae_max": 3.032,
+            "patch_mae_mean": 2.381
           },
           {
             "frame": 1870,
@@ -675,9 +678,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.54,
-            "patch_mae_max": 3.229,
-            "patch_mae_mean": 2.542
+            "global_mae": 2.356,
+            "patch_mae_max": 3.096,
+            "patch_mae_mean": 2.358
           },
           {
             "frame": 1953,
@@ -685,9 +688,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.593,
-            "patch_mae_max": 3.499,
-            "patch_mae_mean": 2.596
+            "global_mae": 2.38,
+            "patch_mae_max": 3.161,
+            "patch_mae_mean": 2.381
           },
           {
             "frame": 1954,
@@ -695,9 +698,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.519,
-            "patch_mae_max": 3.265,
-            "patch_mae_mean": 2.521
+            "global_mae": 2.436,
+            "patch_mae_max": 3.311,
+            "patch_mae_mean": 2.438
           },
           {
             "frame": 1955,
@@ -705,9 +708,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.55,
-            "patch_mae_max": 3.25,
-            "patch_mae_mean": 2.551
+            "global_mae": 2.403,
+            "patch_mae_max": 3.09,
+            "patch_mae_mean": 2.405
           },
           {
             "frame": 2020,
@@ -715,9 +718,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.44,
-            "patch_mae_max": 3.348,
-            "patch_mae_mean": 2.442
+            "global_mae": 2.262,
+            "patch_mae_max": 3.065,
+            "patch_mae_mean": 2.263
           },
           {
             "frame": 2021,
@@ -725,9 +728,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.459,
-            "patch_mae_max": 3.149,
-            "patch_mae_mean": 2.461
+            "global_mae": 2.325,
+            "patch_mae_max": 3.122,
+            "patch_mae_mean": 2.327
           },
           {
             "frame": 2022,
@@ -735,9 +738,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.493,
-            "patch_mae_max": 3.162,
-            "patch_mae_mean": 2.494
+            "global_mae": 2.286,
+            "patch_mae_max": 2.993,
+            "patch_mae_mean": 2.288
           },
           {
             "frame": 2061,
@@ -745,9 +748,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 2.435,
-            "patch_mae_max": 3.215,
-            "patch_mae_mean": 2.437
+            "global_mae": 2.333,
+            "patch_mae_max": 3.163,
+            "patch_mae_mean": 2.335
           },
           {
             "frame": 2114,
@@ -755,9 +758,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.555,
-            "patch_mae_max": 3.401,
-            "patch_mae_mean": 2.558
+            "global_mae": 2.37,
+            "patch_mae_max": 3.254,
+            "patch_mae_mean": 2.371
           },
           {
             "frame": 2115,
@@ -765,9 +768,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.505,
-            "patch_mae_max": 3.326,
-            "patch_mae_mean": 2.507
+            "global_mae": 2.397,
+            "patch_mae_max": 3.124,
+            "patch_mae_mean": 2.399
           },
           {
             "frame": 2116,
@@ -775,9 +778,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.533,
-            "patch_mae_max": 3.342,
-            "patch_mae_mean": 2.535
+            "global_mae": 2.372,
+            "patch_mae_max": 3.127,
+            "patch_mae_mean": 2.374
           },
           {
             "frame": 2256,
@@ -785,9 +788,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.343,
-            "patch_mae_max": 3.055,
-            "patch_mae_mean": 2.344
+            "global_mae": 2.231,
+            "patch_mae_max": 3.026,
+            "patch_mae_mean": 2.232
           },
           {
             "frame": 2257,
@@ -795,9 +798,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.404,
-            "patch_mae_max": 3.106,
-            "patch_mae_mean": 2.404
+            "global_mae": 2.305,
+            "patch_mae_max": 3.284,
+            "patch_mae_mean": 2.306
           },
           {
             "frame": 2258,
@@ -805,9 +808,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.434,
-            "patch_mae_max": 3.138,
-            "patch_mae_mean": 2.435
+            "global_mae": 2.251,
+            "patch_mae_max": 2.91,
+            "patch_mae_mean": 2.253
           },
           {
             "frame": 2496,
@@ -815,9 +818,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.523,
-            "patch_mae_max": 3.401,
-            "patch_mae_mean": 2.525
+            "global_mae": 2.391,
+            "patch_mae_max": 3.338,
+            "patch_mae_mean": 2.392
           },
           {
             "frame": 2497,
@@ -825,9 +828,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.49,
-            "patch_mae_max": 3.383,
-            "patch_mae_mean": 2.491
+            "global_mae": 2.511,
+            "patch_mae_max": 3.409,
+            "patch_mae_mean": 2.512
           },
           {
             "frame": 2498,
@@ -835,9 +838,119 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.505,
-            "patch_mae_max": 3.376,
-            "patch_mae_mean": 2.506
+            "global_mae": 2.566,
+            "patch_mae_max": 3.495,
+            "patch_mae_mean": 2.567
+          },
+          {
+            "frame": 2524,
+            "kinds": [
+              "semantic_landmark_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.278,
+            "patch_mae_max": 3.246,
+            "patch_mae_mean": 2.28
+          },
+          {
+            "frame": 2525,
+            "kinds": [
+              "semantic_landmark"
+            ],
+            "ok": true,
+            "global_mae": 2.288,
+            "patch_mae_max": 3.258,
+            "patch_mae_mean": 2.29,
+            "transition_timing": {
+              "ok": true,
+              "boundary": 2525,
+              "probe_frames": [
+                2495,
+                2496,
+                2497,
+                2498,
+                2499,
+                2500,
+                2501,
+                2502,
+                2503,
+                2504,
+                2505,
+                2506,
+                2507,
+                2508,
+                2509,
+                2510,
+                2511,
+                2512,
+                2513,
+                2514,
+                2515,
+                2516,
+                2517,
+                2518,
+                2519,
+                2520,
+                2521,
+                2522,
+                2523,
+                2524,
+                2525,
+                2526,
+                2527,
+                2528,
+                2529,
+                2530,
+                2531,
+                2532,
+                2533,
+                2534,
+                2535,
+                2536,
+                2537,
+                2538,
+                2539,
+                2540,
+                2541,
+                2542,
+                2543,
+                2544,
+                2545,
+                2546,
+                2547,
+                2548,
+                2549,
+                2550,
+                2551,
+                2552,
+                2553,
+                2554,
+                2555
+              ],
+              "best_offset_frames": 0,
+              "relative_margin": 12.71646,
+              "hypothesis_separation_rms": 0.614603,
+              "fit_rms": 0.171108,
+              "separation_ratio": 3.5919,
+              "scores": {
+                "-2": 1.017406,
+                "-1": 0.410267,
+                "0": 0.029278,
+                "1": 0.40159,
+                "2": 1.029903
+              },
+              "reason": "aligned"
+            }
+          },
+          {
+            "frame": 2526,
+            "kinds": [
+              "semantic_landmark_post"
+            ],
+            "ok": true,
+            "global_mae": 2.287,
+            "patch_mae_max": 3.252,
+            "patch_mae_mean": 2.289
           },
           {
             "frame": 2536,
@@ -845,9 +958,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 2.339,
-            "patch_mae_max": 3.327,
-            "patch_mae_mean": 2.34
+            "global_mae": 2.23,
+            "patch_mae_max": 3.041,
+            "patch_mae_mean": 2.232
           },
           {
             "frame": 2733,
@@ -855,9 +968,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.479,
-            "patch_mae_max": 3.35,
-            "patch_mae_mean": 2.481
+            "global_mae": 2.552,
+            "patch_mae_max": 3.396,
+            "patch_mae_mean": 2.553
           },
           {
             "frame": 2734,
@@ -865,9 +978,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.495,
-            "patch_mae_max": 3.364,
-            "patch_mae_mean": 2.496
+            "global_mae": 2.556,
+            "patch_mae_max": 3.418,
+            "patch_mae_mean": 2.557
           },
           {
             "frame": 2735,
@@ -875,9 +988,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.511,
-            "patch_mae_max": 3.365,
-            "patch_mae_mean": 2.513
+            "global_mae": 2.559,
+            "patch_mae_max": 3.418,
+            "patch_mae_mean": 2.56
           },
           {
             "frame": 2909,
@@ -885,9 +998,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.436,
-            "patch_mae_max": 3.288,
-            "patch_mae_mean": 2.438
+            "global_mae": 2.528,
+            "patch_mae_max": 3.404,
+            "patch_mae_mean": 2.528
           },
           {
             "frame": 2910,
@@ -895,9 +1008,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.486,
-            "patch_mae_max": 3.294,
-            "patch_mae_mean": 2.487
+            "global_mae": 2.526,
+            "patch_mae_max": 3.4,
+            "patch_mae_mean": 2.527
           },
           {
             "frame": 2911,
@@ -905,9 +1018,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.504,
-            "patch_mae_max": 3.307,
-            "patch_mae_mean": 2.506
+            "global_mae": 2.524,
+            "patch_mae_max": 3.402,
+            "patch_mae_mean": 2.525
           },
           {
             "frame": 2917,
@@ -915,9 +1028,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 2.456,
-            "patch_mae_max": 3.319,
-            "patch_mae_mean": 2.458
+            "global_mae": 2.525,
+            "patch_mae_max": 3.422,
+            "patch_mae_mean": 2.526
           },
           {
             "frame": 3171,
@@ -925,9 +1038,9 @@
               "last_frame"
             ],
             "ok": true,
-            "global_mae": 2.515,
-            "patch_mae_max": 3.568,
-            "patch_mae_mean": 2.517
+            "global_mae": 2.711,
+            "patch_mae_max": 3.602,
+            "patch_mae_mean": 2.712
           }
         ],
         "transition_timing": [
@@ -998,16 +1111,16 @@
               974
             ],
             "best_offset_frames": 0,
-            "relative_margin": 25.8376,
-            "hypothesis_separation_rms": 0.22042,
-            "fit_rms": 0.042675,
-            "separation_ratio": 5.16504,
+            "relative_margin": 29.97927,
+            "hypothesis_separation_rms": 0.263791,
+            "fit_rms": 0.047759,
+            "separation_ratio": 5.52337,
             "scores": {
-              "-2": 0.174164,
-              "-1": 0.048876,
-              "0": 0.001821,
-              "1": 0.062819,
-              "2": 0.205855
+              "-2": 0.236426,
+              "-1": 0.074534,
+              "0": 0.002281,
+              "1": 0.070661,
+              "2": 0.258112
             },
             "reason": "aligned"
           },
@@ -1078,16 +1191,16 @@
               1667
             ],
             "best_offset_frames": 0,
-            "relative_margin": 103.23146,
-            "hypothesis_separation_rms": 0.707989,
-            "fit_rms": 0.069464,
-            "separation_ratio": 10.19211,
+            "relative_margin": 85.40144,
+            "hypothesis_separation_rms": 0.684002,
+            "fit_rms": 0.073746,
+            "separation_ratio": 9.27505,
             "scores": {
-              "-2": 0.933771,
-              "-1": 0.502949,
-              "0": 0.004825,
-              "1": 0.595145,
-              "2": 1.253531
+              "-2": 0.900585,
+              "-1": 0.469897,
+              "0": 0.005439,
+              "1": 0.565395,
+              "2": 1.210396
             },
             "reason": "aligned"
           },
@@ -1156,16 +1269,96 @@
               1758
             ],
             "best_offset_frames": 0,
-            "relative_margin": 18.74005,
-            "hypothesis_separation_rms": 0.223145,
-            "fit_rms": 0.049605,
-            "separation_ratio": 4.49845,
+            "relative_margin": 18.52035,
+            "hypothesis_separation_rms": 0.210554,
+            "fit_rms": 0.047414,
+            "separation_ratio": 4.44077,
             "scores": {
-              "-2": 0.162951,
-              "-1": 0.048573,
-              "0": 0.002461,
-              "1": 0.073714,
-              "2": 0.226821
+              "-2": 0.152504,
+              "-1": 0.043883,
+              "0": 0.002248,
+              "1": 0.069609,
+              "2": 0.204248
+            },
+            "reason": "aligned"
+          },
+          {
+            "ok": true,
+            "boundary": 2525,
+            "probe_frames": [
+              2495,
+              2496,
+              2497,
+              2498,
+              2499,
+              2500,
+              2501,
+              2502,
+              2503,
+              2504,
+              2505,
+              2506,
+              2507,
+              2508,
+              2509,
+              2510,
+              2511,
+              2512,
+              2513,
+              2514,
+              2515,
+              2516,
+              2517,
+              2518,
+              2519,
+              2520,
+              2521,
+              2522,
+              2523,
+              2524,
+              2525,
+              2526,
+              2527,
+              2528,
+              2529,
+              2530,
+              2531,
+              2532,
+              2533,
+              2534,
+              2535,
+              2536,
+              2537,
+              2538,
+              2539,
+              2540,
+              2541,
+              2542,
+              2543,
+              2544,
+              2545,
+              2546,
+              2547,
+              2548,
+              2549,
+              2550,
+              2551,
+              2552,
+              2553,
+              2554,
+              2555
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 12.71646,
+            "hypothesis_separation_rms": 0.614603,
+            "fit_rms": 0.171108,
+            "separation_ratio": 3.5919,
+            "scores": {
+              "-2": 1.017406,
+              "-1": 0.410267,
+              "0": 0.029278,
+              "1": 0.40159,
+              "2": 1.029903
             },
             "reason": "aligned"
           }
@@ -1179,77 +1372,107 @@
   "reviews": {
     "music": {
       "reviewer_id": "/root/chapel_music_sync",
-      "evidence_sha256": "17acc95b0e562e4a68fa94c78a77b7b363491b9f77d7acb50ddb41795817e183",
-      "verdict": "pass",
-      "hard_blockers": [],
-      "concerns": [],
-      "evidence": [
-        "Final independent binding recheck of studio/projects/issue-30/candidates/cand-02 against output/studio/issue-30/revision-20261101-world/cand-02/round-2/editorial.final-template.json and actual output/portal-revision/full-round2 media. Recomputed all creative-input, media and QA hashes and the new final evidence digest; source editorial.json equals the pending final template. This is a newly verified binding, not a silent replacement of the earlier provisional digest.",
-        "Only project.engine_sha changed from reviewed engineering head dd8a334bf6005e75f5d0faec334786fe7ed5bfda to trusted main7698bb6e5450b5dad40562e50f1c9d6e1de92d0d. Final project SHA256 is0b7aa0b468c18d8bb92bbda4fc3cf3a665acb01fdf5aeb732b58a7aaee8dd64d. Brief16ed5ffa2019df0f488214cc463a3ed4fdaeb89cf76e49625fa333e8dbd5b3ed and storyboarde81676833d993442f1971878a4cc9cabd921ae9d03b047e338d307dd37d83af4 remain byte-identical to the observed render inputs.",
-        "Actual video SHA256 remains f6e3d5122dc9e607acba8e77b6a19f107c54b320aa7e436e39c23643a77d97fa; contact-sheet8b929b1e7702085692ac9034c3176fd4bd116cbbce10bfc2e1154e7a4032f8cf, timelinea54d412f00390dc1303001a6d940aeb84fcdbe5b8c859d6c26170fd720259b96 and QA9b98d32f707912d533a9a2e986e8c0d7d1ddf25f589543440be88acf93997a3a are also unchanged. The prior actual-media observations therefore apply to these identical bytes.",
-        "Independently verified no runtime/asset/dependency Git diff between reviewed head and trusted main, and no current runtime diff from main. Checked all117 entries in trusted-runtime-file-hashes.json against Git object bytes and both review/source copies. Score modulee9746e487b88ebe39671e8865cc0bff8e65dc13dc23a6e5b82a00149d557f186, renderer05955c72ce981de2d28203504564139d89844b0d8532e46677e8c6799f6a191d and score manifestd87df6f1d0d10aa206006e8d700e8c71fd0cf6f6ce07adb86dc7c4ed14fee960 are unchanged. Reviewed trusted-main-binding.json and final-engine-media-binding.json; the latter records equal public plans and ten native reference-frame witnesses.",
-        "Compared the entire final brief.candidate with output/portal-revision/analysis-final-main/plan-context.json: exact equality. Fresh analysis source hash4239aa8cc50abb85c756ad34f254602f7c084559baf83357475ac72909f6f2cf matches the final brief and rendered provenance. Original attachment hash remains c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d. Planning/brief fingerprints, score-alignment records and registered visual provenance remain consistent.",
-        "The excerpt is still source samples[3934835,9010035),3172 frames at48000 Hz/30 fps. All scene endpoints and accent mappings are exact. Major arrival5446800 maps to containing frame944; strict both-hands octaves6554160 to1637; fast coda6701520 to1729. Subframe offsets1565,125,285 samples are preserved. Score meaning remains m542 beat1, m567 beat2 and m573 beat1; the latter targets new LH C#2 while RH G#3 continues a tie.",
-        "All eleven unchanged encoded QA checks pass. Whole/head/mid/tail audio lag and segment drift are zero; crop max_abs_diff is0 and encoded level difference is-0.011 dB. Independent stream inspection confirmed540x960 H264 at30/1 fps,3172 frames, native48000 Hz mono AAC, zero stream starts and durations105.733333 video/105.733000 audio seconds. Actual-effect phase checks at944,1637,1729 have offset0 and separation ratios5.16504,10.19211,4.49845; maximum patch MAE4.144 is below5.0.",
-        "Retained only observations made from the identical actual MP4: viewed76 decoded frames across0..3171, sampled every60 frames with dense event/ending probes, and technically scanned all3172 decoded video frames. Tiny opening flame, performed-energy-dependent larger flame after the major gate, separating masonry at the octave transition, and the fire/rock/storm world with forward travel at the fast entry are visible. Renderer controls use native RMS with0.10-second attack/0.65-second release and sparse DSP accents; no manual source seconds, fixed BPM or per-note cuts were introduced.",
-        "Observed ending frames2880–3171 retain the storm/lava world without the earlier coverage gap. The all-frame technical scan found no exactly identical adjacent downscaled frames and no black image. The source-ending crop is unchanged and leaves only1165 source samples beyond the last complete frame, less than one frame; the new revision does not introduce a shortened concluding section.",
-        "Strongest remaining musical objection is unverified hearing: exact score meaning, bounded local pitch support and deterministic encoded timing do not prove that performed phrase entries, flame dynamics or the ending feel natural. The fixed-module missing-bass regression was independently rejected with its positive timing case preserved, but the real landmark estimates retain uncalibrated STFT support limits. No observable mechanical/source/owner-sequence blocker was found in the final bound bytes."
-      ],
-      "listening": "unavailable",
-      "limitations": [
-        "No original MP3/full WAV was accessed, rehashed, reconstructed or auditioned. Source identity and audio preservation were checked through the final metadata/analysis/provenance/QA chain.",
-        "Visual evidence consists of actual decoded frame samples plus an all-frame technical scan, not uninterrupted full-motion playback or listening. Full-length viewing quality and perceptual musical synchronization are not established.",
-        "Automatic score-alignment samples are bounded signal estimates. Their STFT support intervals are not calibrated musical-onset tolerances; performed-note identity and phrase naturalness were not independently verified by ear.",
-        "Native-main public-plan/pixel-witness records were inspected, but the protected source was not used by this reviewer to regenerate a render context. Independent Git/runtime-byte equality, fresh saved-candidate equality and unchanged actual-media hashes support the final binding.",
-        "Trusted-main input identity is now verified. Candidate Actions reproduction, CI/receipt readiness, adoption and publication remain separate gates; this music/media review does not claim those gates have completed.",
-        "The original request history and exhausted round2 repair budget are preserved. This recheck introduced no input, source, media, QA or GitHub mutation."
-      ]
-    },
-    "visual": {
-      "reviewer_id": "/root/chapel_visual_viewer",
-      "evidence_sha256": "17acc95b0e562e4a68fa94c78a77b7b363491b9f77d7acb50ddb41795817e183",
+      "evidence_sha256": "dda2fa4c1a9077b09f1e91bfc0706c2a52c5047eda04e46e978f397f7a470dfc",
       "verdict": "pass",
       "hard_blockers": [],
       "concerns": [
         {
-          "id": "RIFT-V02",
-          "note": "Observation: fresh actual full-encode overview 0..3171, native f2400/f3171 and consecutive world samples including[2310,2490),[2790,2850),[3112,3172) sustain movement within one painted landscape. Nearby cliffs change relative to the distant view and the cloud field moves independently, so the earlier weak-traversal concern is materially addressed. The journey remains a continuous approach through one vista rather than reaching visibly different destinations. Impact: viewers seeking broader exploration may still find its extent restrained. This is an editorial preference, not an observed owner-constraint or readability violation. Minimum resolution: explicitly accept the single-landscape 2.5D approach as the intended world passage; no additional scene, unrelated effect or automatic creative repair is requested after the exhausted round2 budget. The required fresh full-media beginning/middle/later/end samples were inspected for this judgment; they do not substitute for real-time whole-duration viewing."
+          "id": "MUSIC-CLEARING-GROWTH-IDENTITY",
+          "note": "The final cue detects sole local tuned E7 growth consistent with the registered score context. Independent calibration reproduced acceptance of both a different sole E7 inside the search window and smooth growth of an already ringing E7 without a fresh physical strike. Thus the clearing can be bound to the computed sample but cannot be claimed to prove a physical keystrike, hand provenance or written-note identity. Retain the explicit disclosure from reviews/final-scale-dsp-review.json and the registered profile; do not describe these accepted-limit cases as rejected negatives. The actual video timing and symbolic interpretation were checked separately."
+        },
+        {
+          "id": "MUSIC-CLEARING-ACOUSTIC-PRECISION",
+          "note": "Zero encoded-effect offset verifies alignment to the deterministic renderer, while the240sample grid and centered8192sample STFT support do not establish calibrated perceptual onset accuracy. The new opening is not early relative to detected sample7974240, but exact alignment to the unheard performed arrival remains unverified. Preserve unavailable-listening and signal-support qualifications; no numeric QA waiver or timing-threshold change is requested."
         }
       ],
       "evidence": [
-        "Final candidate: studio/projects/issue-30/candidates/cand-02/. Independently verified raw project.json/brief.json/storyboard.json against output/studio/issue-30/revision-20261101-world/cand-02/round-2/editorial.final-template.json. Final project.engine_sha is trusted main 7698bb6e5450b5dad40562e50f1c9d6e1de92d0d. Compared with the observed engineering review packet: the project bytes change only the literal engine SHA dd8a334bf6005e75f5d0faec334786fe7ed5bfda to 7698bb6e5450b5dad40562e50f1c9d6e1de92d0d; brief/storyboard bytes are identical. Current source editorial.json equals the pending-review final template byte-for-byte, SHA256 7e2cacf79e63dd6d5eab2625be7ce1d226c45e83cfba585c7f9e9f5065df2832.",
-        "Independently recomputed final canonical binding from input_sha256/media_sha256/qa_sha256: 17acc95b0e562e4a68fa94c78a77b7b363491b9f77d7acb50ddb41795817e183. This is a new final binding, not a silent replacement of provisional 9d40dad5ae8aa85ea48e0bb858073eebb446b440b74e7b5faaead4fa568d6f06. The provisional review remains preserved separately, SHA256 39f38dbd85cbacb698d0896e6a6e1a90e7ec7a050c2d148739e38f0096f7269f.",
-        "Verified Git refs/remotes/origin/main resolves 7698bb6e5450b5dad40562e50f1c9d6e1de92d0d. Independently checked the entire tracked-tree diff dd8a334bf6005e75f5d0faec334786fe7ed5bfda..7698bb6e5450b5dad40562e50f1c9d6e1de92d0d is empty. The historical local branch named main was not used as the trusted engine reference. All 117 entries in output/portal-revision/trusted-runtime-file-hashes.json were independently SHA256-checked against Git blob bytes at both commits and actual files in both candidate and engineering worktrees; all match.",
-        "Read and verified identity/media references in output/portal-revision/trusted-main-binding.json(SHA256 ff30f104eb3ab1ab56014309b9a7ed05592687a70f9ff1ec6c1e985b3b994b21), final-engine-media-binding.json(SHA256 79a31728ed15c3337b832f25ff8d7022e21e40ae3882b4e196bfe7122f56fa00), and trusted-runtime-file-hashes.json(SHA256 ccc60052858a0b9906ff49b69ebc3cc44afe11581ddf3ccfefe9835613113277). These bind the reviewed runtime and actual video to trusted main. Independently matched all ten native_pixel_witness_sha256 values to raw RGB pixels of existing preview-stills-round2 reference PNGs at frames 0, 943, 974, 1290, 1636, 1657, 1682, 1729, 1909, 3171. The proof records public_plan_exact=true; this reviewer did not independently rerun that render/DSP computation.",
-        "Fresh actual hashes of output/portal-revision/full-round2 media remain identical to the visually observed provisional version: video.mp4 f6e3d5122dc9e607acba8e77b6a19f107c54b320aa7e436e39c23643a77d97fa; contact-sheet.jpg 8b929b1e7702085692ac9034c3176fd4bd116cbbce10bfc2e1154e7a4032f8cf; timeline.html a54d412f00390dc1303001a6d940aeb84fcdbe5b8c859d6c26170fd720259b96; qa.json 9b98d32f707912d533a9a2e986e8c0d7d1ddf25f589543440be88acf93997a3a. Parsed QA equals the final template QA and still reports all 11 checks pass. Provenance media hashes agree. Prior visual observations are reused specifically because these actual evidence bytes are unchanged.",
-        "Actual full MP4 visual observations retained: 540x960, 30 fps, 3172 frames, 105.733333 s. Viewed the actual contact sheet, 37 full-duration overview frames(every 90th frame 0..3150 plus 3171), and native decoded frames 0, 974, 1657, 2400, 3171. Video-only decoding (-map 0:v:0, -an) was used; no rendered audio was decoded or listened to.",
-        "Actual full-encode consecutive observation ranges, half-open at 30 fps: [0,60),[600,630),[929,989),[1260,1320),[1622,1750),[1750,1810),[1909,1969),[2310,2490),[2790,2850),[3112,3172). These 758 frames were inspected in 13 ordered labeled sheets at 135x240 per cell, supplemented by native 540x960 images and the 270x480 decoded overview. They cover opening and middle opening, supplied major boundary 944, growing-flame middle, supplied octave-collapse 1637/fast-entry 1729 boundaries, early/middle/later world and encoded ending.",
-        "The actual images show a readable tiny wick-attached flame and candle/holder in the dark opening; the later larger flame and glow remain attached before collapse. The transformation into the fire/rock/storm world is visually understandable. This assesses the owner artistic direction, not an inferred emotional state or a musical listening result.",
-        "RIFT-V01 is materially addressed in the actual encoded collapse: irregular rotating fragments reveal dark side/back surfaces and fall outward/downward, clearing the central route. Painted window/candle content on some front faces remains an illustrated style. No persistent pre-impact duplicated/detached flame, focal obstruction or unintended viewpoint reset was observed in the inspected frames. A preference for realistic masonry is not an additional defect or repair request.",
-        "The actual six-second middle-world sample [2310,2490), later and ending samples retain a clear winding orange route amid dark foreground cliffs; nearby forms change relative to the horizon and clouds move independently. No visible reset, tear, persistent coverage gap or full-screen whiteout observed in those ranges. RIFT-V02 remains only the stated editorial preference about one-landscape travel extent.",
-        "RIFT-V03 remains closed in the unchanged actual full encode: native f3171 and every encoded frame [3112,3172) show painted sky/rock to the upper-right boundary, without the previous straight black exposed band. The final encoded frame stays in the opened world without a forced exit flash. Original audio-ending preservation is reported by supplied QA, not independently judged by this visual reviewer listening."
+        "Fresh main-binding review, not a copied engineering verdict. Recomputed the creative-input/media/QA digest from output/clearing-ending/full-round2/editorial.main-template.json (SHA256 b08f0e73bc44755153475feae5b3562d4219f8e2732c2935b65e54c6cee63757): dda2fa4c1a9077b09f1e91bfc0706c2a52c5047eda04e46e978f397f7a470dfc. Independently checked the actual production input bytes under studio/projects/issue-30/candidates/cand-02/.",
+        "Production project.json SHA256 cfe04d7e3b5a4d9f18bed9597b31c0645cdb49c01391aac5d46e639d776a85ac now names engine 599d36630855a08664aa11e6005994b8b24f0f04. Compared draft and production JSON: only project.engine_sha changes. brief.json raw SHA256 b44fe7d0701e02ce30ddb4986be3e4b29da9f20fc9f1d41ceaadc2cc1f34a279 and storyboard.json raw SHA256 c8176db1fdf328e4ebe469e176f4461eda03ee4631e8925c79f6cd386b197846 remain byte-identical.",
+        "Independently resolved origin/main to 599d36630855a08664aa11e6005994b8b24f0f04. Git tree IDs for that commit and reviewed engineering 02fb618bff507bf5800a1de0c7efa437a476c906 are both 0e8751e994d2614e21d64e64b00c445eb5d9e8ee; whole-tree Git diff is empty. The current inspected score_alignment.py, render_context.py, candle_rift.py and both score manifests equal their committed main bytes. Module SHA256 cd8a36ca11ca6dd9928949aa0948d663ffc9bad4c4a935fc9d22b786e573d010 and score-extension manifest SHA256 ae0022553a22329b19d905ab12d7fe3c2c93cc0a9fc2837ef516728fe9020333 remain unchanged.",
+        "The production candidate exactly equals analysis/plan-context.json candidate cand-02 (context SHA256 e6d3148a76a7d72967443eb909b6e947cbf98934376e9aed0703f838ae73ced0). Its complete score_alignment equals plan/provenance and the reference equals the live validated registered loader. Source metadata still agrees on attachment SHA256 c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d and decoded-source SHA256 4239aa8cc50abb85c756ad34f254602f7c084559baf83357475ac72909f6f2cf; no source audio was opened to perform these checks.",
+        "Freshly hashed identical actual media: video.mp4 0888f16c74070df567ea7d4ae955a20c6f922567c22ff865a72209b2f54a731b; contact-sheet.jpg 3ccc7d7f89f40eea5dda80ccf21b377ad2467144334d7aebcf4450e984f87efc; timeline.html a54d412f00390dc1303001a6d940aeb84fcdbe5b8c859d6c26170fd720259b96. QA remains 6e7ef3432884998a60e420aeb75414fa584fcb832e081985fe93935b0e352bec, plan remains 09dd134de5a366b4850ab69f04cca4c1123ff1e28a45ef2e66b6bf68ca9d3e7a and provenance remains 6cf8e4aa2e506f5b2f1407316ae6cb89e5caa0b24449cf05f0733b3f64dcb518. Main-binding-proof.json SHA256 64bd215a428c872955a9bf8aaac273763840d7e2e76b19ca4f3412ab26cafb7e agrees with these independently verified values.",
+        "Rechecked native arithmetic: source 48k, 9011200 samples; crop [3934835,9010035) is 5075200 samples and 3172 frames at 30fps. All four event positions remain 5446800/944, 6554160/1637, 6701520/1729 and 7974240/containing-frame2524. The first three retain the established containing-frame policy. The final plan event explicitly activates at frame2525, source7974835, 595 samples after the detected growth sample, with 647 frames remaining. No later scene cut or manual cue adjustment was introduced.",
+        "Freshly decoded video-only frames 943/944/945, 1636/1637/1638, 1728/1729/1730, 2524/2525/2526 and 3171 using -map0:v:0 -an -sn -dn. All 13 freshly decoded JPEG files are byte-identical to the corresponding previously inspected files; fresh frame2525 was also visually rechecked. Prior observations of the exact same video bytes are recorded in output/clearing-ending/reviews/full-round2-music.engineering.json, SHA256 ebc07e9008c88458a7f30b6021c1ffe8bb7fb5e42286da10ae8714b77979a961: 112 inspected frames across the whole clip, dense cues and complete visual ending. No repeated full playback or audition is claimed.",
+        "On those identical observed bytes, the tiny candle grows with the native-RMS control after the major cue, the octave transition breaks the church into fragments, and the fast-coda world retains its fire/rock/storm continuity. Frame2524 has intact storm; frame2525 starts the bright opening, subsequent inspected frames open blue/golden sky, and the cleared sky persists through final frame3171. Musical meaning comes from owner direction and the registered score, not emotional inference from energy. This reuse is justified by actual media identity, with fresh native-cue witnesses.",
+        "Unchanged exact QA record and embedded template agree: all 11 checks pass; encoded audio lag at full/head/mid/tail is 0, drift is 0, and original PCM crop max_abs_diff is 0. Encoded-effect offsets at 944/1637/1729/2525 are all 0, separation ratios are 5.52337/9.27505/4.44077/3.5919, and maximum patch MAE is 4.188 below 5. The earlier independent video-only frame count is 3172, H.264 540x960 at 30fps; AAC metadata is 48k mono. This verifies the preserved measured evidence, not bit-identical AAC or heard cadence quality.",
+        "The separate scoped DSP review output/clearing-ending/reviews/final-scale-dsp-review.json, SHA256 b2a128a75f14da7830a3e83b84aa4343ca47b1b14959650bc53826bdc01e000f, still applies because numerical code, score facts and results are unchanged. It accepts sample7974240 as bounded unique tuned pitch-growth evidence, with observed in-window identity and ringing-growth limitations. The first three complete event dictionaries remain the same previously checked production results. No numerical rerun or new detector claim is invented for this metadata-only rebind."
+      ],
+      "listening": "unavailable",
+      "limitations": [
+        "No original MP3/full WAV, reconstructed source or audio payload was accessed or uploaded. No listening was performed. Source identity was checked through matching recorded metadata; original preservation and encoded sync rely on the exact bound QA. Musical naturalness, audible phrase completeness, the perceived ending and perceptual prominence remain unverified.",
+        "The prior actual-media review inspected 112 extracted frames/contact sheets, not continuous complete full-speed playback. This turn adds 13 fresh video-only cue/ending witnesses with identical decoded bytes, plus fresh Git/input/media/QA binding checks. It does not claim a repeated continuous viewing.",
+        "The selected symbolic event is terminal E7 of the last long strict ascending scale at q1860/m621 beat1. Later rising/broken figuration continues. It is not acoustic note-off or a later settling chord. The detector can accept a different sole E7 inside the search window or smooth growth of an already ringing E7; it does not certify physical keystrike, hand provenance or written identity. Centered STFT support is not a calibrated accuracy guarantee.",
+        "Trusted-main tree, current raw inputs and the new local evidence binding have been verified. Actions reproduction/receipt, owner adoption and publication remain separate pending gates; this review does not approve them.",
+        "Writes were limited to this new reviewer report and fresh frames in the existing private reviewer scratch folder. No implementation, candidate input, source audio, media, QA or GitHub state was changed."
+      ]
+    },
+    "visual": {
+      "reviewer_id": "/root/chapel_visual_viewer",
+      "evidence_sha256": "dda2fa4c1a9077b09f1e91bfc0706c2a52c5047eda04e46e978f397f7a470dfc",
+      "verdict": "pass",
+      "hard_blockers": [],
+      "concerns": [
+        {
+          "id": "CLEAR-V02",
+          "note": "Observation: actual full-encode [929,989), [1260,1320) and native 1290 retain one wick-attached flame, with visible changes in size/glow, readable wax and metal holder. Its tall, narrow, nearly symmetric cone still resembles a stylized light spike more than an irregular natural flame. This is a material preference, not an attachment/readability or observed owner-constraint defect. Minimum resolution: editor explicitly accepts the soft stylization; no further artistic repair requested after final budget 2. These fresh full-media observations close the integration evidence gap, while crescendo correspondence remains unverified by ear."
+        },
+        {
+          "id": "CLEAR-V03",
+          "note": "Observation: actual full-encode 2525 introduces a finite soft gold opening, which grows radially into blue/golden sky across the completely inspected clearing 2525..2705 and stays clear through 3171. The route and single skyline survive the whole transition. This is a legible iris-like revelation rather than literal cloud-mass advection; its first-cue disk and radial character may feel more graphic than naturalistic cloud parting. This remains an artistic interpretation preference, not a demonstrated technical or owner-constraint blocker. Minimum resolution: editor explicitly accepts or withholds this interpretation; no further automatic artistic iteration or generic extra effect requested. Complete actual clearing/hold evidence was examined, without claiming real-time musical naturalness."
+        }
+      ],
+      "evidence": [
+        "Fresh main binding: studio/projects/issue-30/candidates/cand-02 project.json/brief.json/storyboard.json raw hashes independently match output/clearing-ending/full-round2/editorial.main-template.json. Only the literal project.engine_sha changes from reviewed 02fb618bff507bf5800a1de0c7efa437a476c906 to trusted 599d36630855a08664aa11e6005994b8b24f0f04; brief/storyboard raw bytes remain identical to the engineering draft. Current source editorial.json equals the pending main template byte-for-byte.",
+        "Independently recomputed canonical input_sha256/media_sha256/qa_sha256 digest dda2fa4c1a9077b09f1e91bfc0706c2a52c5047eda04e46e978f397f7a470dfc. This is a new report, not a replacement of engineering 357c116a5d292680154f1ee690a459b3b4f8ced87c6c87d9cca4638e44fbc57e. The engineering report remains preserved unchanged with SHA256 419a2e9da75507b7ce8f3296d03b3b4a9aee4eb779506abe256d472f9a1a2c57.",
+        "Verified Git refs/remotes/origin/main=599d36630855a08664aa11e6005994b8b24f0f04. Both that commit and reviewed 02fb618bff507bf5800a1de0c7efa437a476c906 resolve to the identical whole Git tree 0e8751e994d2614e21d64e64b00c445eb5d9e8ee; their entire tracked diff is empty. The historical local branch named main was not mistaken for the trusted reference. Independently compared ten actual renderer/analyzer/dependency/registered asset files in both worktrees to trusted-main blobs, including candle_rift.py, score_alignment.py, requirements, current manifest, sky-mask, sky texture, mask recipe/guide and original world/candle textures; all match.",
+        "Read output/clearing-ending/full-round2/main-binding-proof.json SHA256 64bd215a428c872955a9bf8aaac273763840d7e2e76b19ca4f3412ab26cafb7e. Independently checked its engine/tree/input/media/QA/digest assertions against Git and actual files. It agrees with the new template; it was not substituted for those checks.",
+        "Actual media and QA independently rehashed unchanged: video.mp4 0888f16c74070df567ea7d4ae955a20c6f922567c22ff865a72209b2f54a731b; contact-sheet.jpg 3ccc7d7f89f40eea5dda80ccf21b377ad2467144334d7aebcf4450e984f87efc; timeline.html a54d412f00390dc1303001a6d940aeb84fcdbe5b8c859d6c26170fd720259b96; qa.json 6e7ef3432884998a60e420aeb75414fa584fcb832e081985fe93935b0e352bec. Parsed QA equals the main template and all 11 checks pass. Because actual bytes and renderer tree are identical, the actual full-encode visual observations described below remain applicable. No old verdict was applied to different media.",
+        "Fresh native binding spot checks: re-extracted and viewed actual encoded frames 1290/2525/2705/3171 at 540x960 using video-only -map 0:v:0 -an from the independently rehashed MP4. The attached soft cone flame, finite radial opening, clean completed skyline and final composition remain unchanged. This is a binding spot check, not a second full watch.",
+        "Underlying actual full-encode observation retained: 540x960,30fps,3172frames,105.733333s; actual contact sheet,37 whole-duration overview stills(every 90th0..3150 plus3171), native decoded 0/1290/1657/1682/1729/2525/2705/2930/3171, and all 1180 consecutive frames in half-open ranges [0,60),[929,989),[1260,1320),[1622,1849),[2170,2290),[2519,3172). Twenty ordered sheets at 135x240 per cell supported the sequential inspection. All frame extraction selected only the video stream and disabled audio.",
+        "The actual opening maintains a readable fragile candle in the dark nave; the enlarged flame varies size/glow while staying at the wick. Complete collapse/entry shows irregular fragments turning to dark sides/backs and falling outward/downward, revealing the storm/fire/basalt world and clearing the central route. No persistent pre-impact flame duplication or lasting shard obstruction observed in those ranges.",
+        "The world approach preserves a bright winding lava route and dark foreground cliffs, with relative foreground/distance change. The entire actual clearing and post-clear hold were inspected consecutively through 3171, including every frame in 2525..2705 and beyond. The old CLEAR-V01 ghost peaks/dark triangular collars do not recur as the opening reaches the full image. Jagged silhouettes and concave gaps remain single and clean, with no exposed black border, torn matte, lost route or forced exit flash observed.",
+        "The actual final sky remains blue/golden and spacious above the preserved basalt/lava landscape while restrained relative movement continues through the last frame. The visible owner-directed sequence is coherent. CLEAR-V02 cone-flame material and CLEAR-V03 radial/iris cloud-parting interpretation remain explicit preferences for editorial adjudication. Original-performance/coda preservation is reported by supplied QA, not independently heard by this viewer."
       ],
       "listening": "not_applicable",
       "limitations": [
-        "This is the final independent visual/viewer report for the exact evidence digest 17acc95b0e562e4a68fa94c78a77b7b363491b9f77d7acb50ddb41795817e183 and project engine 7698bb6e5450b5dad40562e50f1c9d6e1de92d0d. Trusted Git/runtime identity and unchanged media/QA were independently rechecked. Production Actions reproduction/receipt, owner adoption and publication remain separate gates; no receipt or external approval is inferred from this visual pass.",
-        "No continuous playback or audio listening was performed. Motion judgments use ordered decoded video frames rather than real-time viewing. Strict octave-onset alignment, performed crescendo correspondence, musical pacing/naturalness and original-recording endpoint preservation were not independently judged by ear.",
-        "All 3172 video frames were decoded to review scratch, but only the explicitly listed 758 consecutive frames, 37 overview stills and native samples were visually inspected. Unobserved intervening frames and the complete 105.733333 s were not continuously watched. Sustained-viewing judgment is limited to samples distributed across the full duration; no new playback is claimed during this hash-identity recheck.",
-        "No complete source MP3/WAV was accessed or listened to. This reviewer did not independently rerun source DSP, public-plan generation or the trusted-main render. The root proof records those computations; independently verified identical Git/runtime bytes, actual input/media/QA hashes and the ten stored native RGB witness hashes support reuse of this role’s actual visual observations.",
-        "Owner-provided solemnity, major arrival, violent world and victorious coda are artistic instructions, not emotional facts inferred from RMS/chroma. The same new owner revision has exhausted its initial plus two substantive repair budget. RIFT-V02 requires explicit editorial resolution; no extra automatic repair or mandatory-QA waiver is implied.",
-        "No input/source/candidate/media or GitHub mutations were performed. The provisional report was preserved unchanged. Only this authorized final own report was written during the binding follow-up; evidence references use repository-relative paths or stable hashes."
+        "This report is for the exact new trusted-main input binding and unchanged actual media identified by digest dda2fa4c1a9077b09f1e91bfc0706c2a52c5047eda04e46e978f397f7a470dfc. The production inputs are local candidate files; no production Actions reproduction/receipt, owner adoption, PR approval/merge or publication is claimed. Those remain separate gates.",
+        "No second full watch or uninterrupted real-time playback is claimed. Original full-encode observations are reused only after fresh byte/tree/input identity checks; four native frames were freshly spot-checked for the main binding. Motion judgments remain based on ordered decoded frames, not real-time viewing.",
+        "No audio listening or complete source-recording/WAV/MP3 access. The rendered MP4 audio stream was not decoded. Heard crescendo correspondence, strict musical-event identity, original-recording endpoint, musical naturalness and whole-work audio/visual pacing were not independently certified by ear. Supplied samples/frames and owner emotional imagery are timing metadata/artistic direction, not emotion detected by this viewer.",
+        "All 3172 video frames were decoded during the original full review, but only the listed 1180 consecutive frames,37 overview stills and nine original native images were visually inspected then. The complete collapse and clearing/final-hold spans were inspected as consecutive frames; intervening unobserved portions were not continuously watched. Four new native binding spots do not expand this into an all-frame/full-real-time review.",
+        "No new source DSP or full runtime render was run by this viewer during metadata rebinding. Entire Git-tree equality, raw input comparison, current relevant runtime/asset bytes, unchanged actual video/QA and fresh native samples support the observation transfer. This is not independent execution evidence for a future production Actions run.",
+        "Initial plus two substantive artistic repairs remain exhausted for the same explicit owner ending request. CLEAR-V02/V03 require root editorial resolution; no automatic additional artistic iteration, budget reset or mandatory-QA waiver is implied.",
+        "No source/input/candidate/media or GitHub mutation. The engineering report is preserved byte-for-byte. Only this new own report and video-only native binding spots in the existing review-scratch folder were written; references are repository-relative paths or stable hashes."
       ]
     }
   },
   "decision": {
-    "editor_id": "codex-editor-issue30-world-20261101",
-    "verdict": "stop",
-    "rationale": "Stop after final repair round2. Local native full media passed all eleven mechanical QA checks and the two independent local media-role reviews, but the mandatory trusted Actions still preflight in run41293480604 failed visual_quality. The required review found that enlarged flames in native frames1290,1636,1637 are sharply bounded, opaque nested orange/yellow/cream teardrops that clash with the detailed wax, metal and chapel. Source hash and fresh DSP guards passed. The history artifact13078840970 and its archive digest were verified; Actions native frames1290 and1636 exactly match the local native pixels, so this is not an environment drift. The full Actions render, final review and adopted-candidate artifact/receipt were not produced. Local passes and acceptance of the separate RIFT-V02 single-landscape preference cannot waive this failed required gate. Initial staging plus two substantive repairs for the explicit2026-11-01 request are exhausted; a softer, integrated luminous flame would require another substantive drawing revision, so this request stops without automatic repair, retry or candidate-number reset. Keep the owner source issue and this production PR open/Draft for review; no adoption or publication is approved. The external review applies to render-equivalent head dd8981e2749e35ffc56bc2dfc29e1ed947200014; this stop record changes no renderer, project, brief, storyboard, media or QA. Saved normalized review snapshot SHA256 e0a84ce1950b07415af84bfe176e666de9dc7376c018b179963568474b5d0191; exact Actions artifact review bytes SHA256 c5dd6c5e5df12be9603e1d4c58b2fe34e6260a3cdeec620999d4d0f90f1e3172; verified history ZIP SHA256 a0d55108db1dcb241b55a2d1dfb6b0ee5a0a3095d45e9f5943d2509723055a9d. Earlier request stop and this request staged repair history remain preserved. Listening and continuous real-time playback remain unverified.",
+    "editor_id": "codex-editor-issue30-clearing-20261101",
+    "verdict": "ready",
+    "rationale": "Final repair2 is locally ready for required Actions reproduction and owner review. The full native encode passes all11 mechanical checks with exact PCM crop, zero audio lag/drift and four zero effect offsets. Independent music/sync and visual roles inspected the actual full media and freshly rechecked the trusted-main binding. The native matte resolves the prior skyline blocker; remaining flame/clearing preferences and detector/listening limits are explicitly accepted below. This new ending request used initial0 plus two shared artistic repairs; earlier stopped requests remain preserved. Actions aesthetic gates and owner adoption are not waived or claimed complete.",
     "resolutions": [
       {
-        "role": "visual",
-        "concern_id": "RIFT-V02",
+        "role": "music",
+        "concern_id": "MUSIC-CLEARING-GROWTH-IDENTITY",
         "action": "accept",
-        "reason": "A continuous 2.5D approach keeps the central lava route readable while near cliffs and storm clouds move relative to the distant horizon. The actual full-duration samples support this sustained passage through the requested violent world, with attention remaining on the piano. A broader changing-destination journey is a preference, not a waived defect."
+        "reason": "Accept the bounded score-guided pitch-growth cue for this reviewable film while retaining its documented ringing/inside-window identity limits. The owner-requested symbolic event is separate from the measured local growth; no physical key-strike, hand or exact written-identity guarantee is claimed."
+      },
+      {
+        "role": "music",
+        "concern_id": "MUSIC-CLEARING-ACOUSTIC-PRECISION",
+        "action": "accept",
+        "reason": "Retain the native sample/frame proof and unavailable-listening limitation. Zero encoded-effect offset measures renderer correspondence; STFT support and the native grid do not establish perceptual onset accuracy. All numerical QA gates remain unchanged and pass."
+      },
+      {
+        "role": "visual",
+        "concern_id": "CLEAR-V02",
+        "action": "accept",
+        "reason": "Accept the softly luminous, stylized flame. Its wick attachment, cast light, height/tip variation and performed-envelope response remain readable in the actual full media; the narrow cone supports the restrained painted setting."
+      },
+      {
+        "role": "visual",
+        "concern_id": "CLEAR-V03",
+        "action": "accept",
+        "reason": "Accept the soft radial clearing as the film interpretation of clouds parting after the climax. Its expanding blue/golden opening is readable, preserves the rock/lava route and settles into the ending. It is not presented as a physical cloud simulation."
       }
     ]
   }

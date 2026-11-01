@@ -67,7 +67,7 @@
         "duration_sec": 51.1667
       }
     ],
-    "scene_reason": "score-aligned major arrival and strict both-hands octave entry; fast coda drives scene03 motion",
+    "scene_reason": "score-aligned major arrival and strict both-hands octave entry; fast coda drives scene03 motion; clearing follows the terminal ascending E7 arrival inside scene03",
     "accents": [
       {
         "kind": "accent",
@@ -150,15 +150,15 @@
         "frame": 2910
       }
     ],
-    "analysis_profile": "chopin-scherzo3-coda-v1",
+    "analysis_profile": "chopin-scherzo3-coda-clearing-v1",
     "score_alignment": {
-      "profile_id": "chopin-scherzo3-coda-v1",
+      "profile_id": "chopin-scherzo3-coda-clearing-v1",
       "sample_rate": 48000,
       "source_sample_count": 9011200,
       "reference": {
-        "reference_id": "chopin-op39-v1",
-        "bundle_path": "assets/score/chopin-op39-v1",
-        "manifest_sha256": "d87df6f1d0d10aa206006e8d700e8c71fd0cf6f6ce07adb86dc7c4ed14fee960",
+        "reference_id": "chopin-op39-clearing-v1",
+        "bundle_path": "assets/score/chopin-op39-clearing-v1",
+        "manifest_sha256": "ae0022553a22329b19d905ab12d7fe3c2c93cc0a9fc2837ef516728fe9020333",
         "source": {
           "repository": "pl-wnifc/humdrum-chopin-first-editions",
           "commit": "95dfb105c1669c72d10b04088566154f12d3dc1c",
@@ -168,25 +168,124 @@
         "license": {
           "id": "CC-BY-4.0",
           "url": "https://creativecommons.org/licenses/by/4.0/",
-          "attribution_path": "ATTRIBUTION.md",
-          "commercial_adaptation": true
+          "attribution_path": "assets/score/chopin-op39-v1/ATTRIBUTION.md",
+          "commercial_adaptation": true,
+          "license_path": "assets/score/chopin-op39-v1/LICENSE.txt"
         },
-        "derivation": {
-          "script": "scripts/build_score_reference.py",
-          "parser_version": 1,
-          "repeat_policy": "not unrolled; explicit written score order",
-          "grace_policy": "zero duration; not in chroma occupancy",
-          "tie_policy": "segments sustain occupancy; continuation is not an attack",
-          "chord_rhythm_policy": "first subtoken advances spine; explicit per-note durations preserved",
-          "pitch_policy": "explicit kern sounding-pitch spelling, including naturals; octave lines are display only; no key inference"
+        "base_reference": {
+          "reference_id": "chopin-op39-v1",
+          "bundle_path": "assets/score/chopin-op39-v1",
+          "manifest_sha256": "d87df6f1d0d10aa206006e8d700e8c71fd0cf6f6ce07adb86dc7c4ed14fee960",
+          "source": {
+            "repository": "pl-wnifc/humdrum-chopin-first-editions",
+            "commit": "95dfb105c1669c72d10b04088566154f12d3dc1c",
+            "url": "https://github.com/pl-wnifc/humdrum-chopin-first-editions/tree/95dfb105c1669c72d10b04088566154f12d3dc1c",
+            "path": "kern/039-1-TR.krn"
+          },
+          "license": {
+            "id": "CC-BY-4.0",
+            "url": "https://creativecommons.org/licenses/by/4.0/",
+            "attribution_path": "ATTRIBUTION.md",
+            "commercial_adaptation": true
+          },
+          "derivation": {
+            "script": "scripts/build_score_reference.py",
+            "parser_version": 1,
+            "repeat_policy": "not unrolled; explicit written score order",
+            "grace_policy": "zero duration; not in chroma occupancy",
+            "tie_policy": "segments sustain occupancy; continuation is not an attack",
+            "chord_rhythm_policy": "first subtoken advances spine; explicit per-note durations preserved",
+            "pitch_policy": "explicit kern sounding-pitch spelling, including naturals; octave lines are display only; no key inference"
+          },
+          "files": {
+            "039-1-TR.krn": "96c34477a6ccb3ca6e39b18c00d6671d94c0180f7c5e7567b84323d523242204",
+            "039-1-TR.krn.notes.json": "fe055a05b414e079bed92f933d0c61cb13e19d3dd4b98f2b0e44068802376bd2",
+            "039-1-BH.krn": "6952facf47dab370962099f4ddceb48b0ff024138847b554e6fd688aa995f3f0",
+            "039-1-BH.krn.notes.json": "105abd0c253834f21a145991a535fba14f50435bf0ce3c5d3d76a21593734954",
+            "LICENSE.txt": "430533a2646f16c8c7b58d919b13e0f8dfc5afb334c1915eceea2bf8c19551f9",
+            "ATTRIBUTION.md": "19a488af8218173dbcb78608c45110ad08ac8850e38ced8b32a958bffab837c1"
+          }
+        },
+        "extension": {
+          "base_profile_id": "chopin-scherzo3-coda-v1",
+          "appended_landmarks": [
+            {
+              "id": "final_scale_arrival",
+              "score_quarter": [
+                1860,
+                1
+              ],
+              "measure": 621,
+              "beat": [
+                1,
+                1
+              ],
+              "refinement_midi": [
+                100
+              ],
+              "boundary_kind": "terminal_ascent_note_attack",
+              "meaning": "Terminal RH E7 arrival completing the final long ascent; visual clearing begins after the attack while the held note may ring; not an acoustic release or settling chord"
+            }
+          ],
+          "ascent_evidence": {
+            "staff": 1,
+            "first_quarter": [
+              1848,
+              1
+            ],
+            "step_quarters": [
+              1,
+              2
+            ],
+            "midi_sequence": [
+              62,
+              63,
+              65,
+              67,
+              68,
+              70,
+              72,
+              73,
+              75,
+              77,
+              79,
+              80,
+              82,
+              84,
+              85,
+              87,
+              89,
+              91,
+              92,
+              94,
+              95,
+              96,
+              97,
+              99,
+              100
+            ],
+            "terminal_duration_quarters": [
+              1,
+              1
+            ],
+            "editions": [
+              "039-1-TR.krn.notes.json",
+              "039-1-BH.krn.notes.json"
+            ]
+          },
+          "limits": [
+            "arrival is score-defined intent; acoustic detector returns sole local tuned E7 growth consistent with context, not certified written identity, physical keystrike or hand provenance",
+            "later left-hand/broken figuration continues; m633/634 and m644 are distinct events",
+            "independent music review is required; unavailable listening must be disclosed and is not a demonstrated musical-quality pass; diagnostics are not calibrated confidence probabilities",
+            "held-out prefix registration requires18 coherent frequency observations; ordered trajectory is diagnostic only and does not certify performed strikes",
+            "prefix registration is bounded to40cents and1cent per semitone; terminal-only retuning is forbidden",
+            "original terminal DTW interval plus350ms and original global context limits remain; no existing timing or QA threshold is widened",
+            "a different sole E7 inside the search window and smoothly modulated already-ringing E7 can qualify; explicit identity limitations are calibrated and documented",
+            "new terminal uses declared fundamental support, tonality and unique new-growth gates; old3cue bass refinement and chroma gates remain unchanged"
+          ]
         },
         "files": {
-          "039-1-TR.krn": "96c34477a6ccb3ca6e39b18c00d6671d94c0180f7c5e7567b84323d523242204",
-          "039-1-TR.krn.notes.json": "fe055a05b414e079bed92f933d0c61cb13e19d3dd4b98f2b0e44068802376bd2",
-          "039-1-BH.krn": "6952facf47dab370962099f4ddceb48b0ff024138847b554e6fd688aa995f3f0",
-          "039-1-BH.krn.notes.json": "105abd0c253834f21a145991a535fba14f50435bf0ce3c5d3d76a21593734954",
-          "LICENSE.txt": "430533a2646f16c8c7b58d919b13e0f8dfc5afb334c1915eceea2bf8c19551f9",
-          "ATTRIBUTION.md": "19a488af8218173dbcb78608c45110ad08ac8850e38ced8b32a958bffab837c1"
+          "README.md": "4d6bc10ec29f3b442aa1dc34737ce1257b8c4ff8fc30a934fc382e260e0d0875"
         }
       },
       "landmarks": [
@@ -362,6 +461,2690 @@
             "quantization_samples": 240,
             "interpretation": "90%-peak candidates plus half STFT window; not an accuracy guarantee"
           }
+        },
+        {
+          "id": "final_scale_arrival",
+          "score_quarter": [
+            1860,
+            1
+          ],
+          "measure": 621,
+          "beat": [
+            1,
+            1
+          ],
+          "meaning": "Terminal RH E7 arrival completing the final long ascent; visual clearing begins after the attack while the held note may ring; not an acoustic release or settling chord",
+          "source_sample": 7974240,
+          "method": "score_context_prefix_tuning_then_unique_terminal_pitch_growth",
+          "coarse_interval_samples": [
+            7984800,
+            7984800
+          ],
+          "analysis_hop_samples": 240,
+          "analysis_window_samples": 8192,
+          "target_new_midi": [
+            100
+          ],
+          "prior_midi": [
+            99
+          ],
+          "excluded_prior_harmonic_collisions": [],
+          "register_sequence": {
+            "algorithm": "score_context_prefix_stretch_unique_terminal_growth_v1",
+            "score_quarters": [
+              [
+                1848,
+                1
+              ],
+              [
+                3697,
+                2
+              ],
+              [
+                1849,
+                1
+              ],
+              [
+                3699,
+                2
+              ],
+              [
+                1850,
+                1
+              ],
+              [
+                3701,
+                2
+              ],
+              [
+                1851,
+                1
+              ],
+              [
+                3703,
+                2
+              ],
+              [
+                1852,
+                1
+              ],
+              [
+                3705,
+                2
+              ],
+              [
+                1853,
+                1
+              ],
+              [
+                3707,
+                2
+              ],
+              [
+                1854,
+                1
+              ],
+              [
+                3709,
+                2
+              ],
+              [
+                1855,
+                1
+              ],
+              [
+                3711,
+                2
+              ],
+              [
+                1856,
+                1
+              ],
+              [
+                3713,
+                2
+              ],
+              [
+                1857,
+                1
+              ],
+              [
+                3715,
+                2
+              ],
+              [
+                1858,
+                1
+              ],
+              [
+                3717,
+                2
+              ],
+              [
+                1859,
+                1
+              ],
+              [
+                3719,
+                2
+              ],
+              [
+                1860,
+                1
+              ]
+            ],
+            "midi_sequence": [
+              62,
+              63,
+              65,
+              67,
+              68,
+              70,
+              72,
+              73,
+              75,
+              77,
+              79,
+              80,
+              82,
+              84,
+              85,
+              87,
+              89,
+              91,
+              92,
+              94,
+              95,
+              96,
+              97,
+              99,
+              100
+            ],
+            "dtw_intervals_samples": [
+              [
+                7869600,
+                7879200
+              ],
+              [
+                7881600,
+                7881600
+              ],
+              [
+                7884000,
+                7884000
+              ],
+              [
+                7886400,
+                7888800
+              ],
+              [
+                7891200,
+                7891200
+              ],
+              [
+                7893600,
+                7896000
+              ],
+              [
+                7898400,
+                7903200
+              ],
+              [
+                7905600,
+                7905600
+              ],
+              [
+                7908000,
+                7908000
+              ],
+              [
+                7910400,
+                7912800
+              ],
+              [
+                7915200,
+                7917600
+              ],
+              [
+                7920000,
+                7922400
+              ],
+              [
+                7924800,
+                7924800
+              ],
+              [
+                7927200,
+                7929600
+              ],
+              [
+                7932000,
+                7932000
+              ],
+              [
+                7934400,
+                7934400
+              ],
+              [
+                7936800,
+                7941600
+              ],
+              [
+                7944000,
+                7944000
+              ],
+              [
+                7946400,
+                7946400
+              ],
+              [
+                7948800,
+                7972800
+              ],
+              [
+                7975200,
+                7975200
+              ],
+              [
+                7977600,
+                7977600
+              ],
+              [
+                7980000,
+                7980000
+              ],
+              [
+                7982400,
+                7982400
+              ],
+              [
+                7984800,
+                7984800
+              ]
+            ],
+            "refinement_padding_samples": 16800,
+            "limits": {
+              "maximum_absolute_tuning_cents": 40.0,
+              "maximum_tuning_cents_per_semitone": 1.0,
+              "prefix_fit_residual_cents": 10.0,
+              "minimum_prefix_fit_notes": 18,
+              "minimum_prefix_register_span_semitones": 24,
+              "minimum_direct_spectral_peak_ratio": 0.001,
+              "minimum_terminal_written_register_growth_share": 0.5,
+              "competing_subharmonic_growth_context_half_stft_windows": 1,
+              "minimum_terminal_peak_to_local_background": 4.0,
+              "maximum_terminal_register_cost": 0.5,
+              "minimum_terminal_relative_growth": 0.0,
+              "minimum_terminal_growth_fraction_of_region_maximum_fundamental": 0.003,
+              "terminal_candidate_count_required": 1
+            },
+            "score_meaning_scope": "symbolic intent from the registered score; acoustic detection does not independently certify written identity",
+            "known_identity_limits": [
+              "a sole different E7 within the search window can qualify",
+              "smooth amplitude modulation of already ringing E7 can qualify without a new keystrike"
+            ],
+            "interpretation": "bounded pitch-growth evidence consistent with score context; not calibrated confidence, keystrike certification or hand provenance; lower-register energy and ordered prefix trajectory are diagnostic only",
+            "local_register_sequence_context_samples": [
+              7852800,
+              8001600
+            ],
+            "prefix_frequency_policy": "ordered within-semitone local spectral peaks; independently registered prefix trend predicts held-out terminal tuning",
+            "prefix_tuning_observations": [
+              [
+                62,
+                2.255128
+              ],
+              [
+                63,
+                -5.111386
+              ],
+              [
+                65,
+                -6.61771
+              ],
+              [
+                67,
+                -8.58753
+              ],
+              [
+                68,
+                -3.834695
+              ],
+              [
+                70,
+                2.20813
+              ],
+              [
+                72,
+                -1.047979
+              ],
+              [
+                73,
+                -10.042323
+              ],
+              [
+                75,
+                15.504814
+              ],
+              [
+                77,
+                -5.937652
+              ],
+              [
+                79,
+                0.377985
+              ],
+              [
+                80,
+                5.807939
+              ],
+              [
+                82,
+                10.75527
+              ],
+              [
+                84,
+                10.976021
+              ],
+              [
+                85,
+                4.586434
+              ],
+              [
+                87,
+                5.926287
+              ],
+              [
+                89,
+                8.189104
+              ],
+              [
+                91,
+                8.897791
+              ],
+              [
+                92,
+                15.158491
+              ],
+              [
+                94,
+                12.622364
+              ],
+              [
+                95,
+                -13.715293
+              ],
+              [
+                96,
+                14.550257
+              ],
+              [
+                97,
+                18.313153
+              ],
+              [
+                99,
+                -12.923877
+              ]
+            ],
+            "tuning": {
+              "center_midi": 81.0,
+              "cents_at_center": 3.835231,
+              "cents_per_semitone": 0.523135,
+              "inlier_prefix_notes": 21,
+              "terminal_cents": 13.774799
+            },
+            "note_support": [
+              {
+                "midi": 62,
+                "nominal_hz": 293.664768,
+                "maximum_direct_spectral_ratio": 0.14535936,
+                "maximum_growth_sample": 7872000,
+                "direct_ratio_at_maximum_growth": 0.09066699
+              },
+              {
+                "midi": 63,
+                "nominal_hz": 311.126984,
+                "maximum_direct_spectral_ratio": 0.07802005,
+                "maximum_growth_sample": 7899600,
+                "direct_ratio_at_maximum_growth": 0.04772746
+              },
+              {
+                "midi": 65,
+                "nominal_hz": 349.228231,
+                "maximum_direct_spectral_ratio": 0.07463523,
+                "maximum_growth_sample": 7880640,
+                "direct_ratio_at_maximum_growth": 0.02681432
+              },
+              {
+                "midi": 67,
+                "nominal_hz": 391.995436,
+                "maximum_direct_spectral_ratio": 0.19579972,
+                "maximum_growth_sample": 7885440,
+                "direct_ratio_at_maximum_growth": 0.12696954
+              },
+              {
+                "midi": 68,
+                "nominal_hz": 415.304698,
+                "maximum_direct_spectral_ratio": 0.12272958,
+                "maximum_growth_sample": 7889280,
+                "direct_ratio_at_maximum_growth": 0.05787601
+              },
+              {
+                "midi": 70,
+                "nominal_hz": 466.163762,
+                "maximum_direct_spectral_ratio": 1.0,
+                "maximum_growth_sample": 7945440,
+                "direct_ratio_at_maximum_growth": 0.84639072
+              },
+              {
+                "midi": 72,
+                "nominal_hz": 523.251131,
+                "maximum_direct_spectral_ratio": 0.09317031,
+                "maximum_growth_sample": 7896240,
+                "direct_ratio_at_maximum_growth": 0.05283981
+              },
+              {
+                "midi": 73,
+                "nominal_hz": 554.365262,
+                "maximum_direct_spectral_ratio": 0.31247508,
+                "maximum_growth_sample": 7938720,
+                "direct_ratio_at_maximum_growth": 0.1856535
+              },
+              {
+                "midi": 75,
+                "nominal_hz": 622.253967,
+                "maximum_direct_spectral_ratio": 0.3151893,
+                "maximum_growth_sample": 7917120,
+                "direct_ratio_at_maximum_growth": 0.1416896
+              },
+              {
+                "midi": 77,
+                "nominal_hz": 698.456463,
+                "maximum_direct_spectral_ratio": 0.18694687,
+                "maximum_growth_sample": 7910160,
+                "direct_ratio_at_maximum_growth": 0.11663459
+              },
+              {
+                "midi": 79,
+                "nominal_hz": 783.990872,
+                "maximum_direct_spectral_ratio": 0.20511531,
+                "maximum_growth_sample": 7914960,
+                "direct_ratio_at_maximum_growth": 0.12555857
+              },
+              {
+                "midi": 80,
+                "nominal_hz": 830.609395,
+                "maximum_direct_spectral_ratio": 0.19831033,
+                "maximum_growth_sample": 7919520,
+                "direct_ratio_at_maximum_growth": 0.13100942
+              },
+              {
+                "midi": 82,
+                "nominal_hz": 932.327523,
+                "maximum_direct_spectral_ratio": 0.13439548,
+                "maximum_growth_sample": 7922400,
+                "direct_ratio_at_maximum_growth": 0.07300377
+              },
+              {
+                "midi": 84,
+                "nominal_hz": 1046.502261,
+                "maximum_direct_spectral_ratio": 0.16056557,
+                "maximum_growth_sample": 7925520,
+                "direct_ratio_at_maximum_growth": 0.0675506
+              },
+              {
+                "midi": 85,
+                "nominal_hz": 1108.730524,
+                "maximum_direct_spectral_ratio": 0.09667283,
+                "maximum_growth_sample": 7931760,
+                "direct_ratio_at_maximum_growth": 0.07865811
+              },
+              {
+                "midi": 87,
+                "nominal_hz": 1244.507935,
+                "maximum_direct_spectral_ratio": 0.27062704,
+                "maximum_growth_sample": 7917120,
+                "direct_ratio_at_maximum_growth": 0.09686701
+              },
+              {
+                "midi": 89,
+                "nominal_hz": 1396.912926,
+                "maximum_direct_spectral_ratio": 0.32933291,
+                "maximum_growth_sample": 7939200,
+                "direct_ratio_at_maximum_growth": 0.2054035
+              },
+              {
+                "midi": 91,
+                "nominal_hz": 1567.981744,
+                "maximum_direct_spectral_ratio": 0.13879093,
+                "maximum_growth_sample": 7943280,
+                "direct_ratio_at_maximum_growth": 0.07649075
+              },
+              {
+                "midi": 92,
+                "nominal_hz": 1661.21879,
+                "maximum_direct_spectral_ratio": 0.06306358,
+                "maximum_growth_sample": 7945920,
+                "direct_ratio_at_maximum_growth": 0.04603392
+              },
+              {
+                "midi": 94,
+                "nominal_hz": 1864.655046,
+                "maximum_direct_spectral_ratio": 0.12757584,
+                "maximum_growth_sample": 7944720,
+                "direct_ratio_at_maximum_growth": 0.09472317
+              },
+              {
+                "midi": 95,
+                "nominal_hz": 1975.533205,
+                "maximum_direct_spectral_ratio": 0.08409141,
+                "maximum_growth_sample": 7930800,
+                "direct_ratio_at_maximum_growth": 0.04655569
+              },
+              {
+                "midi": 96,
+                "nominal_hz": 2093.004522,
+                "maximum_direct_spectral_ratio": 0.06148892,
+                "maximum_growth_sample": 7959360,
+                "direct_ratio_at_maximum_growth": 0.03203829
+              },
+              {
+                "midi": 97,
+                "nominal_hz": 2217.461048,
+                "maximum_direct_spectral_ratio": 0.03153711,
+                "maximum_growth_sample": 7964880,
+                "direct_ratio_at_maximum_growth": 0.02064814
+              },
+              {
+                "midi": 99,
+                "nominal_hz": 2489.01587,
+                "maximum_direct_spectral_ratio": 0.03254494,
+                "maximum_growth_sample": 7897440,
+                "direct_ratio_at_maximum_growth": 0.0207356
+              },
+              {
+                "midi": 100,
+                "nominal_hz": 2658.085961,
+                "maximum_direct_spectral_ratio": 0.01252097,
+                "maximum_growth_sample": 7974240,
+                "direct_ratio_at_maximum_growth": 0.00748135
+              }
+            ],
+            "register_observations": [
+              [
+                {
+                  "source_sample": 7872000,
+                  "energy_share": 0.51838764,
+                  "new_growth_share": 0.54625344,
+                  "observed_cents": 2.255128,
+                  "direct_spectral_ratio": 0.09066699,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7901040,
+                  "energy_share": 0.10480468,
+                  "new_growth_share": 0.84758352,
+                  "observed_cents": 11.978113,
+                  "direct_spectral_ratio": 0.01370231,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7918800,
+                  "energy_share": 0.04617158,
+                  "new_growth_share": 0.28918153,
+                  "observed_cents": -20.26936,
+                  "direct_spectral_ratio": 0.00247582,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7926960,
+                  "energy_share": 0.04735845,
+                  "new_growth_share": 0.3771783,
+                  "observed_cents": null,
+                  "direct_spectral_ratio": 0.00128827,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7936560,
+                  "energy_share": 0.02039803,
+                  "new_growth_share": 0.18231991,
+                  "observed_cents": -13.315325,
+                  "direct_spectral_ratio": 0.00101741,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7942560,
+                  "energy_share": 0.04285601,
+                  "new_growth_share": 0.37972353,
+                  "observed_cents": 12.895302,
+                  "direct_spectral_ratio": 0.00162985,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7869120,
+                  "energy_share": 0.03172236,
+                  "new_growth_share": 0.19699284,
+                  "observed_cents": null,
+                  "direct_spectral_ratio": 0.00151341,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7877040,
+                  "energy_share": 0.28807698,
+                  "new_growth_share": 0.79764633,
+                  "observed_cents": -7.398682,
+                  "direct_spectral_ratio": 0.01100699,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7888320,
+                  "energy_share": 0.46445836,
+                  "new_growth_share": 0.19784981,
+                  "observed_cents": -3.030068,
+                  "direct_spectral_ratio": 0.02554507,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7899600,
+                  "energy_share": 0.55118731,
+                  "new_growth_share": 0.57853973,
+                  "observed_cents": -6.089452,
+                  "direct_spectral_ratio": 0.04772746,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7925280,
+                  "energy_share": 0.65610546,
+                  "new_growth_share": 0.63473271,
+                  "observed_cents": -8.306534,
+                  "direct_spectral_ratio": 0.03003933,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7940400,
+                  "energy_share": 0.83859036,
+                  "new_growth_share": 0.59782514,
+                  "observed_cents": -4.546172,
+                  "direct_spectral_ratio": 0.05211412,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7996320,
+                  "energy_share": 0.014881,
+                  "new_growth_share": 0.01574108,
+                  "observed_cents": -2.880521,
+                  "direct_spectral_ratio": 0.00667202,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7867680,
+                  "energy_share": 0.17560096,
+                  "new_growth_share": 0.24481377,
+                  "observed_cents": -24.030446,
+                  "direct_spectral_ratio": 0.00828959,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7880640,
+                  "energy_share": 0.84232641,
+                  "new_growth_share": 0.88847945,
+                  "observed_cents": -8.656097,
+                  "direct_spectral_ratio": 0.02681432,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7886400,
+                  "energy_share": 0.86275653,
+                  "new_growth_share": 0.16005455,
+                  "observed_cents": 5.735965,
+                  "direct_spectral_ratio": 0.05508264,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7915680,
+                  "energy_share": 0.54034998,
+                  "new_growth_share": 0.18463325,
+                  "observed_cents": -5.968873,
+                  "direct_spectral_ratio": 0.01048222,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7928400,
+                  "energy_share": 0.81410979,
+                  "new_growth_share": 0.30963427,
+                  "observed_cents": -7.385368,
+                  "direct_spectral_ratio": 0.00407273,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7938960,
+                  "energy_share": 0.46658115,
+                  "new_growth_share": 0.30148913,
+                  "observed_cents": 3.248808,
+                  "direct_spectral_ratio": 0.00366403,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7945920,
+                  "energy_share": 0.63591884,
+                  "new_growth_share": 0.80557792,
+                  "observed_cents": -2.954198,
+                  "direct_spectral_ratio": 0.00219472,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7981920,
+                  "energy_share": 0.29541024,
+                  "new_growth_share": 0.07000536,
+                  "observed_cents": -14.921281,
+                  "direct_spectral_ratio": 0.00167365,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7867920,
+                  "energy_share": 0.16619822,
+                  "new_growth_share": 0.14807031,
+                  "observed_cents": -5.344377,
+                  "direct_spectral_ratio": 0.01396142,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7872240,
+                  "energy_share": 0.30104132,
+                  "new_growth_share": 0.07194936,
+                  "observed_cents": -1.823574,
+                  "direct_spectral_ratio": 0.02799028,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7878960,
+                  "energy_share": 0.2030826,
+                  "new_growth_share": 0.12833152,
+                  "observed_cents": -2.5858,
+                  "direct_spectral_ratio": 0.02528381,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7885440,
+                  "energy_share": 0.42317416,
+                  "new_growth_share": 0.82060058,
+                  "observed_cents": -8.58753,
+                  "direct_spectral_ratio": 0.12696954,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7947360,
+                  "energy_share": 0.15304928,
+                  "new_growth_share": 0.32049489,
+                  "observed_cents": null,
+                  "direct_spectral_ratio": 0.00121214,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7881120,
+                  "energy_share": 0.05737735,
+                  "new_growth_share": 0.29346228,
+                  "observed_cents": 11.165822,
+                  "direct_spectral_ratio": 0.00102236,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7889280,
+                  "energy_share": 0.68422618,
+                  "new_growth_share": 0.90583866,
+                  "observed_cents": -3.834695,
+                  "direct_spectral_ratio": 0.05787601,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7931520,
+                  "energy_share": 0.32116606,
+                  "new_growth_share": 0.55784598,
+                  "observed_cents": null,
+                  "direct_spectral_ratio": 0.00274095,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7943280,
+                  "energy_share": 0.14710982,
+                  "new_growth_share": 0.17000145,
+                  "observed_cents": 11.89212,
+                  "direct_spectral_ratio": 0.00141087,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7981920,
+                  "energy_share": 0.02961237,
+                  "new_growth_share": 0.11361534,
+                  "observed_cents": -0.244575,
+                  "direct_spectral_ratio": 0.00516402,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7893360,
+                  "energy_share": 0.87031602,
+                  "new_growth_share": 0.87769301,
+                  "observed_cents": 2.20813,
+                  "direct_spectral_ratio": 0.11495179,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7899360,
+                  "energy_share": 0.85064394,
+                  "new_growth_share": 0.63241787,
+                  "observed_cents": -0.597945,
+                  "direct_spectral_ratio": 0.21407783,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7917360,
+                  "energy_share": 0.79097061,
+                  "new_growth_share": 0.36475583,
+                  "observed_cents": -0.324405,
+                  "direct_spectral_ratio": 0.0948049,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7930320,
+                  "energy_share": 0.96415524,
+                  "new_growth_share": 0.93053009,
+                  "observed_cents": -3.362854,
+                  "direct_spectral_ratio": 0.24088968,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7938240,
+                  "energy_share": 0.97400379,
+                  "new_growth_share": 0.93031423,
+                  "observed_cents": 2.379515,
+                  "direct_spectral_ratio": 0.5448936,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7945440,
+                  "energy_share": 0.99115153,
+                  "new_growth_share": 0.94327536,
+                  "observed_cents": 0.53476,
+                  "direct_spectral_ratio": 0.84639072,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7867920,
+                  "energy_share": 0.1944637,
+                  "new_growth_share": 0.4703162,
+                  "observed_cents": 1.239936,
+                  "direct_spectral_ratio": 0.00132524,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7896240,
+                  "energy_share": 0.96650822,
+                  "new_growth_share": 0.92870373,
+                  "observed_cents": -1.047979,
+                  "direct_spectral_ratio": 0.05283981,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7918320,
+                  "energy_share": 0.94693824,
+                  "new_growth_share": 0.47799893,
+                  "observed_cents": 4.767423,
+                  "direct_spectral_ratio": 0.01353293,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7924320,
+                  "energy_share": 0.87031043,
+                  "new_growth_share": 0.822367,
+                  "observed_cents": -9.551821,
+                  "direct_spectral_ratio": 0.00710783,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7929120,
+                  "energy_share": 0.96607602,
+                  "new_growth_share": 0.51984867,
+                  "observed_cents": -10.977662,
+                  "direct_spectral_ratio": 0.01079892,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7935840,
+                  "energy_share": 0.76310423,
+                  "new_growth_share": 0.63123002,
+                  "observed_cents": 26.413373,
+                  "direct_spectral_ratio": 0.00850258,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7943280,
+                  "energy_share": 0.96214817,
+                  "new_growth_share": 0.71800845,
+                  "observed_cents": -2.397534,
+                  "direct_spectral_ratio": 0.0093082,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7974480,
+                  "energy_share": 0.34945228,
+                  "new_growth_share": 0.35529312,
+                  "observed_cents": -6.373678,
+                  "direct_spectral_ratio": 0.00113172,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7868400,
+                  "energy_share": 0.47297579,
+                  "new_growth_share": 0.41384076,
+                  "observed_cents": 4.169686,
+                  "direct_spectral_ratio": 0.03340647,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7898160,
+                  "energy_share": 0.58664492,
+                  "new_growth_share": 0.5838101,
+                  "observed_cents": -10.042323,
+                  "direct_spectral_ratio": 0.05081369,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7916880,
+                  "energy_share": 0.45280562,
+                  "new_growth_share": 0.80732102,
+                  "observed_cents": 15.420553,
+                  "direct_spectral_ratio": 0.03205146,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7924080,
+                  "energy_share": 0.57663455,
+                  "new_growth_share": 0.55286901,
+                  "observed_cents": 1.873685,
+                  "direct_spectral_ratio": 0.04050302,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7930800,
+                  "energy_share": 0.77117599,
+                  "new_growth_share": 0.96125918,
+                  "observed_cents": 7.189036,
+                  "direct_spectral_ratio": 0.08917868,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7938720,
+                  "energy_share": 0.87716975,
+                  "new_growth_share": 0.97533906,
+                  "observed_cents": 1.908704,
+                  "direct_spectral_ratio": 0.1856535,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7944720,
+                  "energy_share": 0.93641241,
+                  "new_growth_share": 0.96348706,
+                  "observed_cents": 1.502937,
+                  "direct_spectral_ratio": 0.24063006,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7999680,
+                  "energy_share": 0.34814952,
+                  "new_growth_share": 0.41247758,
+                  "observed_cents": -4.871772,
+                  "direct_spectral_ratio": 0.02197838,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7871040,
+                  "energy_share": 0.07826501,
+                  "new_growth_share": 0.43921441,
+                  "observed_cents": null,
+                  "direct_spectral_ratio": 0.00273227,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7897200,
+                  "energy_share": 0.69169987,
+                  "new_growth_share": 0.42247476,
+                  "observed_cents": -0.240734,
+                  "direct_spectral_ratio": 0.03186644,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7904400,
+                  "energy_share": 0.43629762,
+                  "new_growth_share": 0.58046871,
+                  "observed_cents": 11.209738,
+                  "direct_spectral_ratio": 0.0477519,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7917120,
+                  "energy_share": 0.83287094,
+                  "new_growth_share": 0.84533782,
+                  "observed_cents": 15.504814,
+                  "direct_spectral_ratio": 0.1416896,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7923120,
+                  "energy_share": 0.93605697,
+                  "new_growth_share": 0.80195759,
+                  "observed_cents": 8.400964,
+                  "direct_spectral_ratio": 0.24392785,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7939440,
+                  "energy_share": 0.7950203,
+                  "new_growth_share": 0.80796926,
+                  "observed_cents": 4.626916,
+                  "direct_spectral_ratio": 0.16626771,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7945680,
+                  "energy_share": 0.8087235,
+                  "new_growth_share": 0.86419233,
+                  "observed_cents": 0.702987,
+                  "direct_spectral_ratio": 0.2522338,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7996080,
+                  "energy_share": 0.35244224,
+                  "new_growth_share": 0.72840992,
+                  "observed_cents": -0.217834,
+                  "direct_spectral_ratio": 0.01800604,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7866720,
+                  "energy_share": 0.22822199,
+                  "new_growth_share": 0.32729531,
+                  "observed_cents": -37.254528,
+                  "direct_spectral_ratio": 0.00126536,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7872960,
+                  "energy_share": 0.82424754,
+                  "new_growth_share": 0.80093161,
+                  "observed_cents": -27.687693,
+                  "direct_spectral_ratio": 0.01847738,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7886880,
+                  "energy_share": 0.2267053,
+                  "new_growth_share": 0.34029506,
+                  "observed_cents": -6.68007,
+                  "direct_spectral_ratio": 0.01625479,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7899840,
+                  "energy_share": 0.51823164,
+                  "new_growth_share": 0.55216152,
+                  "observed_cents": -2.593408,
+                  "direct_spectral_ratio": 0.02531344,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7910160,
+                  "energy_share": 0.88765174,
+                  "new_growth_share": 0.99255353,
+                  "observed_cents": -5.937652,
+                  "direct_spectral_ratio": 0.11663459,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7929120,
+                  "energy_share": 0.94272062,
+                  "new_growth_share": 0.86480662,
+                  "observed_cents": 2.303166,
+                  "direct_spectral_ratio": 0.07720836,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7981920,
+                  "energy_share": 0.80623205,
+                  "new_growth_share": 0.58242967,
+                  "observed_cents": -12.196092,
+                  "direct_spectral_ratio": 0.00696376,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7998960,
+                  "energy_share": 0.48403145,
+                  "new_growth_share": 0.53277991,
+                  "observed_cents": -24.599958,
+                  "direct_spectral_ratio": 0.00423253,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7885680,
+                  "energy_share": 0.19891411,
+                  "new_growth_share": 0.20930831,
+                  "observed_cents": 7.774601,
+                  "direct_spectral_ratio": 0.03499236,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7905120,
+                  "energy_share": 0.26055253,
+                  "new_growth_share": 0.8156397,
+                  "observed_cents": -1.081109,
+                  "direct_spectral_ratio": 0.02674277,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7914960,
+                  "energy_share": 0.76867595,
+                  "new_growth_share": 0.99360004,
+                  "observed_cents": 0.377985,
+                  "direct_spectral_ratio": 0.12555857,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7922640,
+                  "energy_share": 0.85607495,
+                  "new_growth_share": 0.78082729,
+                  "observed_cents": 3.034836,
+                  "direct_spectral_ratio": 0.13464353,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7928880,
+                  "energy_share": 0.8855385,
+                  "new_growth_share": 0.79491621,
+                  "observed_cents": 2.501987,
+                  "direct_spectral_ratio": 0.10347755,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7996560,
+                  "energy_share": 0.42165239,
+                  "new_growth_share": 0.54229882,
+                  "observed_cents": -15.618253,
+                  "direct_spectral_ratio": 0.00375624,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7890480,
+                  "energy_share": 0.17219785,
+                  "new_growth_share": 0.17070346,
+                  "observed_cents": 6.620164,
+                  "direct_spectral_ratio": 0.0208245,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7897440,
+                  "energy_share": 0.20637256,
+                  "new_growth_share": 0.27980473,
+                  "observed_cents": 11.62327,
+                  "direct_spectral_ratio": 0.02225468,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7919520,
+                  "energy_share": 0.78038173,
+                  "new_growth_share": 0.98776584,
+                  "observed_cents": 5.807939,
+                  "direct_spectral_ratio": 0.13100942,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7877760,
+                  "energy_share": 0.1581714,
+                  "new_growth_share": 0.1161979,
+                  "observed_cents": 1.919016,
+                  "direct_spectral_ratio": 0.00398745,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7893600,
+                  "energy_share": 0.2096349,
+                  "new_growth_share": 0.21294825,
+                  "observed_cents": 3.384165,
+                  "direct_spectral_ratio": 0.03441485,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7901280,
+                  "energy_share": 0.04220119,
+                  "new_growth_share": 0.10391096,
+                  "observed_cents": 0.315374,
+                  "direct_spectral_ratio": 0.01056396,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7906560,
+                  "energy_share": 0.10268447,
+                  "new_growth_share": 1.0,
+                  "observed_cents": 1.304956,
+                  "direct_spectral_ratio": 0.01824055,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7922400,
+                  "energy_share": 0.46147439,
+                  "new_growth_share": 0.68626594,
+                  "observed_cents": 10.75527,
+                  "direct_spectral_ratio": 0.07300377,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7930560,
+                  "energy_share": 0.23283041,
+                  "new_growth_share": 0.18545388,
+                  "observed_cents": 7.748696,
+                  "direct_spectral_ratio": 0.08061881,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7939200,
+                  "energy_share": 0.14515562,
+                  "new_growth_share": 0.13759211,
+                  "observed_cents": 3.632224,
+                  "direct_spectral_ratio": 0.10715647,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7945440,
+                  "energy_share": 0.11247301,
+                  "new_growth_share": 0.15126138,
+                  "observed_cents": -0.556078,
+                  "direct_spectral_ratio": 0.10725996,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7854960,
+                  "energy_share": 0.89937115,
+                  "new_growth_share": 0.89512255,
+                  "observed_cents": -12.118589,
+                  "direct_spectral_ratio": 0.00376323,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7868640,
+                  "energy_share": 0.11659006,
+                  "new_growth_share": 0.21160328,
+                  "observed_cents": -39.744958,
+                  "direct_spectral_ratio": 0.00157517,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7881120,
+                  "energy_share": 0.13616816,
+                  "new_growth_share": 0.12263719,
+                  "observed_cents": 3.863704,
+                  "direct_spectral_ratio": 0.00658259,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7897920,
+                  "energy_share": 0.09425719,
+                  "new_growth_share": 0.09365943,
+                  "observed_cents": 5.938601,
+                  "direct_spectral_ratio": 0.00958759,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7925520,
+                  "energy_share": 0.88288619,
+                  "new_growth_share": 0.95611561,
+                  "observed_cents": 10.976021,
+                  "direct_spectral_ratio": 0.0675506,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7854000,
+                  "energy_share": 0.42170062,
+                  "new_growth_share": 0.91179417,
+                  "observed_cents": 6.325472,
+                  "direct_spectral_ratio": 0.0609347,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7865520,
+                  "energy_share": 0.24121965,
+                  "new_growth_share": 0.30805107,
+                  "observed_cents": 3.381603,
+                  "direct_spectral_ratio": 0.01924468,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7877280,
+                  "energy_share": 0.16905713,
+                  "new_growth_share": 0.40317748,
+                  "observed_cents": -43.69039,
+                  "direct_spectral_ratio": 0.00244397,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7902000,
+                  "energy_share": 0.46991345,
+                  "new_growth_share": 0.34944453,
+                  "observed_cents": 2.626288,
+                  "direct_spectral_ratio": 0.06176729,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7916640,
+                  "energy_share": 0.49637728,
+                  "new_growth_share": 0.36803179,
+                  "observed_cents": 1.845877,
+                  "direct_spectral_ratio": 0.0384003,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7931760,
+                  "energy_share": 0.38295865,
+                  "new_growth_share": 0.36274124,
+                  "observed_cents": 4.586434,
+                  "direct_spectral_ratio": 0.07865811,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7939440,
+                  "energy_share": 0.19353584,
+                  "new_growth_share": 0.10955021,
+                  "observed_cents": 5.879184,
+                  "direct_spectral_ratio": 0.05379835,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7944720,
+                  "energy_share": 0.19987309,
+                  "new_growth_share": 0.20582116,
+                  "observed_cents": 0.982847,
+                  "direct_spectral_ratio": 0.06010981,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7853760,
+                  "energy_share": 0.67622437,
+                  "new_growth_share": 0.94063156,
+                  "observed_cents": 12.339902,
+                  "direct_spectral_ratio": 0.01179746,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7890000,
+                  "energy_share": 0.12519067,
+                  "new_growth_share": 0.10768088,
+                  "observed_cents": 8.42581,
+                  "direct_spectral_ratio": 0.01212074,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7897680,
+                  "energy_share": 0.17992392,
+                  "new_growth_share": 0.13578349,
+                  "observed_cents": 3.382553,
+                  "direct_spectral_ratio": 0.01874256,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7906320,
+                  "energy_share": 0.1900025,
+                  "new_growth_share": 0.26836928,
+                  "observed_cents": 8.033182,
+                  "direct_spectral_ratio": 0.01864639,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7917120,
+                  "energy_share": 0.4060546,
+                  "new_growth_share": 0.30520344,
+                  "observed_cents": 5.43877,
+                  "direct_spectral_ratio": 0.09686701,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7923600,
+                  "energy_share": 0.43776944,
+                  "new_growth_share": 0.33603639,
+                  "observed_cents": 5.926287,
+                  "direct_spectral_ratio": 0.21593946,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7934640,
+                  "energy_share": 0.49323219,
+                  "new_growth_share": 0.26101026,
+                  "observed_cents": 6.175724,
+                  "direct_spectral_ratio": 0.15232427,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7945680,
+                  "energy_share": 0.24113528,
+                  "new_growth_share": 0.410547,
+                  "observed_cents": 4.890978,
+                  "direct_spectral_ratio": 0.08014929,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7898400,
+                  "energy_share": 0.10271342,
+                  "new_growth_share": 0.15129188,
+                  "observed_cents": 9.491212,
+                  "direct_spectral_ratio": 0.02189775,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7908720,
+                  "energy_share": 0.11008338,
+                  "new_growth_share": 0.06715913,
+                  "observed_cents": 1.269913,
+                  "direct_spectral_ratio": 0.01716553,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7931040,
+                  "energy_share": 0.02515552,
+                  "new_growth_share": 0.02635888,
+                  "observed_cents": 1.818641,
+                  "direct_spectral_ratio": 0.00807906,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7939200,
+                  "energy_share": 0.24556141,
+                  "new_growth_share": 0.53917101,
+                  "observed_cents": 8.189104,
+                  "direct_spectral_ratio": 0.2054035,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7866480,
+                  "energy_share": 0.35610493,
+                  "new_growth_share": 0.25265347,
+                  "observed_cents": 0.383172,
+                  "direct_spectral_ratio": 0.00322686,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7898640,
+                  "energy_share": 0.13872565,
+                  "new_growth_share": 0.25817833,
+                  "observed_cents": -1.459347,
+                  "direct_spectral_ratio": 0.01731733,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7914720,
+                  "energy_share": 0.18614138,
+                  "new_growth_share": 0.09859508,
+                  "observed_cents": 7.970943,
+                  "direct_spectral_ratio": 0.02506563,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7927200,
+                  "energy_share": 0.12474047,
+                  "new_growth_share": 0.61133263,
+                  "observed_cents": -5.632103,
+                  "direct_spectral_ratio": 0.01481589,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7937040,
+                  "energy_share": 0.13763372,
+                  "new_growth_share": 0.40735315,
+                  "observed_cents": -5.720033,
+                  "direct_spectral_ratio": 0.00912005,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7943280,
+                  "energy_share": 0.75095401,
+                  "new_growth_share": 0.9289086,
+                  "observed_cents": 8.897791,
+                  "direct_spectral_ratio": 0.07649075,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7973520,
+                  "energy_share": 0.41261098,
+                  "new_growth_share": 0.50728649,
+                  "observed_cents": 27.469633,
+                  "direct_spectral_ratio": 0.0019056,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7992240,
+                  "energy_share": 0.32999329,
+                  "new_growth_share": 0.24141334,
+                  "observed_cents": -29.160388,
+                  "direct_spectral_ratio": 0.00637555,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7866960,
+                  "energy_share": 0.20791365,
+                  "new_growth_share": 0.17783061,
+                  "observed_cents": 13.013766,
+                  "direct_spectral_ratio": 0.00636486,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7900800,
+                  "energy_share": 0.28046483,
+                  "new_growth_share": 0.30057135,
+                  "observed_cents": 11.542473,
+                  "direct_spectral_ratio": 0.02835517,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7918320,
+                  "energy_share": 0.21909212,
+                  "new_growth_share": 0.0800507,
+                  "observed_cents": 13.536164,
+                  "direct_spectral_ratio": 0.01901472,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7931520,
+                  "energy_share": 0.18616857,
+                  "new_growth_share": 0.17535953,
+                  "observed_cents": 8.186722,
+                  "direct_spectral_ratio": 0.02706245,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7940880,
+                  "energy_share": 0.07180858,
+                  "new_growth_share": 0.0258752,
+                  "observed_cents": 9.202766,
+                  "direct_spectral_ratio": 0.01908145,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7945920,
+                  "energy_share": 0.13255068,
+                  "new_growth_share": 0.22263455,
+                  "observed_cents": 15.158491,
+                  "direct_spectral_ratio": 0.04603392,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7958640,
+                  "energy_share": 0.02600964,
+                  "new_growth_share": 0.90702058,
+                  "observed_cents": 10.529264,
+                  "direct_spectral_ratio": 0.00195461,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7968480,
+                  "energy_share": 0.21794292,
+                  "new_growth_share": 0.70580812,
+                  "observed_cents": 9.766007,
+                  "direct_spectral_ratio": 0.00389089,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7868160,
+                  "energy_share": 0.48512388,
+                  "new_growth_share": 0.54130143,
+                  "observed_cents": 16.997557,
+                  "direct_spectral_ratio": 0.00690187,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7902480,
+                  "energy_share": 0.04584592,
+                  "new_growth_share": 0.17408792,
+                  "observed_cents": 14.349211,
+                  "direct_spectral_ratio": 0.01085397,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7916880,
+                  "energy_share": 0.23519543,
+                  "new_growth_share": 0.16323738,
+                  "observed_cents": 12.659045,
+                  "direct_spectral_ratio": 0.03751067,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7921680,
+                  "energy_share": 0.22401657,
+                  "new_growth_share": 0.08040759,
+                  "observed_cents": 12.729871,
+                  "direct_spectral_ratio": 0.06235725,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7928640,
+                  "energy_share": 0.13817558,
+                  "new_growth_share": 0.03550889,
+                  "observed_cents": 13.674127,
+                  "direct_spectral_ratio": 0.04783329,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7939680,
+                  "energy_share": 0.05744233,
+                  "new_growth_share": 0.06182109,
+                  "observed_cents": 15.338536,
+                  "direct_spectral_ratio": 0.04047072,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7944720,
+                  "energy_share": 0.11035736,
+                  "new_growth_share": 0.18422423,
+                  "observed_cents": 12.622364,
+                  "direct_spectral_ratio": 0.09472317,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7950960,
+                  "energy_share": 0.11625785,
+                  "new_growth_share": 0.26611366,
+                  "observed_cents": 11.632842,
+                  "direct_spectral_ratio": 0.10698463,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7868880,
+                  "energy_share": 0.21283775,
+                  "new_growth_share": 0.15833912,
+                  "observed_cents": -32.30331,
+                  "direct_spectral_ratio": 0.00524215,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7885680,
+                  "energy_share": 0.37769738,
+                  "new_growth_share": 0.75177104,
+                  "observed_cents": 1.299172,
+                  "direct_spectral_ratio": 0.00990659,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7898400,
+                  "energy_share": 0.61542945,
+                  "new_growth_share": 0.88393673,
+                  "observed_cents": -18.372083,
+                  "direct_spectral_ratio": 0.02806434,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7930800,
+                  "energy_share": 0.18633366,
+                  "new_growth_share": 0.19722296,
+                  "observed_cents": 16.129046,
+                  "direct_spectral_ratio": 0.04655569,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7955280,
+                  "energy_share": 0.31539927,
+                  "new_growth_share": 0.96070575,
+                  "observed_cents": 14.914775,
+                  "direct_spectral_ratio": 0.04460447,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7987920,
+                  "energy_share": 0.16501745,
+                  "new_growth_share": 0.20208182,
+                  "observed_cents": -13.715293,
+                  "direct_spectral_ratio": 0.00181608,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7992960,
+                  "energy_share": 0.45131732,
+                  "new_growth_share": 0.47331752,
+                  "observed_cents": 18.36123,
+                  "direct_spectral_ratio": 0.0030699,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7870800,
+                  "energy_share": 0.63298057,
+                  "new_growth_share": 0.6346688,
+                  "observed_cents": -15.355845,
+                  "direct_spectral_ratio": 0.02217617,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7883040,
+                  "energy_share": 0.29918232,
+                  "new_growth_share": 0.22075213,
+                  "observed_cents": 17.268376,
+                  "direct_spectral_ratio": 0.01449025,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7897920,
+                  "energy_share": 0.05737671,
+                  "new_growth_share": 0.04039829,
+                  "observed_cents": 13.937016,
+                  "direct_spectral_ratio": 0.00560786,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7903200,
+                  "energy_share": 0.11490405,
+                  "new_growth_share": 0.217544,
+                  "observed_cents": 19.283495,
+                  "direct_spectral_ratio": 0.00701604,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7909680,
+                  "energy_share": 0.20112971,
+                  "new_growth_share": 0.15457851,
+                  "observed_cents": 12.992174,
+                  "direct_spectral_ratio": 0.0230197,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7959360,
+                  "energy_share": 0.9708315,
+                  "new_growth_share": 0.98513477,
+                  "observed_cents": 14.329683,
+                  "direct_spectral_ratio": 0.03203829,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7967520,
+                  "energy_share": 0.80847519,
+                  "new_growth_share": 0.83671221,
+                  "observed_cents": 14.550257,
+                  "direct_spectral_ratio": 0.00445996,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7999440,
+                  "energy_share": 0.43961318,
+                  "new_growth_share": 0.81831882,
+                  "observed_cents": -31.371656,
+                  "direct_spectral_ratio": 0.00487081,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7898160,
+                  "energy_share": 0.15438304,
+                  "new_growth_share": 0.15504671,
+                  "observed_cents": -11.245128,
+                  "direct_spectral_ratio": 0.00927698,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7908240,
+                  "energy_share": 0.13300768,
+                  "new_growth_share": 0.49985919,
+                  "observed_cents": 16.39189,
+                  "direct_spectral_ratio": 0.00867961,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7924320,
+                  "energy_share": 0.1758532,
+                  "new_growth_share": 0.32801964,
+                  "observed_cents": -14.997077,
+                  "direct_spectral_ratio": 0.01065414,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7932240,
+                  "energy_share": 0.08603732,
+                  "new_growth_share": 0.05730187,
+                  "observed_cents": 17.39521,
+                  "direct_spectral_ratio": 0.01317542,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7937760,
+                  "energy_share": 0.07122241,
+                  "new_growth_share": 0.03349008,
+                  "observed_cents": 11.509289,
+                  "direct_spectral_ratio": 0.01069971,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7944960,
+                  "energy_share": 0.05210098,
+                  "new_growth_share": 0.07351796,
+                  "observed_cents": 15.323311,
+                  "direct_spectral_ratio": 0.01400692,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7952400,
+                  "energy_share": 0.02369235,
+                  "new_growth_share": 0.90058326,
+                  "observed_cents": 14.782589,
+                  "direct_spectral_ratio": 0.00383722,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7964880,
+                  "energy_share": 0.43982293,
+                  "new_growth_share": 0.92342262,
+                  "observed_cents": 18.313153,
+                  "direct_spectral_ratio": 0.02064814,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7881360,
+                  "energy_share": 0.61849008,
+                  "new_growth_share": 0.66193746,
+                  "observed_cents": -11.04252,
+                  "direct_spectral_ratio": 0.01248553,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7897440,
+                  "energy_share": 0.36748508,
+                  "new_growth_share": 0.3354353,
+                  "observed_cents": 22.513243,
+                  "direct_spectral_ratio": 0.0207356,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7906320,
+                  "energy_share": 0.20400764,
+                  "new_growth_share": 0.16029359,
+                  "observed_cents": 22.146262,
+                  "direct_spectral_ratio": 0.02037308,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7915920,
+                  "energy_share": 0.18388074,
+                  "new_growth_share": 0.02928155,
+                  "observed_cents": 21.253411,
+                  "direct_spectral_ratio": 0.0152338,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7924800,
+                  "energy_share": 0.03976431,
+                  "new_growth_share": 0.05590522,
+                  "observed_cents": 15.781581,
+                  "direct_spectral_ratio": 0.01215042,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7932960,
+                  "energy_share": 0.04179374,
+                  "new_growth_share": 0.23078255,
+                  "observed_cents": 20.352076,
+                  "direct_spectral_ratio": 0.00935286,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7937280,
+                  "energy_share": 0.09647109,
+                  "new_growth_share": 0.05486126,
+                  "observed_cents": 22.228205,
+                  "direct_spectral_ratio": 0.01540879,
+                  "terminal_tonality": null,
+                  "supported": true
+                },
+                {
+                  "source_sample": 7944240,
+                  "energy_share": 0.09838182,
+                  "new_growth_share": 0.09055949,
+                  "observed_cents": 18.871101,
+                  "direct_spectral_ratio": 0.02076706,
+                  "terminal_tonality": null,
+                  "supported": true
+                }
+              ],
+              [
+                {
+                  "source_sample": 7974240,
+                  "energy_share": 0.3350388,
+                  "new_growth_share": 0.97189089,
+                  "observed_cents": 4.488514,
+                  "direct_spectral_ratio": 0.00748135,
+                  "terminal_tonality": 12.161666,
+                  "supported": true
+                }
+              ]
+            ],
+            "candidate_counts": [
+              6,
+              7,
+              8,
+              5,
+              5,
+              6,
+              8,
+              8,
+              8,
+              8,
+              6,
+              3,
+              8,
+              5,
+              8,
+              8,
+              4,
+              8,
+              8,
+              8,
+              7,
+              8,
+              8,
+              8,
+              1
+            ],
+            "candidate_onset_samples": [
+              [
+                7872000,
+                7901040,
+                7918800,
+                7926960,
+                7936560,
+                7942560
+              ],
+              [
+                7869120,
+                7877040,
+                7888320,
+                7899600,
+                7925280,
+                7940400,
+                7996320
+              ],
+              [
+                7867680,
+                7880640,
+                7886400,
+                7915680,
+                7928400,
+                7938960,
+                7945920,
+                7981920
+              ],
+              [
+                7867920,
+                7872240,
+                7878960,
+                7885440,
+                7947360
+              ],
+              [
+                7881120,
+                7889280,
+                7931520,
+                7943280,
+                7981920
+              ],
+              [
+                7893360,
+                7899360,
+                7917360,
+                7930320,
+                7938240,
+                7945440
+              ],
+              [
+                7867920,
+                7896240,
+                7918320,
+                7924320,
+                7929120,
+                7935840,
+                7943280,
+                7974480
+              ],
+              [
+                7868400,
+                7898160,
+                7916880,
+                7924080,
+                7930800,
+                7938720,
+                7944720,
+                7999680
+              ],
+              [
+                7871040,
+                7897200,
+                7904400,
+                7917120,
+                7923120,
+                7939440,
+                7945680,
+                7996080
+              ],
+              [
+                7866720,
+                7872960,
+                7886880,
+                7899840,
+                7910160,
+                7929120,
+                7981920,
+                7998960
+              ],
+              [
+                7885680,
+                7905120,
+                7914960,
+                7922640,
+                7928880,
+                7996560
+              ],
+              [
+                7890480,
+                7897440,
+                7919520
+              ],
+              [
+                7877760,
+                7893600,
+                7901280,
+                7906560,
+                7922400,
+                7930560,
+                7939200,
+                7945440
+              ],
+              [
+                7854960,
+                7868640,
+                7881120,
+                7897920,
+                7925520
+              ],
+              [
+                7854000,
+                7865520,
+                7877280,
+                7902000,
+                7916640,
+                7931760,
+                7939440,
+                7944720
+              ],
+              [
+                7853760,
+                7890000,
+                7897680,
+                7906320,
+                7917120,
+                7923600,
+                7934640,
+                7945680
+              ],
+              [
+                7898400,
+                7908720,
+                7931040,
+                7939200
+              ],
+              [
+                7866480,
+                7898640,
+                7914720,
+                7927200,
+                7937040,
+                7943280,
+                7973520,
+                7992240
+              ],
+              [
+                7866960,
+                7900800,
+                7918320,
+                7931520,
+                7940880,
+                7945920,
+                7958640,
+                7968480
+              ],
+              [
+                7868160,
+                7902480,
+                7916880,
+                7921680,
+                7928640,
+                7939680,
+                7944720,
+                7950960
+              ],
+              [
+                7868880,
+                7885680,
+                7898400,
+                7930800,
+                7955280,
+                7987920,
+                7992960
+              ],
+              [
+                7870800,
+                7883040,
+                7897920,
+                7903200,
+                7909680,
+                7959360,
+                7967520,
+                7999440
+              ],
+              [
+                7898160,
+                7908240,
+                7924320,
+                7932240,
+                7937760,
+                7944960,
+                7952400,
+                7964880
+              ],
+              [
+                7881360,
+                7897440,
+                7906320,
+                7915920,
+                7924800,
+                7932960,
+                7937280,
+                7944240
+              ],
+              [
+                7974240
+              ]
+            ],
+            "candidate_relative_growth": [
+              [
+                1.0,
+                0.561512,
+                0.079956,
+                0.084632,
+                0.046279,
+                0.06728
+              ],
+              [
+                0.185568,
+                0.691926,
+                0.036155,
+                1.0,
+                0.803785,
+                0.483807,
+                0.084475
+              ],
+              [
+                0.132423,
+                1.0,
+                0.024862,
+                0.051064,
+                0.033217,
+                0.02651,
+                0.174384,
+                0.024878
+              ],
+              [
+                0.112188,
+                0.040143,
+                0.032002,
+                1.0,
+                0.052339
+              ],
+              [
+                0.047232,
+                1.0,
+                0.192302,
+                0.020939,
+                0.070446
+              ],
+              [
+                0.52943,
+                0.231576,
+                0.073232,
+                0.880033,
+                0.802821,
+                1.0
+              ],
+              [
+                0.072677,
+                1.0,
+                0.029327,
+                0.061398,
+                0.059906,
+                0.09191,
+                0.111623,
+                0.020683
+              ],
+              [
+                0.138738,
+                0.44948,
+                0.308071,
+                0.140304,
+                0.704486,
+                1.0,
+                0.998527,
+                0.137338
+              ],
+              [
+                0.087788,
+                0.193894,
+                0.311604,
+                1.0,
+                0.862713,
+                0.539548,
+                0.616167,
+                0.099267
+              ],
+              [
+                0.038995,
+                0.132825,
+                0.053071,
+                0.160398,
+                1.0,
+                0.128606,
+                0.059512,
+                0.074506
+              ],
+              [
+                0.2297,
+                0.074615,
+                1.0,
+                0.042415,
+                0.032358,
+                0.07826
+              ],
+              [
+                0.128488,
+                0.120272,
+                1.0
+              ],
+              [
+                0.047037,
+                0.440949,
+                0.082663,
+                0.048271,
+                1.0,
+                0.616777,
+                0.394284,
+                0.548609
+              ],
+              [
+                0.046081,
+                0.028698,
+                0.088178,
+                0.077251,
+                1.0
+              ],
+              [
+                0.185926,
+                0.154024,
+                0.137622,
+                0.602075,
+                0.447391,
+                1.0,
+                0.306796,
+                0.645324
+              ],
+              [
+                0.170983,
+                0.127832,
+                0.094804,
+                0.260203,
+                1.0,
+                0.993978,
+                0.375844,
+                0.976968
+              ],
+              [
+                0.073124,
+                0.036765,
+                0.025364,
+                1.0
+              ],
+              [
+                0.04741,
+                0.238622,
+                0.157571,
+                0.073321,
+                0.043314,
+                1.0,
+                0.027745,
+                0.034868
+              ],
+              [
+                0.104933,
+                0.675442,
+                0.314952,
+                0.523854,
+                0.092884,
+                1.0,
+                0.056571,
+                0.034756
+              ],
+              [
+                0.152849,
+                0.216149,
+                0.602182,
+                0.232851,
+                0.14347,
+                0.234258,
+                1.0,
+                0.724884
+              ],
+              [
+                0.059843,
+                0.162456,
+                0.531209,
+                1.0,
+                0.825105,
+                0.021696,
+                0.041754
+              ],
+              [
+                0.553697,
+                0.044931,
+                0.056607,
+                0.107008,
+                0.43874,
+                1.0,
+                0.056676,
+                0.047718
+              ],
+              [
+                0.429363,
+                0.184549,
+                0.356531,
+                0.222922,
+                0.180382,
+                0.412478,
+                0.158337,
+                1.0
+              ],
+              [
+                0.678535,
+                1.0,
+                0.607794,
+                0.308224,
+                0.521998,
+                0.506126,
+                0.320011,
+                0.626936
+              ],
+              [
+                1.0
+              ]
+            ],
+            "missing_candidate_score_indices": [],
+            "ordered_trajectory": {
+              "scope": "diagnostic_only; never supplies terminal timing or certifies performed keystrikes",
+              "limits": {
+                "maximum_omitted_observations": 2,
+                "maximum_history_states": 20000,
+                "relative_inter_onset_range": [
+                  0.2,
+                  4.0
+                ],
+                "terminal_relative_recent_interval_range": [
+                  0.4,
+                  2.0
+                ]
+              },
+              "path_cost": 8.46248565,
+              "observed_score_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                24
+              ],
+              "onset_samples": [
+                7872000,
+                7877040,
+                7880640,
+                7885440,
+                7889280,
+                7893360,
+                7896240,
+                7898160,
+                7904400,
+                7910160,
+                7914960,
+                7919520,
+                7922400,
+                7925520,
+                7931760,
+                7934640,
+                7939200,
+                7943280,
+                7945920,
+                7950960,
+                7955280,
+                7959360,
+                7964880,
+                7974240
+              ],
+              "omitted_score_indices": [
+                23
+              ]
+            },
+            "terminal_written_register_growth_share": 0.97189089,
+            "terminal_written_register_share": 0.3350388
+          },
+          "quality": {
+            "local_mean_cosine_cost": 0.579774,
+            "lowest_fundamental_spectral_peak_ratio": 0.00748135,
+            "terminal_written_register_share": 0.3350388,
+            "terminal_written_register_growth_share": 0.97189089,
+            "terminal_peak_to_local_background": 12.161666,
+            "growth_score": 1.0,
+            "interpretation": "local pitch-growth evidence consistent with the score target; not certified physical keystrike, written identity, hand provenance or calibrated confidence",
+            "refined_register_cost": 0.028109,
+            "refined_cosine_cost_diagnostic": 0.441241
+          },
+          "uncertainty": {
+            "support_interval_samples": [
+              7970144,
+              7978336
+            ],
+            "quantization_samples": 240,
+            "interpretation": "centered STFT support; not an accuracy guarantee"
+          }
         }
       ],
       "analysis": {
@@ -402,7 +3185,34 @@
           "half-quarter chroma is octave-invariant; local fundamental growth supplies register evidence",
           "pedal, weak fundamentals and simultaneous attacks can still produce ambiguity",
           "uncertainty is STFT support, not a calibrated error bound; independent music review required"
-        ]
+        ],
+        "terminal_register_alignment": {
+          "algorithm": "score_context_prefix_stretch_unique_terminal_growth_v1",
+          "scope": "new final_scale_arrival only; preceding three refinements unchanged",
+          "registration": "robust linear cents versus written MIDI from held-out prefix; ordered trajectory is diagnostic only, not keystrike certification",
+          "limits": {
+            "maximum_absolute_tuning_cents": 40.0,
+            "maximum_tuning_cents_per_semitone": 1.0,
+            "prefix_fit_residual_cents": 10.0,
+            "minimum_prefix_fit_notes": 18,
+            "minimum_prefix_register_span_semitones": 24,
+            "minimum_direct_spectral_peak_ratio": 0.001,
+            "minimum_terminal_written_register_growth_share": 0.5,
+            "competing_subharmonic_growth_context_half_stft_windows": 1,
+            "minimum_terminal_peak_to_local_background": 4.0,
+            "maximum_terminal_register_cost": 0.5,
+            "minimum_terminal_relative_growth": 0.0,
+            "minimum_terminal_growth_fraction_of_region_maximum_fundamental": 0.003,
+            "terminal_candidate_count_required": 1
+          },
+          "anchor_policy": "terminal written-register new-growth cost<=0.5; continuing lower-register energy and terminal chroma are diagnostic only; original three cues keep their chroma gate",
+          "legacy_chroma_anchor_scope": [
+            "major_arrival",
+            "both_hands_octaves",
+            "fast_coda"
+          ],
+          "caveat": "detects sole local tuned E7 growth consistent with score context; a different sole E7 inside the window or smoothly modulated ringing E7 can qualify; no physical keystrike, written-identity or hand guarantee; independent music review required"
+        }
       }
     },
     "score_landmarks": [
@@ -581,6 +3391,2691 @@
           "interpretation": "90%-peak candidates plus half STFT window; not an accuracy guarantee"
         },
         "frame": 1729
+      },
+      {
+        "id": "final_scale_arrival",
+        "score_quarter": [
+          1860,
+          1
+        ],
+        "measure": 621,
+        "beat": [
+          1,
+          1
+        ],
+        "meaning": "Terminal RH E7 arrival completing the final long ascent; visual clearing begins after the attack while the held note may ring; not an acoustic release or settling chord",
+        "source_sample": 7974240,
+        "method": "score_context_prefix_tuning_then_unique_terminal_pitch_growth",
+        "coarse_interval_samples": [
+          7984800,
+          7984800
+        ],
+        "analysis_hop_samples": 240,
+        "analysis_window_samples": 8192,
+        "target_new_midi": [
+          100
+        ],
+        "prior_midi": [
+          99
+        ],
+        "excluded_prior_harmonic_collisions": [],
+        "register_sequence": {
+          "algorithm": "score_context_prefix_stretch_unique_terminal_growth_v1",
+          "score_quarters": [
+            [
+              1848,
+              1
+            ],
+            [
+              3697,
+              2
+            ],
+            [
+              1849,
+              1
+            ],
+            [
+              3699,
+              2
+            ],
+            [
+              1850,
+              1
+            ],
+            [
+              3701,
+              2
+            ],
+            [
+              1851,
+              1
+            ],
+            [
+              3703,
+              2
+            ],
+            [
+              1852,
+              1
+            ],
+            [
+              3705,
+              2
+            ],
+            [
+              1853,
+              1
+            ],
+            [
+              3707,
+              2
+            ],
+            [
+              1854,
+              1
+            ],
+            [
+              3709,
+              2
+            ],
+            [
+              1855,
+              1
+            ],
+            [
+              3711,
+              2
+            ],
+            [
+              1856,
+              1
+            ],
+            [
+              3713,
+              2
+            ],
+            [
+              1857,
+              1
+            ],
+            [
+              3715,
+              2
+            ],
+            [
+              1858,
+              1
+            ],
+            [
+              3717,
+              2
+            ],
+            [
+              1859,
+              1
+            ],
+            [
+              3719,
+              2
+            ],
+            [
+              1860,
+              1
+            ]
+          ],
+          "midi_sequence": [
+            62,
+            63,
+            65,
+            67,
+            68,
+            70,
+            72,
+            73,
+            75,
+            77,
+            79,
+            80,
+            82,
+            84,
+            85,
+            87,
+            89,
+            91,
+            92,
+            94,
+            95,
+            96,
+            97,
+            99,
+            100
+          ],
+          "dtw_intervals_samples": [
+            [
+              7869600,
+              7879200
+            ],
+            [
+              7881600,
+              7881600
+            ],
+            [
+              7884000,
+              7884000
+            ],
+            [
+              7886400,
+              7888800
+            ],
+            [
+              7891200,
+              7891200
+            ],
+            [
+              7893600,
+              7896000
+            ],
+            [
+              7898400,
+              7903200
+            ],
+            [
+              7905600,
+              7905600
+            ],
+            [
+              7908000,
+              7908000
+            ],
+            [
+              7910400,
+              7912800
+            ],
+            [
+              7915200,
+              7917600
+            ],
+            [
+              7920000,
+              7922400
+            ],
+            [
+              7924800,
+              7924800
+            ],
+            [
+              7927200,
+              7929600
+            ],
+            [
+              7932000,
+              7932000
+            ],
+            [
+              7934400,
+              7934400
+            ],
+            [
+              7936800,
+              7941600
+            ],
+            [
+              7944000,
+              7944000
+            ],
+            [
+              7946400,
+              7946400
+            ],
+            [
+              7948800,
+              7972800
+            ],
+            [
+              7975200,
+              7975200
+            ],
+            [
+              7977600,
+              7977600
+            ],
+            [
+              7980000,
+              7980000
+            ],
+            [
+              7982400,
+              7982400
+            ],
+            [
+              7984800,
+              7984800
+            ]
+          ],
+          "refinement_padding_samples": 16800,
+          "limits": {
+            "maximum_absolute_tuning_cents": 40.0,
+            "maximum_tuning_cents_per_semitone": 1.0,
+            "prefix_fit_residual_cents": 10.0,
+            "minimum_prefix_fit_notes": 18,
+            "minimum_prefix_register_span_semitones": 24,
+            "minimum_direct_spectral_peak_ratio": 0.001,
+            "minimum_terminal_written_register_growth_share": 0.5,
+            "competing_subharmonic_growth_context_half_stft_windows": 1,
+            "minimum_terminal_peak_to_local_background": 4.0,
+            "maximum_terminal_register_cost": 0.5,
+            "minimum_terminal_relative_growth": 0.0,
+            "minimum_terminal_growth_fraction_of_region_maximum_fundamental": 0.003,
+            "terminal_candidate_count_required": 1
+          },
+          "score_meaning_scope": "symbolic intent from the registered score; acoustic detection does not independently certify written identity",
+          "known_identity_limits": [
+            "a sole different E7 within the search window can qualify",
+            "smooth amplitude modulation of already ringing E7 can qualify without a new keystrike"
+          ],
+          "interpretation": "bounded pitch-growth evidence consistent with score context; not calibrated confidence, keystrike certification or hand provenance; lower-register energy and ordered prefix trajectory are diagnostic only",
+          "local_register_sequence_context_samples": [
+            7852800,
+            8001600
+          ],
+          "prefix_frequency_policy": "ordered within-semitone local spectral peaks; independently registered prefix trend predicts held-out terminal tuning",
+          "prefix_tuning_observations": [
+            [
+              62,
+              2.255128
+            ],
+            [
+              63,
+              -5.111386
+            ],
+            [
+              65,
+              -6.61771
+            ],
+            [
+              67,
+              -8.58753
+            ],
+            [
+              68,
+              -3.834695
+            ],
+            [
+              70,
+              2.20813
+            ],
+            [
+              72,
+              -1.047979
+            ],
+            [
+              73,
+              -10.042323
+            ],
+            [
+              75,
+              15.504814
+            ],
+            [
+              77,
+              -5.937652
+            ],
+            [
+              79,
+              0.377985
+            ],
+            [
+              80,
+              5.807939
+            ],
+            [
+              82,
+              10.75527
+            ],
+            [
+              84,
+              10.976021
+            ],
+            [
+              85,
+              4.586434
+            ],
+            [
+              87,
+              5.926287
+            ],
+            [
+              89,
+              8.189104
+            ],
+            [
+              91,
+              8.897791
+            ],
+            [
+              92,
+              15.158491
+            ],
+            [
+              94,
+              12.622364
+            ],
+            [
+              95,
+              -13.715293
+            ],
+            [
+              96,
+              14.550257
+            ],
+            [
+              97,
+              18.313153
+            ],
+            [
+              99,
+              -12.923877
+            ]
+          ],
+          "tuning": {
+            "center_midi": 81.0,
+            "cents_at_center": 3.835231,
+            "cents_per_semitone": 0.523135,
+            "inlier_prefix_notes": 21,
+            "terminal_cents": 13.774799
+          },
+          "note_support": [
+            {
+              "midi": 62,
+              "nominal_hz": 293.664768,
+              "maximum_direct_spectral_ratio": 0.14535936,
+              "maximum_growth_sample": 7872000,
+              "direct_ratio_at_maximum_growth": 0.09066699
+            },
+            {
+              "midi": 63,
+              "nominal_hz": 311.126984,
+              "maximum_direct_spectral_ratio": 0.07802005,
+              "maximum_growth_sample": 7899600,
+              "direct_ratio_at_maximum_growth": 0.04772746
+            },
+            {
+              "midi": 65,
+              "nominal_hz": 349.228231,
+              "maximum_direct_spectral_ratio": 0.07463523,
+              "maximum_growth_sample": 7880640,
+              "direct_ratio_at_maximum_growth": 0.02681432
+            },
+            {
+              "midi": 67,
+              "nominal_hz": 391.995436,
+              "maximum_direct_spectral_ratio": 0.19579972,
+              "maximum_growth_sample": 7885440,
+              "direct_ratio_at_maximum_growth": 0.12696954
+            },
+            {
+              "midi": 68,
+              "nominal_hz": 415.304698,
+              "maximum_direct_spectral_ratio": 0.12272958,
+              "maximum_growth_sample": 7889280,
+              "direct_ratio_at_maximum_growth": 0.05787601
+            },
+            {
+              "midi": 70,
+              "nominal_hz": 466.163762,
+              "maximum_direct_spectral_ratio": 1.0,
+              "maximum_growth_sample": 7945440,
+              "direct_ratio_at_maximum_growth": 0.84639072
+            },
+            {
+              "midi": 72,
+              "nominal_hz": 523.251131,
+              "maximum_direct_spectral_ratio": 0.09317031,
+              "maximum_growth_sample": 7896240,
+              "direct_ratio_at_maximum_growth": 0.05283981
+            },
+            {
+              "midi": 73,
+              "nominal_hz": 554.365262,
+              "maximum_direct_spectral_ratio": 0.31247508,
+              "maximum_growth_sample": 7938720,
+              "direct_ratio_at_maximum_growth": 0.1856535
+            },
+            {
+              "midi": 75,
+              "nominal_hz": 622.253967,
+              "maximum_direct_spectral_ratio": 0.3151893,
+              "maximum_growth_sample": 7917120,
+              "direct_ratio_at_maximum_growth": 0.1416896
+            },
+            {
+              "midi": 77,
+              "nominal_hz": 698.456463,
+              "maximum_direct_spectral_ratio": 0.18694687,
+              "maximum_growth_sample": 7910160,
+              "direct_ratio_at_maximum_growth": 0.11663459
+            },
+            {
+              "midi": 79,
+              "nominal_hz": 783.990872,
+              "maximum_direct_spectral_ratio": 0.20511531,
+              "maximum_growth_sample": 7914960,
+              "direct_ratio_at_maximum_growth": 0.12555857
+            },
+            {
+              "midi": 80,
+              "nominal_hz": 830.609395,
+              "maximum_direct_spectral_ratio": 0.19831033,
+              "maximum_growth_sample": 7919520,
+              "direct_ratio_at_maximum_growth": 0.13100942
+            },
+            {
+              "midi": 82,
+              "nominal_hz": 932.327523,
+              "maximum_direct_spectral_ratio": 0.13439548,
+              "maximum_growth_sample": 7922400,
+              "direct_ratio_at_maximum_growth": 0.07300377
+            },
+            {
+              "midi": 84,
+              "nominal_hz": 1046.502261,
+              "maximum_direct_spectral_ratio": 0.16056557,
+              "maximum_growth_sample": 7925520,
+              "direct_ratio_at_maximum_growth": 0.0675506
+            },
+            {
+              "midi": 85,
+              "nominal_hz": 1108.730524,
+              "maximum_direct_spectral_ratio": 0.09667283,
+              "maximum_growth_sample": 7931760,
+              "direct_ratio_at_maximum_growth": 0.07865811
+            },
+            {
+              "midi": 87,
+              "nominal_hz": 1244.507935,
+              "maximum_direct_spectral_ratio": 0.27062704,
+              "maximum_growth_sample": 7917120,
+              "direct_ratio_at_maximum_growth": 0.09686701
+            },
+            {
+              "midi": 89,
+              "nominal_hz": 1396.912926,
+              "maximum_direct_spectral_ratio": 0.32933291,
+              "maximum_growth_sample": 7939200,
+              "direct_ratio_at_maximum_growth": 0.2054035
+            },
+            {
+              "midi": 91,
+              "nominal_hz": 1567.981744,
+              "maximum_direct_spectral_ratio": 0.13879093,
+              "maximum_growth_sample": 7943280,
+              "direct_ratio_at_maximum_growth": 0.07649075
+            },
+            {
+              "midi": 92,
+              "nominal_hz": 1661.21879,
+              "maximum_direct_spectral_ratio": 0.06306358,
+              "maximum_growth_sample": 7945920,
+              "direct_ratio_at_maximum_growth": 0.04603392
+            },
+            {
+              "midi": 94,
+              "nominal_hz": 1864.655046,
+              "maximum_direct_spectral_ratio": 0.12757584,
+              "maximum_growth_sample": 7944720,
+              "direct_ratio_at_maximum_growth": 0.09472317
+            },
+            {
+              "midi": 95,
+              "nominal_hz": 1975.533205,
+              "maximum_direct_spectral_ratio": 0.08409141,
+              "maximum_growth_sample": 7930800,
+              "direct_ratio_at_maximum_growth": 0.04655569
+            },
+            {
+              "midi": 96,
+              "nominal_hz": 2093.004522,
+              "maximum_direct_spectral_ratio": 0.06148892,
+              "maximum_growth_sample": 7959360,
+              "direct_ratio_at_maximum_growth": 0.03203829
+            },
+            {
+              "midi": 97,
+              "nominal_hz": 2217.461048,
+              "maximum_direct_spectral_ratio": 0.03153711,
+              "maximum_growth_sample": 7964880,
+              "direct_ratio_at_maximum_growth": 0.02064814
+            },
+            {
+              "midi": 99,
+              "nominal_hz": 2489.01587,
+              "maximum_direct_spectral_ratio": 0.03254494,
+              "maximum_growth_sample": 7897440,
+              "direct_ratio_at_maximum_growth": 0.0207356
+            },
+            {
+              "midi": 100,
+              "nominal_hz": 2658.085961,
+              "maximum_direct_spectral_ratio": 0.01252097,
+              "maximum_growth_sample": 7974240,
+              "direct_ratio_at_maximum_growth": 0.00748135
+            }
+          ],
+          "register_observations": [
+            [
+              {
+                "source_sample": 7872000,
+                "energy_share": 0.51838764,
+                "new_growth_share": 0.54625344,
+                "observed_cents": 2.255128,
+                "direct_spectral_ratio": 0.09066699,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7901040,
+                "energy_share": 0.10480468,
+                "new_growth_share": 0.84758352,
+                "observed_cents": 11.978113,
+                "direct_spectral_ratio": 0.01370231,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7918800,
+                "energy_share": 0.04617158,
+                "new_growth_share": 0.28918153,
+                "observed_cents": -20.26936,
+                "direct_spectral_ratio": 0.00247582,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7926960,
+                "energy_share": 0.04735845,
+                "new_growth_share": 0.3771783,
+                "observed_cents": null,
+                "direct_spectral_ratio": 0.00128827,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7936560,
+                "energy_share": 0.02039803,
+                "new_growth_share": 0.18231991,
+                "observed_cents": -13.315325,
+                "direct_spectral_ratio": 0.00101741,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7942560,
+                "energy_share": 0.04285601,
+                "new_growth_share": 0.37972353,
+                "observed_cents": 12.895302,
+                "direct_spectral_ratio": 0.00162985,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7869120,
+                "energy_share": 0.03172236,
+                "new_growth_share": 0.19699284,
+                "observed_cents": null,
+                "direct_spectral_ratio": 0.00151341,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7877040,
+                "energy_share": 0.28807698,
+                "new_growth_share": 0.79764633,
+                "observed_cents": -7.398682,
+                "direct_spectral_ratio": 0.01100699,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7888320,
+                "energy_share": 0.46445836,
+                "new_growth_share": 0.19784981,
+                "observed_cents": -3.030068,
+                "direct_spectral_ratio": 0.02554507,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7899600,
+                "energy_share": 0.55118731,
+                "new_growth_share": 0.57853973,
+                "observed_cents": -6.089452,
+                "direct_spectral_ratio": 0.04772746,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7925280,
+                "energy_share": 0.65610546,
+                "new_growth_share": 0.63473271,
+                "observed_cents": -8.306534,
+                "direct_spectral_ratio": 0.03003933,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7940400,
+                "energy_share": 0.83859036,
+                "new_growth_share": 0.59782514,
+                "observed_cents": -4.546172,
+                "direct_spectral_ratio": 0.05211412,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7996320,
+                "energy_share": 0.014881,
+                "new_growth_share": 0.01574108,
+                "observed_cents": -2.880521,
+                "direct_spectral_ratio": 0.00667202,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7867680,
+                "energy_share": 0.17560096,
+                "new_growth_share": 0.24481377,
+                "observed_cents": -24.030446,
+                "direct_spectral_ratio": 0.00828959,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7880640,
+                "energy_share": 0.84232641,
+                "new_growth_share": 0.88847945,
+                "observed_cents": -8.656097,
+                "direct_spectral_ratio": 0.02681432,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7886400,
+                "energy_share": 0.86275653,
+                "new_growth_share": 0.16005455,
+                "observed_cents": 5.735965,
+                "direct_spectral_ratio": 0.05508264,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7915680,
+                "energy_share": 0.54034998,
+                "new_growth_share": 0.18463325,
+                "observed_cents": -5.968873,
+                "direct_spectral_ratio": 0.01048222,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7928400,
+                "energy_share": 0.81410979,
+                "new_growth_share": 0.30963427,
+                "observed_cents": -7.385368,
+                "direct_spectral_ratio": 0.00407273,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7938960,
+                "energy_share": 0.46658115,
+                "new_growth_share": 0.30148913,
+                "observed_cents": 3.248808,
+                "direct_spectral_ratio": 0.00366403,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7945920,
+                "energy_share": 0.63591884,
+                "new_growth_share": 0.80557792,
+                "observed_cents": -2.954198,
+                "direct_spectral_ratio": 0.00219472,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7981920,
+                "energy_share": 0.29541024,
+                "new_growth_share": 0.07000536,
+                "observed_cents": -14.921281,
+                "direct_spectral_ratio": 0.00167365,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7867920,
+                "energy_share": 0.16619822,
+                "new_growth_share": 0.14807031,
+                "observed_cents": -5.344377,
+                "direct_spectral_ratio": 0.01396142,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7872240,
+                "energy_share": 0.30104132,
+                "new_growth_share": 0.07194936,
+                "observed_cents": -1.823574,
+                "direct_spectral_ratio": 0.02799028,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7878960,
+                "energy_share": 0.2030826,
+                "new_growth_share": 0.12833152,
+                "observed_cents": -2.5858,
+                "direct_spectral_ratio": 0.02528381,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7885440,
+                "energy_share": 0.42317416,
+                "new_growth_share": 0.82060058,
+                "observed_cents": -8.58753,
+                "direct_spectral_ratio": 0.12696954,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7947360,
+                "energy_share": 0.15304928,
+                "new_growth_share": 0.32049489,
+                "observed_cents": null,
+                "direct_spectral_ratio": 0.00121214,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7881120,
+                "energy_share": 0.05737735,
+                "new_growth_share": 0.29346228,
+                "observed_cents": 11.165822,
+                "direct_spectral_ratio": 0.00102236,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7889280,
+                "energy_share": 0.68422618,
+                "new_growth_share": 0.90583866,
+                "observed_cents": -3.834695,
+                "direct_spectral_ratio": 0.05787601,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7931520,
+                "energy_share": 0.32116606,
+                "new_growth_share": 0.55784598,
+                "observed_cents": null,
+                "direct_spectral_ratio": 0.00274095,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7943280,
+                "energy_share": 0.14710982,
+                "new_growth_share": 0.17000145,
+                "observed_cents": 11.89212,
+                "direct_spectral_ratio": 0.00141087,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7981920,
+                "energy_share": 0.02961237,
+                "new_growth_share": 0.11361534,
+                "observed_cents": -0.244575,
+                "direct_spectral_ratio": 0.00516402,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7893360,
+                "energy_share": 0.87031602,
+                "new_growth_share": 0.87769301,
+                "observed_cents": 2.20813,
+                "direct_spectral_ratio": 0.11495179,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7899360,
+                "energy_share": 0.85064394,
+                "new_growth_share": 0.63241787,
+                "observed_cents": -0.597945,
+                "direct_spectral_ratio": 0.21407783,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7917360,
+                "energy_share": 0.79097061,
+                "new_growth_share": 0.36475583,
+                "observed_cents": -0.324405,
+                "direct_spectral_ratio": 0.0948049,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7930320,
+                "energy_share": 0.96415524,
+                "new_growth_share": 0.93053009,
+                "observed_cents": -3.362854,
+                "direct_spectral_ratio": 0.24088968,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7938240,
+                "energy_share": 0.97400379,
+                "new_growth_share": 0.93031423,
+                "observed_cents": 2.379515,
+                "direct_spectral_ratio": 0.5448936,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7945440,
+                "energy_share": 0.99115153,
+                "new_growth_share": 0.94327536,
+                "observed_cents": 0.53476,
+                "direct_spectral_ratio": 0.84639072,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7867920,
+                "energy_share": 0.1944637,
+                "new_growth_share": 0.4703162,
+                "observed_cents": 1.239936,
+                "direct_spectral_ratio": 0.00132524,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7896240,
+                "energy_share": 0.96650822,
+                "new_growth_share": 0.92870373,
+                "observed_cents": -1.047979,
+                "direct_spectral_ratio": 0.05283981,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7918320,
+                "energy_share": 0.94693824,
+                "new_growth_share": 0.47799893,
+                "observed_cents": 4.767423,
+                "direct_spectral_ratio": 0.01353293,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7924320,
+                "energy_share": 0.87031043,
+                "new_growth_share": 0.822367,
+                "observed_cents": -9.551821,
+                "direct_spectral_ratio": 0.00710783,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7929120,
+                "energy_share": 0.96607602,
+                "new_growth_share": 0.51984867,
+                "observed_cents": -10.977662,
+                "direct_spectral_ratio": 0.01079892,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7935840,
+                "energy_share": 0.76310423,
+                "new_growth_share": 0.63123002,
+                "observed_cents": 26.413373,
+                "direct_spectral_ratio": 0.00850258,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7943280,
+                "energy_share": 0.96214817,
+                "new_growth_share": 0.71800845,
+                "observed_cents": -2.397534,
+                "direct_spectral_ratio": 0.0093082,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7974480,
+                "energy_share": 0.34945228,
+                "new_growth_share": 0.35529312,
+                "observed_cents": -6.373678,
+                "direct_spectral_ratio": 0.00113172,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7868400,
+                "energy_share": 0.47297579,
+                "new_growth_share": 0.41384076,
+                "observed_cents": 4.169686,
+                "direct_spectral_ratio": 0.03340647,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7898160,
+                "energy_share": 0.58664492,
+                "new_growth_share": 0.5838101,
+                "observed_cents": -10.042323,
+                "direct_spectral_ratio": 0.05081369,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7916880,
+                "energy_share": 0.45280562,
+                "new_growth_share": 0.80732102,
+                "observed_cents": 15.420553,
+                "direct_spectral_ratio": 0.03205146,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7924080,
+                "energy_share": 0.57663455,
+                "new_growth_share": 0.55286901,
+                "observed_cents": 1.873685,
+                "direct_spectral_ratio": 0.04050302,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7930800,
+                "energy_share": 0.77117599,
+                "new_growth_share": 0.96125918,
+                "observed_cents": 7.189036,
+                "direct_spectral_ratio": 0.08917868,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7938720,
+                "energy_share": 0.87716975,
+                "new_growth_share": 0.97533906,
+                "observed_cents": 1.908704,
+                "direct_spectral_ratio": 0.1856535,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7944720,
+                "energy_share": 0.93641241,
+                "new_growth_share": 0.96348706,
+                "observed_cents": 1.502937,
+                "direct_spectral_ratio": 0.24063006,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7999680,
+                "energy_share": 0.34814952,
+                "new_growth_share": 0.41247758,
+                "observed_cents": -4.871772,
+                "direct_spectral_ratio": 0.02197838,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7871040,
+                "energy_share": 0.07826501,
+                "new_growth_share": 0.43921441,
+                "observed_cents": null,
+                "direct_spectral_ratio": 0.00273227,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7897200,
+                "energy_share": 0.69169987,
+                "new_growth_share": 0.42247476,
+                "observed_cents": -0.240734,
+                "direct_spectral_ratio": 0.03186644,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7904400,
+                "energy_share": 0.43629762,
+                "new_growth_share": 0.58046871,
+                "observed_cents": 11.209738,
+                "direct_spectral_ratio": 0.0477519,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7917120,
+                "energy_share": 0.83287094,
+                "new_growth_share": 0.84533782,
+                "observed_cents": 15.504814,
+                "direct_spectral_ratio": 0.1416896,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7923120,
+                "energy_share": 0.93605697,
+                "new_growth_share": 0.80195759,
+                "observed_cents": 8.400964,
+                "direct_spectral_ratio": 0.24392785,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7939440,
+                "energy_share": 0.7950203,
+                "new_growth_share": 0.80796926,
+                "observed_cents": 4.626916,
+                "direct_spectral_ratio": 0.16626771,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7945680,
+                "energy_share": 0.8087235,
+                "new_growth_share": 0.86419233,
+                "observed_cents": 0.702987,
+                "direct_spectral_ratio": 0.2522338,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7996080,
+                "energy_share": 0.35244224,
+                "new_growth_share": 0.72840992,
+                "observed_cents": -0.217834,
+                "direct_spectral_ratio": 0.01800604,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7866720,
+                "energy_share": 0.22822199,
+                "new_growth_share": 0.32729531,
+                "observed_cents": -37.254528,
+                "direct_spectral_ratio": 0.00126536,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7872960,
+                "energy_share": 0.82424754,
+                "new_growth_share": 0.80093161,
+                "observed_cents": -27.687693,
+                "direct_spectral_ratio": 0.01847738,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7886880,
+                "energy_share": 0.2267053,
+                "new_growth_share": 0.34029506,
+                "observed_cents": -6.68007,
+                "direct_spectral_ratio": 0.01625479,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7899840,
+                "energy_share": 0.51823164,
+                "new_growth_share": 0.55216152,
+                "observed_cents": -2.593408,
+                "direct_spectral_ratio": 0.02531344,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7910160,
+                "energy_share": 0.88765174,
+                "new_growth_share": 0.99255353,
+                "observed_cents": -5.937652,
+                "direct_spectral_ratio": 0.11663459,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7929120,
+                "energy_share": 0.94272062,
+                "new_growth_share": 0.86480662,
+                "observed_cents": 2.303166,
+                "direct_spectral_ratio": 0.07720836,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7981920,
+                "energy_share": 0.80623205,
+                "new_growth_share": 0.58242967,
+                "observed_cents": -12.196092,
+                "direct_spectral_ratio": 0.00696376,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7998960,
+                "energy_share": 0.48403145,
+                "new_growth_share": 0.53277991,
+                "observed_cents": -24.599958,
+                "direct_spectral_ratio": 0.00423253,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7885680,
+                "energy_share": 0.19891411,
+                "new_growth_share": 0.20930831,
+                "observed_cents": 7.774601,
+                "direct_spectral_ratio": 0.03499236,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7905120,
+                "energy_share": 0.26055253,
+                "new_growth_share": 0.8156397,
+                "observed_cents": -1.081109,
+                "direct_spectral_ratio": 0.02674277,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7914960,
+                "energy_share": 0.76867595,
+                "new_growth_share": 0.99360004,
+                "observed_cents": 0.377985,
+                "direct_spectral_ratio": 0.12555857,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7922640,
+                "energy_share": 0.85607495,
+                "new_growth_share": 0.78082729,
+                "observed_cents": 3.034836,
+                "direct_spectral_ratio": 0.13464353,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7928880,
+                "energy_share": 0.8855385,
+                "new_growth_share": 0.79491621,
+                "observed_cents": 2.501987,
+                "direct_spectral_ratio": 0.10347755,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7996560,
+                "energy_share": 0.42165239,
+                "new_growth_share": 0.54229882,
+                "observed_cents": -15.618253,
+                "direct_spectral_ratio": 0.00375624,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7890480,
+                "energy_share": 0.17219785,
+                "new_growth_share": 0.17070346,
+                "observed_cents": 6.620164,
+                "direct_spectral_ratio": 0.0208245,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7897440,
+                "energy_share": 0.20637256,
+                "new_growth_share": 0.27980473,
+                "observed_cents": 11.62327,
+                "direct_spectral_ratio": 0.02225468,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7919520,
+                "energy_share": 0.78038173,
+                "new_growth_share": 0.98776584,
+                "observed_cents": 5.807939,
+                "direct_spectral_ratio": 0.13100942,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7877760,
+                "energy_share": 0.1581714,
+                "new_growth_share": 0.1161979,
+                "observed_cents": 1.919016,
+                "direct_spectral_ratio": 0.00398745,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7893600,
+                "energy_share": 0.2096349,
+                "new_growth_share": 0.21294825,
+                "observed_cents": 3.384165,
+                "direct_spectral_ratio": 0.03441485,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7901280,
+                "energy_share": 0.04220119,
+                "new_growth_share": 0.10391096,
+                "observed_cents": 0.315374,
+                "direct_spectral_ratio": 0.01056396,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7906560,
+                "energy_share": 0.10268447,
+                "new_growth_share": 1.0,
+                "observed_cents": 1.304956,
+                "direct_spectral_ratio": 0.01824055,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7922400,
+                "energy_share": 0.46147439,
+                "new_growth_share": 0.68626594,
+                "observed_cents": 10.75527,
+                "direct_spectral_ratio": 0.07300377,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7930560,
+                "energy_share": 0.23283041,
+                "new_growth_share": 0.18545388,
+                "observed_cents": 7.748696,
+                "direct_spectral_ratio": 0.08061881,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7939200,
+                "energy_share": 0.14515562,
+                "new_growth_share": 0.13759211,
+                "observed_cents": 3.632224,
+                "direct_spectral_ratio": 0.10715647,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7945440,
+                "energy_share": 0.11247301,
+                "new_growth_share": 0.15126138,
+                "observed_cents": -0.556078,
+                "direct_spectral_ratio": 0.10725996,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7854960,
+                "energy_share": 0.89937115,
+                "new_growth_share": 0.89512255,
+                "observed_cents": -12.118589,
+                "direct_spectral_ratio": 0.00376323,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7868640,
+                "energy_share": 0.11659006,
+                "new_growth_share": 0.21160328,
+                "observed_cents": -39.744958,
+                "direct_spectral_ratio": 0.00157517,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7881120,
+                "energy_share": 0.13616816,
+                "new_growth_share": 0.12263719,
+                "observed_cents": 3.863704,
+                "direct_spectral_ratio": 0.00658259,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7897920,
+                "energy_share": 0.09425719,
+                "new_growth_share": 0.09365943,
+                "observed_cents": 5.938601,
+                "direct_spectral_ratio": 0.00958759,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7925520,
+                "energy_share": 0.88288619,
+                "new_growth_share": 0.95611561,
+                "observed_cents": 10.976021,
+                "direct_spectral_ratio": 0.0675506,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7854000,
+                "energy_share": 0.42170062,
+                "new_growth_share": 0.91179417,
+                "observed_cents": 6.325472,
+                "direct_spectral_ratio": 0.0609347,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7865520,
+                "energy_share": 0.24121965,
+                "new_growth_share": 0.30805107,
+                "observed_cents": 3.381603,
+                "direct_spectral_ratio": 0.01924468,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7877280,
+                "energy_share": 0.16905713,
+                "new_growth_share": 0.40317748,
+                "observed_cents": -43.69039,
+                "direct_spectral_ratio": 0.00244397,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7902000,
+                "energy_share": 0.46991345,
+                "new_growth_share": 0.34944453,
+                "observed_cents": 2.626288,
+                "direct_spectral_ratio": 0.06176729,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7916640,
+                "energy_share": 0.49637728,
+                "new_growth_share": 0.36803179,
+                "observed_cents": 1.845877,
+                "direct_spectral_ratio": 0.0384003,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7931760,
+                "energy_share": 0.38295865,
+                "new_growth_share": 0.36274124,
+                "observed_cents": 4.586434,
+                "direct_spectral_ratio": 0.07865811,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7939440,
+                "energy_share": 0.19353584,
+                "new_growth_share": 0.10955021,
+                "observed_cents": 5.879184,
+                "direct_spectral_ratio": 0.05379835,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7944720,
+                "energy_share": 0.19987309,
+                "new_growth_share": 0.20582116,
+                "observed_cents": 0.982847,
+                "direct_spectral_ratio": 0.06010981,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7853760,
+                "energy_share": 0.67622437,
+                "new_growth_share": 0.94063156,
+                "observed_cents": 12.339902,
+                "direct_spectral_ratio": 0.01179746,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7890000,
+                "energy_share": 0.12519067,
+                "new_growth_share": 0.10768088,
+                "observed_cents": 8.42581,
+                "direct_spectral_ratio": 0.01212074,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7897680,
+                "energy_share": 0.17992392,
+                "new_growth_share": 0.13578349,
+                "observed_cents": 3.382553,
+                "direct_spectral_ratio": 0.01874256,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7906320,
+                "energy_share": 0.1900025,
+                "new_growth_share": 0.26836928,
+                "observed_cents": 8.033182,
+                "direct_spectral_ratio": 0.01864639,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7917120,
+                "energy_share": 0.4060546,
+                "new_growth_share": 0.30520344,
+                "observed_cents": 5.43877,
+                "direct_spectral_ratio": 0.09686701,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7923600,
+                "energy_share": 0.43776944,
+                "new_growth_share": 0.33603639,
+                "observed_cents": 5.926287,
+                "direct_spectral_ratio": 0.21593946,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7934640,
+                "energy_share": 0.49323219,
+                "new_growth_share": 0.26101026,
+                "observed_cents": 6.175724,
+                "direct_spectral_ratio": 0.15232427,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7945680,
+                "energy_share": 0.24113528,
+                "new_growth_share": 0.410547,
+                "observed_cents": 4.890978,
+                "direct_spectral_ratio": 0.08014929,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7898400,
+                "energy_share": 0.10271342,
+                "new_growth_share": 0.15129188,
+                "observed_cents": 9.491212,
+                "direct_spectral_ratio": 0.02189775,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7908720,
+                "energy_share": 0.11008338,
+                "new_growth_share": 0.06715913,
+                "observed_cents": 1.269913,
+                "direct_spectral_ratio": 0.01716553,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7931040,
+                "energy_share": 0.02515552,
+                "new_growth_share": 0.02635888,
+                "observed_cents": 1.818641,
+                "direct_spectral_ratio": 0.00807906,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7939200,
+                "energy_share": 0.24556141,
+                "new_growth_share": 0.53917101,
+                "observed_cents": 8.189104,
+                "direct_spectral_ratio": 0.2054035,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7866480,
+                "energy_share": 0.35610493,
+                "new_growth_share": 0.25265347,
+                "observed_cents": 0.383172,
+                "direct_spectral_ratio": 0.00322686,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7898640,
+                "energy_share": 0.13872565,
+                "new_growth_share": 0.25817833,
+                "observed_cents": -1.459347,
+                "direct_spectral_ratio": 0.01731733,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7914720,
+                "energy_share": 0.18614138,
+                "new_growth_share": 0.09859508,
+                "observed_cents": 7.970943,
+                "direct_spectral_ratio": 0.02506563,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7927200,
+                "energy_share": 0.12474047,
+                "new_growth_share": 0.61133263,
+                "observed_cents": -5.632103,
+                "direct_spectral_ratio": 0.01481589,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7937040,
+                "energy_share": 0.13763372,
+                "new_growth_share": 0.40735315,
+                "observed_cents": -5.720033,
+                "direct_spectral_ratio": 0.00912005,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7943280,
+                "energy_share": 0.75095401,
+                "new_growth_share": 0.9289086,
+                "observed_cents": 8.897791,
+                "direct_spectral_ratio": 0.07649075,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7973520,
+                "energy_share": 0.41261098,
+                "new_growth_share": 0.50728649,
+                "observed_cents": 27.469633,
+                "direct_spectral_ratio": 0.0019056,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7992240,
+                "energy_share": 0.32999329,
+                "new_growth_share": 0.24141334,
+                "observed_cents": -29.160388,
+                "direct_spectral_ratio": 0.00637555,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7866960,
+                "energy_share": 0.20791365,
+                "new_growth_share": 0.17783061,
+                "observed_cents": 13.013766,
+                "direct_spectral_ratio": 0.00636486,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7900800,
+                "energy_share": 0.28046483,
+                "new_growth_share": 0.30057135,
+                "observed_cents": 11.542473,
+                "direct_spectral_ratio": 0.02835517,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7918320,
+                "energy_share": 0.21909212,
+                "new_growth_share": 0.0800507,
+                "observed_cents": 13.536164,
+                "direct_spectral_ratio": 0.01901472,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7931520,
+                "energy_share": 0.18616857,
+                "new_growth_share": 0.17535953,
+                "observed_cents": 8.186722,
+                "direct_spectral_ratio": 0.02706245,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7940880,
+                "energy_share": 0.07180858,
+                "new_growth_share": 0.0258752,
+                "observed_cents": 9.202766,
+                "direct_spectral_ratio": 0.01908145,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7945920,
+                "energy_share": 0.13255068,
+                "new_growth_share": 0.22263455,
+                "observed_cents": 15.158491,
+                "direct_spectral_ratio": 0.04603392,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7958640,
+                "energy_share": 0.02600964,
+                "new_growth_share": 0.90702058,
+                "observed_cents": 10.529264,
+                "direct_spectral_ratio": 0.00195461,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7968480,
+                "energy_share": 0.21794292,
+                "new_growth_share": 0.70580812,
+                "observed_cents": 9.766007,
+                "direct_spectral_ratio": 0.00389089,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7868160,
+                "energy_share": 0.48512388,
+                "new_growth_share": 0.54130143,
+                "observed_cents": 16.997557,
+                "direct_spectral_ratio": 0.00690187,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7902480,
+                "energy_share": 0.04584592,
+                "new_growth_share": 0.17408792,
+                "observed_cents": 14.349211,
+                "direct_spectral_ratio": 0.01085397,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7916880,
+                "energy_share": 0.23519543,
+                "new_growth_share": 0.16323738,
+                "observed_cents": 12.659045,
+                "direct_spectral_ratio": 0.03751067,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7921680,
+                "energy_share": 0.22401657,
+                "new_growth_share": 0.08040759,
+                "observed_cents": 12.729871,
+                "direct_spectral_ratio": 0.06235725,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7928640,
+                "energy_share": 0.13817558,
+                "new_growth_share": 0.03550889,
+                "observed_cents": 13.674127,
+                "direct_spectral_ratio": 0.04783329,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7939680,
+                "energy_share": 0.05744233,
+                "new_growth_share": 0.06182109,
+                "observed_cents": 15.338536,
+                "direct_spectral_ratio": 0.04047072,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7944720,
+                "energy_share": 0.11035736,
+                "new_growth_share": 0.18422423,
+                "observed_cents": 12.622364,
+                "direct_spectral_ratio": 0.09472317,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7950960,
+                "energy_share": 0.11625785,
+                "new_growth_share": 0.26611366,
+                "observed_cents": 11.632842,
+                "direct_spectral_ratio": 0.10698463,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7868880,
+                "energy_share": 0.21283775,
+                "new_growth_share": 0.15833912,
+                "observed_cents": -32.30331,
+                "direct_spectral_ratio": 0.00524215,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7885680,
+                "energy_share": 0.37769738,
+                "new_growth_share": 0.75177104,
+                "observed_cents": 1.299172,
+                "direct_spectral_ratio": 0.00990659,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7898400,
+                "energy_share": 0.61542945,
+                "new_growth_share": 0.88393673,
+                "observed_cents": -18.372083,
+                "direct_spectral_ratio": 0.02806434,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7930800,
+                "energy_share": 0.18633366,
+                "new_growth_share": 0.19722296,
+                "observed_cents": 16.129046,
+                "direct_spectral_ratio": 0.04655569,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7955280,
+                "energy_share": 0.31539927,
+                "new_growth_share": 0.96070575,
+                "observed_cents": 14.914775,
+                "direct_spectral_ratio": 0.04460447,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7987920,
+                "energy_share": 0.16501745,
+                "new_growth_share": 0.20208182,
+                "observed_cents": -13.715293,
+                "direct_spectral_ratio": 0.00181608,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7992960,
+                "energy_share": 0.45131732,
+                "new_growth_share": 0.47331752,
+                "observed_cents": 18.36123,
+                "direct_spectral_ratio": 0.0030699,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7870800,
+                "energy_share": 0.63298057,
+                "new_growth_share": 0.6346688,
+                "observed_cents": -15.355845,
+                "direct_spectral_ratio": 0.02217617,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7883040,
+                "energy_share": 0.29918232,
+                "new_growth_share": 0.22075213,
+                "observed_cents": 17.268376,
+                "direct_spectral_ratio": 0.01449025,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7897920,
+                "energy_share": 0.05737671,
+                "new_growth_share": 0.04039829,
+                "observed_cents": 13.937016,
+                "direct_spectral_ratio": 0.00560786,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7903200,
+                "energy_share": 0.11490405,
+                "new_growth_share": 0.217544,
+                "observed_cents": 19.283495,
+                "direct_spectral_ratio": 0.00701604,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7909680,
+                "energy_share": 0.20112971,
+                "new_growth_share": 0.15457851,
+                "observed_cents": 12.992174,
+                "direct_spectral_ratio": 0.0230197,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7959360,
+                "energy_share": 0.9708315,
+                "new_growth_share": 0.98513477,
+                "observed_cents": 14.329683,
+                "direct_spectral_ratio": 0.03203829,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7967520,
+                "energy_share": 0.80847519,
+                "new_growth_share": 0.83671221,
+                "observed_cents": 14.550257,
+                "direct_spectral_ratio": 0.00445996,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7999440,
+                "energy_share": 0.43961318,
+                "new_growth_share": 0.81831882,
+                "observed_cents": -31.371656,
+                "direct_spectral_ratio": 0.00487081,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7898160,
+                "energy_share": 0.15438304,
+                "new_growth_share": 0.15504671,
+                "observed_cents": -11.245128,
+                "direct_spectral_ratio": 0.00927698,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7908240,
+                "energy_share": 0.13300768,
+                "new_growth_share": 0.49985919,
+                "observed_cents": 16.39189,
+                "direct_spectral_ratio": 0.00867961,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7924320,
+                "energy_share": 0.1758532,
+                "new_growth_share": 0.32801964,
+                "observed_cents": -14.997077,
+                "direct_spectral_ratio": 0.01065414,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7932240,
+                "energy_share": 0.08603732,
+                "new_growth_share": 0.05730187,
+                "observed_cents": 17.39521,
+                "direct_spectral_ratio": 0.01317542,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7937760,
+                "energy_share": 0.07122241,
+                "new_growth_share": 0.03349008,
+                "observed_cents": 11.509289,
+                "direct_spectral_ratio": 0.01069971,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7944960,
+                "energy_share": 0.05210098,
+                "new_growth_share": 0.07351796,
+                "observed_cents": 15.323311,
+                "direct_spectral_ratio": 0.01400692,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7952400,
+                "energy_share": 0.02369235,
+                "new_growth_share": 0.90058326,
+                "observed_cents": 14.782589,
+                "direct_spectral_ratio": 0.00383722,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7964880,
+                "energy_share": 0.43982293,
+                "new_growth_share": 0.92342262,
+                "observed_cents": 18.313153,
+                "direct_spectral_ratio": 0.02064814,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7881360,
+                "energy_share": 0.61849008,
+                "new_growth_share": 0.66193746,
+                "observed_cents": -11.04252,
+                "direct_spectral_ratio": 0.01248553,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7897440,
+                "energy_share": 0.36748508,
+                "new_growth_share": 0.3354353,
+                "observed_cents": 22.513243,
+                "direct_spectral_ratio": 0.0207356,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7906320,
+                "energy_share": 0.20400764,
+                "new_growth_share": 0.16029359,
+                "observed_cents": 22.146262,
+                "direct_spectral_ratio": 0.02037308,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7915920,
+                "energy_share": 0.18388074,
+                "new_growth_share": 0.02928155,
+                "observed_cents": 21.253411,
+                "direct_spectral_ratio": 0.0152338,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7924800,
+                "energy_share": 0.03976431,
+                "new_growth_share": 0.05590522,
+                "observed_cents": 15.781581,
+                "direct_spectral_ratio": 0.01215042,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7932960,
+                "energy_share": 0.04179374,
+                "new_growth_share": 0.23078255,
+                "observed_cents": 20.352076,
+                "direct_spectral_ratio": 0.00935286,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7937280,
+                "energy_share": 0.09647109,
+                "new_growth_share": 0.05486126,
+                "observed_cents": 22.228205,
+                "direct_spectral_ratio": 0.01540879,
+                "terminal_tonality": null,
+                "supported": true
+              },
+              {
+                "source_sample": 7944240,
+                "energy_share": 0.09838182,
+                "new_growth_share": 0.09055949,
+                "observed_cents": 18.871101,
+                "direct_spectral_ratio": 0.02076706,
+                "terminal_tonality": null,
+                "supported": true
+              }
+            ],
+            [
+              {
+                "source_sample": 7974240,
+                "energy_share": 0.3350388,
+                "new_growth_share": 0.97189089,
+                "observed_cents": 4.488514,
+                "direct_spectral_ratio": 0.00748135,
+                "terminal_tonality": 12.161666,
+                "supported": true
+              }
+            ]
+          ],
+          "candidate_counts": [
+            6,
+            7,
+            8,
+            5,
+            5,
+            6,
+            8,
+            8,
+            8,
+            8,
+            6,
+            3,
+            8,
+            5,
+            8,
+            8,
+            4,
+            8,
+            8,
+            8,
+            7,
+            8,
+            8,
+            8,
+            1
+          ],
+          "candidate_onset_samples": [
+            [
+              7872000,
+              7901040,
+              7918800,
+              7926960,
+              7936560,
+              7942560
+            ],
+            [
+              7869120,
+              7877040,
+              7888320,
+              7899600,
+              7925280,
+              7940400,
+              7996320
+            ],
+            [
+              7867680,
+              7880640,
+              7886400,
+              7915680,
+              7928400,
+              7938960,
+              7945920,
+              7981920
+            ],
+            [
+              7867920,
+              7872240,
+              7878960,
+              7885440,
+              7947360
+            ],
+            [
+              7881120,
+              7889280,
+              7931520,
+              7943280,
+              7981920
+            ],
+            [
+              7893360,
+              7899360,
+              7917360,
+              7930320,
+              7938240,
+              7945440
+            ],
+            [
+              7867920,
+              7896240,
+              7918320,
+              7924320,
+              7929120,
+              7935840,
+              7943280,
+              7974480
+            ],
+            [
+              7868400,
+              7898160,
+              7916880,
+              7924080,
+              7930800,
+              7938720,
+              7944720,
+              7999680
+            ],
+            [
+              7871040,
+              7897200,
+              7904400,
+              7917120,
+              7923120,
+              7939440,
+              7945680,
+              7996080
+            ],
+            [
+              7866720,
+              7872960,
+              7886880,
+              7899840,
+              7910160,
+              7929120,
+              7981920,
+              7998960
+            ],
+            [
+              7885680,
+              7905120,
+              7914960,
+              7922640,
+              7928880,
+              7996560
+            ],
+            [
+              7890480,
+              7897440,
+              7919520
+            ],
+            [
+              7877760,
+              7893600,
+              7901280,
+              7906560,
+              7922400,
+              7930560,
+              7939200,
+              7945440
+            ],
+            [
+              7854960,
+              7868640,
+              7881120,
+              7897920,
+              7925520
+            ],
+            [
+              7854000,
+              7865520,
+              7877280,
+              7902000,
+              7916640,
+              7931760,
+              7939440,
+              7944720
+            ],
+            [
+              7853760,
+              7890000,
+              7897680,
+              7906320,
+              7917120,
+              7923600,
+              7934640,
+              7945680
+            ],
+            [
+              7898400,
+              7908720,
+              7931040,
+              7939200
+            ],
+            [
+              7866480,
+              7898640,
+              7914720,
+              7927200,
+              7937040,
+              7943280,
+              7973520,
+              7992240
+            ],
+            [
+              7866960,
+              7900800,
+              7918320,
+              7931520,
+              7940880,
+              7945920,
+              7958640,
+              7968480
+            ],
+            [
+              7868160,
+              7902480,
+              7916880,
+              7921680,
+              7928640,
+              7939680,
+              7944720,
+              7950960
+            ],
+            [
+              7868880,
+              7885680,
+              7898400,
+              7930800,
+              7955280,
+              7987920,
+              7992960
+            ],
+            [
+              7870800,
+              7883040,
+              7897920,
+              7903200,
+              7909680,
+              7959360,
+              7967520,
+              7999440
+            ],
+            [
+              7898160,
+              7908240,
+              7924320,
+              7932240,
+              7937760,
+              7944960,
+              7952400,
+              7964880
+            ],
+            [
+              7881360,
+              7897440,
+              7906320,
+              7915920,
+              7924800,
+              7932960,
+              7937280,
+              7944240
+            ],
+            [
+              7974240
+            ]
+          ],
+          "candidate_relative_growth": [
+            [
+              1.0,
+              0.561512,
+              0.079956,
+              0.084632,
+              0.046279,
+              0.06728
+            ],
+            [
+              0.185568,
+              0.691926,
+              0.036155,
+              1.0,
+              0.803785,
+              0.483807,
+              0.084475
+            ],
+            [
+              0.132423,
+              1.0,
+              0.024862,
+              0.051064,
+              0.033217,
+              0.02651,
+              0.174384,
+              0.024878
+            ],
+            [
+              0.112188,
+              0.040143,
+              0.032002,
+              1.0,
+              0.052339
+            ],
+            [
+              0.047232,
+              1.0,
+              0.192302,
+              0.020939,
+              0.070446
+            ],
+            [
+              0.52943,
+              0.231576,
+              0.073232,
+              0.880033,
+              0.802821,
+              1.0
+            ],
+            [
+              0.072677,
+              1.0,
+              0.029327,
+              0.061398,
+              0.059906,
+              0.09191,
+              0.111623,
+              0.020683
+            ],
+            [
+              0.138738,
+              0.44948,
+              0.308071,
+              0.140304,
+              0.704486,
+              1.0,
+              0.998527,
+              0.137338
+            ],
+            [
+              0.087788,
+              0.193894,
+              0.311604,
+              1.0,
+              0.862713,
+              0.539548,
+              0.616167,
+              0.099267
+            ],
+            [
+              0.038995,
+              0.132825,
+              0.053071,
+              0.160398,
+              1.0,
+              0.128606,
+              0.059512,
+              0.074506
+            ],
+            [
+              0.2297,
+              0.074615,
+              1.0,
+              0.042415,
+              0.032358,
+              0.07826
+            ],
+            [
+              0.128488,
+              0.120272,
+              1.0
+            ],
+            [
+              0.047037,
+              0.440949,
+              0.082663,
+              0.048271,
+              1.0,
+              0.616777,
+              0.394284,
+              0.548609
+            ],
+            [
+              0.046081,
+              0.028698,
+              0.088178,
+              0.077251,
+              1.0
+            ],
+            [
+              0.185926,
+              0.154024,
+              0.137622,
+              0.602075,
+              0.447391,
+              1.0,
+              0.306796,
+              0.645324
+            ],
+            [
+              0.170983,
+              0.127832,
+              0.094804,
+              0.260203,
+              1.0,
+              0.993978,
+              0.375844,
+              0.976968
+            ],
+            [
+              0.073124,
+              0.036765,
+              0.025364,
+              1.0
+            ],
+            [
+              0.04741,
+              0.238622,
+              0.157571,
+              0.073321,
+              0.043314,
+              1.0,
+              0.027745,
+              0.034868
+            ],
+            [
+              0.104933,
+              0.675442,
+              0.314952,
+              0.523854,
+              0.092884,
+              1.0,
+              0.056571,
+              0.034756
+            ],
+            [
+              0.152849,
+              0.216149,
+              0.602182,
+              0.232851,
+              0.14347,
+              0.234258,
+              1.0,
+              0.724884
+            ],
+            [
+              0.059843,
+              0.162456,
+              0.531209,
+              1.0,
+              0.825105,
+              0.021696,
+              0.041754
+            ],
+            [
+              0.553697,
+              0.044931,
+              0.056607,
+              0.107008,
+              0.43874,
+              1.0,
+              0.056676,
+              0.047718
+            ],
+            [
+              0.429363,
+              0.184549,
+              0.356531,
+              0.222922,
+              0.180382,
+              0.412478,
+              0.158337,
+              1.0
+            ],
+            [
+              0.678535,
+              1.0,
+              0.607794,
+              0.308224,
+              0.521998,
+              0.506126,
+              0.320011,
+              0.626936
+            ],
+            [
+              1.0
+            ]
+          ],
+          "missing_candidate_score_indices": [],
+          "ordered_trajectory": {
+            "scope": "diagnostic_only; never supplies terminal timing or certifies performed keystrikes",
+            "limits": {
+              "maximum_omitted_observations": 2,
+              "maximum_history_states": 20000,
+              "relative_inter_onset_range": [
+                0.2,
+                4.0
+              ],
+              "terminal_relative_recent_interval_range": [
+                0.4,
+                2.0
+              ]
+            },
+            "path_cost": 8.46248565,
+            "observed_score_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              24
+            ],
+            "onset_samples": [
+              7872000,
+              7877040,
+              7880640,
+              7885440,
+              7889280,
+              7893360,
+              7896240,
+              7898160,
+              7904400,
+              7910160,
+              7914960,
+              7919520,
+              7922400,
+              7925520,
+              7931760,
+              7934640,
+              7939200,
+              7943280,
+              7945920,
+              7950960,
+              7955280,
+              7959360,
+              7964880,
+              7974240
+            ],
+            "omitted_score_indices": [
+              23
+            ]
+          },
+          "terminal_written_register_growth_share": 0.97189089,
+          "terminal_written_register_share": 0.3350388
+        },
+        "quality": {
+          "local_mean_cosine_cost": 0.579774,
+          "lowest_fundamental_spectral_peak_ratio": 0.00748135,
+          "terminal_written_register_share": 0.3350388,
+          "terminal_written_register_growth_share": 0.97189089,
+          "terminal_peak_to_local_background": 12.161666,
+          "growth_score": 1.0,
+          "interpretation": "local pitch-growth evidence consistent with the score target; not certified physical keystrike, written identity, hand provenance or calibrated confidence",
+          "refined_register_cost": 0.028109,
+          "refined_cosine_cost_diagnostic": 0.441241
+        },
+        "uncertainty": {
+          "support_interval_samples": [
+            7970144,
+            7978336
+          ],
+          "quantization_samples": 240,
+          "interpretation": "centered STFT support; not an accuracy guarantee"
+        },
+        "frame": 2524
       }
     ]
   },
@@ -588,14 +6083,14 @@
     "attachment_sha256": "c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d",
     "decoded_wav_sha256": "4239aa8cc50abb85c756ad34f254602f7c084559baf83357475ac72909f6f2cf"
   },
-  "fingerprint": "b5a7e41932ff1fc1fd08b4e5262d71a56949f4474d7fbdb16345e5acec9dfeca",
+  "fingerprint": "3e2265f07a7a495a6cc96b65ec683ed49fe178d5b3bc011c309309c614f28520",
   "piece": "Chopin, Scherzo No. 3 (owner-provided identification). Second-half recording: scherzo3_2.mp3.",
   "period": null,
-  "art_notes": "Begin with a fragile, nearly extinguished candle in a dark church, with minor-key solemnity reminiscent of a funeral march. \"Funeral march\" describes the atmosphere, not a different composition.\n\nRevision explicitly requested by the owner in the Codex chat on 2026-11-01:\n- After the music turns to the major mode, let the flame grow in response to the performed crescendo.\n- At the start of the passage in octaves in both hands, let the church collapse and reveal another world.\n- Use the fast passages to open up and move into that otherworld.\n- The owner selected a violent world of flames, rocks and a storm.\n\nPreserve the original performance. Determine event positions automatically from the recording and, if validated, alignment with the musical score; do not enter source seconds manually or impose a fixed BPM. Preserve the concluding coda. Treat musical interpretation separately from timing precision. Produce this separately from the first-half work.",
+  "art_notes": "Begin with a fragile, nearly extinguished candle in a dark church, with minor-key solemnity reminiscent of a funeral march. \"Funeral march\" describes the atmosphere, not a different composition.\n\nRevision explicitly requested by the owner in the Codex chat on 2026-11-01:\n- After the music turns to the major mode, let the flame grow in response to the performed crescendo.\n- At the start of the passage in octaves in both hands, let the church collapse and reveal another world.\n- Use the fast passages to open up and move into that otherworld.\n- The owner selected a violent world of flames, rocks and a storm.\n\nAdditional ending revision explicitly requested by the owner in the Codex chat on 2026-11-01:\n- After the very last ascending scale, let the storm clouds part and clear for the ending.\n\nPreserve the original performance. Determine event positions automatically from the recording and, if validated, alignment with the musical score; do not enter source seconds manually or impose a fixed BPM. Preserve the concluding coda. Treat musical interpretation separately from timing precision. Produce this separately from the first-half work.",
   "creative_brief": {
     "world": "An imagined dark chapel opens into a violent world of fire, basalt rock and storm; not the actual recording venue.",
     "character": "One fragile candle, then falling masonry and an open molten landscape; no people.",
-    "narrative_arc": "The minor-mode candle barely survives; at the score-aligned major arrival it grows with the performed crescendo. Both-hands octaves fracture the church; fast passages launch a journey into the burning storm world. The recorded final coda remains intact.",
+    "narrative_arc": "The candle barely survives in the dark nave, then grows with the performed crescendo after the major arrival. Both-hands octaves fracture the church and fast passages enter a violent fire, basalt and storm world. After the final long ascending scale reaches its high point, the storm parts progressively into open blue sky and golden light while the original concluding coda continues.",
     "creative_interpretation": "The owner supplied the solemn opening, crescendo, octave collapse, violent world and victorious coda; signal activity alone is not interpreted as emotion.",
     "scene_guidance": [
       {
@@ -612,13 +6107,14 @@
       },
       {
         "scene_id": "scene03",
-        "direction": "At both-hands octaves, turn and drop stone fragments to expose fire, basalt and storm; enter at the fast coda.",
-        "composition": "Clear the central lava route and move nearby cliffs more than the distant horizon.",
-        "palette_intent": "Charcoal/indigo candlelight becomes incandescent lava, dark basalt and storm-blue cloud."
+        "direction": "At both-hands octaves, turn and drop stone fragments to expose the fire, basalt and storm world; enter it at the fast coda. After the final ascending scale, part the clouds toward an open blue and golden ending.",
+        "composition": "Preserve the central lava route and the original rock silhouettes as the sky opens.",
+        "palette_intent": "Storm blue and incandescent lava give way to spacious pale blue and warm golden sky."
       }
     ],
-    "renderer_constraints": "Use the registered candle-rift-v1 provider and chopin-scherzo3-coda-v1 profile. Preserve native samples, containing-frame conversion, original performance and sparse DSP accents. No source seconds entered manually, fixed BPM, per-note cuts or generated audio.",
-    "evidence_notes": "Explicit owner revision requested on 2026-11-01; same PR33/cand-02. Initial stage0 exposed tile-like collapse and weak traversal. Round1 added turned stone sides/backs and depth-varying travel. Final repair2 corrected a late cloud-layer coverage gap; native still and encoded late preview independently rechecked. No remaining repair budget. Prior request round2 stop remains in Git history at ae87c5ca91297a2298a1f372dc16b28bfa0ddc31. All musical landmarks and accents come from fresh registered analysis, without manual source timestamps. Final recorded coda retained; omitted source tail is less than one video frame.",
-    "uncertainty": "No musical listening is claimed. Score registration and native signal refinement support automatic event positioning; STFT support intervals are not calibrated accuracy guarantees. Musical meaning, planned timing, encoded QA and aesthetics remain separate. One new world painting; generation cost unmeasured."
+    "renderer_constraints": "Use registered candle-clearing-v1 with chopin-scherzo3-coda-clearing-v1. Keep the original performance and native source samples. The final growth cue activates at the first frame boundary at or after its sample. No manual recording seconds, fixed BPM, per-note cuts or generated audio.",
+    "evidence_notes": "New explicit owner ending request in Codex chat on 2026-11-01; final repair2 after initial ghost peaks and repair1 skyline collars. A registered native matte resolved the still-stage blocker. The final long ascending scale reaches RH E7 at score q1860/m621 beat1; clouds begin opening after the detected native-sample arrival and clear through the ending. This is not acoustic note-off. Original performance preserved; no manual recording timestamps. Previous stopped requests remain in Git history and Actions evidence.",
+    "uncertainty": "Audio listening is unavailable. The final cue is a unique local tuned E7 growth event consistent with the registered score context; it does not certify a physical key strike or written-event identity. STFT support is not calibrated accuracy. Musical meaning, detected timing, encoded QA and aesthetics are separate. Two built-in image generations produced one active sky-only texture; a registered deterministic matte preserves the original rocks. Generation cost is unmeasured.",
+    "ending": "After the terminal ascent, the storm parts progressively to a spacious blue and gold sky. Retain the basalt and lava route as the final world opens."
   }
 }
