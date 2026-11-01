@@ -31,6 +31,7 @@
 ## Codex主導の制作
 
 - 制作依頼（「Issue #x の映像作品化」）とPRコメント対応は [.agents/skills/studio-produce/SKILL.md](.agents/skills/studio-produce/SKILL.md) を読む。独立レビューと裁定は同スキルから案内する。制作・検証のサブエージェント分担を許可する。Museへコンテンツを委任しない。
+- Releaseを指定したYouTube投稿依頼は [.agents/skills/studio-upload-youtube/SKILL.md](.agents/skills/studio-upload-youtube/SKILL.md) を読む。ファイル送信前にchopin-moodのチャネル名・IDを照合し、Googleアカウントや個人チャネルを投稿先の根拠にしない。既定の公開・視聴者設定も同スキルに従う。PRのMergeやRelease作成だけではYouTubeへ投稿しない。
 - 元Issueと関連PR、最新の本人コメントと実画像を取得する。新しい子Issueを自動で作らない。候補は最大3案、合格した実質的に異なる案だけを1案1PRで出し、修正は同じPRに積む。
 - 制作入力は `studio/projects/issue-<番号>/candidates/cand-0[123]/` の4 JSONに保存する。原録音は保存しない。候補PRのブランチは `codex/studio-issue-<番号>-cand-0[123]` とする。
 - 原音源とDSPの整数サンプル／フレーム位置を保持する。候補は解析器の出力とexact比較し、秒表示も再丸めしない。描画の修正を説明文だけで済ませない。
