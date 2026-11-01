@@ -44,54 +44,30 @@
     "scenes": [
       {
         "id": "scene01",
-        "start_sample": 3934835,
-        "end_sample": 5349235,
         "start_frame": 0,
-        "end_frame": 884,
-        "duration_sec": 29.4667
+        "end_frame": 944,
+        "start_sample": 3934835,
+        "end_sample": 5445235,
+        "duration_sec": 31.4667
       },
       {
         "id": "scene02",
-        "start_sample": 5349235,
-        "end_sample": 6110835,
-        "start_frame": 884,
-        "end_frame": 1360,
-        "duration_sec": 15.8667
+        "start_frame": 944,
+        "end_frame": 1637,
+        "start_sample": 5445235,
+        "end_sample": 6554035,
+        "duration_sec": 23.1
       },
       {
         "id": "scene03",
-        "start_sample": 6110835,
-        "end_sample": 7109235,
-        "start_frame": 1360,
-        "end_frame": 1984,
-        "duration_sec": 20.8
-      },
-      {
-        "id": "scene04",
-        "start_sample": 7109235,
-        "end_sample": 7472435,
-        "start_frame": 1984,
-        "end_frame": 2211,
-        "duration_sec": 7.5667
-      },
-      {
-        "id": "scene05",
-        "start_sample": 7472435,
-        "end_sample": 7875635,
-        "start_frame": 2211,
-        "end_frame": 2463,
-        "duration_sec": 8.4
-      },
-      {
-        "id": "scene06",
-        "start_sample": 7875635,
-        "end_sample": 9010035,
-        "start_frame": 2463,
+        "start_frame": 1637,
         "end_frame": 3172,
-        "duration_sec": 23.6333
+        "start_sample": 6554035,
+        "end_sample": 9010035,
+        "duration_sec": 51.1667
       }
     ],
-    "scene_reason": "DP chose 5 cut(s) from 13 candidate(s) (13 after frame snap); min scene 6s = 180 frames, max cuts 5",
+    "scene_reason": "score-aligned major arrival and strict both-hands octave entry; fast coda drives scene03 motion",
     "accents": [
       {
         "kind": "accent",
@@ -173,61 +149,476 @@
         "method": "flux_peak_v1",
         "frame": 2910
       }
+    ],
+    "analysis_profile": "chopin-scherzo3-coda-v1",
+    "score_alignment": {
+      "profile_id": "chopin-scherzo3-coda-v1",
+      "sample_rate": 48000,
+      "source_sample_count": 9011200,
+      "reference": {
+        "reference_id": "chopin-op39-v1",
+        "bundle_path": "assets/score/chopin-op39-v1",
+        "manifest_sha256": "d87df6f1d0d10aa206006e8d700e8c71fd0cf6f6ce07adb86dc7c4ed14fee960",
+        "source": {
+          "repository": "pl-wnifc/humdrum-chopin-first-editions",
+          "commit": "95dfb105c1669c72d10b04088566154f12d3dc1c",
+          "url": "https://github.com/pl-wnifc/humdrum-chopin-first-editions/tree/95dfb105c1669c72d10b04088566154f12d3dc1c",
+          "path": "kern/039-1-TR.krn"
+        },
+        "license": {
+          "id": "CC-BY-4.0",
+          "url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution_path": "ATTRIBUTION.md",
+          "commercial_adaptation": true
+        },
+        "derivation": {
+          "script": "scripts/build_score_reference.py",
+          "parser_version": 1,
+          "repeat_policy": "not unrolled; explicit written score order",
+          "grace_policy": "zero duration; not in chroma occupancy",
+          "tie_policy": "segments sustain occupancy; continuation is not an attack",
+          "chord_rhythm_policy": "first subtoken advances spine; explicit per-note durations preserved",
+          "pitch_policy": "explicit kern sounding-pitch spelling, including naturals; octave lines are display only; no key inference"
+        },
+        "files": {
+          "039-1-TR.krn": "96c34477a6ccb3ca6e39b18c00d6671d94c0180f7c5e7567b84323d523242204",
+          "039-1-TR.krn.notes.json": "fe055a05b414e079bed92f933d0c61cb13e19d3dd4b98f2b0e44068802376bd2",
+          "039-1-BH.krn": "6952facf47dab370962099f4ddceb48b0ff024138847b554e6fd688aa995f3f0",
+          "039-1-BH.krn.notes.json": "105abd0c253834f21a145991a535fba14f50435bf0ce3c5d3d76a21593734954",
+          "LICENSE.txt": "430533a2646f16c8c7b58d919b13e0f8dfc5afb334c1915eceea2bf8c19551f9",
+          "ATTRIBUTION.md": "19a488af8218173dbcb78608c45110ad08ac8850e38ced8b32a958bffab837c1"
+        }
+      },
+      "landmarks": [
+        {
+          "id": "major_arrival",
+          "score_quarter": [
+            1623,
+            1
+          ],
+          "measure": 542,
+          "beat": [
+            1,
+            1
+          ],
+          "meaning": "C-sharp major arrival; does not label the entire coda as major",
+          "source_sample": 5446800,
+          "method": "subsequence_chroma_dtw_then_new_pitch_fundamental_growth",
+          "coarse_interval_samples": [
+            5445600,
+            5445600
+          ],
+          "analysis_hop_samples": 240,
+          "analysis_window_samples": 8192,
+          "target_new_midi": [
+            49,
+            56,
+            61,
+            65,
+            68
+          ],
+          "prior_midi": [
+            51
+          ],
+          "excluded_prior_harmonic_collisions": [
+            [
+              56,
+              3
+            ]
+          ],
+          "quality": {
+            "local_mean_cosine_cost": 0.264049,
+            "lowest_fundamental_energy_ratio": 0.151659,
+            "lowest_fundamental_spectral_peak_ratio": 0.17800494,
+            "attack_score": 0.9684583187,
+            "interpretation": "bounded signal diagnostics; not a calibrated confidence probability",
+            "refined_cosine_cost": 0.165145
+          },
+          "uncertainty": {
+            "support_interval_samples": [
+              5442464,
+              5451376
+            ],
+            "quantization_samples": 240,
+            "interpretation": "90%-peak candidates plus half STFT window; not an accuracy guarantee"
+          }
+        },
+        {
+          "id": "both_hands_octaves",
+          "score_quarter": [
+            1699,
+            1
+          ],
+          "measure": 567,
+          "beat": [
+            2,
+            1
+          ],
+          "meaning": "first strict both-hands octave attack; preceding beat has RH octaves and LH single B-sharp",
+          "source_sample": 6554160,
+          "method": "subsequence_chroma_dtw_then_new_pitch_fundamental_growth",
+          "coarse_interval_samples": [
+            6535200,
+            6564000
+          ],
+          "analysis_hop_samples": 240,
+          "analysis_window_samples": 8192,
+          "target_new_midi": [
+            57,
+            69
+          ],
+          "prior_midi": [
+            60,
+            81,
+            93
+          ],
+          "excluded_prior_harmonic_collisions": [
+            [
+              57,
+              4
+            ],
+            [
+              69,
+              2
+            ],
+            [
+              69,
+              4
+            ],
+            [
+              69,
+              6
+            ]
+          ],
+          "quality": {
+            "local_mean_cosine_cost": 0.107463,
+            "lowest_fundamental_energy_ratio": 0.05754,
+            "lowest_fundamental_spectral_peak_ratio": 0.03072153,
+            "attack_score": 1.0,
+            "interpretation": "bounded signal diagnostics; not a calibrated confidence probability",
+            "refined_cosine_cost": 0.053912
+          },
+          "uncertainty": {
+            "support_interval_samples": [
+              6549824,
+              6558496
+            ],
+            "quantization_samples": 240,
+            "interpretation": "90%-peak candidates plus half STFT window; not an accuracy guarantee"
+          }
+        },
+        {
+          "id": "fast_coda",
+          "score_quarter": [
+            1716,
+            1
+          ],
+          "measure": 573,
+          "beat": [
+            1,
+            1
+          ],
+          "meaning": "fast coda; new LH C-sharp2 while RH G-sharp3 continues a tie",
+          "source_sample": 6701520,
+          "method": "subsequence_chroma_dtw_then_new_pitch_fundamental_growth",
+          "coarse_interval_samples": [
+            6703200,
+            6710400
+          ],
+          "analysis_hop_samples": 240,
+          "analysis_window_samples": 8192,
+          "target_new_midi": [
+            37
+          ],
+          "prior_midi": [
+            32,
+            44,
+            56,
+            68
+          ],
+          "excluded_prior_harmonic_collisions": [
+            [
+              37,
+              3
+            ],
+            [
+              37,
+              6
+            ]
+          ],
+          "quality": {
+            "local_mean_cosine_cost": 0.286834,
+            "lowest_fundamental_energy_ratio": 0.658461,
+            "lowest_fundamental_spectral_peak_ratio": 0.09045294,
+            "attack_score": 0.721862687,
+            "interpretation": "bounded signal diagnostics; not a calibrated confidence probability",
+            "refined_cosine_cost": 0.329743
+          },
+          "uncertainty": {
+            "support_interval_samples": [
+              6697184,
+              6706096
+            ],
+            "quantization_samples": 240,
+            "interpretation": "90%-peak candidates plus half STFT window; not an accuracy guarantee"
+          }
+        }
+      ],
+      "analysis": {
+        "algorithm_version": 1,
+        "feature": "12-bin chroma STFT power",
+        "chroma_tuning_semitones": 0.0,
+        "chroma_precision_decimals": 6,
+        "reference_steps_per_quarter": 2,
+        "coarse_hop_samples": 2400,
+        "stft_window_samples": 8192,
+        "stft_center": true,
+        "stft_padding": "constant",
+        "time_origin": "native source sample zero; centered window centers",
+        "cost_quantum": 1e-06,
+        "dtw": "cosine, subsequence free reference beginning, forced reference ending; steps (1,1),(0,1),(1,0)",
+        "score_coverage_quarters": [
+          [
+            2375,
+            2
+          ],
+          [
+            1947,
+            1
+          ]
+        ],
+        "mean_cosine_cost": 0.253206,
+        "acceptance_limits": {
+          "maximum_mean_cosine_cost": 0.42,
+          "maximum_landmark_local_cost": 0.6,
+          "maximum_refined_cosine_cost": 0.5,
+          "minimum_direct_fundamental_spectral_peak_ratio": 0.001,
+          "maximum_coarse_interval_seconds": 2.0
+        },
+        "librosa_version": "1.0.0",
+        "numpy_version": "2.5.4",
+        "limits": [
+          "written-order reference with forced ending; unsupported repeats/cuts can fail",
+          "half-quarter chroma is octave-invariant; local fundamental growth supplies register evidence",
+          "pedal, weak fundamentals and simultaneous attacks can still produce ambiguity",
+          "uncertainty is STFT support, not a calibrated error bound; independent music review required"
+        ]
+      }
+    },
+    "score_landmarks": [
+      {
+        "id": "major_arrival",
+        "score_quarter": [
+          1623,
+          1
+        ],
+        "measure": 542,
+        "beat": [
+          1,
+          1
+        ],
+        "meaning": "C-sharp major arrival; does not label the entire coda as major",
+        "source_sample": 5446800,
+        "method": "subsequence_chroma_dtw_then_new_pitch_fundamental_growth",
+        "coarse_interval_samples": [
+          5445600,
+          5445600
+        ],
+        "analysis_hop_samples": 240,
+        "analysis_window_samples": 8192,
+        "target_new_midi": [
+          49,
+          56,
+          61,
+          65,
+          68
+        ],
+        "prior_midi": [
+          51
+        ],
+        "excluded_prior_harmonic_collisions": [
+          [
+            56,
+            3
+          ]
+        ],
+        "quality": {
+          "local_mean_cosine_cost": 0.264049,
+          "lowest_fundamental_energy_ratio": 0.151659,
+          "lowest_fundamental_spectral_peak_ratio": 0.17800494,
+          "attack_score": 0.9684583187,
+          "interpretation": "bounded signal diagnostics; not a calibrated confidence probability",
+          "refined_cosine_cost": 0.165145
+        },
+        "uncertainty": {
+          "support_interval_samples": [
+            5442464,
+            5451376
+          ],
+          "quantization_samples": 240,
+          "interpretation": "90%-peak candidates plus half STFT window; not an accuracy guarantee"
+        },
+        "frame": 944
+      },
+      {
+        "id": "both_hands_octaves",
+        "score_quarter": [
+          1699,
+          1
+        ],
+        "measure": 567,
+        "beat": [
+          2,
+          1
+        ],
+        "meaning": "first strict both-hands octave attack; preceding beat has RH octaves and LH single B-sharp",
+        "source_sample": 6554160,
+        "method": "subsequence_chroma_dtw_then_new_pitch_fundamental_growth",
+        "coarse_interval_samples": [
+          6535200,
+          6564000
+        ],
+        "analysis_hop_samples": 240,
+        "analysis_window_samples": 8192,
+        "target_new_midi": [
+          57,
+          69
+        ],
+        "prior_midi": [
+          60,
+          81,
+          93
+        ],
+        "excluded_prior_harmonic_collisions": [
+          [
+            57,
+            4
+          ],
+          [
+            69,
+            2
+          ],
+          [
+            69,
+            4
+          ],
+          [
+            69,
+            6
+          ]
+        ],
+        "quality": {
+          "local_mean_cosine_cost": 0.107463,
+          "lowest_fundamental_energy_ratio": 0.05754,
+          "lowest_fundamental_spectral_peak_ratio": 0.03072153,
+          "attack_score": 1.0,
+          "interpretation": "bounded signal diagnostics; not a calibrated confidence probability",
+          "refined_cosine_cost": 0.053912
+        },
+        "uncertainty": {
+          "support_interval_samples": [
+            6549824,
+            6558496
+          ],
+          "quantization_samples": 240,
+          "interpretation": "90%-peak candidates plus half STFT window; not an accuracy guarantee"
+        },
+        "frame": 1637
+      },
+      {
+        "id": "fast_coda",
+        "score_quarter": [
+          1716,
+          1
+        ],
+        "measure": 573,
+        "beat": [
+          1,
+          1
+        ],
+        "meaning": "fast coda; new LH C-sharp2 while RH G-sharp3 continues a tie",
+        "source_sample": 6701520,
+        "method": "subsequence_chroma_dtw_then_new_pitch_fundamental_growth",
+        "coarse_interval_samples": [
+          6703200,
+          6710400
+        ],
+        "analysis_hop_samples": 240,
+        "analysis_window_samples": 8192,
+        "target_new_midi": [
+          37
+        ],
+        "prior_midi": [
+          32,
+          44,
+          56,
+          68
+        ],
+        "excluded_prior_harmonic_collisions": [
+          [
+            37,
+            3
+          ],
+          [
+            37,
+            6
+          ]
+        ],
+        "quality": {
+          "local_mean_cosine_cost": 0.286834,
+          "lowest_fundamental_energy_ratio": 0.658461,
+          "lowest_fundamental_spectral_peak_ratio": 0.09045294,
+          "attack_score": 0.721862687,
+          "interpretation": "bounded signal diagnostics; not a calibrated confidence probability",
+          "refined_cosine_cost": 0.329743
+        },
+        "uncertainty": {
+          "support_interval_samples": [
+            6697184,
+            6706096
+          ],
+          "quantization_samples": 240,
+          "interpretation": "90%-peak candidates plus half STFT window; not an accuracy guarantee"
+        },
+        "frame": 1729
+      }
     ]
   },
   "source_hashes": {
     "attachment_sha256": "c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d",
     "decoded_wav_sha256": "4239aa8cc50abb85c756ad34f254602f7c084559baf83357475ac72909f6f2cf"
   },
-  "fingerprint": "441be032140fcd7ca8f612e2f944e2550b0affc7ad562689aab099acaa3a71cf",
-  "piece": "ショパン スケルツォ第3番（本人申告）。後半録音 scherzo3_2.mp3。",
+  "fingerprint": "b5a7e41932ff1fc1fd08b4e5262d71a56949f4474d7fbdb16345e5acec9dfeca",
+  "piece": "Chopin, Scherzo No. 3 (owner-provided identification). Second-half recording: scherzo3_2.mp3.",
   "period": null,
-  "art_notes": "短調で火が今にも消えそうなろうそく。葬送行進曲を思わせる雰囲気。ただ最後には勝利のようなコーダ。\n\n消えかけの小さな炎の危うさと、葬送行進曲を思わせる厳かさから始め、最後は勝利を感じるコーダへ向かう映像にしたい。「葬送行進曲」は雰囲気の比喩であり、別の曲を指定するものではない。コーダを含む構成を重視する。\n\n本人演奏の音源を保持し、音楽の時刻はDSPで自動計算する。前半録音とは別作品として制作する。",
+  "art_notes": "Begin with a fragile, nearly extinguished candle in a dark church, with minor-key solemnity reminiscent of a funeral march. \"Funeral march\" describes the atmosphere, not a different composition.\n\nRevision explicitly requested by the owner in the Codex chat on 2026-11-01:\n- After the music turns to the major mode, let the flame grow in response to the performed crescendo.\n- At the start of the passage in octaves in both hands, let the church collapse and reveal another world.\n- Use the fast passages to open up and move into that otherworld.\n- The owner selected a violent world of flames, rocks and a storm.\n\nPreserve the original performance. Determine event positions automatically from the recording and, if validated, alignment with the musical score; do not enter source seconds manually or impose a fixed BPM. Preserve the concluding coda. Treat musical interpretation separately from timing precision. Produce this separately from the first-half work.",
   "creative_brief": {
-    "world": "An imagined dark chapel, not a claim about the actual recording venue.",
-    "character": "One short wax candle with a living flame; no people.",
-    "narrative_arc": "A fragile flame nearly goes out, persists through solemn darkness, and grows steady as golden light opens in the conclusion.",
-    "creative_interpretation": "Owner-directed near-extinguished candle, funeral-march-like solemnity and victorious ending. Musical meaning is supplied by the owner, not inferred from activity.",
+    "world": "An imagined dark chapel opens into a violent world of fire, basalt rock and storm; not the actual recording venue.",
+    "character": "One fragile candle, then falling masonry and an open molten landscape; no people.",
+    "narrative_arc": "The minor-mode candle barely survives; at the score-aligned major arrival it grows with the performed crescendo. Both-hands octaves fracture the church; fast passages launch a journey into the burning storm world. The recorded final coda remains intact.",
+    "creative_interpretation": "The owner supplied the solemn opening, crescendo, octave collapse, violent world and victorious coda; signal activity alone is not interpreted as emotion.",
     "scene_guidance": [
       {
         "scene_id": "scene01",
-        "direction": "A small living flame, fragile in a vast dark room.",
-        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
-        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
+        "direction": "A nearly extinguished candle in a solemn, dark nave.",
+        "composition": "Keep the wick readable and slowly approach the candle.",
+        "palette_intent": "Charcoal/indigo candlelight becomes incandescent lava, dark basalt and storm-blue cloud."
       },
       {
         "scene_id": "scene02",
-        "direction": "The flame bends low but holds its wick.",
-        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
-        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
+        "direction": "The flame grows with the performed crescendo after the major arrival.",
+        "composition": "Keep flame, wick and surrounding cast light attached in one frame.",
+        "palette_intent": "Charcoal/indigo candlelight becomes incandescent lava, dark basalt and storm-blue cloud."
       },
       {
         "scene_id": "scene03",
-        "direction": "Solemn suspension; keep the candle readable.",
-        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
-        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
-      },
-      {
-        "scene_id": "scene04",
-        "direction": "Warmth returns cautiously around the wax.",
-        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
-        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
-      },
-      {
-        "scene_id": "scene05",
-        "direction": "The flame gathers strength without a cut.",
-        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
-        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
-      },
-      {
-        "scene_id": "scene06",
-        "direction": "A firm flame and broad golden light answer the darkness.",
-        "composition": "One detailed candle in a dark chapel; maintain a readable wick and base.",
-        "palette_intent": "Charcoal and indigo, then warm gold at the concluding DSP scene."
+        "direction": "At both-hands octaves, turn and drop stone fragments to expose fire, basalt and storm; enter at the fast coda.",
+        "composition": "Clear the central lava route and move nearby cliffs more than the distant horizon.",
+        "palette_intent": "Charcoal/indigo candlelight becomes incandescent lava, dark basalt and storm-blue cloud."
       }
     ],
-    "renderer_constraints": "Registered AI paintings, deterministic flame or light and restrained camera. No generated or replaced audio, no fixed BPM, no per-note cuts. Preserve exact DSP scene IDs and samples.",
-    "evidence_notes": "Terminal alternative covers the source ending on its native frame grid; omitted fraction is less than one frame. Arc uses existing DSP scene boundaries, without asserting that a detected boundary identifies the coda.",
-    "uncertainty": "Listening unavailable; phrase boundaries and the exact musical start of the coda have not been confirmed by ear. Prior adopted works use a moonlit traveler, a storm recital and a sunlit salon; this chapel composition differs. Generation cost unmeasured."
+    "renderer_constraints": "Use the registered candle-rift-v1 provider and chopin-scherzo3-coda-v1 profile. Preserve native samples, containing-frame conversion, original performance and sparse DSP accents. No source seconds entered manually, fixed BPM, per-note cuts or generated audio.",
+    "evidence_notes": "Explicit owner revision requested on 2026-11-01; same PR33/cand-02. Initial stage0 exposed tile-like collapse and weak traversal. Round1 added turned stone sides/backs and depth-varying travel. Final repair2 corrected a late cloud-layer coverage gap; native still and encoded late preview independently rechecked. No remaining repair budget. Prior request round2 stop remains in Git history at ae87c5ca91297a2298a1f372dc16b28bfa0ddc31. All musical landmarks and accents come from fresh registered analysis, without manual source timestamps. Final recorded coda retained; omitted source tail is less than one video frame.",
+    "uncertainty": "No musical listening is claimed. Score registration and native signal refinement support automatic event positioning; STFT support intervals are not calibrated accuracy guarantees. Musical meaning, planned timing, encoded QA and aesthetics remain separate. One new world painting; generation cost unmeasured."
   }
 }

@@ -1,314 +1,155 @@
 {
   "schema_version": "1.0",
-  "style_id": "last-candle-v1",
-  "prototype_notice": "AI-generated original chapel art; deterministic animation; original owner performance retained.",
+  "style_id": "flame-and-world-beyond-v1",
+  "prototype_notice": "AI-painted imaginary setting with deterministic 2.5D animation and original performance audio.",
   "scenes": [
     {
       "id": "scene01",
       "palette": {
         "sky_top": [
+          8,
           12,
-          17,
-          29
+          38
         ],
         "sky_bot": [
-          35,
-          44,
-          66
+          38,
+          52,
+          96
         ],
         "far": [
-          65,
-          65,
-          76
+          30,
+          44,
+          78
         ],
         "near": [
-          15,
-          18,
-          25
+          16,
+          26,
+          52
         ],
         "moon": [
-          130,
-          156,
-          204
+          235,
+          238,
+          245
         ],
         "glow": [
-          244,
-          177,
-          79
+          255,
+          214,
+          150
         ]
       },
-      "motif": "A small living flame, fragile in a vast dark room.",
-      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
+      "motif": "A nearly extinguished candle in a solemn, dark nave.",
+      "camera": "Keep the wick readable and slowly approach the candle.",
       "params": {
-        "candle_strength": 0.12,
-        "chapel_warmth": 0.02,
-        "figure_scale": 1,
-        "particle_multiplier": 0,
-        "light_bias": -0.1,
-        "glow_scale": 0.8,
-        "camera_zoom_start": 1.02,
-        "camera_zoom_end": 1.045,
-        "camera_pan_x_start": 0.08,
-        "camera_pan_x_end": 0.08,
-        "camera_pan_y_start": -0.15,
-        "camera_pan_y_end": -0.15
+        "figure_scale": 1.0,
+        "particle_multiplier": 1.0,
+        "light_bias": 0.0,
+        "glow_scale": 1.0,
+        "camera_zoom_start": 1.0,
+        "camera_zoom_end": 1.04,
+        "camera_pan_x_start": 0.0,
+        "camera_pan_x_end": 0.0,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.0
       }
     },
     {
       "id": "scene02",
       "palette": {
         "sky_top": [
-          12,
-          17,
-          29
+          40,
+          16,
+          10
         ],
         "sky_bot": [
-          35,
-          44,
-          66
+          110,
+          60,
+          30
         ],
         "far": [
-          8,
-          13,
-          26
+          80,
+          44,
+          30
         ],
         "near": [
-          15,
-          18,
-          25
+          44,
+          24,
+          18
         ],
         "moon": [
-          130,
-          156,
-          204
+          250,
+          235,
+          220
         ],
         "glow": [
-          244,
-          177,
-          79
+          255,
+          180,
+          120
         ]
       },
-      "motif": "The flame bends low but holds its wick.",
-      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
+      "motif": "The flame grows with the performed crescendo after the major arrival.",
+      "camera": "Keep flame, wick and surrounding cast light attached in one frame.",
       "params": {
-        "candle_strength": 0.08,
-        "chapel_warmth": 0,
-        "figure_scale": 1,
-        "particle_multiplier": 0,
-        "light_bias": -0.1,
-        "glow_scale": 0.8,
-        "camera_zoom_start": 1.045,
-        "camera_zoom_end": 1.06,
-        "camera_pan_x_start": 0.08,
-        "camera_pan_x_end": 0.08,
-        "camera_pan_y_start": -0.15,
-        "camera_pan_y_end": -0.15
+        "figure_scale": 1.0,
+        "particle_multiplier": 1.0,
+        "light_bias": 0.0,
+        "glow_scale": 1.0,
+        "camera_zoom_start": 1.04,
+        "camera_zoom_end": 1.07,
+        "camera_pan_x_start": 0.0,
+        "camera_pan_x_end": 0.0,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.0
       }
     },
     {
       "id": "scene03",
       "palette": {
         "sky_top": [
-          12,
-          17,
-          29
+          6,
+          30,
+          34
         ],
         "sky_bot": [
-          35,
-          44,
-          66
+          30,
+          90,
+          96
         ],
         "far": [
-          130,
-          130,
-          142
+          24,
+          70,
+          76
         ],
         "near": [
-          15,
-          18,
-          25
+          12,
+          40,
+          48
         ],
         "moon": [
-          130,
-          156,
-          204
+          232,
+          244,
+          244
         ],
         "glow": [
-          244,
-          177,
-          79
+          180,
+          255,
+          220
         ]
       },
-      "motif": "Solemn suspension; keep the candle readable.",
-      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
+      "motif": "At both-hands octaves, turn and drop stone fragments to expose fire, basalt and storm; enter at the fast coda.",
+      "camera": "Clear the central lava route and move nearby cliffs more than the distant horizon.",
       "params": {
-        "candle_strength": 0.1,
-        "chapel_warmth": 0.03,
-        "figure_scale": 1,
-        "particle_multiplier": 0,
-        "light_bias": -0.1,
-        "glow_scale": 0.8,
-        "camera_zoom_start": 1.06,
-        "camera_zoom_end": 1.075,
-        "camera_pan_x_start": 0.08,
-        "camera_pan_x_end": 0.08,
-        "camera_pan_y_start": -0.15,
-        "camera_pan_y_end": -0.15
-      }
-    },
-    {
-      "id": "scene04",
-      "palette": {
-        "sky_top": [
-          12,
-          17,
-          29
-        ],
-        "sky_bot": [
-          35,
-          44,
-          66
-        ],
-        "far": [
-          12,
-          17,
-          30
-        ],
-        "near": [
-          15,
-          18,
-          25
-        ],
-        "moon": [
-          130,
-          156,
-          204
-        ],
-        "glow": [
-          244,
-          177,
-          79
-        ]
-      },
-      "motif": "Warmth returns cautiously around the wax.",
-      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
-      "params": {
-        "candle_strength": 0.18,
-        "chapel_warmth": 0.09,
-        "figure_scale": 1,
-        "particle_multiplier": 0,
-        "light_bias": 0.02,
-        "glow_scale": 0.8,
-        "camera_zoom_start": 1.075,
-        "camera_zoom_end": 1.06,
-        "camera_pan_x_start": 0.08,
-        "camera_pan_x_end": 0.08,
-        "camera_pan_y_start": -0.15,
-        "camera_pan_y_end": -0.15
-      }
-    },
-    {
-      "id": "scene05",
-      "palette": {
-        "sky_top": [
-          12,
-          17,
-          29
-        ],
-        "sky_bot": [
-          35,
-          44,
-          66
-        ],
-        "far": [
-          80,
-          73,
-          65
-        ],
-        "near": [
-          15,
-          18,
-          25
-        ],
-        "moon": [
-          130,
-          156,
-          204
-        ],
-        "glow": [
-          244,
-          177,
-          79
-        ]
-      },
-      "motif": "The flame gathers strength without a cut.",
-      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
-      "params": {
-        "candle_strength": 0.32,
-        "chapel_warmth": 0.24,
-        "figure_scale": 1,
-        "particle_multiplier": 0,
-        "light_bias": 0.02,
-        "glow_scale": 1.1,
-        "camera_zoom_start": 1.06,
-        "camera_zoom_end": 1.045,
-        "camera_pan_x_start": 0.08,
-        "camera_pan_x_end": 0.08,
-        "camera_pan_y_start": -0.15,
-        "camera_pan_y_end": -0.15
-      }
-    },
-    {
-      "id": "scene06",
-      "palette": {
-        "sky_top": [
-          12,
-          17,
-          29
-        ],
-        "sky_bot": [
-          35,
-          44,
-          66
-        ],
-        "far": [
-          125,
-          88,
-          42
-        ],
-        "near": [
-          15,
-          18,
-          25
-        ],
-        "moon": [
-          130,
-          156,
-          204
-        ],
-        "glow": [
-          244,
-          177,
-          79
-        ]
-      },
-      "motif": "A firm flame and broad golden light answer the darkness.",
-      "camera": "Continuous restrained whole-world camera; architecture and flame share the transform.",
-      "params": {
-        "candle_strength": 0.93,
-        "chapel_warmth": 0.94,
-        "figure_scale": 1,
-        "particle_multiplier": 0,
-        "light_bias": 0.02,
-        "glow_scale": 1.1,
-        "camera_zoom_start": 1.045,
-        "camera_zoom_end": 1.0,
-        "camera_pan_x_start": 0.08,
-        "camera_pan_x_end": 0.08,
-        "camera_pan_y_start": -0.15,
-        "camera_pan_y_end": -0.15
+        "figure_scale": 1.0,
+        "particle_multiplier": 1.0,
+        "light_bias": 0.0,
+        "glow_scale": 1.0,
+        "camera_zoom_start": 1.07,
+        "camera_zoom_end": 1.07,
+        "camera_pan_x_start": 0.0,
+        "camera_pan_x_end": 0.0,
+        "camera_pan_y_start": 0.0,
+        "camera_pan_y_end": 0.0
       }
     }
   ],
-  "renderer": "last-candle-v1"
+  "renderer": "candle-rift-v1"
 }
