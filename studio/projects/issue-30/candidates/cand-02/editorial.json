@@ -1,18 +1,18 @@
 {
   "schema_version": "2.0",
   "round": 2,
-  "creator_id": "codex-studio-issue30-clearing-20261101",
+  "creator_id": "codex-studio-issue30-cloud-recession-20261102",
   "input_sha256": {
-    "project.json": "cfe04d7e3b5a4d9f18bed9597b31c0645cdb49c01391aac5d46e639d776a85ac",
-    "brief.json": "b44fe7d0701e02ce30ddb4986be3e4b29da9f20fc9f1d41ceaadc2cc1f34a279",
-    "storyboard.json": "c8176db1fdf328e4ebe469e176f4461eda03ee4631e8925c79f6cd386b197846"
+    "project.json": "586a9702fb71b878efd650bf3690b55ab6401322a5a69966002e89da0d41ed61",
+    "brief.json": "04597fc72283e536e64ff55328db5b1dba2127e909c14589fbca826e9a03aab7",
+    "storyboard.json": "14f2fe5133cf55bb8a9bb5f56e3bc75c7cb6a961c018624a6bc7c9782896cde2"
   },
   "media_sha256": {
-    "video.mp4": "0888f16c74070df567ea7d4ae955a20c6f922567c22ff865a72209b2f54a731b",
+    "video.mp4": "a4dd6882d388da6b34579c452a95d2ccd9fad2fb4a6d373ea9b50ceb0321e417",
     "contact-sheet.jpg": "3ccc7d7f89f40eea5dda80ccf21b377ad2467144334d7aebcf4450e984f87efc",
     "timeline.html": "a54d412f00390dc1303001a6d940aeb84fcdbe5b8c859d6c26170fd720259b96"
   },
-  "qa_sha256": "6e7ef3432884998a60e420aeb75414fa584fcb832e081985fe93935b0e352bec",
+  "qa_sha256": "4f9849cccd114fa8b709a841ac55f09fbd2321e79160aa1d9d7134e36b14264e",
   "qa": {
     "checks": [
       {
@@ -818,9 +818,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.391,
-            "patch_mae_max": 3.338,
-            "patch_mae_mean": 2.392
+            "global_mae": 2.394,
+            "patch_mae_max": 3.324,
+            "patch_mae_mean": 2.395
           },
           {
             "frame": 2497,
@@ -828,9 +828,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.511,
-            "patch_mae_max": 3.409,
-            "patch_mae_mean": 2.512
+            "global_mae": 2.515,
+            "patch_mae_max": 3.417,
+            "patch_mae_mean": 2.516
           },
           {
             "frame": 2498,
@@ -838,9 +838,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.566,
-            "patch_mae_max": 3.495,
-            "patch_mae_mean": 2.567
+            "global_mae": 2.573,
+            "patch_mae_max": 3.499,
+            "patch_mae_mean": 2.574
           },
           {
             "frame": 2524,
@@ -848,9 +848,9 @@
               "semantic_landmark_pre"
             ],
             "ok": true,
-            "global_mae": 2.278,
-            "patch_mae_max": 3.246,
-            "patch_mae_mean": 2.28
+            "global_mae": 2.328,
+            "patch_mae_max": 3.284,
+            "patch_mae_mean": 2.329
           },
           {
             "frame": 2525,
@@ -858,9 +858,9 @@
               "semantic_landmark"
             ],
             "ok": true,
-            "global_mae": 2.288,
-            "patch_mae_max": 3.258,
-            "patch_mae_mean": 2.29,
+            "global_mae": 2.357,
+            "patch_mae_max": 3.301,
+            "patch_mae_mean": 2.358,
             "transition_timing": {
               "ok": true,
               "boundary": 2525,
@@ -928,16 +928,16 @@
                 2555
               ],
               "best_offset_frames": 0,
-              "relative_margin": 12.71646,
-              "hypothesis_separation_rms": 0.614603,
-              "fit_rms": 0.171108,
-              "separation_ratio": 3.5919,
+              "relative_margin": 14.78572,
+              "hypothesis_separation_rms": 0.621896,
+              "fit_rms": 0.161591,
+              "separation_ratio": 3.84859,
               "scores": {
-                "-2": 1.017406,
-                "-1": 0.410267,
-                "0": 0.029278,
-                "1": 0.40159,
-                "2": 1.029903
+                "-2": 0.809277,
+                "-1": 0.412189,
+                "0": 0.026111,
+                "1": 0.415533,
+                "2": 0.831107
               },
               "reason": "aligned"
             }
@@ -948,9 +948,9 @@
               "semantic_landmark_post"
             ],
             "ok": true,
-            "global_mae": 2.287,
-            "patch_mae_max": 3.252,
-            "patch_mae_mean": 2.289
+            "global_mae": 2.358,
+            "patch_mae_max": 3.291,
+            "patch_mae_mean": 2.359
           },
           {
             "frame": 2536,
@@ -958,9 +958,9 @@
               "interior"
             ],
             "ok": true,
-            "global_mae": 2.23,
-            "patch_mae_max": 3.041,
-            "patch_mae_mean": 2.232
+            "global_mae": 2.398,
+            "patch_mae_max": 3.304,
+            "patch_mae_mean": 2.4
           },
           {
             "frame": 2733,
@@ -968,9 +968,9 @@
               "accent_pre"
             ],
             "ok": true,
-            "global_mae": 2.552,
-            "patch_mae_max": 3.396,
-            "patch_mae_mean": 2.553
+            "global_mae": 2.553,
+            "patch_mae_max": 3.395,
+            "patch_mae_mean": 2.554
           },
           {
             "frame": 2734,
@@ -978,9 +978,9 @@
               "accent"
             ],
             "ok": true,
-            "global_mae": 2.556,
-            "patch_mae_max": 3.418,
-            "patch_mae_mean": 2.557
+            "global_mae": 2.561,
+            "patch_mae_max": 3.397,
+            "patch_mae_mean": 2.562
           },
           {
             "frame": 2735,
@@ -988,9 +988,9 @@
               "accent_post"
             ],
             "ok": true,
-            "global_mae": 2.559,
-            "patch_mae_max": 3.418,
-            "patch_mae_mean": 2.56
+            "global_mae": 2.561,
+            "patch_mae_max": 3.428,
+            "patch_mae_mean": 2.562
           },
           {
             "frame": 2909,
@@ -1349,16 +1349,16 @@
               2555
             ],
             "best_offset_frames": 0,
-            "relative_margin": 12.71646,
-            "hypothesis_separation_rms": 0.614603,
-            "fit_rms": 0.171108,
-            "separation_ratio": 3.5919,
+            "relative_margin": 14.78572,
+            "hypothesis_separation_rms": 0.621896,
+            "fit_rms": 0.161591,
+            "separation_ratio": 3.84859,
             "scores": {
-              "-2": 1.017406,
-              "-1": 0.410267,
-              "0": 0.029278,
-              "1": 0.40159,
-              "2": 1.029903
+              "-2": 0.809277,
+              "-1": 0.412189,
+              "0": 0.026111,
+              "1": 0.415533,
+              "2": 0.831107
             },
             "reason": "aligned"
           }
@@ -1371,102 +1371,72 @@
   },
   "reviews": {
     "music": {
-      "reviewer_id": "/root/chapel_music_sync",
-      "evidence_sha256": "dda2fa4c1a9077b09f1e91bfc0706c2a52c5047eda04e46e978f397f7a470dfc",
+      "reviewer_id": "/root/cloud_recession_music",
+      "evidence_sha256": "0a75e8d951abe08b7b47009723320a6303396e664c5fdba937ac54b1aeedcf4a",
       "verdict": "pass",
       "hard_blockers": [],
-      "concerns": [
-        {
-          "id": "MUSIC-CLEARING-GROWTH-IDENTITY",
-          "note": "The final cue detects sole local tuned E7 growth consistent with the registered score context. Independent calibration reproduced acceptance of both a different sole E7 inside the search window and smooth growth of an already ringing E7 without a fresh physical strike. Thus the clearing can be bound to the computed sample but cannot be claimed to prove a physical keystrike, hand provenance or written-note identity. Retain the explicit disclosure from reviews/final-scale-dsp-review.json and the registered profile; do not describe these accepted-limit cases as rejected negatives. The actual video timing and symbolic interpretation were checked separately."
-        },
-        {
-          "id": "MUSIC-CLEARING-ACOUSTIC-PRECISION",
-          "note": "Zero encoded-effect offset verifies alignment to the deterministic renderer, while the240sample grid and centered8192sample STFT support do not establish calibrated perceptual onset accuracy. The new opening is not early relative to detected sample7974240, but exact alignment to the unheard performed arrival remains unverified. Preserve unavailable-listening and signal-support qualifications; no numeric QA waiver or timing-threshold change is requested."
-        }
-      ],
+      "concerns": [],
       "evidence": [
-        "Fresh main-binding review, not a copied engineering verdict. Recomputed the creative-input/media/QA digest from output/clearing-ending/full-round2/editorial.main-template.json (SHA256 b08f0e73bc44755153475feae5b3562d4219f8e2732c2935b65e54c6cee63757): dda2fa4c1a9077b09f1e91bfc0706c2a52c5047eda04e46e978f397f7a470dfc. Independently checked the actual production input bytes under studio/projects/issue-30/candidates/cand-02/.",
-        "Production project.json SHA256 cfe04d7e3b5a4d9f18bed9597b31c0645cdb49c01391aac5d46e639d776a85ac now names engine 599d36630855a08664aa11e6005994b8b24f0f04. Compared draft and production JSON: only project.engine_sha changes. brief.json raw SHA256 b44fe7d0701e02ce30ddb4986be3e4b29da9f20fc9f1d41ceaadc2cc1f34a279 and storyboard.json raw SHA256 c8176db1fdf328e4ebe469e176f4461eda03ee4631e8925c79f6cd386b197846 remain byte-identical.",
-        "Independently resolved origin/main to 599d36630855a08664aa11e6005994b8b24f0f04. Git tree IDs for that commit and reviewed engineering 02fb618bff507bf5800a1de0c7efa437a476c906 are both 0e8751e994d2614e21d64e64b00c445eb5d9e8ee; whole-tree Git diff is empty. The current inspected score_alignment.py, render_context.py, candle_rift.py and both score manifests equal their committed main bytes. Module SHA256 cd8a36ca11ca6dd9928949aa0948d663ffc9bad4c4a935fc9d22b786e573d010 and score-extension manifest SHA256 ae0022553a22329b19d905ab12d7fe3c2c93cc0a9fc2837ef516728fe9020333 remain unchanged.",
-        "The production candidate exactly equals analysis/plan-context.json candidate cand-02 (context SHA256 e6d3148a76a7d72967443eb909b6e947cbf98934376e9aed0703f838ae73ced0). Its complete score_alignment equals plan/provenance and the reference equals the live validated registered loader. Source metadata still agrees on attachment SHA256 c0dbf332eecbc506a8768f370da7ca224232d0aa651310cb3902baa6d6fe959d and decoded-source SHA256 4239aa8cc50abb85c756ad34f254602f7c084559baf83357475ac72909f6f2cf; no source audio was opened to perform these checks.",
-        "Freshly hashed identical actual media: video.mp4 0888f16c74070df567ea7d4ae955a20c6f922567c22ff865a72209b2f54a731b; contact-sheet.jpg 3ccc7d7f89f40eea5dda80ccf21b377ad2467144334d7aebcf4450e984f87efc; timeline.html a54d412f00390dc1303001a6d940aeb84fcdbe5b8c859d6c26170fd720259b96. QA remains 6e7ef3432884998a60e420aeb75414fa584fcb832e081985fe93935b0e352bec, plan remains 09dd134de5a366b4850ab69f04cca4c1123ff1e28a45ef2e66b6bf68ca9d3e7a and provenance remains 6cf8e4aa2e506f5b2f1407316ae6cb89e5caa0b24449cf05f0733b3f64dcb518. Main-binding-proof.json SHA256 64bd215a428c872955a9bf8aaac273763840d7e2e76b19ca4f3412ab26cafb7e agrees with these independently verified values.",
-        "Rechecked native arithmetic: source 48k, 9011200 samples; crop [3934835,9010035) is 5075200 samples and 3172 frames at 30fps. All four event positions remain 5446800/944, 6554160/1637, 6701520/1729 and 7974240/containing-frame2524. The first three retain the established containing-frame policy. The final plan event explicitly activates at frame2525, source7974835, 595 samples after the detected growth sample, with 647 frames remaining. No later scene cut or manual cue adjustment was introduced.",
-        "Freshly decoded video-only frames 943/944/945, 1636/1637/1638, 1728/1729/1730, 2524/2525/2526 and 3171 using -map0:v:0 -an -sn -dn. All 13 freshly decoded JPEG files are byte-identical to the corresponding previously inspected files; fresh frame2525 was also visually rechecked. Prior observations of the exact same video bytes are recorded in output/clearing-ending/reviews/full-round2-music.engineering.json, SHA256 ebc07e9008c88458a7f30b6021c1ffe8bb7fb5e42286da10ae8714b77979a961: 112 inspected frames across the whole clip, dense cues and complete visual ending. No repeated full playback or audition is claimed.",
-        "On those identical observed bytes, the tiny candle grows with the native-RMS control after the major cue, the octave transition breaks the church into fragments, and the fast-coda world retains its fire/rock/storm continuity. Frame2524 has intact storm; frame2525 starts the bright opening, subsequent inspected frames open blue/golden sky, and the cleared sky persists through final frame3171. Musical meaning comes from owner direction and the registered score, not emotional inference from energy. This reuse is justified by actual media identity, with fresh native-cue witnesses.",
-        "Unchanged exact QA record and embedded template agree: all 11 checks pass; encoded audio lag at full/head/mid/tail is 0, drift is 0, and original PCM crop max_abs_diff is 0. Encoded-effect offsets at 944/1637/1729/2525 are all 0, separation ratios are 5.52337/9.27505/4.44077/3.5919, and maximum patch MAE is 4.188 below 5. The earlier independent video-only frame count is 3172, H.264 540x960 at 30fps; AAC metadata is 48k mono. This verifies the preserved measured evidence, not bit-identical AAC or heard cadence quality.",
-        "The separate scoped DSP review output/clearing-ending/reviews/final-scale-dsp-review.json, SHA256 b2a128a75f14da7830a3e83b84aa4343ca47b1b14959650bc53826bdc01e000f, still applies because numerical code, score facts and results are unchanged. It accepts sample7974240 as bounded unique tuned pitch-growth evidence, with observed in-window identity and ringing-growth limitations. The first three complete event dictionaries remain the same previously checked production results. No numerical rerun or new detector claim is invented for this metadata-only rebind."
+        "Fresh main-binding review for final shared repair2. Read-only remote git ls-remote confirms main at5a864e3d139968e3a05a8ec908a59734755d773f; local origin/main agrees. Main whole tree87dc27f3d6ea2cf5ff7133b017b87a8f96c4edec exactly equals reviewed engineering commit ed8a1e54e3c62bbb1f2059db8aad5cf15ca28590. Independently compared production trees studio,p0,assets,scripts,.github/studio and requirements-p0.txt to actual-render engine b4bdf42e27cdf5ae3002f0d70bea6b82c8c61378: all identical. The entire b4-to-main file diff contains only the test module, two legacy fixture files and studio-ci.yml test invocation adding --maxfail=1. Renderer SHA256 remains88ae4752d95da976bc2b3a28bd399422aa69d1f71387bcc178882e8455edb5c9; score_alignment.py remainscd8a36ca11ca6dd9928949aa0948d663ffc9bad4c4a935fc9d22b786e573d010.",
+        "Independently rehashed the production candidate three JSON inputs in studio/projects/issue-30/candidates/cand-02 and recomputed editorial.main-template.json evidence digest from actual input/media/QA maps. New binding0a75e8d951abe08b7b47009723320a6303396e664c5fdba937ac54b1aeedcf4a is exact. Current project binds main5a864e3 and hash586a9702fb71b878efd650bf3690b55ab6401322a5a69966002e89da0d41ed61; brief04597fc72283e536e64ff55328db5b1dba2127e909c14589fbca826e9a03aab7 and storyboard14f2fe5133cf55bb8a9bb5f56e3bc75c7cb6a961c018624a6bc7c9782896cde2 are byte-identical to the observed engineering inputs. The previous8734b52e engineering digest was not reused.",
+        "Rehashed the actual current video,contact-sheet,timeline,QA and every full-round2/hashes.json entry; all agree with the main template and saved bundle. The observed film remains exactly SHA256 a4dd6882d388da6b34579c452a95d2ccd9fad2fb4a6d373ea9b50ceb0321e417 and QA4f9849cccd114fa8b709a841ac55f09fbd2321e79160aa1d9d7134e36b14264e. The original observed20frame pixel manifest points to this same video hash. This is a fresh input/code/media binding audit of the same film, not another full watch or a new render.",
+        "Ran validate_dsp_candidate again using current production brief/project against fresh canonical analysis context. It passes exact candidate equality and profile/source binding. Source identifier remains4239aa8cc50abb85c756ad34f254602f7c084559baf83357475ac72909f6f2cf in context,brief and actual provenance. Source excerpt[3934835,9010035) at48000Hz is5075200samples, exactly3172frames at30fps. Retained landmarks5446800/944,6554160/1637,6701520/1729 and7974240/containing2524 are unchanged. The final cue activates2525 at boundary7974835,595samples after the registered event, and finishes2705 inside scene03. This integer precision is rendering correspondence, not certified acoustic keystrike precision.",
+        "Re-read the actual finalized current qa.json rather than inferring a pass from old editorial text: all11 required named checks pass. The canonical tool record reports exact PCM crop(max_abs_diff0), full/head/mid/tail lag0, drift0 and level difference-0.011dB. All52 actual spatial probes satisfy unchanged global8/patch5 limits(maxpatch4.188); mandatory offsets944/1637/1729/2525 are all0, with separation ratios5.52337,9.27505,4.44077,3.84859. Clearing margin14.78572 and ratio3.84859 meet the unchanged0.1/2.0 gate. No previous failure or synthetic calibration pass substitutes for this actual record.",
+        "Observed actual media scope retained exactly from this reviewer's independent round2 video-only decode:20 native samples943/944/945/979;1636/1637/1638/1655;1728/1729/1730/1749;2524/2525/2526/2548;2615/2705/3117/3171. Small candle persists around944, larger attached flame is present979, collapse fragments are visible1655, and storm terrain is established before internal fast cue1729. Storm is intact2524, irregular blue/golden gaps appear2525/2526 and develop2548/2615, and clear sky remains2705/3117/3171 above existing terrain. Independent comparisons of these20 decoded pixels to production-identical renderer with nonaudio-derived controls passed(maxpatch3.992). There was no second playback or extra movement observation during this rebinding.",
+        "Repair2 strict native calibration remains bound to production-identical renderer: normal clearing offset0/ratio6.79065 and spatial maxpatch4.183, intentional late1 rejects atoffset1, missing clearing rejects. This reviewer independently verified report/video hashes and recomputed decoded normal frame299/300/301/479 spatial metrics. Actual-frame QA above separately establishes current-film correspondence. Initial0 synthetic ratio0.92724 and actual round1 ratio1.99187 remain preserved failures, not rounded or waived.",
+        "What works: fresh main/input equivalence preserves the exact source/DSP and rendered evidence already observed, with current actual QA proving encoded correspondence under unchanged limits. Strongest counterargument: observable frame alignment does not prove that the bounded E7-growth detector selected the musically intended physical arrival, or that the stronger initial opening has the right perceptual weight. Without listening those judgments remain unavailable. This mechanical pass is not an assertion of musical naturalness or an editorial decision to publish."
       ],
       "listening": "unavailable",
       "limitations": [
-        "No original MP3/full WAV, reconstructed source or audio payload was accessed or uploaded. No listening was performed. Source identity was checked through matching recorded metadata; original preservation and encoded sync rely on the exact bound QA. Musical naturalness, audible phrase completeness, the perceived ending and perceptual prominence remain unverified.",
-        "The prior actual-media review inspected 112 extracted frames/contact sheets, not continuous complete full-speed playback. This turn adds 13 fresh video-only cue/ending witnesses with identical decoded bytes, plus fresh Git/input/media/QA binding checks. It does not claim a repeated continuous viewing.",
-        "The selected symbolic event is terminal E7 of the last long strict ascending scale at q1860/m621 beat1. Later rising/broken figuration continues. It is not acoustic note-off or a later settling chord. The detector can accept a different sole E7 inside the search window or smooth growth of an already ringing E7; it does not certify physical keystrike, hand provenance or written identity. Centered STFT support is not a calibrated accuracy guarantee.",
-        "Trusted-main tree, current raw inputs and the new local evidence binding have been verified. Actions reproduction/receipt, owner adoption and publication remain separate pending gates; this review does not approve them.",
-        "Writes were limited to this new reviewer report and fresh frames in the existing private reviewer scratch folder. No implementation, candidate input, source audio, media, QA or GitHub state was changed."
+        "No source recording, waveform, temporary audio file or WAV was opened. Source identity, crop and audio lag statements are based on canonical tool records and matching metadata/hashes; this reviewer did not independently recompute acoustic correlation.",
+        "No listening. Musical naturalness, audible excerpt entrance/exit, perceptual onset precision and whether the initial sky opening competes with the performance remain unverified.",
+        "Final cue denotes sole local tuned E7 growth consistent with registered score context. Another sole E7 in the bounded window or modulated ringing E7 may qualify; physical keystrike, hand provenance and written-event identity are not certified. Quantization/window support and exact sample/frame arithmetic are not acoustic accuracy guarantees.",
+        "This fresh main binding reuses only the exact same already-observed actual video hash. Visual observation remains the20 listed native samples; no second full watch, uninterrupted full-speed playback or complete continuous-motion observation is claimed.",
+        "Full transition computation was not rerun in this review. Current hashed records/gate logic, synthetic counterexamples and independent actual decoded pixel checks were inspected.",
+        "No CI or mandatory Actions gate success is claimed. This review is not the root editor's final adjudication, production PR readiness, adoption approval or publication authorization."
       ]
     },
     "visual": {
-      "reviewer_id": "/root/chapel_visual_viewer",
-      "evidence_sha256": "dda2fa4c1a9077b09f1e91bfc0706c2a52c5047eda04e46e978f397f7a470dfc",
+      "reviewer_id": "codex:/root/cloud_final_visual:2026-11-02:full-round2:main-binding",
+      "evidence_sha256": "0a75e8d951abe08b7b47009723320a6303396e664c5fdba937ac54b1aeedcf4a",
       "verdict": "pass",
       "hard_blockers": [],
       "concerns": [
         {
-          "id": "CLEAR-V02",
-          "note": "Observation: actual full-encode [929,989), [1260,1320) and native 1290 retain one wick-attached flame, with visible changes in size/glow, readable wax and metal holder. Its tall, narrow, nearly symmetric cone still resembles a stylized light spike more than an irregular natural flame. This is a material preference, not an attachment/readability or observed owner-constraint defect. Minimum resolution: editor explicitly accepts the soft stylization; no further artistic repair requested after final budget 2. These fresh full-media observations close the integration evidence gap, while crescendo correspondence remains unverified by ear."
-        },
-        {
-          "id": "CLEAR-V03",
-          "note": "Observation: actual full-encode 2525 introduces a finite soft gold opening, which grows radially into blue/golden sky across the completely inspected clearing 2525..2705 and stays clear through 3171. The route and single skyline survive the whole transition. This is a legible iris-like revelation rather than literal cloud-mass advection; its first-cue disk and radial character may feel more graphic than naturalistic cloud parting. This remains an artistic interpretation preference, not a demonstrated technical or owner-constraint blocker. Minimum resolution: editor explicitly accepts or withholds this interpretation; no further automatic artistic iteration or generic extra effect requested. Complete actual clearing/hold evidence was examined, without claiming real-time musical naturalness."
+          "id": "V-FRESH-PLANAR-COLLAPSE",
+          "note": "Observation: in consecutive frames1630–1659 and every-third-frame1660–1705, especially native1650,1665,1680, the chapel and candle image split together into thin, straight-edged, rotating planes. Impact: the passage clearly ruptures and exposes the violent world, but its physical reading is closer to a shattered picture than falling architectural masonry; this is the strongest visual counterargument to the requested church collapse. It remains an expressive concern, because falling fragments, exposure of the lava route, and transition into the new world are visibly present. Minimum remedy if physical masonry becomes essential in a later authorized request: keep the candle coherent while restricting fractures to architecture and giving the nearest fragments modest thickness/back-face shading; this would require renderer work, not a metadata edit. Confirmation: review consecutive encoded frames around1637–1705 at native resolution and phone size, showing recognizable architectural fragments dropping away without obscuring the lava route. The editor may accept the current stylized rupture on the observed evidence; no new repair is assumed here."
         }
       ],
       "evidence": [
-        "Fresh main binding: studio/projects/issue-30/candidates/cand-02 project.json/brief.json/storyboard.json raw hashes independently match output/clearing-ending/full-round2/editorial.main-template.json. Only the literal project.engine_sha changes from reviewed 02fb618bff507bf5800a1de0c7efa437a476c906 to trusted 599d36630855a08664aa11e6005994b8b24f0f04; brief/storyboard raw bytes remain identical to the engineering draft. Current source editorial.json equals the pending main template byte-for-byte.",
-        "Independently recomputed canonical input_sha256/media_sha256/qa_sha256 digest dda2fa4c1a9077b09f1e91bfc0706c2a52c5047eda04e46e978f397f7a470dfc. This is a new report, not a replacement of engineering 357c116a5d292680154f1ee690a459b3b4f8ced87c6c87d9cca4638e44fbc57e. The engineering report remains preserved unchanged with SHA256 419a2e9da75507b7ce8f3296d03b3b4a9aee4eb779506abe256d472f9a1a2c57.",
-        "Verified Git refs/remotes/origin/main=599d36630855a08664aa11e6005994b8b24f0f04. Both that commit and reviewed 02fb618bff507bf5800a1de0c7efa437a476c906 resolve to the identical whole Git tree 0e8751e994d2614e21d64e64b00c445eb5d9e8ee; their entire tracked diff is empty. The historical local branch named main was not mistaken for the trusted reference. Independently compared ten actual renderer/analyzer/dependency/registered asset files in both worktrees to trusted-main blobs, including candle_rift.py, score_alignment.py, requirements, current manifest, sky-mask, sky texture, mask recipe/guide and original world/candle textures; all match.",
-        "Read output/clearing-ending/full-round2/main-binding-proof.json SHA256 64bd215a428c872955a9bf8aaac273763840d7e2e76b19ca4f3412ab26cafb7e. Independently checked its engine/tree/input/media/QA/digest assertions against Git and actual files. It agrees with the new template; it was not substituted for those checks.",
-        "Actual media and QA independently rehashed unchanged: video.mp4 0888f16c74070df567ea7d4ae955a20c6f922567c22ff865a72209b2f54a731b; contact-sheet.jpg 3ccc7d7f89f40eea5dda80ccf21b377ad2467144334d7aebcf4450e984f87efc; timeline.html a54d412f00390dc1303001a6d940aeb84fcdbe5b8c859d6c26170fd720259b96; qa.json 6e7ef3432884998a60e420aeb75414fa584fcb832e081985fe93935b0e352bec. Parsed QA equals the main template and all 11 checks pass. Because actual bytes and renderer tree are identical, the actual full-encode visual observations described below remain applicable. No old verdict was applied to different media.",
-        "Fresh native binding spot checks: re-extracted and viewed actual encoded frames 1290/2525/2705/3171 at 540x960 using video-only -map 0:v:0 -an from the independently rehashed MP4. The attached soft cone flame, finite radial opening, clean completed skyline and final composition remain unchanged. This is a binding spot check, not a second full watch.",
-        "Underlying actual full-encode observation retained: 540x960,30fps,3172frames,105.733333s; actual contact sheet,37 whole-duration overview stills(every 90th0..3150 plus3171), native decoded 0/1290/1657/1682/1729/2525/2705/2930/3171, and all 1180 consecutive frames in half-open ranges [0,60),[929,989),[1260,1320),[1622,1849),[2170,2290),[2519,3172). Twenty ordered sheets at 135x240 per cell supported the sequential inspection. All frame extraction selected only the video stream and disabled audio.",
-        "The actual opening maintains a readable fragile candle in the dark nave; the enlarged flame varies size/glow while staying at the wick. Complete collapse/entry shows irregular fragments turning to dark sides/backs and falling outward/downward, revealing the storm/fire/basalt world and clearing the central route. No persistent pre-impact flame duplication or lasting shard obstruction observed in those ranges.",
-        "The world approach preserves a bright winding lava route and dark foreground cliffs, with relative foreground/distance change. The entire actual clearing and post-clear hold were inspected consecutively through 3171, including every frame in 2525..2705 and beyond. The old CLEAR-V01 ghost peaks/dark triangular collars do not recur as the opening reaches the full image. Jagged silhouettes and concave gaps remain single and clean, with no exposed black border, torn matte, lost route or forced exit flash observed.",
-        "The actual final sky remains blue/golden and spacious above the preserved basalt/lava landscape while restrained relative movement continues through the last frame. The visible owner-directed sequence is coherent. CLEAR-V02 cone-flame material and CLEAR-V03 radial/iris cloud-parting interpretation remain explicit preferences for editorial adjudication. Original-performance/coda preservation is reported by supplied QA, not independently heard by this viewer."
+        "Read AGENTS.md, README.md, .agents/skills/studio-review/SKILL.md and docs/12_CREATIVE_REVIEW_PROTOCOL.md. This is an independently delegated visual-viewer context; no prior reviewer report or completed editorial verdict was consulted. Owner wishes and draft/brief.json creative_brief supplied the intended arc; production evidence_notes were not used as proof of success.",
+        "Fresh main binding: git ls-remote origin refs/heads/main independently returned 5a864e3d139968e3a05a8ec908a59734755d773f. Its tree 87dc27f3d6ea2cf5ff7133b017b87a8f96c4edec equals engineering head ed8a1e54e3c62bbb1f2059db8aad5cf15ca28590. git diff from the originally watched b4bdf42e27cdf5ae3002f0d70bea6b82c8c61378 to main contains only studio-ci.yml and three test/fixture files; all production paths are byte-identical. Independently compared the merged-main blobs for all nine registered renderer/visual-asset paths, including studio/candle_rift.py, against local and watched-b4 bytes. Renderer SHA remains 88ae4752d95da976bc2b3a28bd399422aa69d1f71387bcc178882e8455edb5c9. No audio was opened.",
+        "Independently rehashed the current three candidate inputs under the chopin-mood-scherzo3 worktree at studio/projects/issue-30/candidates/cand-02 and actual full-round2 media/QA. They match editorial.main-template.json. project.json SHA is 586a9702fb71b878efd650bf3690b55ab6401322a5a69966002e89da0d41ed61; its only semantic change from the reviewed draft is engine_sha now pinned to merged main 5a864e3d139968e3a05a8ec908a59734755d773f. brief.json and storyboard.json bytes remain identical. Video a4dd6882d388da6b34579c452a95d2ccd9fad2fb4a6d373ea9b50ceb0321e417, contact sheet, timeline and QA 4f9849cccd114fa8b709a841ac55f09fbd2321e79160aa1d9d7134e36b14264e remain byte-identical to the actual film reviewed earlier. The freshly recomputed evidence digest is 0a75e8d951abe08b7b47009723320a6303396e664c5fdba937ac54b1aeedcf4a, rather than the previous engineering digest. Verification details are in output/cloud-recession/reviews/final-visual-fresh/main-binding-verification.json. The visual observations that follow are the earlier actual-film observations retained because these bytes and production code are unchanged; no second viewing pass is claimed.",
+        "Viewed the supplied contact-sheet.jpg for static composition, then actual decoded frame grids spanning the entire film: frames0,15,30,...,3165 and3171 at180x320 per frame. Viewed every consecutive frame0–29,940–969,1630–1659,2520–2549,2700–2729 and3142–3171. Additionally viewed every third frame1660–1759,1900–2017,2465–2522 and2550–2703. Exact extraction lists and method are saved in output/cloud-recession/reviews/final-visual-fresh/extraction-manifest.json. These are ordered frame observations, not real-time playback.",
+        "Viewed native540x960 images at frames0,944,960,1260,1637,1650,1665,1680,1729,1900,2017,2524,2525,2526,2545,2565,2590,2625,2649,2705,3000,3171. At phone-size grid scale, the candle body, wick and tiny initial light remain readable against the dark nave. Large empty nave space and cool background make the isolated weak light the subject. Native0 and944 show a nearly extinguished point;960 and1260 show a substantially taller flame and brighter attached glow. The film develops the same subject instead of cutting on each attack.",
+        "The ordered collapse sequence develops narrow fractures into rotating falling fragments, progressively exposes the fiery canyon, and clears the view by the fast-passage world section. Native1729,1900,2017 and coarse full-film observations show the central lava route retained while near rock silhouettes move and enlarge more than the distant skyline. This supplies a legible modest traversal rather than a succession of unrelated stills. Fire-orange lava, dark basalt and dense blue storm clouds make the violent world distinct from the opening while carrying its warm light motif forward. The planar material reading is recorded separately as V-FRESH-PLANAR-COLLAPSE.",
+        "Actual consecutive2520–2524 remain storm-covered. At2525 a visible irregular blue/gold fissure appears; native2525 and2526 preserve the existing rock silhouettes. Consecutive2525–2549 and every-third-frame2550–2703 show multiple cloud banks receding through irregular gaps while retaining their source cloud detail. The view opens progressively rather than replacing the whole terrain. Native2545,2565,2590,2625,2649,2705 show increasing blue/golden sky, isolated residual cloud pieces diminishing, and uninterrupted lava/rock geometry. At2705 the storm veil is gone and the ending is an open blue sky with illuminated high clouds, not a blank fill.",
+        "Full-film coarse coverage2700–3171 plus every consecutive2700–2729 and3142–3171 shows the open-sky ending retained, with the lava route and foreground rocks still recognizable. The final frame is a complete composition without an observed black frame, cut-back to the storm, exposed matte seam, or sudden terrain substitution. What changes is the light/world openness; what remains is the warm light and central route, giving the sequence a readable weak-light→expansion→rupture/traversal→release arc. The long quiet opening and final hold are intentional-looking spaces for the performance, although real-time fatigue and musical pacing are outside this inspection method.",
+        "Read the completed actual qa.json and verified its bytes SHA4f9849cccd114fa8b709a841ac55f09fbd2321e79160aa1d9d7134e36b14264e against the template; all11 required check names are present and pass. The rendered-frame transition checks report offset0 at944,1637,1729,2525, with respective separation ratios5.52337,9.27505,4.44077,3.84859 against unchanged minimum2.0. This is evidence of the reported encoded QA result, not a substitute for aesthetic observations or a claim to have rerun audio QA. Details of independent hash verification are in output/cloud-recession/reviews/final-visual-fresh/engineering-binding-verification.json."
       ],
       "listening": "not_applicable",
       "limitations": [
-        "This report is for the exact new trusted-main input binding and unchanged actual media identified by digest dda2fa4c1a9077b09f1e91bfc0706c2a52c5047eda04e46e978f397f7a470dfc. The production inputs are local candidate files; no production Actions reproduction/receipt, owner adoption, PR approval/merge or publication is claimed. Those remain separate gates.",
-        "No second full watch or uninterrupted real-time playback is claimed. Original full-encode observations are reused only after fresh byte/tree/input identity checks; four native frames were freshly spot-checked for the main binding. Motion judgments remain based on ordered decoded frames, not real-time viewing.",
-        "No audio listening or complete source-recording/WAV/MP3 access. The rendered MP4 audio stream was not decoded. Heard crescendo correspondence, strict musical-event identity, original-recording endpoint, musical naturalness and whole-work audio/visual pacing were not independently certified by ear. Supplied samples/frames and owner emotional imagery are timing metadata/artistic direction, not emotion detected by this viewer.",
-        "All 3172 video frames were decoded during the original full review, but only the listed 1180 consecutive frames,37 overview stills and nine original native images were visually inspected then. The complete collapse and clearing/final-hold spans were inspected as consecutive frames; intervening unobserved portions were not continuously watched. Four new native binding spots do not expand this into an all-frame/full-real-time review.",
-        "No new source DSP or full runtime render was run by this viewer during metadata rebinding. Entire Git-tree equality, raw input comparison, current relevant runtime/asset bytes, unchanged actual video/QA and fresh native samples support the observation transfer. This is not independent execution evidence for a future production Actions run.",
-        "Initial plus two substantive artistic repairs remain exhausted for the same explicit owner ending request. CLEAR-V02/V03 require root editorial resolution; no automatic additional artistic iteration, budget reset or mandatory-QA waiver is implied.",
-        "No source/input/candidate/media or GitHub mutation. The engineering report is preserved byte-for-byte. Only this new own report and video-only native binding spots in the existing review-scratch folder were written; references are repository-relative paths or stable hashes."
+        "No audio source, WAV, temporary decoded audio or waveform was opened or supplied to a model, and no listening was performed. This visual review does not establish musical naturalness, phrase suitability, performed mode, physical keystrike identity, or perceptual audiovisual synchrony; event names are supplied musical intent and positions are the frozen plan coordinates.",
+        "Motion was inspected as ordered decoded frames with the exact consecutive ranges and every-third/15th-frame samples listed above. I did not perform real-time playback, listen through the film, or visually inspect every frame of the105.733333s film; transient defects between unsampled frames and real-time viewing fatigue remain unassessed.",
+        "No comparable recent adopted film was supplied to this independent context, so cross-work motif/composition reuse was not verified.",
+        "This visual review now binds merged main 5a864e3d139968e3a05a8ec908a59734755d773f, the current three candidate inputs, and the unchanged actual full-round2 media/QA through a freshly recomputed digest. The rebind did not involve a second playback or image-viewing pass. Remote CI/required Actions gate completion was not independently reviewed in this visual role; visual pass does not declare those gates green, authorize changing Draft status, or replace the editor/owner decisions."
       ]
     }
   },
   "decision": {
-    "editor_id": "codex-editor-issue30-clearing-20261101",
-    "verdict": "stop",
-    "rationale": "Final artistic repair2 stops after the required Actions motion preflight failed for reviewed head ee269a7f0d712afd020195de78cf020dc2f9a48a. Run41364506623 on trusted main599d36630855a08664aa11e6005994b8b24f0f04 passed source/fresh-DSP guards and still preflight, then rejected the smooth oval/arched clearing and broad gray feathering in native encoded frames2548/2578 as a pasted-in sky boundary. The verified history artifact13105864871 has published/archive SHA256abb08bbd0f89f2e5baf4002c0aa4b54470f6e2b146b140643fae3d5edd7f2da0; original v1/motion/review.json SHA2563d93cb9030c0ac5b2c2fe34b4c55ad2283ba89e9c48b991ebe39db96ef9bbaa4. Local full QA and independent full-role passes remain factual, but do not waive this mandatory gate. The Actions public plan equals the local plan; native stills1290/3171 are pixel-identical, while encoded preview pixels differ slightly. The visible oval is present in the actual verified Actions evidence. Full Actions rendering/final review and an eligible candidate artifact/receipt were not produced. CLEAR-V03 is left unresolved at this stop. Initial0 plus two shared substantive artistic repairs for the explicit ending request are exhausted; no third repair or budget reset is performed. Issue30/PR33 stay open, PR33Draft; earlier request stops remain preserved.",
+    "editor_id": "codex-editor-issue30-cloud-recession-20261102",
+    "verdict": "ready",
+    "rationale": "Final shared repair2 is locally ready for required Actions reproduction and owner review. All11 native full-encode QA checks pass, with exact PCM crop, zero measured audio lag/drift, four zero rendered-effect offsets and unchanged strict thresholds. Independent music/sync and a fresh-context visual reviewer inspected the actual media and freshly verified this trusted-main binding. Source-cloud recession replaces the rejected oval and broad gray feathering; the native terrain matte preserves the rock/lava route. The stronger initial fissure and small diminishing cloud remnants remain intentional stage expression choices. Listening and uninterrupted real-time playback are unavailable, and detector identity/precision limits remain explicit. This new explicit2026-11-02 request used initial0 plus two shared substantive repairs; prior failed evidence is retained. This local ready decision does not waive mandatory Actions gates, claim owner adoption or authorize publication.",
     "resolutions": [
       {
-        "role": "music",
-        "concern_id": "MUSIC-CLEARING-GROWTH-IDENTITY",
-        "action": "accept",
-        "reason": "Accept the bounded score-guided pitch-growth cue for this reviewable film while retaining its documented ringing/inside-window identity limits. The owner-requested symbolic event is separate from the measured local growth; no physical key-strike, hand or exact written-identity guarantee is claimed."
-      },
-      {
-        "role": "music",
-        "concern_id": "MUSIC-CLEARING-ACOUSTIC-PRECISION",
-        "action": "accept",
-        "reason": "Retain the native sample/frame proof and unavailable-listening limitation. Zero encoded-effect offset measures renderer correspondence; STFT support and the native grid do not establish perceptual onset accuracy. All numerical QA gates remain unchanged and pass."
-      },
-      {
         "role": "visual",
-        "concern_id": "CLEAR-V02",
+        "concern_id": "V-FRESH-PLANAR-COLLAPSE",
         "action": "accept",
-        "reason": "Accept the softly luminous, stylized flame. Its wick attachment, cast light, height/tip variation and performed-envelope response remain readable in the actual full media; the narrow cone supports the restrained painted setting."
+        "reason": "Accept the stylized planar rupture as the fantasy collapse of the chapel image into the new world. Actual turning/falling fragments expose the central lava route at the score-guided octave passage and leave a readable traversal. This is not described as physically simulated architectural masonry. The current request improves cloud compositing while retaining this established narrative, and no mandatory visual blocker was observed."
       }
     ]
   }

@@ -6107,14 +6107,14 @@
       },
       {
         "scene_id": "scene03",
-        "direction": "At both-hands octaves, turn and drop stone fragments to expose the fire, basalt and storm world; enter it at the fast coda. After the final ascending scale, part the clouds toward an open blue and golden ending.",
+        "direction": "At both-hands octaves, turn and drop stone fragments to expose the fire, basalt and storm world; enter it at the fast coda. After the final ascending scale, cloud banks recede in irregular detailed gaps toward the open blue and golden ending.",
         "composition": "Preserve the central lava route and the original rock silhouettes as the sky opens.",
         "palette_intent": "Storm blue and incandescent lava give way to spacious pale blue and warm golden sky."
       }
     ],
-    "renderer_constraints": "Use registered candle-clearing-v1 with chopin-scherzo3-coda-clearing-v1. Keep the original performance and native source samples. The final growth cue activates at the first frame boundary at or after its sample. No manual recording seconds, fixed BPM, per-note cuts or generated audio.",
-    "evidence_notes": "New explicit owner ending request in Codex chat on 2026-11-01; final repair2 after initial ghost peaks and repair1 skyline collars. A registered native matte resolved the still-stage blocker. The final long ascending scale reaches RH E7 at score q1860/m621 beat1; clouds begin opening after the detected native-sample arrival and clear through the ending. This is not acoustic note-off. Original performance preserved; no manual recording timestamps. Previous stopped requests remain in Git history and Actions evidence.",
+    "renderer_constraints": "Use registered candle-clearing-v1 with chopin-scherzo3-coda-clearing-v1. Keep the original performance and native source samples. The final growth cue activates at the first frame boundary at or after its sample. Use source-cloud detail and a narrow irregular boundary, preserving original rock silhouettes. No manual recording seconds, fixed BPM, per-note cuts or generated audio.",
+    "evidence_notes": "New explicit owner request in Codex chat on2026-11-02: Please continue improving it a little more. Final shared repair2: initial0 failed native synthetic onset separation; repair1 passed synthetic calibration but the actual full encode remained ambiguous (1.99187 below unchanged2). A larger initial source-cloud fissure begins at the same cue, with progressive cloud recession and an unchanged endpoint. All source timing, assets, terrain matte and QA thresholds remain unchanged. No further artistic repair remains. All prior failed media, source snapshots, Git heads and Actions evidence are preserved.",
     "uncertainty": "Audio listening is unavailable. The final cue is a unique local tuned E7 growth event consistent with the registered score context; it does not certify a physical key strike or written-event identity. STFT support is not calibrated accuracy. Musical meaning, detected timing, encoded QA and aesthetics are separate. Two built-in image generations produced one active sky-only texture; a registered deterministic matte preserves the original rocks. Generation cost is unmeasured.",
-    "ending": "After the terminal ascent, the storm parts progressively to a spacious blue and gold sky. Retain the basalt and lava route as the final world opens."
+    "ending": "After the final ascent reaches its detected high point, cloud banks recede through irregular detailed gaps into open blue and golden sky. Preserve the basalt and lava route and settle into the ending."
   }
 }
