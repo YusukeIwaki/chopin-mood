@@ -270,17 +270,47 @@ def test_native_same_frame_terrain_pixels_survive_clearing_and_camera(monkeypatc
     assert np.mean(np.abs(before[~terrain].astype(float)-after[~terrain])) > 10
 
 
-def test_legacy_renderer_matches_pre_recession_pixel_baseline():
-    # Recorded from main 599d366 before changing the optional compositor.
-    # Include candle, turning/falling masonry, launch and late terrain.
-    expected={0:"5d370b027118d493720b389cd84df03a8a6fbf16ca76732f67eed8f84875f6a9",
-              85:"04ad35452a7200d84d0a257dad07f26c6f0d0dd6e7483dd201cb8b9d78bd8f39",
-              142:"9abb50efaa769e2e19b04c983fb141654c20308c10df99c5f29f663c0fb716f1",
-              185:"226533d32098e3619de397e6c4710f64e940487d51ec6ae988414f9da5375c3a",
-              239:"fd63bfa65da1c3922c0f31880bd9afb41eabc12a0c371ccf2e6f55ef72fac039"}
-    fn=reference(controls())
-    for frame,digest in expected.items():
-        assert hashlib.sha256(fn(frame).tobytes()).hexdigest() == digest
+def test_legacy_renderer_matches_pre_recession_pixel_baseline(tmp_path):
+    import platform
+    from pathlib import Path
+    from types import ModuleType
+    import PIL
+    # Cross-platform PIL/NumPy rasterization can differ. Compare the exact
+    # pre-recession provider with the current provider in the same process,
+    # retaining byte equality rather than tolerating any pixel difference.
+    fixture=Path(__file__).parent/"fixtures/candle_rift_599d366.py"
+    raw=fixture.read_bytes()
+    digest="de36f31e4dc5b24d5594781bb61924a69419a18ea9da71b63325ad61a0319dd4"
+    assert hashlib.sha256(raw).hexdigest() == digest
+    provenance=json.loads(fixture.with_suffix(".provenance.json").read_text())
+    assert provenance["source_commit"] == "599d36630855a08664aa11e6005994b8b24f0f04"
+    assert provenance["source_path"] == "studio/candle_rift.py"
+    assert provenance["sha256"] == digest
+    old=ModuleType("studio._candle_rift_pre_recession")
+    old.__package__="studio"
+    # Resolve registered assets from this clone, not the fixture directory.
+    old.__file__=candle_rift.__file__
+    exec(compile(raw,str(fixture),"exec"),old.__dict__)
+    assert old.ROOT == candle_rift.ROOT
+    before_controls=controls();after_controls=controls()
+    before_layout={"candle_rift":old.make_layout(SEED,W,H)}
+    after_layout={"candle_rift":candle_rift.make_layout(SEED,W,H)}
+    palettes=[nocturne_chapel.BASE_PALETTE]*3;params=[{}]*3
+    report={"platform":platform.system(),"architecture":platform.machine(),
+            "python":platform.python_version(),"pillow":PIL.__version__,"numpy":np.__version__,
+            "fixture_sha256":digest,"renderer_sha256":hashlib.sha256(Path(candle_rift.__file__).read_bytes()).hexdigest(),
+            "frames":[]}
+    # Candle, turning/falling masonry, launch and late terrain, including
+    # the camera and final colour/blur pass in each full draw_frame call.
+    for frame in (0,85,142,185,239):
+        before=old.draw_frame(frame,before_controls,W,H,SEED,before_layout,palettes,params)
+        after=candle_rift.draw_frame(frame,after_controls,W,H,SEED,after_layout,palettes,params)
+        equal=np.array_equal(before,after)
+        report["frames"].append({"frame":frame,"byte_equal":equal,
+            "before_sha256":hashlib.sha256(before.tobytes()).hexdigest(),
+            "after_sha256":hashlib.sha256(after.tobytes()).hexdigest()})
+        (tmp_path/"legacy-provider-comparison.json").write_text(json.dumps(report,indent=2)+"\n")
+        assert equal, f"legacy renderer pixels changed at frame {frame}"
 
 
 def test_new_world_never_affine_copies_rock_bearing_image_into_sky(monkeypatch):

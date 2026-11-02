@@ -1,0 +1,7 @@
+{
+  "source_commit": "599d36630855a08664aa11e6005994b8b24f0f04",
+  "source_path": "studio/candle_rift.py",
+  "sha256": "de36f31e4dc5b24d5594781bb61924a69419a18ea9da71b63325ad61a0319dd4",
+  "purpose": "Immutable pre-recession provider oracle for same-environment byte-exact legacy renderer comparison. Test-only; no runtime Git/history/network access.",
+  "asset_resolution": "Loaded as an isolated studio submodule with __file__ pointing to the current studio/candle_rift.py so registered assets and shared helpers resolve from the clone."
+}
