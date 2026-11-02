@@ -1,0 +1,1431 @@
+{
+  "schema_version": "2.0",
+  "round": 1,
+  "creator_id": "codex-studio-issue30-cloud-wisps-20261102-0550",
+  "input_sha256": {
+    "project.json": "ca8d838d65a5ad228bad0de469e3d327c857c05c09fc683d4dc39eeb2e0f0ac9",
+    "brief.json": "930d01189a9cff9ba2de580f8314ba2848325928da3a61012a8aab7f43ba0d03",
+    "storyboard.json": "01d5ac9e736ff207f20854822f2bd7303b28139240e4f32e9e013e54ac3fc1c9"
+  },
+  "media_sha256": {
+    "video.mp4": "a01d357ba91036f1104f87071be711b5623013e544365f98b825f33c13562de9",
+    "contact-sheet.jpg": "3ccc7d7f89f40eea5dda80ccf21b377ad2467144334d7aebcf4450e984f87efc",
+    "timeline.html": "a54d412f00390dc1303001a6d940aeb84fcdbe5b8c859d6c26170fd720259b96"
+  },
+  "qa_sha256": "794232b713e62b9fa12f200f58a4e0667d590d2fbe238e4ac06a435a55bdda04",
+  "qa": {
+    "checks": [
+      {
+        "name": "studio:stream_kinds",
+        "pass": true,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "w": 540,
+        "h": 960
+      },
+      {
+        "name": "studio:frame_count",
+        "pass": true,
+        "nb_read_frames": 3172,
+        "expected": 3172
+      },
+      {
+        "name": "studio:video_stream",
+        "pass": true,
+        "start_time": 0.0,
+        "duration": 105.7333,
+        "expected_duration": 105.7333,
+        "start_tol_1_frame": 0.033333,
+        "dur_tol_frames": 1.5
+      },
+      {
+        "name": "studio:audio_stream",
+        "pass": true,
+        "start_time": 0.0,
+        "duration": 105.733,
+        "expected_duration": 105.7333,
+        "start_tol_1_frame": 0.033333,
+        "dur_tol_frames": 1.5
+      },
+      {
+        "name": "studio:audio_sync",
+        "pass": true,
+        "verdict": "measured",
+        "lag_pass_samples": 1600,
+        "search_samples": 6400,
+        "full": {
+          "lag_samples": 0,
+          "peak_corr": 1.0,
+          "level_diff_db": -0.011,
+          "ref_rms": 0.018774,
+          "dec_rms": 0.01875
+        },
+        "segments": {
+          "head": {
+            "lag_samples": 0,
+            "peak_corr": 1.0
+          },
+          "mid": {
+            "lag_samples": 0,
+            "peak_corr": 1.0
+          },
+          "tail": {
+            "lag_samples": 0,
+            "peak_corr": 1.0
+          }
+        },
+        "segment_drift_samples": 0
+      },
+      {
+        "name": "studio:crop_pcm_exact",
+        "pass": true,
+        "mode": "float_tight",
+        "max_abs_diff": 0.0
+      },
+      {
+        "name": "studio:no_black_frames",
+        "pass": true,
+        "black_segments": [],
+        "black_sec_beyond_intro": 0
+      },
+      {
+        "name": "studio:content_changes",
+        "pass": true,
+        "probe_frames": [
+          0,
+          1057,
+          2114,
+          3171
+        ],
+        "motion_diffs_blur_downscaled": [
+          9.6872,
+          46.9675,
+          45.3593
+        ],
+        "motion_floor": 0.4,
+        "mean_abs_diffs_raw": [
+          11.526,
+          47.502,
+          52.681
+        ]
+      },
+      {
+        "name": "studio:scene_invariants",
+        "pass": true,
+        "n_scenes": 3,
+        "coverage_ok": true,
+        "contiguous_ok": true,
+        "min_len_ok": true
+      },
+      {
+        "name": "studio:input_hash_unchanged",
+        "pass": true,
+        "sha256": "4239aa8cc50abb85..."
+      },
+      {
+        "name": "studio:rendered_frame_spotcheck",
+        "pass": true,
+        "method": "decoded MP4 frames vs deterministic clean-renderer reference frames; per-frame whole-frame MAE and 8x12 patch MAE (0-255), plus encoded transition phase; all must pass",
+        "thresholds": {
+          "global_mae_max": 8.0,
+          "patch_mae_max": 5.0,
+          "baseline_patch_mae_max": 16.0,
+          "patch_grid": [
+            8,
+            12
+          ],
+          "transition_min_relative_margin": 0.1,
+          "transition_feature_std_min": 0.25,
+          "transition_separation_ratio_min": 2.0,
+          "transition_gain_range": [
+            0.9,
+            1.1
+          ]
+        },
+        "probed_frames": [
+          0,
+          1,
+          253,
+          634,
+          943,
+          944,
+          945,
+          1109,
+          1569,
+          1570,
+          1571,
+          1585,
+          1636,
+          1637,
+          1638,
+          1657,
+          1658,
+          1659,
+          1728,
+          1729,
+          1730,
+          1868,
+          1869,
+          1870,
+          1953,
+          1954,
+          1955,
+          2020,
+          2021,
+          2022,
+          2061,
+          2114,
+          2115,
+          2116,
+          2256,
+          2257,
+          2258,
+          2496,
+          2497,
+          2498,
+          2524,
+          2525,
+          2526,
+          2536,
+          2733,
+          2734,
+          2735,
+          2909,
+          2910,
+          2911,
+          2917,
+          3171
+        ],
+        "frames": [
+          {
+            "frame": 0,
+            "kinds": [
+              "first_frame",
+              "scene_start"
+            ],
+            "ok": true,
+            "global_mae": 1.364,
+            "patch_mae_max": 1.908,
+            "patch_mae_mean": 1.364
+          },
+          {
+            "frame": 1,
+            "kinds": [
+              "scene_start_post"
+            ],
+            "ok": true,
+            "global_mae": 1.358,
+            "patch_mae_max": 1.91,
+            "patch_mae_mean": 1.358
+          },
+          {
+            "frame": 253,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 1.376,
+            "patch_mae_max": 1.983,
+            "patch_mae_mean": 1.376
+          },
+          {
+            "frame": 634,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 1.44,
+            "patch_mae_max": 2.296,
+            "patch_mae_mean": 1.441
+          },
+          {
+            "frame": 943,
+            "kinds": [
+              "scene_start_pre",
+              "semantic_landmark_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.387,
+            "patch_mae_max": 2.113,
+            "patch_mae_mean": 1.387
+          },
+          {
+            "frame": 944,
+            "kinds": [
+              "scene_start",
+              "semantic_landmark"
+            ],
+            "ok": true,
+            "global_mae": 1.382,
+            "patch_mae_max": 2.073,
+            "patch_mae_mean": 1.382,
+            "transition_timing": {
+              "ok": true,
+              "boundary": 944,
+              "probe_frames": [
+                914,
+                915,
+                916,
+                917,
+                918,
+                919,
+                920,
+                921,
+                922,
+                923,
+                924,
+                925,
+                926,
+                927,
+                928,
+                929,
+                930,
+                931,
+                932,
+                933,
+                934,
+                935,
+                936,
+                937,
+                938,
+                939,
+                940,
+                941,
+                942,
+                943,
+                944,
+                945,
+                946,
+                947,
+                948,
+                949,
+                950,
+                951,
+                952,
+                953,
+                954,
+                955,
+                956,
+                957,
+                958,
+                959,
+                960,
+                961,
+                962,
+                963,
+                964,
+                965,
+                966,
+                967,
+                968,
+                969,
+                970,
+                971,
+                972,
+                973,
+                974
+              ],
+              "best_offset_frames": 0,
+              "relative_margin": 29.97927,
+              "hypothesis_separation_rms": 0.263791,
+              "fit_rms": 0.047759,
+              "separation_ratio": 5.52337,
+              "scores": {
+                "-2": 0.236426,
+                "-1": 0.074534,
+                "0": 0.002281,
+                "1": 0.070661,
+                "2": 0.258112
+              },
+              "reason": "aligned"
+            }
+          },
+          {
+            "frame": 945,
+            "kinds": [
+              "scene_start_post",
+              "semantic_landmark_post"
+            ],
+            "ok": true,
+            "global_mae": 1.401,
+            "patch_mae_max": 2.103,
+            "patch_mae_mean": 1.401
+          },
+          {
+            "frame": 1109,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 1.531,
+            "patch_mae_max": 2.368,
+            "patch_mae_mean": 1.532
+          },
+          {
+            "frame": 1569,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.639,
+            "patch_mae_max": 2.274,
+            "patch_mae_mean": 1.64
+          },
+          {
+            "frame": 1570,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 1.735,
+            "patch_mae_max": 2.484,
+            "patch_mae_mean": 1.736
+          },
+          {
+            "frame": 1571,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 1.622,
+            "patch_mae_max": 2.399,
+            "patch_mae_mean": 1.623
+          },
+          {
+            "frame": 1585,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 1.639,
+            "patch_mae_max": 2.256,
+            "patch_mae_mean": 1.639
+          },
+          {
+            "frame": 1636,
+            "kinds": [
+              "scene_start_pre",
+              "semantic_landmark_pre"
+            ],
+            "ok": true,
+            "global_mae": 1.744,
+            "patch_mae_max": 2.479,
+            "patch_mae_mean": 1.745
+          },
+          {
+            "frame": 1637,
+            "kinds": [
+              "scene_start",
+              "semantic_landmark"
+            ],
+            "ok": true,
+            "global_mae": 1.718,
+            "patch_mae_max": 2.451,
+            "patch_mae_mean": 1.719,
+            "transition_timing": {
+              "ok": true,
+              "boundary": 1637,
+              "probe_frames": [
+                1607,
+                1608,
+                1609,
+                1610,
+                1611,
+                1612,
+                1613,
+                1614,
+                1615,
+                1616,
+                1617,
+                1618,
+                1619,
+                1620,
+                1621,
+                1622,
+                1623,
+                1624,
+                1625,
+                1626,
+                1627,
+                1628,
+                1629,
+                1630,
+                1631,
+                1632,
+                1633,
+                1634,
+                1635,
+                1636,
+                1637,
+                1638,
+                1639,
+                1640,
+                1641,
+                1642,
+                1643,
+                1644,
+                1645,
+                1646,
+                1647,
+                1648,
+                1649,
+                1650,
+                1651,
+                1652,
+                1653,
+                1654,
+                1655,
+                1656,
+                1657,
+                1658,
+                1659,
+                1660,
+                1661,
+                1662,
+                1663,
+                1664,
+                1665,
+                1666,
+                1667
+              ],
+              "best_offset_frames": 0,
+              "relative_margin": 85.40144,
+              "hypothesis_separation_rms": 0.684002,
+              "fit_rms": 0.073746,
+              "separation_ratio": 9.27505,
+              "scores": {
+                "-2": 0.900585,
+                "-1": 0.469897,
+                "0": 0.005439,
+                "1": 0.565395,
+                "2": 1.210396
+              },
+              "reason": "aligned"
+            }
+          },
+          {
+            "frame": 1638,
+            "kinds": [
+              "scene_start_post",
+              "semantic_landmark_post"
+            ],
+            "ok": true,
+            "global_mae": 1.719,
+            "patch_mae_max": 2.454,
+            "patch_mae_mean": 1.72
+          },
+          {
+            "frame": 1657,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.303,
+            "patch_mae_max": 4.049,
+            "patch_mae_mean": 2.308
+          },
+          {
+            "frame": 1658,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 2.348,
+            "patch_mae_max": 3.938,
+            "patch_mae_mean": 2.353
+          },
+          {
+            "frame": 1659,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 2.395,
+            "patch_mae_max": 4.188,
+            "patch_mae_mean": 2.4
+          },
+          {
+            "frame": 1728,
+            "kinds": [
+              "semantic_landmark_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.145,
+            "patch_mae_max": 3.025,
+            "patch_mae_mean": 2.146
+          },
+          {
+            "frame": 1729,
+            "kinds": [
+              "semantic_landmark"
+            ],
+            "ok": true,
+            "global_mae": 2.146,
+            "patch_mae_max": 3.019,
+            "patch_mae_mean": 2.147,
+            "transition_timing": {
+              "ok": true,
+              "boundary": 1729,
+              "probe_frames": [
+                1700,
+                1701,
+                1702,
+                1703,
+                1704,
+                1705,
+                1706,
+                1707,
+                1708,
+                1709,
+                1710,
+                1711,
+                1712,
+                1713,
+                1714,
+                1715,
+                1716,
+                1717,
+                1718,
+                1719,
+                1720,
+                1721,
+                1722,
+                1723,
+                1724,
+                1725,
+                1726,
+                1727,
+                1728,
+                1729,
+                1730,
+                1731,
+                1732,
+                1733,
+                1734,
+                1735,
+                1736,
+                1737,
+                1738,
+                1739,
+                1740,
+                1741,
+                1742,
+                1743,
+                1744,
+                1745,
+                1746,
+                1747,
+                1748,
+                1749,
+                1750,
+                1751,
+                1752,
+                1753,
+                1754,
+                1755,
+                1756,
+                1757,
+                1758
+              ],
+              "best_offset_frames": 0,
+              "relative_margin": 18.52035,
+              "hypothesis_separation_rms": 0.210554,
+              "fit_rms": 0.047414,
+              "separation_ratio": 4.44077,
+              "scores": {
+                "-2": 0.152504,
+                "-1": 0.043883,
+                "0": 0.002248,
+                "1": 0.069609,
+                "2": 0.204248
+              },
+              "reason": "aligned"
+            }
+          },
+          {
+            "frame": 1730,
+            "kinds": [
+              "semantic_landmark_post"
+            ],
+            "ok": true,
+            "global_mae": 2.179,
+            "patch_mae_max": 3.042,
+            "patch_mae_mean": 2.18
+          },
+          {
+            "frame": 1868,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.336,
+            "patch_mae_max": 3.104,
+            "patch_mae_mean": 2.338
+          },
+          {
+            "frame": 1869,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 2.379,
+            "patch_mae_max": 3.032,
+            "patch_mae_mean": 2.381
+          },
+          {
+            "frame": 1870,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 2.356,
+            "patch_mae_max": 3.096,
+            "patch_mae_mean": 2.358
+          },
+          {
+            "frame": 1953,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.38,
+            "patch_mae_max": 3.161,
+            "patch_mae_mean": 2.381
+          },
+          {
+            "frame": 1954,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 2.436,
+            "patch_mae_max": 3.311,
+            "patch_mae_mean": 2.438
+          },
+          {
+            "frame": 1955,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 2.403,
+            "patch_mae_max": 3.09,
+            "patch_mae_mean": 2.405
+          },
+          {
+            "frame": 2020,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.262,
+            "patch_mae_max": 3.065,
+            "patch_mae_mean": 2.263
+          },
+          {
+            "frame": 2021,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 2.325,
+            "patch_mae_max": 3.122,
+            "patch_mae_mean": 2.327
+          },
+          {
+            "frame": 2022,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 2.286,
+            "patch_mae_max": 2.993,
+            "patch_mae_mean": 2.288
+          },
+          {
+            "frame": 2061,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 2.333,
+            "patch_mae_max": 3.163,
+            "patch_mae_mean": 2.335
+          },
+          {
+            "frame": 2114,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.37,
+            "patch_mae_max": 3.254,
+            "patch_mae_mean": 2.371
+          },
+          {
+            "frame": 2115,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 2.397,
+            "patch_mae_max": 3.124,
+            "patch_mae_mean": 2.399
+          },
+          {
+            "frame": 2116,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 2.372,
+            "patch_mae_max": 3.127,
+            "patch_mae_mean": 2.374
+          },
+          {
+            "frame": 2256,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.231,
+            "patch_mae_max": 3.026,
+            "patch_mae_mean": 2.232
+          },
+          {
+            "frame": 2257,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 2.305,
+            "patch_mae_max": 3.284,
+            "patch_mae_mean": 2.306
+          },
+          {
+            "frame": 2258,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 2.251,
+            "patch_mae_max": 2.91,
+            "patch_mae_mean": 2.253
+          },
+          {
+            "frame": 2496,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.391,
+            "patch_mae_max": 3.346,
+            "patch_mae_mean": 2.392
+          },
+          {
+            "frame": 2497,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 2.51,
+            "patch_mae_max": 3.456,
+            "patch_mae_mean": 2.511
+          },
+          {
+            "frame": 2498,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 2.568,
+            "patch_mae_max": 3.57,
+            "patch_mae_mean": 2.57
+          },
+          {
+            "frame": 2524,
+            "kinds": [
+              "semantic_landmark_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.325,
+            "patch_mae_max": 3.283,
+            "patch_mae_mean": 2.327
+          },
+          {
+            "frame": 2525,
+            "kinds": [
+              "semantic_landmark"
+            ],
+            "ok": true,
+            "global_mae": 2.339,
+            "patch_mae_max": 3.29,
+            "patch_mae_mean": 2.341,
+            "transition_timing": {
+              "ok": true,
+              "boundary": 2525,
+              "probe_frames": [
+                2495,
+                2496,
+                2497,
+                2498,
+                2499,
+                2500,
+                2501,
+                2502,
+                2503,
+                2504,
+                2505,
+                2506,
+                2507,
+                2508,
+                2509,
+                2510,
+                2511,
+                2512,
+                2513,
+                2514,
+                2515,
+                2516,
+                2517,
+                2518,
+                2519,
+                2520,
+                2521,
+                2522,
+                2523,
+                2524,
+                2525,
+                2526,
+                2527,
+                2528,
+                2529,
+                2530,
+                2531,
+                2532,
+                2533,
+                2534,
+                2535,
+                2536,
+                2537,
+                2538,
+                2539,
+                2540,
+                2541,
+                2542,
+                2543,
+                2544,
+                2545,
+                2546,
+                2547,
+                2548,
+                2549,
+                2550,
+                2551,
+                2552,
+                2553,
+                2554,
+                2555
+              ],
+              "best_offset_frames": 0,
+              "relative_margin": 8.16022,
+              "hypothesis_separation_rms": 0.475817,
+              "fit_rms": 0.166892,
+              "separation_ratio": 2.85104,
+              "scores": {
+                "-2": 0.747173,
+                "-1": 0.255602,
+                "0": 0.027853,
+                "1": 0.25514,
+                "2": 0.775138
+              },
+              "reason": "aligned"
+            }
+          },
+          {
+            "frame": 2526,
+            "kinds": [
+              "semantic_landmark_post"
+            ],
+            "ok": true,
+            "global_mae": 2.344,
+            "patch_mae_max": 3.293,
+            "patch_mae_mean": 2.346
+          },
+          {
+            "frame": 2536,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 2.392,
+            "patch_mae_max": 3.274,
+            "patch_mae_mean": 2.394
+          },
+          {
+            "frame": 2733,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.552,
+            "patch_mae_max": 3.377,
+            "patch_mae_mean": 2.552
+          },
+          {
+            "frame": 2734,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 2.559,
+            "patch_mae_max": 3.406,
+            "patch_mae_mean": 2.56
+          },
+          {
+            "frame": 2735,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 2.562,
+            "patch_mae_max": 3.409,
+            "patch_mae_mean": 2.563
+          },
+          {
+            "frame": 2909,
+            "kinds": [
+              "accent_pre"
+            ],
+            "ok": true,
+            "global_mae": 2.528,
+            "patch_mae_max": 3.404,
+            "patch_mae_mean": 2.528
+          },
+          {
+            "frame": 2910,
+            "kinds": [
+              "accent"
+            ],
+            "ok": true,
+            "global_mae": 2.526,
+            "patch_mae_max": 3.4,
+            "patch_mae_mean": 2.527
+          },
+          {
+            "frame": 2911,
+            "kinds": [
+              "accent_post"
+            ],
+            "ok": true,
+            "global_mae": 2.524,
+            "patch_mae_max": 3.402,
+            "patch_mae_mean": 2.525
+          },
+          {
+            "frame": 2917,
+            "kinds": [
+              "interior"
+            ],
+            "ok": true,
+            "global_mae": 2.525,
+            "patch_mae_max": 3.422,
+            "patch_mae_mean": 2.526
+          },
+          {
+            "frame": 3171,
+            "kinds": [
+              "last_frame"
+            ],
+            "ok": true,
+            "global_mae": 2.711,
+            "patch_mae_max": 3.602,
+            "patch_mae_mean": 2.712
+          }
+        ],
+        "transition_timing": [
+          {
+            "ok": true,
+            "boundary": 944,
+            "probe_frames": [
+              914,
+              915,
+              916,
+              917,
+              918,
+              919,
+              920,
+              921,
+              922,
+              923,
+              924,
+              925,
+              926,
+              927,
+              928,
+              929,
+              930,
+              931,
+              932,
+              933,
+              934,
+              935,
+              936,
+              937,
+              938,
+              939,
+              940,
+              941,
+              942,
+              943,
+              944,
+              945,
+              946,
+              947,
+              948,
+              949,
+              950,
+              951,
+              952,
+              953,
+              954,
+              955,
+              956,
+              957,
+              958,
+              959,
+              960,
+              961,
+              962,
+              963,
+              964,
+              965,
+              966,
+              967,
+              968,
+              969,
+              970,
+              971,
+              972,
+              973,
+              974
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 29.97927,
+            "hypothesis_separation_rms": 0.263791,
+            "fit_rms": 0.047759,
+            "separation_ratio": 5.52337,
+            "scores": {
+              "-2": 0.236426,
+              "-1": 0.074534,
+              "0": 0.002281,
+              "1": 0.070661,
+              "2": 0.258112
+            },
+            "reason": "aligned"
+          },
+          {
+            "ok": true,
+            "boundary": 1637,
+            "probe_frames": [
+              1607,
+              1608,
+              1609,
+              1610,
+              1611,
+              1612,
+              1613,
+              1614,
+              1615,
+              1616,
+              1617,
+              1618,
+              1619,
+              1620,
+              1621,
+              1622,
+              1623,
+              1624,
+              1625,
+              1626,
+              1627,
+              1628,
+              1629,
+              1630,
+              1631,
+              1632,
+              1633,
+              1634,
+              1635,
+              1636,
+              1637,
+              1638,
+              1639,
+              1640,
+              1641,
+              1642,
+              1643,
+              1644,
+              1645,
+              1646,
+              1647,
+              1648,
+              1649,
+              1650,
+              1651,
+              1652,
+              1653,
+              1654,
+              1655,
+              1656,
+              1657,
+              1658,
+              1659,
+              1660,
+              1661,
+              1662,
+              1663,
+              1664,
+              1665,
+              1666,
+              1667
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 85.40144,
+            "hypothesis_separation_rms": 0.684002,
+            "fit_rms": 0.073746,
+            "separation_ratio": 9.27505,
+            "scores": {
+              "-2": 0.900585,
+              "-1": 0.469897,
+              "0": 0.005439,
+              "1": 0.565395,
+              "2": 1.210396
+            },
+            "reason": "aligned"
+          },
+          {
+            "ok": true,
+            "boundary": 1729,
+            "probe_frames": [
+              1700,
+              1701,
+              1702,
+              1703,
+              1704,
+              1705,
+              1706,
+              1707,
+              1708,
+              1709,
+              1710,
+              1711,
+              1712,
+              1713,
+              1714,
+              1715,
+              1716,
+              1717,
+              1718,
+              1719,
+              1720,
+              1721,
+              1722,
+              1723,
+              1724,
+              1725,
+              1726,
+              1727,
+              1728,
+              1729,
+              1730,
+              1731,
+              1732,
+              1733,
+              1734,
+              1735,
+              1736,
+              1737,
+              1738,
+              1739,
+              1740,
+              1741,
+              1742,
+              1743,
+              1744,
+              1745,
+              1746,
+              1747,
+              1748,
+              1749,
+              1750,
+              1751,
+              1752,
+              1753,
+              1754,
+              1755,
+              1756,
+              1757,
+              1758
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 18.52035,
+            "hypothesis_separation_rms": 0.210554,
+            "fit_rms": 0.047414,
+            "separation_ratio": 4.44077,
+            "scores": {
+              "-2": 0.152504,
+              "-1": 0.043883,
+              "0": 0.002248,
+              "1": 0.069609,
+              "2": 0.204248
+            },
+            "reason": "aligned"
+          },
+          {
+            "ok": true,
+            "boundary": 2525,
+            "probe_frames": [
+              2495,
+              2496,
+              2497,
+              2498,
+              2499,
+              2500,
+              2501,
+              2502,
+              2503,
+              2504,
+              2505,
+              2506,
+              2507,
+              2508,
+              2509,
+              2510,
+              2511,
+              2512,
+              2513,
+              2514,
+              2515,
+              2516,
+              2517,
+              2518,
+              2519,
+              2520,
+              2521,
+              2522,
+              2523,
+              2524,
+              2525,
+              2526,
+              2527,
+              2528,
+              2529,
+              2530,
+              2531,
+              2532,
+              2533,
+              2534,
+              2535,
+              2536,
+              2537,
+              2538,
+              2539,
+              2540,
+              2541,
+              2542,
+              2543,
+              2544,
+              2545,
+              2546,
+              2547,
+              2548,
+              2549,
+              2550,
+              2551,
+              2552,
+              2553,
+              2554,
+              2555
+            ],
+            "best_offset_frames": 0,
+            "relative_margin": 8.16022,
+            "hypothesis_separation_rms": 0.475817,
+            "fit_rms": 0.166892,
+            "separation_ratio": 2.85104,
+            "scores": {
+              "-2": 0.747173,
+              "-1": 0.255602,
+              "0": 0.027853,
+              "1": 0.25514,
+              "2": 0.775138
+            },
+            "reason": "aligned"
+          }
+        ],
+        "transition_timing_supported": true
+      }
+    ],
+    "pass": true,
+    "musical_naturalness": "NOT verified (no listening)"
+  },
+  "reviews": {
+    "music": {
+      "reviewer_id": "/root/cloud_wisps_music",
+      "evidence_sha256": "50bd9eb41c37695d40d747dfd3cf8e86468c425eaf367c95565b026f34cfb350",
+      "verdict": "pass",
+      "hard_blockers": [],
+      "concerns": [],
+      "evidence": [
+        "Fresh trusted-main rebind for repair 1 of request 20261102-cloud-wisps-0550, round 1. Independently queried GitHub fetch_commit(main), GitHub comparison and git ls-remote: main is a4abb31a3dc96885872a67c157e86eac5061902d, the merge of engineering PR #39. Its complete tree aeba35b405adffe9a702e914b26c722c61104b3d equals the independently reviewed engineering commit 9813b0676470a91afa1a224ebb70014c37307431. Both local diff and GitHub comparison have no changed files. Seven runtime modules and eight registered asset/manifest hashes were also checked directly against main objects, current reviewed files and the production checkout.",
+        "Production project.json now pins that main commit and hashes to ca8d838d65a5ad228bad0de469e3d327c857c05c09fc683d4dc39eeb2e0f0ac9. engine_sha is its only changed value. Brief 930d01189a9cff9ba2de580f8314ba2848325928da3a61012a8aab7f43ba0d03 and storyboard 01d5ac9e736ff207f20854822f2bd7303b28139240e4f32e9e013e54ac3fc1c9 remain byte-identical to the engineering inputs. Renderer SHA256 remains 4456b3857b1b10d6b159fdb9cf13867cb6501315b5162364f1b2711ca254eeb6. Exact DSP validation against the fresh canonical analyzer, source-hash metadata and plan detector records passes without accessing audio.",
+        "Rehashed current actual video a01d357ba91036f1104f87071be711b5623013e544365f98b825f33c13562de9, contact sheet 3ccc7d7f89f40eea5dda80ccf21b377ad2467144334d7aebcf4450e984f87efc, timeline a54d412f00390dc1303001a6d940aeb84fcdbe5b8c859d6c26170fd720259b96 and QA 794232b713e62b9fa12f200f58a4e0667d590d2fbe238e4ac06a435a55bdda04. They match the main template and the already inspected repair 1 media exactly. Every bundle hash verifies and embedded QA equals the current file. Independently rebuilt the binding object from these actual production input/media/QA hashes and hashed canonical compact JSON to obtain 50bd9eb41c37695d40d747dfd3cf8e86468c425eaf367c95565b026f34cfb350; the engineering digest was not simply replaced.",
+        "What works: unchanged native clocks preserve the 48 kHz excerpt [3934835,9010035), exactly 5,075,200 samples / 3,172 frames at 30 fps. Major 5446800→frame 944, octaves 6554160→1637 and fast coda 6701520→1729 retain containing-frame scheduling. Final 7974240 remains containing frame 2524 and activation 2525 at boundary 7974835 (+595 samples), under first-boundary-at-or-after policy. Clearing completes at 2705 after 180 frames; source threshold onset reaches its previous exact trajectory at 2528. Main tree equality includes detector, timing, renderer, dependency and asset definitions.",
+        "Rechecked the unchanged actual-film raw QA and guard decisions: exactly 11 required checks pass, all 52 spatial probes meet global MAE 8 / patch MAE 5 (maximum patch 4.188), and all four temporal models select offset 0. Separation ratios are 5.52337, 9.27505, 4.44077 and 2.85104 at frames 944,1637,1729,2525; fixed minima remain separation 2 and relative margin 0.1. The current full-film clearing ratio 2.85104 is kept distinct from padded diagnostic 9.39504 and synthetic 5.06379. Bound QA records exact crop difference 0, full/head/mid/tail lag 0, drift 0, correlation 1.0 and level difference −0.011 dB; these remain report observations, not repeated audio measurements.",
+        "Original actual-media observations remain applicable through verified media-byte and whole-tree equality. The fresh engineering review decoded video only at 25 listed frames around all cue boundaries and the ending, maximum patch 3.699 under original bounds. It visually inspected frames 2524,2525,2526,2527,2528,2705,3171: intact pre-cue storm, small expanding fissures and a clear ending above basalt/lava were visible. This main rebind adds independent ref/tree/runtime/assets/input/DSP/media/QA verification; it adds no new decoding, watching or listening. Detailed observations remain in repair1-actual-frame-audit.json and full-repair1-music.engineering.json; new verification is in full-repair1-music.main-audit.json.",
+        "Strongest counterargument remains: exact encoded timing against detector output cannot establish the intended physical keystrike, particular written event, hand identity or perceptual onset accuracy. The final detector accepts sole local tuned E7 growth consistent with score context; another sole E7 in the window or modulation of already ringing E7 can qualify. Without listening, musical naturalness and phrase suitability stay unverified. The lower full-film separation also shows why short-window calibration cannot replace the actual-film QA or required Actions reproduction."
+      ],
+      "listening": "unavailable",
+      "limitations": [
+        "Fresh rebind of the same actual media only. No additional viewing, video decoding, rendering, detector experiment or listening was performed. Original numerical frame scope is 25 frames and original visual scope is the seven explicitly listed frames.",
+        "No audio stream was decoded or listened to; no WAV, MP3, standalone performance source, input directory or protected temporary audio intermediate was accessed. Audio preservation figures remain the bound QA/provenance record observations.",
+        "Musical naturalness, excerpt entrance/exit, perceived crescendo and whether motion distracts from the performance remain unverified. This is a scoped mechanical/data-integrity pass, with all registered E7 identity and STFT precision limits retained.",
+        "Ordinary CI and required Actions reproduction are separate gates and are not certified here. This report makes no green-CI, candidate readiness, approval, merge or owner-adoption claim. Initial 0 Actions rejection remains in this same request history; repair budget was not reset."
+      ]
+    },
+    "visual": {
+      "reviewer_id": "/root/onset_repair1_full_visual",
+      "evidence_sha256": "50bd9eb41c37695d40d747dfd3cf8e86468c425eaf367c95565b026f34cfb350",
+      "verdict": "pass",
+      "hard_blockers": [],
+      "concerns": [],
+      "evidence": [
+        "Independent fresh visual-viewer context for Issue30/cand02/PR33, request20261102-cloud-wisps-0550 repair1. Read AGENTS.md, README.md, studio-review skill and docs/12_CREATIVE_REVIEW_PROTOCOL.md; did not read other reviewers conclusions or old pass reports. This is a new observation of the current full encoded film, not an approval carried from request history.",
+        "Fresh trusted-main rebind independently verified live GitHub connector main SHA, live REST main/commit tree and git ls-remote as a4abb31a3dc96885872a67c157e86eac5061902d. Whole main tree aeba35b405adffe9a702e914b26c722c61104b3d exactly equals reviewed engineering commit9813b0676470a91afa1a224ebb70014c37307431. Additionally compared 77 provider, analyzer, runtime, dependency/config and registered visual/score asset files against both commit objects and both actual worktrees. The candle_rift.py provider remains SHA4456b3857b1b10d6b159fdb9cf13867cb6501315b5162364f1b2711ca254eeb6. Exact checks are saved in main-rebind-verification.json.",
+        "Current production project.json SHAca8d838d65a5ad228bad0de469e3d327c857c05c09fc683d4dc39eeb2e0f0ac9 differs from the observed engineering draft only in engine_sha (9813b067... to trusted main a4abb31...). brief.json SHA930d01189a9cff9ba2de580f8314ba2848325928da3a61012a8aab7f43ba0d03 and storyboard.json SHA01d5ac9e736ff207f20854822f2bd7303b28139240e4f32e9e013e54ac3fc1c9 are byte-identical to the reviewed draft. Rehashed actual video, contact sheet, timeline, QA and plan; all equal previously observed bytes. Recomputed main evidence digest50bd9eb41c37695d40d747dfd3cf8e86468c425eaf367c95565b026f34cfb350. This is a fresh identity/provenance verification, not a second watch or a digest-only substitution.",
+        "Actual observed media: output/cloud-wisps/full-repair1/video.mp4 SHAa01d357ba91036f1104f87071be711b5623013e544365f98b825f33c13562de9. ffprobe reports H264 540x960,30/1fps,3172video frames,105.733333s. Decoded the complete video stream locally to RGB24 without opening source audio, then inspected 395 unique selected encoded frames via reviewer-created sheets and native images. Exact extraction sets and RGB hashes are in decoded-frame-manifest.json in this review directory; selection count398 includes3 additional native frames not visually opened.",
+        "Full-arc sampled visual coverage: every30th frame0..3150 plus3171 (1fps), with opening0..60 step5 and840..1000 step5, every major-boundary frame936..960, collapse1628..1745 step3 plus1636/1637/1638/1728/1729/1730, every clearing frame2524..2705, and ending2970..3165 step15 plus3168..3171. These are time-ordered encoded-frame observations, not continuous real-time playback or a certification of full-duration sustained viewing.",
+        "Opening and crescendo observations: native0 shows a small legible warm wick over a large textured candle, with dark columns and high blue window supplying church scale. At180px-wide sheet size the wick/candle remain separable from the background. The936..960 sequence retains candle position and church geometry while the flame progressively grows; native1300 shows soft warm light attached to the wick and readable wax/brass texture rather than a separate opaque symbol. The visual arc moves from fragile point of light to dominant flame without unrelated cuts.",
+        "Collapse/travel observations:1636..1638 retain the established candle composition; later1640..1729 samples show textured sections turning and falling to expose the same centered lava route, with native1658 resolving their painted fronts and shaded thickness. The full-arc samples1729..2520 retain basalt ridges, stacked depth and a bright winding route; foreground cropping/scale changes create a restrained forward progression rather than cycling unrelated views. These observations support narrative continuity, not a judgment of physical realism or music timing.",
+        "Clearing onset, every frame2524..2535 inspected both in ordered sheets and individually at native540x960:2524 remains storm-filled;2525 shows a small warmer opening low in the clouds,2526 expands irregular horizon fissures,2527 makes the central blue opening clearly readable, and2528 enlarges it while substantial cloudbanks remain.2530..2535 continue the same contour family. Thus the transition is distributed across multiple encoded frames and does not substitute an entire clear horizon in one observed frame. The initial2525..2528 expansion is fast (0.1s); these still sequences do not prove how soft that acceleration feels at30fps.",
+        "Clearing progression, all182 consecutive frames2524..2705 inspected in eight ordered sheets: the central opening expands between persistent dark banks, lower gaps join, and remaining banks recede toward the upper/left edges. Native2610/2630/2650 show diminishing cloud mass with textured, softly thinning edges; small detached remnants read as smoke/wisps rather than a hard polygonal iris. No broad gray overlay, circular wipe, duplicated rock silhouette or newly black unfilled margin was observed. The lava route and left/right rock silhouettes remain continuous beneath the changing sky.",
+        "Ending observations: all clearing frames through2705, then1fps samples and2970..3171 closer ending samples retain a blue upper sky, golden layered horizon and the same basalt/lava depth. Native3171 is legible and complete at the last encoded frame, with no visible return to storm, crop hole or blank ending frame. The golden sky supplies a clear visual release while preserving the violent world already traversed.",
+        "Strongest visual counterargument:0..943 (31.47s) is intentionally near-static,1729..2524 retains one landscape, and the completed sky then holds roughly15.5s to the end. This may demand patience from a viewer; stills cannot measure real-time engagement. I do not invent a blocking boredom finding from that uncertainty: the owner requested the solemn opening and final opening of the clouds, and the observed progression has clear causality, scale, material detail and three distinct states. More cuts or particles are not supported as a necessary repair by the inspected evidence.",
+        "Observed visual sequences pass with no supported asset/narrative blocker. The local QA object/bytes are unchanged and have11passing checks, but neither QA nor the maker explanation was used as aesthetic approval. This main rebind does not replace the separate Actions review, music review or owner adoption."
+      ],
+      "listening": "not_applicable",
+      "limitations": [
+        "No continuous real-time playback was observed. Local-file browser playback was rejected by URL policy; no browser-policy workaround was attempted. An offline native-player attempt was unavailable because the Mac was locked. Exact dense-frame scopes above are the basis of the visual-sequence verdict; continuous30fps perceived smoothness and full-duration sustained viewing remain unverified.",
+        "No audio was listened to or read by this visual reviewer, including source input/source.wav, MP3, full WAV, clip_audio.wav or QA-decoded audio. No musical naturalness, cadence, key/mode or perceptual audiovisual synchrony is claimed. Scene semantics come from the owner brief and frozen plan, not inferred listening.",
+        "No recent accepted-film media was supplied for comparison; motif/composition diversity across the channel was not verified.",
+        "This review now binds to trusted main a4abb31a3dc96885872a67c157e86eac5061902d after fresh whole-tree, actual code/asset, production-input and media/QA byte verification. The original395-frame observation scope and all realtime/listening limits remain unchanged. No second watch, rerender, historic package-environment identity, CI completion, required Actions approval or adoption is claimed."
+      ]
+    }
+  },
+  "decision": {
+    "editor_id": "codex-editor-root-issue30-cloud-wisps-20261102-0550",
+    "verdict": "ready",
+    "rationale": "Repair1 of request20261102-cloud-wisps-0550; one further shared substantive repair remains. Both independent roles bind the same actual full-film bytes and QA. Native still, encoded motion and full-film sequences support small source-textured fissures instead of the initial0 bulk-blue/horizon substitution, with original terrain and thinning wisps retained. All11 current full-file QA checks and strict synthetic/actual-control calibrations pass under unchanged thresholds; full-film clearing separation2.85104 is used, not padded-window9.39504. The fast four-frame initial growth is retained as the observed progression after the source-defined high point; continuous real-time perception, sustained full-duration viewing and listening remain unverified. The unchanged stylized picture-plane collapse is an expression choice. Both roles freshly verified trusted main a4abb31a3dc96885872a67c157e86eac5061902d, exact engineering-tree equality and current input/media/QA binding50bd9eb41c37695d40d747dfd3cf8e86468c425eaf367c95565b026f34cfb350. This is local readiness for required Actions reproduction, not adoption, publication or waiver of initial0 mandatory failure41399434010. New required Actions and ordinary CI must pass before review-ready presentation.",
+    "resolutions": []
+  }
+}
