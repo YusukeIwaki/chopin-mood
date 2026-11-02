@@ -11,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
-from scipy.ndimage import gaussian_filter
+from scipy.ndimage import distance_transform_edt, gaussian_filter
 
 from .nocturne_chapel import _flame, _state
 
@@ -50,11 +50,43 @@ def _cloud_recession(world, sky_mask, seed):
     # monotonically, with dense cloud banks surviving until the late opening.
     low, high = np.percentile(field[sky_mask > .98], [1, 99.5])
     arrival = ((field-low)/max(float(high-low), 1e-6)).astype(np.float32)
+    # Follow the painted small-scale ridges rather than giving every lobe
+    # the same cutout edge. These are source-image pixel widths, not field
+    # value feathers (which make flat regions a broad gray crossfade).
+    texture = np.clip(.5+4*(fine-banks), 0, 1)
+    rim = ((4+6*texture)*w/540).astype(np.float32)
+    return arrival, rim
+
+
+def _cloud_opacity(arrival, rim, threshold):
+    """Opaque banks give way to textured rims, then translucent thin wisps.
+
+    Distance and local support both decrease as the surviving cloud set
+    shrinks. No component is deleted at an area threshold, and no history or
+    per-frame noise is needed. A small detached lobe loses opacity across
+    its thickness before it could become an opaque floating chip.
+    """
+    remaining = arrival > threshold
+    if not remaining.any():
+        return np.zeros_like(arrival)
+    if remaining.all():
+        return np.ones_like(arrival)
+    inside = distance_transform_edt(remaining)
+    outside = distance_transform_edt(~remaining)
+    # The nearest-pixel distance alone jumps when a contour crosses a
+    # pixel. Its field residual supplies the subpixel motion through that
+    # pixel, while the distance retains a bounded spatial rim at flat peaks.
     dy, dx = np.gradient(arrival)
-    # Convert the field gradient to an approximately two-pixel transition.
-    # A fixed field-value feather would make flat cloud banks broad gray fog.
-    feather = np.maximum(2*np.hypot(dx, dy), .0005).astype(np.float32)
-    return arrival, feather
+    residual = np.clip((arrival-threshold)/np.maximum(np.hypot(dx,dy),1e-6),-1,1)
+    distance = np.where(remaining,inside-1,1-outside)+residual
+    edge = np.clip(.5+distance/rim,0,1)
+    opacity = edge*edge*(3-2*edge)
+    # Wide banks retain their original texture and opaque interiors. Thin
+    # necks and isolated remnants have less nearby cloud mass, so their
+    # whole density ebbs continuously, not just the outermost antialias.
+    support = gaussian_filter(opacity, .03*arrival.shape[1])
+    thinning = np.clip(support/.9,0,1)
+    return (opacity*thinning*thinning*(3-2*thinning)).astype(np.float32)
 
 
 def _smooth(x):
@@ -159,7 +191,7 @@ def make_layout(seed, w, h, renderer_id=RENDERER_ID):
             sky = np.asarray(mask.resize((w,h),Image.Resampling.LANCZOS),np.float32)/255
         layout.update(mode=CLEARING_RENDERER_ID, cleared_world=load(path),
                       sky_mask=sky)
-        layout["cloud_arrival"], layout["cloud_feather"] = _cloud_recession(
+        layout["cloud_arrival"], layout["cloud_rim"] = _cloud_recession(
             layout["world"], sky, seed)
         layout["provenance"] = {"bundle_id": CLEARING_RENDERER_ID,
             "manifest_path": (CLEARING_DIRECTORY/"manifest.json").as_posix(),
@@ -206,8 +238,8 @@ def clearing_state(f, ctrl, asset):
     # The first small fissures must survive encoding at the actual cue.
     # Continue from them to the unchanged endpoint, without anticipating it.
     threshold = u+.2*(1-u)**2
-    edge = np.clip((threshold-asset["cloud_arrival"])/asset["cloud_feather"]+.5,0,1)
-    return edge*edge*(3-2*edge)*asset["sky_mask"], _smooth(u)
+    opacity = _cloud_opacity(asset["cloud_arrival"],asset["cloud_rim"],threshold)
+    return (1-opacity)*asset["sky_mask"], _smooth(u)
 
 
 def _candle(f, ctrl, w, h, asset, major, octave, params):

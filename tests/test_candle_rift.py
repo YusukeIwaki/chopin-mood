@@ -174,10 +174,16 @@ def test_new_mode_reveals_sky_spatially_after_cue_and_protects_rock():
                for f in range(CLEARING,CLEARING+12)) > .02
 
 
-def test_cloud_recession_is_monotone_and_preserves_narrow_detailed_edges():
-    from scipy.ndimage import distance_transform_edt, label
+def test_cloud_recession_is_monotone_with_textured_rims_and_opaque_banks():
+    from scipy.ndimage import distance_transform_edt
     width,height=540,960
     asset=candle_rift.make_layout(SEED,width,height,candle_rift.CLEARING_RENDERER_ID)
+    # The new rim follows source texture within 4--10 native pixels. The
+    # old <=2px cutout assertion preserved the opaque-chip defect rather
+    # than testing composition or the density of narrow cloud remnants.
+    assert asset["cloud_rim"].min() >= 4
+    assert asset["cloud_rim"].max() <= 10
+    assert asset["cloud_rim"][asset["sky_mask"]>.99].std() > .1
     c=clearing_controls()
     previous=np.zeros((height,width),np.float32)
     for delta in (0,27,54,90,144,179):
@@ -185,24 +191,52 @@ def test_cloud_recession_is_monotone_and_preserves_narrow_detailed_edges():
         assert np.all(mask >= previous)
         assert not mask[asset["sky_mask"] == 0].any()
         if 0 < delta < 179:
-            # The actual cloud gaps have a narrow antialiased boundary;
-            # broad partly transparent gray bands would fail this check.
-            opened=mask > .5
-            distance=np.where(opened,distance_transform_edt(opened),
-                              distance_transform_edt(~opened))
-            intermediate=(mask>.1)&(mask<.9)&(asset["sky_mask"]>.99)
-            assert intermediate.any()
-            assert np.percentile(distance[intermediate],95) <= 2
-            # Coherent banks/gaps dominate; isolated flecks cannot account
-            # for a material fraction of the reveal even at native size.
-            components,_=label(opened)
-            sizes=np.bincount(components.ravel())[1:]
-            assert sizes[sizes<12].sum()/opened.sum() < .02
+            threshold=delta/179+.2*(1-delta/179)**2
+            remaining=asset["cloud_arrival"]>threshold
+            # The local extinction does not turn broad cloud interiors
+            # into a veil. Cores three support radii from a gap remain
+            # opaque; the fully opened sky also stays fully exposed.
+            core=(distance_transform_edt(remaining)>3*.03*width)&(asset["sky_mask"]>.99)
+            if core.any():
+                assert np.max(mask[core]) < .01
+            open_core=(distance_transform_edt(~remaining)>10)&(asset["sky_mask"]>.99)
+            assert open_core.any()
+            assert np.array_equal(mask[open_core],asset["sky_mask"][open_core])
         if delta == 90:
             fraction=mask.sum()/asset["sky_mask"].sum()
             assert .25 < fraction < .8  # Opening still develops in the tail.
         previous=mask
     assert np.array_equal(previous,asset["sky_mask"])
+
+
+def test_thin_clouds_lose_density_without_component_deletion_or_uniform_blur():
+    # A large bank, an isolated 30px lobe and a 10px neck survive the same
+    # field threshold. A sharp cutout (negative control) keeps all three
+    # centers opaque; the new opacity keeps the bank opaque and turns the
+    # thin shapes into wisps before they have vanished geometrically.
+    yy,xx=np.mgrid[:220,:540]
+    large=70-np.hypot(xx-125,yy-110)
+    small=15-np.hypot(xx-340,yy-110)
+    neck=np.minimum(5-np.abs(yy-110),np.minimum(xx-420,510-xx))
+    arrival=(.5+.01*np.maximum.reduce([large,small,neck])).astype(np.float32)
+    rim=np.full_like(arrival,7)
+    opacity=candle_rift._cloud_opacity(arrival,rim,.5)
+    sharp=np.clip((arrival-.5)/.02+.5,0,1)
+    sharp=sharp*sharp*(3-2*sharp)
+    assert sharp[110,125] == sharp[110,340] == sharp[110,465] == 1
+    assert opacity[110,125] == 1
+    assert 0 < opacity[110,465] < opacity[110,340] < .7
+    # All density remains local to the cloud contour (no blurred gray
+    # window), and successive thresholds thin the existing pieces rather
+    # than dropping them when a component area happens to cross a limit.
+    assert np.all(opacity[arrival < .4] == 0)
+    previous=opacity
+    for threshold in (.51,.52,.54,.56,.58,.6):
+        value=candle_rift._cloud_opacity(arrival,rim,threshold)
+        assert np.all(value <= previous)
+        assert 0 < value[110,340] < previous[110,340]
+        assert np.max(previous-value) < .4
+        previous=value
 
 
 def test_cloud_recession_depends_on_painted_clouds_and_seed_not_access_order():
@@ -224,7 +258,7 @@ def test_cloud_recession_depends_on_painted_clouds_and_seed_not_access_order():
     flat=asset["world"].copy()
     flat[active]=flat[active].mean(axis=0)
     changed=dict(asset)
-    changed["cloud_arrival"],changed["cloud_feather"]=candle_rift._cloud_recession(flat,asset["sky_mask"],SEED)
+    changed["cloud_arrival"],changed["cloud_rim"]=candle_rift._cloud_recession(flat,asset["sky_mask"],SEED)
     assert np.mean(np.abs(expected-candle_rift.clearing_state(frame,c,changed)[0])[active]) > .1
     for cue in (CLEARING,CLEARING_N-60):
         ctrl=dict(c,score_clearing_frame=cue)
