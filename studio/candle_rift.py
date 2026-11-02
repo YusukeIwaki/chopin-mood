@@ -21,6 +21,7 @@ RENDERER_ID = "candle-rift-v1"
 CLEARING_RENDERER_ID = "candle-clearing-v1"
 CLEARING_DIRECTORY = Path("assets/visual/candle-clearing-v1")
 CLEARING_FRAMES = 180
+CLEARING_ONSET_FRAMES = 4
 
 
 def _cloud_recession(world, sky_mask, seed):
@@ -235,9 +236,11 @@ def clearing_state(f, ctrl, asset):
     u = float(np.clip((f-cue)/duration,0,1))
     if u >= 1:
         return asset["sky_mask"].copy(), 1.
-    # The first small fissures must survive encoding at the actual cue.
-    # Continue from them to the unchanged endpoint, without anticipating it.
-    threshold = u+.2*(1-u)**2
+    # Begin with small source-textured fissures on the actual cue. Ease the
+    # initial bias itself, not the opacity of an already-large aperture;
+    # the established recession trajectory resumes after four cue frames.
+    onset = _smooth((f-cue+1)/CLEARING_ONSET_FRAMES)
+    threshold = u+.2*(1-u)**2*onset
     opacity = _cloud_opacity(asset["cloud_arrival"],asset["cloud_rim"],threshold)
     return (1-opacity)*asset["sky_mask"], _smooth(u)
 

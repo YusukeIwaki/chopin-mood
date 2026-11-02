@@ -209,6 +209,36 @@ def test_cloud_recession_is_monotone_with_textured_rims_and_opaque_banks():
     assert np.array_equal(previous,asset["sky_mask"])
 
 
+def test_clearing_onset_opens_small_fissures_before_the_established_recession():
+    width,height=540,960
+    asset=candle_rift.make_layout(SEED,width,height,candle_rift.CLEARING_RENDERER_ID)
+    c=clearing_controls()
+    old_activation=(1-candle_rift._cloud_opacity(
+        asset["cloud_arrival"],asset["cloud_rim"],.2))*asset["sky_mask"]
+    masks=[candle_rift.clearing_state(CLEARING+delta,c,asset)[0] for delta in range(4)]
+    # Negative control: the previous .2 activation bulk-revealed about a
+    # tenth of the sky. The cue now starts with small genuinely open
+    # fissures, rather than crossfading that same large blue aperture.
+    assert 0 < masks[0].sum() < .25*old_activation.sum()
+    assert np.any((masks[0]>.98)&(asset["sky_mask"]>.99))
+    previous=np.zeros_like(masks[0])
+    steps=[]
+    for mask in masks:
+        assert np.all(mask>=previous)
+        steps.append(float((mask-previous).sum()))
+        previous=mask
+    assert max(steps) < .7*old_activation.sum()
+    # The four-frame onset changes neither the later spatial trajectory
+    # nor the endpoint. This comparison uses the old threshold equation.
+    for delta in (3,4,27,90,144):
+        u=delta/179
+        expected=(1-candle_rift._cloud_opacity(asset["cloud_arrival"],
+            asset["cloud_rim"],u+.2*(1-u)**2))*asset["sky_mask"]
+        assert np.array_equal(candle_rift.clearing_state(CLEARING+delta,c,asset)[0],expected)
+    assert not candle_rift.clearing_state(CLEARING-1,c,asset)[0].any()
+    assert np.array_equal(candle_rift.clearing_state(CLEARING+179,c,asset)[0],asset["sky_mask"])
+
+
 def test_thin_clouds_lose_density_without_component_deletion_or_uniform_blur():
     # A large bank, an isolated 30px lobe and a 10px neck survive the same
     # field threshold. A sharp cutout (negative control) keeps all three
