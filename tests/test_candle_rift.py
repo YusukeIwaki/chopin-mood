@@ -174,6 +174,115 @@ def test_new_mode_reveals_sky_spatially_after_cue_and_protects_rock():
                for f in range(CLEARING,CLEARING+12)) > .02
 
 
+def test_cloud_recession_is_monotone_and_preserves_narrow_detailed_edges():
+    from scipy.ndimage import distance_transform_edt, label
+    width,height=540,960
+    asset=candle_rift.make_layout(SEED,width,height,candle_rift.CLEARING_RENDERER_ID)
+    c=clearing_controls()
+    previous=np.zeros((height,width),np.float32)
+    for delta in (0,27,54,90,144,179):
+        mask,_=candle_rift.clearing_state(CLEARING+delta,c,asset)
+        assert np.all(mask >= previous)
+        assert not mask[asset["sky_mask"] == 0].any()
+        if 0 < delta < 179:
+            # The actual cloud gaps have a narrow antialiased boundary;
+            # broad partly transparent gray bands would fail this check.
+            opened=mask > .5
+            distance=np.where(opened,distance_transform_edt(opened),
+                              distance_transform_edt(~opened))
+            intermediate=(mask>.1)&(mask<.9)&(asset["sky_mask"]>.99)
+            assert intermediate.any()
+            assert np.percentile(distance[intermediate],95) <= 2
+            # Coherent banks/gaps dominate; isolated flecks cannot account
+            # for a material fraction of the reveal even at native size.
+            components,_=label(opened)
+            sizes=np.bincount(components.ravel())[1:]
+            assert sizes[sizes<12].sum()/opened.sum() < .02
+        if delta == 90:
+            fraction=mask.sum()/asset["sky_mask"].sum()
+            assert .25 < fraction < .8  # Opening still develops in the tail.
+        previous=mask
+    assert np.array_equal(previous,asset["sky_mask"])
+
+
+def test_cloud_recession_depends_on_painted_clouds_and_seed_not_access_order():
+    asset=candle_rift.make_layout(SEED,W,H,candle_rift.CLEARING_RENDERER_ID)
+    repeated=candle_rift.make_layout(SEED,W,H,candle_rift.CLEARING_RENDERER_ID)
+    another=candle_rift.make_layout(SEED+1,W,H,candle_rift.CLEARING_RENDERER_ID)
+    c=clearing_controls()
+    frame=CLEARING+90
+    expected=candle_rift.clearing_state(frame,c,asset)[0]
+    candle_rift.clearing_state(CLEARING_N-1,c,asset)
+    candle_rift.clearing_state(0,c,asset)
+    assert np.array_equal(expected,candle_rift.clearing_state(frame,c,asset)[0])
+    assert np.array_equal(expected,candle_rift.clearing_state(frame,c,repeated)[0])
+    active=asset["sky_mask"]>.99
+    assert np.mean(np.abs(expected-candle_rift.clearing_state(frame,c,another)[0])[active]) > .02
+    # Keep the same seed, native matte and global colour; remove only the
+    # original painted cloud structures. A geometric/seed-only window would
+    # be unchanged, whereas cloud-driven gaps must materially change.
+    flat=asset["world"].copy()
+    flat[active]=flat[active].mean(axis=0)
+    changed=dict(asset)
+    changed["cloud_arrival"],changed["cloud_feather"]=candle_rift._cloud_recession(flat,asset["sky_mask"],SEED)
+    assert np.mean(np.abs(expected-candle_rift.clearing_state(frame,c,changed)[0])[active]) > .1
+    for cue in (CLEARING,CLEARING_N-60):
+        ctrl=dict(c,score_clearing_frame=cue)
+        assert not candle_rift.clearing_state(cue-1,ctrl,asset)[0].any()
+        assert candle_rift.clearing_state(cue,ctrl,asset)[0].any()
+        end=min(cue+candle_rift.CLEARING_FRAMES,CLEARING_N-1)
+        assert np.array_equal(candle_rift.clearing_state(end,ctrl,asset)[0],asset["sky_mask"])
+
+
+def test_native_same_frame_terrain_pixels_survive_clearing_and_camera(monkeypatch):
+    from PIL import Image
+    from scipy.ndimage import binary_dilation
+    width,height=540,960
+    c=clearing_controls()
+    lay=rendering.make_layouts(SEED,width,height)
+    lay["candle_rift"]=candle_rift.make_layout(SEED,width,height,candle_rift.CLEARING_RENDERER_ID)
+    # Storm effects intentionally fade separately. Isolate sky compositing
+    # while preserving the exact source frame, lava envelope and camera.
+    lay["candle_rift"]["embers"]=np.empty((0,4))
+    params=[{"camera_zoom_start":1.07,"camera_zoom_end":1.07}]*3
+    transformed_mattes=[]; transform=Image.Image.transform
+    def observed(self,size,method,*args,**kwargs):
+        result=transform(self,size,method,*args,**kwargs)
+        if self.mode == "L" and method == Image.Transform.MESH:
+            transformed_mattes.append(np.asarray(result))
+        return result
+    monkeypatch.setattr(Image.Image,"transform",observed)
+    frame=CLEARING+150
+    def draw(ctrl):
+        return rendering.draw_clean_frame(frame,ctrl,width,height,SEED,lay,
+            [nocturne_chapel.BASE_PALETTE]*3,params)
+    after=draw(c)
+    before=draw(dict(c,score_clearing_frame=CLEARING_N-1))
+    assert len(transformed_mattes) == 2
+    assert np.array_equal(*transformed_mattes)
+    matte=rendering.apply_camera(np.repeat(transformed_mattes[0][...,None],3,axis=2),
+                                 *rendering.camera_for_frame(frame,c,params))[...,0]
+    # Exclude the native antialias and final grade's finite filter support.
+    # Includes the spires/concave gaps as well as the entire lava foreground.
+    terrain=~binary_dilation(matte>0,iterations=8)
+    assert terrain.sum() > width*height*.55
+    assert np.array_equal(before[terrain],after[terrain])
+    assert np.mean(np.abs(before[~terrain].astype(float)-after[~terrain])) > 10
+
+
+def test_legacy_renderer_matches_pre_recession_pixel_baseline():
+    # Recorded from main 599d366 before changing the optional compositor.
+    # Include candle, turning/falling masonry, launch and late terrain.
+    expected={0:"5d370b027118d493720b389cd84df03a8a6fbf16ca76732f67eed8f84875f6a9",
+              85:"04ad35452a7200d84d0a257dad07f26c6f0d0dd6e7483dd201cb8b9d78bd8f39",
+              142:"9abb50efaa769e2e19b04c983fb141654c20308c10df99c5f29f663c0fb716f1",
+              185:"226533d32098e3619de397e6c4710f64e940487d51ec6ae988414f9da5375c3a",
+              239:"fd63bfa65da1c3922c0f31880bd9afb41eabc12a0c371ccf2e6f55ef72fac039"}
+    fn=reference(controls())
+    for frame,digest in expected.items():
+        assert hashlib.sha256(fn(frame).tobytes()).hexdigest() == digest
+
+
 def test_new_world_never_affine_copies_rock_bearing_image_into_sky(monkeypatch):
     from PIL import Image
     asset=candle_rift.make_layout(SEED,W,H,candle_rift.CLEARING_RENDERER_ID)
@@ -387,10 +496,17 @@ def test_encoded_clearing_rejects_late_and_missing_visual_event(tmp_path,case):
     render.render_video(frames(),str(wav),str(video),width,height,30,1,CLEARING_N)
     expected=reference(clearing_controls(),candle_rift.CLEARING_RENDERER_ID,width,height)
     timing=qa.check_transition_timing(str(video),CLEARING,expected.transition_window(CLEARING),width,height,CLEARING_N,expected)
+    # Retain encoded calibration evidence even if a future positive fails.
+    report={"case":case,"width":width,"height":height,"encoding_args":list(render.VIDEO_ENCODE_ARGS),
+            "patch_mae_max":expected.patch_mae_max,"timing":timing}
+    report_path=tmp_path/"calibration.json"
+    report_path.write_text(json.dumps(report,indent=2)+"\n")
     if case == "good":
         assert timing["ok"],json.dumps(timing,indent=2)
         checked=qa.check_rendered_frames(str(video),clearing_plan(),Timebase(22050,30),width,height,CLEARING_N,
                                          expected,require_transition_timing=True)
+        report["rendered_frames"]=checked
+        report_path.write_text(json.dumps(report,indent=2)+"\n")
         passed=checked["pass"]
     else:
         checked=timing
