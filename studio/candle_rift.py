@@ -11,6 +11,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
+from scipy.ndimage import gaussian_filter
 
 from .nocturne_chapel import _flame, _state
 
@@ -20,6 +21,40 @@ RENDERER_ID = "candle-rift-v1"
 CLEARING_RENDERER_ID = "candle-clearing-v1"
 CLEARING_DIRECTORY = Path("assets/visual/candle-clearing-v1")
 CLEARING_FRAMES = 180
+
+
+def _cloud_recession(world, sky_mask, seed):
+    """When each painted cloud yields, in source-image coordinates.
+
+    Bright fissures and the original small cloud rims break up larger banks.
+    Two seeded, low-frequency fields vary their recession without a moving
+    geometric window or independently flickering per-frame noise.
+    """
+    h, w = sky_mask.shape
+    luma = world @ np.array([.2126, .7152, .0722], np.float32) / 255
+    fine = gaussian_filter(luma, max(.5, .002*w))
+    banks = gaussian_filter(luma, max(1., .018*w))
+    broad = gaussian_filter(luma, max(1., .065*w))
+    rng = np.random.RandomState(seed ^ 0xC10D)
+
+    def spatial(cols, rows):
+        values = rng.uniform(-1, 1, (rows, cols)).astype(np.float32)
+        return np.asarray(Image.fromarray(values).resize(
+            (w, h), Image.Resampling.BICUBIC), np.float32)
+
+    y = (np.arange(h, dtype=np.float32)[:, None]+.5)/h
+    field = (.34*(1-np.clip(y/.40, 0, 1))-.47*banks
+             -.31*(fine-broad)+.16*spatial(6, 12)+.065*spatial(19, 34))
+    # A few pre-existing bright cracks open on the activation frame. The
+    # storm stays completely intact before that frame; later pixels reveal
+    # monotonically, with dense cloud banks surviving until the late opening.
+    low, high = np.percentile(field[sky_mask > .98], [1, 99.5])
+    arrival = ((field-low)/max(float(high-low), 1e-6)).astype(np.float32)
+    dy, dx = np.gradient(arrival)
+    # Convert the field gradient to an approximately two-pixel transition.
+    # A fixed field-value feather would make flat cloud banks broad gray fog.
+    feather = np.maximum(2*np.hypot(dx, dy), .0005).astype(np.float32)
+    return arrival, feather
 
 
 def _smooth(x):
@@ -124,6 +159,8 @@ def make_layout(seed, w, h, renderer_id=RENDERER_ID):
             sky = np.asarray(mask.resize((w,h),Image.Resampling.LANCZOS),np.float32)/255
         layout.update(mode=CLEARING_RENDERER_ID, cleared_world=load(path),
                       sky_mask=sky)
+        layout["cloud_arrival"], layout["cloud_feather"] = _cloud_recession(
+            layout["world"], sky, seed)
         layout["provenance"] = {"bundle_id": CLEARING_RENDERER_ID,
             "manifest_path": (CLEARING_DIRECTORY/"manifest.json").as_posix(),
             "manifest_sha256": hashlib.sha256(extension_raw).hexdigest(),
@@ -156,7 +193,7 @@ def _soft_flame(canvas, wx, wy, height, lean):
 
 
 def clearing_state(f, ctrl, asset):
-    """Spatial sky reveal and storm fade, strictly gated by activation."""
+    """Source-cloud recession and storm fade, strictly gated by activation."""
     if asset.get("mode") != CLEARING_RENDERER_ID:
         return None, 0.
     cue = int(ctrl["score_clearing_frame"])
@@ -164,9 +201,12 @@ def clearing_state(f, ctrl, asset):
         return np.zeros_like(asset["sky_mask"]), 0.
     duration = min(CLEARING_FRAMES,max(1,len(ctrl["scene_id"])-cue-1))
     u = float(np.clip((f-cue)/duration,0,1))
-    radius = .14+1.02*u**.85
-    distance = np.sqrt(((asset["x"]-.5)/.72)**2+((asset["y"]-.34)/.52)**2)
-    edge = np.clip((radius-distance)/.075,0,1)
+    if u >= 1:
+        return asset["sky_mask"].copy(), 1.
+    # The first small fissures must survive encoding at the actual cue.
+    # Continue from them to the unchanged endpoint, without anticipating it.
+    threshold = u+.2*(1-u)**2
+    edge = np.clip((threshold-asset["cloud_arrival"])/asset["cloud_feather"]+.5,0,1)
     return edge*edge*(3-2*edge)*asset["sky_mask"], _smooth(u)
 
 
