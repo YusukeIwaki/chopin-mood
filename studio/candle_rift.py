@@ -205,7 +205,7 @@ def clearing_state(f, ctrl, asset):
         return asset["sky_mask"].copy(), 1.
     # The first small fissures must survive encoding at the actual cue.
     # Continue from them to the unchanged endpoint, without anticipating it.
-    threshold = .125+.875*u
+    threshold = u+.2*(1-u)**2
     edge = np.clip((threshold-asset["cloud_arrival"])/asset["cloud_feather"]+.5,0,1)
     return edge*edge*(3-2*edge)*asset["sky_mask"], _smooth(u)
 
